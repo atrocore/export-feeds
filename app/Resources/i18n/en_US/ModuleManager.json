@@ -1,0 +1,8 @@
+{
+    "moduleNames": {
+        "Export": "Export feeds"
+    },
+    "moduleDescriptions": {
+        "Export": "User-friendly mechanism of data export"
+    }
+}

@@ -1,0 +1,3 @@
+{
+  "ExportTypeFactory": "Export\\Loaders\\ExportTypeFactoryLoader"
+}

@@ -1,0 +1,11 @@
+{
+    "scopeNames": {
+        "ExportFeed": "Export Feed"
+    },
+    "scopeNamesPlural": {
+        "ExportFeed": "Export Feeds"
+    },
+    "labels": {
+        "Generate": "Generate"
+    }
+}

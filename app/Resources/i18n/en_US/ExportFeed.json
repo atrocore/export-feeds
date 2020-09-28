@@ -1,0 +1,63 @@
+{
+  "fields": {
+    "entity": "Entity",
+    "type": "Type",
+    "channel": "Channel",
+    "isActive": "Active",
+    "fileType": "Format",
+    "isFileHeaderRow": "Header Row",
+    "csvFieldDelimiter": "Field Delimiter",
+    "csvTextQualifier": "Text Qualifier",
+    "field": "Field",
+    "column": "Column",
+    "exportBy": "Export By",
+    "remove": "Remove",
+    "isAttribute": "Is Attribute",
+    "attribute": "Attribute",
+    "fieldOrAttribute": "Field/Attribute",
+    "delimiter": "Field Value Delimiter",
+    "exportByOrChannel":"Export By/Channel"
+  },
+  "labels": {
+    "Create ExportFeed": "Create Export Feed",
+    "Simple Type Settings": "Simple Type Settings",
+    "Product Simple Type Settings": "Product Simple Type Settings",
+    "Products Filter": "Products Filter",
+    "Configurator": "Configurator",
+    "addEntityField": "Add entity field",
+    "addProductAttribute": "Add Product attribute"
+  },
+  "messages": {
+    "delimitersMustBeDifferent": "Delimiters for fields and field values must be different."
+  },
+  "additionalTranslates": {
+    "exportName": "Export: <strong>%s</strong>",
+    "channelDataArchive": "Channel export: <strong>%s</strong>",
+    "jobCreated": "Export job created successfully",
+    "jobNotCreated": "Export job created failed",
+    "channelWithoutExportFeeds": "No Export Feeds linked with current Channel"
+  },
+  "options": {
+    "type": {
+      "simple": "Simple",
+      "productSimple": "Product Simple",
+      "productImage": "Product Image",
+      "productAsset": "Product Asset"
+    },
+    "fileType": {
+      "xlsx": "XLSX (Excel)",
+      "csv": "CSV"
+    },
+    "csvTextQualifier": {
+      "doubleQuote": "Double Quote",
+      "singleQuote": "Single Quote"
+    }
+  },
+  "exceptions": {
+    "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
+    "Configurator settings incorrect": "Configurator settings incorrect"
+  },
+  "tooltips": {
+    "channel": "Link Export Feed to specified channel. Export from channel page will include this feed."
+  }
+}

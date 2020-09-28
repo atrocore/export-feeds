@@ -1,0 +1,18 @@
+[
+  {
+    "route": "/ExportFeed/:exportFeedId/exportByFeed",
+    "method": "post",
+    "params": {
+      "controller": "ExportFeed",
+      "action": "ExportFile"
+    }
+  },
+  {
+    "route": "/ExportFeed/:channelId/exportByChannel",
+    "method": "post",
+    "params": {
+      "controller": "ExportFeed",
+      "action": "ExportChannel"
+    }
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "entity": true,
+  "layouts": false,
+  "tab": true,
+  "acl": true,
+  "aclPortal": true,
+  "aclPortalLevelList": [
+    "all",
+    "account",
+    "contact",
+    "own",
+    "no"
+  ],
+  "type": "Base",
+  "module": "Export",
+  "customizable": false,
+  "object": true,
+  "hasOwner": true
+}

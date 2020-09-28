@@ -1,0 +1,7 @@
+{
+  "implementationClassNameMap": {
+    "ExportFeedXlsx": "\\Export\\Core\\FileStorage\\Storages\\ExportFeedXlsx",
+    "ExportFeedCsv": "\\Export\\Core\\FileStorage\\Storages\\ExportFeedCsv",
+    "ExportZip": "\\Export\\Core\\FileStorage\\Storages\\ExportZip"
+  }
+}

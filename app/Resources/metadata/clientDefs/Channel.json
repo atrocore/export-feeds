@@ -1,0 +1,5 @@
+{
+    "recordViews": {
+        "detail": "export:views/channel/record/detail"
+    }
+}

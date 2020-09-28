@@ -1,0 +1,52 @@
+[
+    {
+        "label": "Overview",
+        "style": "default",
+        "rows": [
+            [
+                {
+                    "name": "isActive"
+                },
+                false
+            ],
+            [
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "channel"
+                }
+            ],
+            [
+                {
+                    "name": "description"
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        ]
+    },
+    {
+        "label": "File",
+        "style": "info",
+        "rows": [
+            [
+                {
+                    "name": "fileType"
+                },
+                {
+                    "name": "isFileHeaderRow"
+                }
+            ],
+            [
+                {
+                    "name": "csvFieldDelimiter"
+                },
+                {
+                    "name": "csvTextQualifier"
+                }
+            ]
+        ]
+    }
+]

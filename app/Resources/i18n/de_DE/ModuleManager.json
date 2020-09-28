@@ -1,0 +1,8 @@
+{
+    "moduleNames": {
+        "Export": "Exportprofil"
+    },
+    "moduleDescriptions": {
+        "Export": "Benutzerfreundlicher Mechanismus für Datenexport"
+    }
+}

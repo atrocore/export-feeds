@@ -1,0 +1,44 @@
+{
+  "fields": {
+    "exportFeeds": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutListDisabled": true,
+      "layoutMassUpdateDisabled": true,
+      "layoutFiltersDisabled": true,
+      "noLoad": true,
+      "importDisabled": true
+    }
+  },
+  "links": {
+    "exportFeeds": {
+      "type": "hasMany",
+      "foreign": "channel",
+      "entity": "ExportFeed"
+    }
+  },
+  "collection": {
+    "sortBy": "createdAt",
+    "asc": false
+  },
+  "indexes": {
+    "name": {
+      "columns": [
+        "name",
+        "deleted"
+      ]
+    },
+    "ownerUser": {
+      "columns": [
+        "ownerUserId",
+        "deleted"
+      ]
+    },
+    "assignedUser": {
+      "columns": [
+        "assignedUserId",
+        "deleted"
+      ]
+    }
+  }
+}

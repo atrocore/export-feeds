@@ -1,0 +1,6 @@
+{
+  "AttributeExport": "\\Export\\Services\\AttributeExport",
+  "ExportTypeSimple": "\\Export\\Services\\ExportTypeSimple",
+  "QueueManagerChannelExport": "\\Export\\Services\\QueueManagerChannelExport",
+  "QueueManagerExport": "\\Export\\Services\\QueueManagerExport"
+}

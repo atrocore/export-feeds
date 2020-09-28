@@ -1,0 +1,126 @@
+{
+  "controller": "controllers/record",
+  "boolFilterList": [
+    "onlyMy"
+  ],
+  "quickCreate": true,
+  "navigateToEntityAfterQuickCreate": true,
+  "disabledSelectList": true,
+  "quickCreateOptions": {
+    "fullFormDisabled": true
+  },
+  "iconClass": "fas fa-cloud-upload-alt",
+  "views": {
+    "list": "export:views/list",
+    "detail": "export:views/detail"
+  },
+  "recordViews": {
+    "detail": "export:views/export-feed/record/detail",
+    "list": "export:views/export-feed/record/list"
+  },
+  "bottomPanels": {
+    "detail": [
+      {
+        "name": "simpleTypeProductFilter",
+        "label": "Products Filter",
+        "view": "export:views/export-feed/simple-type-components/record/panels/simple-type-product-filter",
+        "notRefreshable": true
+      },
+      {
+        "name": "simpleTypeSettings",
+        "label": "Simple Type Settings",
+        "view": "export:views/export-feed/record/panels/simple-type-settings",
+        "notRefreshable": true
+      }
+    ]
+  },
+  "optionalBottomPanels": {
+    "simpleTypeSettings": [
+      {
+        "field": "type",
+        "value": "simple"
+      }
+    ],
+    "simpleTypeEntityFilter": [
+      {
+        "field": "type",
+        "value": "simple"
+      }
+    ]
+  },
+  "customEntities": {
+    "Product": {
+      "productCategories": {
+        "entity": "Category"
+      }
+    }
+  },
+  "dynamicLogic": {
+    "fields": {
+      "type": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "isNotEmpty",
+              "attribute": "id"
+            }
+          ]
+        }
+      },
+      "csvFieldDelimiter": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "fileType",
+              "value": "csv"
+            }
+          ]
+        }
+      },
+      "valueDelimiter": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "fileType",
+              "value": "csv"
+            },
+            {
+              "type": "in",
+              "attribute": "type",
+              "value": [
+                "simple"
+              ]
+            }
+          ]
+        }
+      },
+      "csvTextQualifier": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "fileType",
+              "value": "csv"
+            }
+          ]
+        }
+      },
+      "isFileHeaderRow": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }
+}
