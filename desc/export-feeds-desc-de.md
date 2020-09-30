@@ -6,7 +6,7 @@ Mit Hilfe des Moduls „Export Feeds“ wird der Datenexport aus dem AtroPIM-Sys
 
 Um das Modul „Export Feeds“ in Ihrem System zu installieren, gehen Sie zur `Administration> Modulmanager`. Finden Sie dieses Modul in der Liste „Shop“ und klicken Sie auf `Installieren`:
 
-![Export install](_assets/export_install.jpg)
+![Export install](_assets/export-install.jpg)
 
 Wählen Sie im angezeigten Installations-Pop-up die gewünschte Version aus und klicken Sie auf den Button `Installieren`. Der Modulhintergrund wird grün und das Modul wird in den Modulmanager-Bereich „Installiert“ verschoben. Klicken Sie auf `Update starten`, um die Installation zu bestätigen.
 
