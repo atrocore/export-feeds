@@ -1,6 +1,6 @@
-The "Export Feeds" module enables the use of export feeds in a user-friendly manner. In general, *export feed* is a data export template that depends on the user needs and entity data to be exported from the TreoPIM system. Learn more about the TreoPIM system and its advantages [here](https://treopim.com/help/what-is-treopim).
+The "Export Feeds" module enables the use of export feeds in a user-friendly manner. In general, *export feed* is a data export template that depends on the user needs and entity data to be exported from the AtroPIM system. Learn more about the AtroPIM system and its advantages [here](https://atropim.com/help/what-is-atropim).
 
-With the help of the "Export Feeds" module, data export from the TreoPIM system is performed in accordance with the export templates that can be further configured and customized, as well as reused at different time intervals. Export feeds can also be used to automate the data export process via Scheduled Jobs.
+With the help of the "Export Feeds" module, data export from the AtroPIM system is performed in accordance with the export templates that can be further configured and customized, as well as reused at different time intervals. Export feeds can also be used to automate the data export process via Scheduled Jobs.
 
 ## Installation 
 
@@ -16,9 +16,9 @@ To update/remove the "Export Feeds" module from the system, use the correspondin
 
 ## Administrator Functions
 
-The "Export Feeds" module significantly extends the functionality of the [TreoPIM](https://treopim.com/help/what-is-treopim) system, so further description of the module is given in the context of TreoPIM.
+The "Export Feeds" module significantly extends the functionality of the [AtroPIM](https://atropim.com/help/what-is-atropim) system, so further description of the module is given in the context of AtroPIM.
 
-After the module installation, a new `Export Feeds` configuration group is added to the TreoPIM administration page. Also there is a possibility to add export feeds as a separate navigation menu item on the `Administration > User Interface` page:
+After the module installation, a new `Export Feeds` configuration group is added to the AtroPIM administration page. Also there is a possibility to add export feeds as a separate navigation menu item on the `Administration > User Interface` page:
 
 ![Export feeds adding](_assets/export-feeds-add.jpg)
 
@@ -33,7 +33,7 @@ To create a new export feed, go to the `Administration > Export Feeds` page or c
 ![Export feed creating](_assets/export-feed-create.jpg)
 
 Here enter the export feed name, select its type and define its owner. Currently the following export feed types are supported:
- - **Simple** – designed for exporting data from any entity existing in your system with the ability to configure the list of fields to be exported, their order and names. Also this export feed type allows you to export product attribute values and product categories for the product entities in accordance with their scope levels. Refer to the **TreoPIM user guide** to learn more about the [attributes](https://treopim.com/help/attributes) and [products](https://treopim.com/help/products).
+ - **Simple** – designed for exporting data from any entity existing in your system with the ability to configure the list of fields to be exported, their order and names. Also this export feed type allows you to export product attribute values and product categories for the product entities in accordance with their scope levels. Refer to the **AtroPIM user guide** to learn more about the [attributes](https://atropim.com/help/attributes) and [products](https://atropim.com/help/products).
 - **Product image** – designed for exporting product images existing in your system. The resulting file will contain the URL links to the exported product images arranged in accordance with the scope level (global or channel) defined for product images in the system.
 
 Click the `Save` button to complete the operation; the new record will be added to the export feeds list. You can configure it right away on the detail view page that opens or return to it later.
@@ -46,7 +46,7 @@ To configure the export feed, click the desired record in the export feeds list;
 
 In-line editing is supported here. So prior to making any changes, you have to click the pencil icon located on the right of each editable field.
 
-*For details on in-line editing and other features of the TreoPIM system, refer to the **Entity Records** section of the [**Views and Panels**](https://treopim.com/help/views-and-panels) article of our user guide.*
+*For details on in-line editing and other features of the AtroPIM system, refer to the **Entity Records** section of the [**Views and Panels**](https://atropim.com/help/views-and-panels) article of our user guide.*
 
 The following settings are available on the `OVERVIEW` panel:
 
@@ -73,7 +73,7 @@ Please, note that by default the XLSX (Excel) file format is set and the `Header
 
 #### Products Filter
 
-The TreoPIM system allows you to export a specific range of product data, which can be defined on the `PRODUCTS FILTER` panel. Here you can build filters by categories linked to the product, entity fields of the product itself, and by product attributes and their values:
+The AtroPIM system allows you to export a specific range of product data, which can be defined on the `PRODUCTS FILTER` panel. Here you can build filters by categories linked to the product, entity fields of the product itself, and by product attributes and their values:
 
 ![Products filter](_assets/products-filter.jpg)
 
@@ -96,7 +96,7 @@ To enable editing of the parameters on the `SIMPLE TYPE SETTINGS` panel, click t
 
 #### Configurator
 
-The configuration of the entity fields is performed on the `CONFIGURATOR` panel on either the detail or edit view page of the export feed. By default, the required fields of the entity type defined on the `SIMPLE TYPE SETTINGS` panel are displayed there, and depending on this choice, the `CONFIGURATOR` panel contains different fields. For [products](https://treopim.com/help/products), this panel looks as follows: 
+The configuration of the entity fields is performed on the `CONFIGURATOR` panel on either the detail or edit view page of the export feed. By default, the required fields of the entity type defined on the `SIMPLE TYPE SETTINGS` panel are displayed there, and depending on this choice, the `CONFIGURATOR` panel contains different fields. For [products](https://atropim.com/help/products), this panel looks as follows: 
 
 ![Configurator panel](_assets/configurator.jpg)
 
@@ -154,7 +154,7 @@ In order to *remove* the export feed record, use the corresponding option from t
 
 To complete the operation, click the `Remove` button in the confirmation message that appears.
 
-The "Export Feeds" module also supports common TreoCore *mass actions* that can be applied to several selected export feed records, i.e. records with set checkboxes. These actions can be found in the corresponding menu on the export feeds list view page:
+The "Export Feeds" module also supports common AtroCore *mass actions* that can be applied to several selected export feed records, i.e. records with set checkboxes. These actions can be found in the corresponding menu on the export feeds list view page:
 
 ![Mass actions](_assets/mass-actions.jpg)
 
