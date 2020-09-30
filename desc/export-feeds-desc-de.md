@@ -1,6 +1,6 @@
-Das Modul „Export Feeds“ ermöglicht die benutzerfreundliche Anwendung von Export Feeds. Im Allgemeinen ist Export Feeds eine Vorlage für den Datenexport, die von den Nutzeranforderungen und den aus TreoPIM zu exportierenden Entitätsdaten abhängt. Erfahren Sie [hier](https://treopim.com/help/what-is-treopim) mehr über das TreoPIM-System und seine Vorteile.
+Das Modul „Export Feeds“ ermöglicht die benutzerfreundliche Anwendung von Export Feeds. Im Allgemeinen ist Export Feeds eine Vorlage für den Datenexport, die von den Nutzeranforderungen und den aus AtroPIM zu exportierenden Entitätsdaten abhängt. Erfahren Sie [hier](https://atropim.com/help/what-is-atropim) mehr über das AtroPIM-System und seine Vorteile.
 
-Mit Hilfe des Moduls „Export Feeds“ wird der Datenexport aus dem TreoPIM-System gemäß den Exportvorlagen durchgeführt, die weiter konfiguriert, angepasst und in verschiedenen Zeitintervallen wiederverwendet werden können. Export Feeds können auch dazu genutzt werden, um den Prozess des Datenexports via Scheduled Jobs zu automatisieren.
+Mit Hilfe des Moduls „Export Feeds“ wird der Datenexport aus dem AtroPIM-System gemäß den Exportvorlagen durchgeführt, die weiter konfiguriert, angepasst und in verschiedenen Zeitintervallen wiederverwendet werden können. Export Feeds können auch dazu genutzt werden, um den Prozess des Datenexports via Scheduled Jobs zu automatisieren.
 
 ## Installation
 
@@ -16,9 +16,9 @@ Um das Modul „Export Feeds“ zu aktualisieren / zu entfernen, nutzen Sie ents
 
 ## Funktionen für den Administrator
 
-Das Modul „Export Feeds“ erweitert die Funktionalität des [TreoPIM](https://treopim.com/help/what-is-treopim)-Systems erheblich, so ist eine weitere Modulbeschreibung im Kontext von TreoPIM gegeben.
+Das Modul „Export Feeds“ erweitert die Funktionalität des [AtroPIM](https://atropim.com/help/what-is-atropim)-Systems erheblich, so ist eine weitere Modulbeschreibung im Kontext von AtroPIM gegeben.
 
-Nach der Modulinstallation wird eine neue `Export- Feeds`-Konfigurationsgruppe zum TreoPIM-Adminbereich hinzugefügt. Es ist auch möglich, Export Feeds als separaten Navigationsmenüpunkt auf der Seite `Administration> Benutzeroberfläche` hinzuzufügen:
+Nach der Modulinstallation wird eine neue `Export- Feeds`-Konfigurationsgruppe zum AtroPIM-Adminbereich hinzugefügt. Es ist auch möglich, Export Feeds als separaten Navigationsmenüpunkt auf der Seite `Administration> Benutzeroberfläche` hinzuzufügen:
 
 ![Export feeds adding](_assets/export-feeds-add.jpg)
 
@@ -34,7 +34,7 @@ Um einen neuen Export Feed zu erstellen, gehen Sie zur `Administration> Export F
 
 Geben Sie hier den Namen des Export Feeds ein, wählen Sie dessen Typ aus und geben Sie dessen Eigentümer an. Aktuell werden die folgenden Export-Feed-Typen unterstützt:
 
-- **Simple** – für den Export der Daten aus beliebiger Entität Ihres Systems mit der Möglichkeit, die Liste der zu exportierenden Felder, ihre Reihenfolge und Namen zu konfigurieren. Mit diesem Export-Feed-Typ können Sie auch Produktattributwerte und Produktkategorien für die Produktentitäten gemäß ihren Umfängen exportieren. Weitere Informationen zu den [Attributen](https://treopim.com/help/attributes) und [Produkten](https://treopim.com/help/products) finden Sie im **TreoPIM User Guide**.
+- **Simple** – für den Export der Daten aus beliebiger Entität Ihres Systems mit der Möglichkeit, die Liste der zu exportierenden Felder, ihre Reihenfolge und Namen zu konfigurieren. Mit diesem Export-Feed-Typ können Sie auch Produktattributwerte und Produktkategorien für die Produktentitäten gemäß ihren Umfängen exportieren. Weitere Informationen zu den [Attributen](https://atropim.com/help/attributes) und [Produkten](https://atropim.com/help/products) finden Sie im **AtroPIM User Guide**.
 - **Produktbild** – für den Export der in Ihrem System vorhandenen Produktbilder. Die resultierende Datei enthält die URL-Links zu exportierten Produktbildern, die gemäß dem im System eingestellten Umfang für Produktbilder (global oder channel) angeordnet sind.
 
 Klicken Sie auf den Button `Speichern`, um den Vorgang abzuschließen. Der neue Datensatz wird zu der Export-Feeds-Liste hinzugefügt. Sie können ihn sofort auf der Detailansichtsseite konfigurieren oder später darauf zurückkommen.
@@ -47,7 +47,7 @@ Um das Export Feed zu konfigurieren, klicken Sie auf den gewünschten Datensatz 
 
 Inline-Bearbeitung wird hier unterstützt. Bevor Sie Änderungen vornehmen, müssen Sie auf das Stiftsymbol rechts neben jedem bearbeitbaren Feld klicken.
 
-*Ausführliche Informationen zur Inline-Bearbeitung und zu anderen Funktionen des TreoPIM-Systems finden Sie im Abschnitt **Entity Records** des Artikels [**Views and Panels**](https://treopim.com/help/views-and-panels) in unserem User Guide.*
+*Ausführliche Informationen zur Inline-Bearbeitung und zu anderen Funktionen des AtroPIM-Systems finden Sie im Abschnitt **Entity Records** des Artikels [**Views and Panels**](https://atropim.com/help/views-and-panels) in unserem User Guide.*
 
 Folgende Einstellungen sind im Panel `OVERVIEW` verfügbar:
 
@@ -75,7 +75,7 @@ Beachten Sie bitte, dass das XLSX (Excel)-Dateiformat standardmäßig eingestell
 
 #### Filter der Produkte
 
-Das TreoPIM-System ermöglicht es, einen bestimmten Bereich von Produktdaten zu exportieren, der im Panel `Filter der Produkte` definiert werden kann. Hier können Sie Filter nach Kategorien erstellen, die mit dem Produkt verknüpft sind, nach Entitätsfeldern des Produkts selbst sowie nach Produktattributen und deren Werten:
+Das AtroPIM-System ermöglicht es, einen bestimmten Bereich von Produktdaten zu exportieren, der im Panel `Filter der Produkte` definiert werden kann. Hier können Sie Filter nach Kategorien erstellen, die mit dem Produkt verknüpft sind, nach Entitätsfeldern des Produkts selbst sowie nach Produktattributen und deren Werten:
 
   ![Products filter](_assets/products-filter.jpg)
 
