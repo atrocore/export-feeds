@@ -7,7 +7,7 @@
     "fileType": "Format",
     "isFileHeaderRow": "Header Zeile",
     "csvFieldDelimiter": "Feld-Trennzeichen",
-    "csvTextQualifier": "Text-Anführungszeichen",
+    "csvTextQualifier": "Text-Qualifier",
     "field": "Feld",
     "column": "Spalte",
     "exportBy": "Export von",
@@ -15,7 +15,7 @@
     "isAttribute": "Ist Attribut",
     "attribute": "Attribut",
     "fieldOrAttribute": "Feld/Attribut",
-    "delimiter": "Feldwert Begrenzer",
+    "delimiter": "Trennzeichen",
     "exportByOrChannel":"Export von/Kanal",
     "data": "Daten"
   },
@@ -24,9 +24,9 @@
   },
   "labels": {
     "Create ExportFeed": "Export Feed erstellen",
-    "Simple Type Settings": "Einfache Typ-Einstellungen",
-    "Product Simple Type Settings": "Einstellungen des Produkttyps Simple",
-    "Products Filter": "Filter der Produkte",
+    "Simple Type Settings": "Simple Typ Einstellungen",
+    "Product Simple Type Settings": "Simple Typ Einstellungen für Produkte",
+    "Products Filter": "Produktfilter",
     "Configurator": "Konfigurator",
     "addEntityField": "Entitätsfeld hinzufügen",
     "addProductAttribute": "Produktattribut hinzufügen"
@@ -38,8 +38,8 @@
     "exportName": "Datenexport beim Feed '%s'",
     "channelDataArchive": "Datenexport für den Kanal '%s'",
     "jobCreated": "Exportjob erfolgreich erstellt",
-    "jobNotCreated": "Exportauftrag erstellt fehlgeschlagen",
-    "channelWithoutExportFeeds": "Keine Export-Feeds, die mit dem aktuellen Kanal verknüpft sind"
+    "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
+    "channelWithoutExportFeeds": "Keine Export Feeds, die mit dem aktuellen Kanal verknüpft sind"
   },
   "options": {
     "type": {
@@ -62,6 +62,6 @@
     "Configurator settings incorrect": "Konfiguratoreinstellungen falsch"
   },
   "tooltips": {
-    "channel": "Verknüpfen Sie den Export-Feed mit dem angegebenen Kanal. Beim Export von der Kanalseite wird dieser Feed enthalten."
+    "channel": "Verknüpfen Sie den Export Feed mit dem angegebenen Kanal. Beim Export von der Kanalseite wird dieser Feed enthalten."
   }
 }
