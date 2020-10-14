@@ -1,8 +1,8 @@
 {
     "labels": {
-        "exportFeed": "Export Profile"
+        "exportFeed": "Export Profil"
     },
     "descriptions": {
-        "exportFeed": "Export Profile für Datenexport konfigurieren"
+        "exportFeed": "Export Profil für Datenexport konfigurieren"
     }
 }
