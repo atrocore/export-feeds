@@ -1,8 +1,8 @@
 {
     "labels": {
-        "exportFeed": "Export Profil"
+        "exportFeed": "Export Profile"
     },
     "descriptions": {
-        "exportFeed": "Export Template für Datenexport von Treo-Entities konfigurieren"
+        "exportFeed": "Export Profile für Datenexport konfigurieren"
     }
 }
