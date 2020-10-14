@@ -15,7 +15,7 @@
       "default": "Export Feeds"
     },
     "description": {
-      "default": "The module adds possibility to use export feeds in a user-friendly way."
+      "default": "The module enables to use preconfigured feeds (templates) for data export."
     },
     "tags": [
       "usability",
