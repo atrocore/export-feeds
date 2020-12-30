@@ -165,7 +165,7 @@ class Product extends Record
                         $result = $item;
                         break;
                     case 'Channel':
-                        if (in_array($channelId, array_column($item->get('channels')->toArray(), 'id'))) {
+                        if ($channelId == $item->get('channelId')) {
                             $result = $item;
                         }
                         break;

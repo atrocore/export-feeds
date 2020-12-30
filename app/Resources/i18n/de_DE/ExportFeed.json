@@ -29,7 +29,15 @@
     "Products Filter": "Produktfilter",
     "Configurator": "Konfigurator",
     "addEntityField": "Entitätsfeld hinzufügen",
-    "addProductAttribute": "Produktattribut hinzufügen"
+    "addProductAttribute": "Produktattribut hinzufügen",
+    "simple": "Simple",
+    "productSimple": "Produkt Simple",
+    "productImage": "Produktbild",
+    "productAsset": "Produkt-Asset",
+    "xlsx": "XLSX (Excel)",
+    "csv": "CSV",
+    "doubleQuote": "Doppel-Anführungszeichen",
+    "singleQuote": "Anführungszeichen"
   },
   "messages": {
     "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein."
@@ -40,22 +48,6 @@
     "jobCreated": "Exportjob erfolgreich erstellt",
     "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
     "channelWithoutExportFeeds": "Keine Export Feeds, die mit dem aktuellen Kanal verknüpft sind"
-  },
-  "options": {
-    "type": {
-      "simple": "Simple",
-      "productSimple": "Produkt Simple",
-      "productImage": "Produktbild",
-      "productAsset": "Produkt-Asset"
-    },
-    "fileType": {
-      "xlsx": "XLSX (Excel)",
-      "csv": "CSV"
-    },
-    "csvTextQualifier": {
-      "doubleQuote": "Doppel-Anführungszeichen",
-      "singleQuote": "Anführungszeichen"
-    }
   },
   "exceptions": {
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",

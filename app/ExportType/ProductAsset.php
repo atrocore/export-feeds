@@ -120,22 +120,17 @@ class ProductAsset extends AbstractType
         $sql = "
             SELECT 
                CASE
-                    WHEN ar.scope = 'Channel' THEN c.name
+                    WHEN pa.channel IS NOT NULL THEN c.name
                     ELSE 'Global'
                 END AS scope,
-                CASE
-                    WHEN a.type = 'Gallery Image' THEN CONCAT('{$url}?entryPoint=preview&size=original&id=', a.id)
-                    ELSE CONCAT('{$url}?entryPoint=download&id=', a.file_id)
-                END AS url
-            FROM asset_relation ar
-            LEFT JOIN asset a ON ar.asset_id = a.id
-            LEFT JOIN asset_relation_channel arc ON arc.asset_relation_id = ar.id AND arc.deleted = 0
-            LEFT JOIN channel AS c ON c.id = arc.channel_id AND c.deleted = 0
-            WHERE ar.entity_id = :productId
-                AND ar.entity_name = 'Product'
-                AND ar.deleted = '0'    
+                CONCAT('{$url}?entryPoint=download&id=', a.file_id) AS url
+            FROM product_asset pa
+            LEFT JOIN asset a ON pa.asset_id = a.id
+            LEFT JOIN channel AS c ON c.id = pa.channel AND c.deleted = 0
+            WHERE pa.product_id = :productId
+                AND pa.deleted = '0'    
                 {$customWhere}
-            ORDER BY ar.sort_order ASC, ar.modified_at DESC;";
+            ORDER BY pa.sorting ASC, a.modified_at DESC;";
 
         return $this
             ->getEntityManager()
