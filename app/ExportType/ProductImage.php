@@ -29,6 +29,6 @@ class ProductImage extends ProductAsset
 {
    protected function getCustomWhere(): string
    {
-       return ' AND type = \'Gallery Image\'';
+       return ' AND a.type = \'Gallery Image\'';
    }
 }

@@ -124,10 +124,8 @@ class AttributeExport extends AbstractService
                     ON (pf.id = pfa.product_family_id)
                 inner join attribute as a
                     ON (pfa.attribute_id = a.id)
-                left join product_family_attribute_channel as pfac
-                    ON (pfa.id = pfac.product_family_attribute_id)
                 left join channel as c
-                    ON (pfac.channel_id = c.id)
+                    ON (pfa.channel_id = c.id)
                 where pf.id in ("' . implode('","', $familyIds) . '") ORDER BY a.name ASC';
 
         $res = $pdo->query($sql);

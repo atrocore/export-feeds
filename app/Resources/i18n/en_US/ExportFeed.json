@@ -25,7 +25,15 @@
     "Products Filter": "Products Filter",
     "Configurator": "Configurator",
     "addEntityField": "Add entity field",
-    "addProductAttribute": "Add Product attribute"
+    "addProductAttribute": "Add Product attribute",
+    "simple": "Simple",
+    "productSimple": "Product Simple",
+    "productImage": "Product Image",
+    "productAsset": "Product Asset",
+    "xlsx": "XLSX (Excel)",
+    "csv": "CSV",
+    "doubleQuote": "Double Quote",
+    "singleQuote": "Single Quote"
   },
   "messages": {
     "delimitersMustBeDifferent": "Delimiters for fields and field values must be different."
@@ -36,22 +44,6 @@
     "jobCreated": "Export job created successfully",
     "jobNotCreated": "Export job created failed",
     "channelWithoutExportFeeds": "No Export Feeds linked with current Channel"
-  },
-  "options": {
-    "type": {
-      "simple": "Simple",
-      "productSimple": "Product Simple",
-      "productImage": "Product Image",
-      "productAsset": "Product Asset"
-    },
-    "fileType": {
-      "xlsx": "XLSX (Excel)",
-      "csv": "CSV"
-    },
-    "csvTextQualifier": {
-      "doubleQuote": "Double Quote",
-      "singleQuote": "Single Quote"
-    }
   },
   "exceptions": {
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
