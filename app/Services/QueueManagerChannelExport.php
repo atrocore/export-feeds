@@ -24,7 +24,7 @@ namespace Export\Services;
 
 use Espo\ORM\EntityCollection;
 use Export\File\Zip;
-use Treo\Entities\Attachment;
+use Espo\Entities\Attachment;
 
 /**
  * Class QueueManagerChannelExport

@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace Export\Core\FileStorage\Storages;
 
 use Export\File\Csv;
-use Treo\Entities\Attachment;
+use Espo\Entities\Attachment;
 
 /**
  * ExportFeedCsv Storage

@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Core\FileStorage\Storages;
 
-use Treo\Entities\Attachment;
+use Espo\Entities\Attachment;
 use Export\File\Zip;
 
 /**

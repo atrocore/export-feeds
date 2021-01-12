@@ -23,7 +23,7 @@ declare(strict_types=1);
 namespace Export\File;
 
 use Treo\Core\FileStorage\Manager as FileManager;
-use Treo\Entities\Attachment;
+use Espo\Entities\Attachment;
 use Espo\ORM\EntityManager;
 use Export\Core\FileStorage\Storages\AbstractStorage;
 
@@ -85,7 +85,7 @@ abstract class AbstractFile
      *
      * @param array $feed
      *
-     * @return AbstractType
+     * @return AbstractFile
      */
     public function setFeed(array $feed): AbstractFile
     {
@@ -99,7 +99,7 @@ abstract class AbstractFile
      *
      * @param EntityManager $entityManager
      *
-     * @return AbstractType
+     * @return AbstractFile
      */
     public function setEntityManager(EntityManager $entityManager): AbstractFile
     {
