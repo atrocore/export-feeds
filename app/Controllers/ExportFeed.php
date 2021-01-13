@@ -31,28 +31,29 @@ use Slim\Http\Request;
  */
 class ExportFeed extends Base
 {
-
     /**
      * @ApiDescription(description="Export data to file")
      * @ApiMethod(type="POST")
-     * @ApiRoute(name="/ExportFeed/{exportFeedId}/exportByFeed")
+     * @ApiRoute(name="/ExportFeed/action/exportFile")
+     * @ApiBody(sample="{
+     *     'id': '1'
+     * }")
      * @ApiResponseCode(sample="[200,401,403,404,500]")
      * @ApiParams(name="exportFeedId", type="string", is_required=1, description="ExportFeed ID")
      * @ApiReturn(sample="bool")
      *
-     * @param array   $params
-     * @param array   $data
-     * @param Request $request
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
      *
      * @return bool
      * @throws Exceptions\BadRequest
-     * @throws Exceptions\Error
      * @throws Exceptions\Forbidden
      */
     public function actionExportFile($params, $data, Request $request): bool
     {
         // checking request
-        if (!$request->isPost()) {
+        if (!$request->isPost() || empty($data->id)) {
             throw new Exceptions\BadRequest();
         }
 
@@ -61,34 +62,32 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        if (!empty($params['exportFeedId'])) {
-            return $this->getRecordService()->exportFile($params['exportFeedId']);
-        }
-
-        throw new Exceptions\Error();
+        return $this->getRecordService()->exportFile($data->id);
     }
 
     /**
      * @ApiDescription(description="Export channel data to file")
      * @ApiMethod(type="POST")
-     * @ApiRoute(name="/ExportFeed/{channelId}/exportByChannel")
+     * @ApiRoute(name="/ExportFeed/action/exportChannel")
+     * @ApiBody(sample="{
+     *     'id': '1'
+     * }")
      * @ApiResponseCode(sample="[200,401,403,404,500]")
      * @ApiParams(name="channelId", type="string", is_required=1, description="Channel ID")
      * @ApiReturn(sample="bool")
      *
-     * @param array   $params
-     * @param array   $data
-     * @param Request $request
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
      *
      * @return bool
      * @throws Exceptions\BadRequest
-     * @throws Exceptions\Error
      * @throws Exceptions\Forbidden
      */
     public function actionExportChannel($params, $data, Request $request): bool
     {
         // checking request
-        if (!$request->isPost()) {
+        if (!$request->isPost() || empty($data->id)) {
             throw new Exceptions\BadRequest();
         }
 
@@ -97,10 +96,6 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        if (!empty($params['channelId'])) {
-            return $this->getRecordService()->exportChannel($params['channelId']);
-        }
-
-        throw new Exceptions\Error();
+        return $this->getRecordService()->exportChannel($data->id);
     }
 }

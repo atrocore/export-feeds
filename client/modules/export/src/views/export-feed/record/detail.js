@@ -58,7 +58,7 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
         actionExportNow() {
             const exportButton = this.$el.find('button[data-action="exportNow"]');
             exportButton.prop('disabled', true);
-            this.ajaxPostRequest(`ExportFeed/${this.model.id}/exportByFeed`).then(response => {
+            this.ajaxPostRequest('ExportFeed/action/exportFile', {id: this.model.id}).then(response => {
                 this.notify(this.translate(response ? 'jobCreated' : 'jobNotCreated', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
                 Backbone.trigger('showQueuePanel');
             }).always(() => {

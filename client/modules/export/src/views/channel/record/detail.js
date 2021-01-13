@@ -47,7 +47,7 @@ Espo.define('export:views/channel/record/detail', 'pim:views/record/detail',
             const button = this.$el.find('button[data-action="exportByChannel"]');
             button.prop('disabled', true);
             this.notify('Please wait');
-            this.ajaxPostRequest(`ExportFeed/${this.model.id}/exportByChannel`).then(response => {
+            this.ajaxPostRequest('ExportFeed/action/exportChannel', {id: this.model.id}).then(response => {
                 this.notify(this.translate(response ? 'jobCreated' : 'channelWithoutExportFeeds', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
                 Backbone.trigger('showQueuePanel');
             }).always(() => {
