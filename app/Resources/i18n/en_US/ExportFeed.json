@@ -20,9 +20,9 @@
   },
   "labels": {
     "Create ExportFeed": "Create Export Feed",
-    "Simple Type Settings": "Simple Type Settings",
+    "simpleTypeSettings": "Simple Type Settings",
     "Product Simple Type Settings": "Product Simple Type Settings",
-    "Products Filter": "Products Filter",
+    "productsFilter": "Products Filter",
     "Configurator": "Configurator",
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",
@@ -47,7 +47,7 @@
   },
   "exceptions": {
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
-    "Configurator settings incorrect": "Configurator settings incorrect"
+    "configuratorSettingsIncorrect": "Configurator settings incorrect"
   },
   "tooltips": {
     "channel": "Link Export Feed to specified channel. Export from channel page will include this feed."

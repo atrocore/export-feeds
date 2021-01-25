@@ -43,7 +43,7 @@ class ExportFeedEntity extends AbstractListener
     {
         if (!$this->isValid($event->getArgument('entity'))) {
             throw new BadRequest($this->translate(
-                'Configurator settings incorrect',
+                'configuratorSettingsIncorrect',
                 'exceptions',
                 'ExportFeed'
             ));
