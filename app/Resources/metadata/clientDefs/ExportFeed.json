@@ -22,13 +22,13 @@
     "detail": [
       {
         "name": "simpleTypeProductFilter",
-        "label": "Products Filter",
+        "label": "productsFilter",
         "view": "export:views/export-feed/simple-type-components/record/panels/simple-type-product-filter",
         "notRefreshable": true
       },
       {
         "name": "simpleTypeSettings",
-        "label": "Simple Type Settings",
+        "label": "simpleTypeSettings",
         "view": "export:views/export-feed/record/panels/simple-type-settings",
         "notRefreshable": true
       }
