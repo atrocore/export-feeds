@@ -36,9 +36,22 @@ class ExportFeed extends Base
         $params['where'][] = [
             'type'      => 'in',
             'attribute' => 'type',
-            'value'     => $this->getMetadata()->get(['entityDefs','ExportFeed','fields','type','options'], [])
+            'value'     => $this->getMetadata()->get(['entityDefs', 'ExportFeed', 'fields', 'type', 'options'], [])
         ];
 
+        if (!empty($params['exportEntity'])) {
+            $params['where'][] = [
+                'type'      => 'in',
+                'attribute' => 'id',
+                'value'     => $this->getRepository()->getIdsByExportEntity((string)$params['exportEntity'])
+            ];
+        }
+
         return parent::getSelectParams($params, $withAcl, $checkWherePermission);
+    }
+
+    protected function getRepository(): \Export\Repositories\ExportFeed
+    {
+        return $this->getEntityManager()->getRepository('ExportFeed');
     }
 }

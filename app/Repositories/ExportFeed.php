@@ -18,7 +18,7 @@
  * for your own needs, if source code is provided.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Export\Repositories;
 
@@ -29,4 +29,16 @@ use Espo\Core\Templates\Repositories\Base;
  */
 class ExportFeed extends Base
 {
+    /**
+     * @param string $exportEntity
+     *
+     * @return array
+     */
+    public function getIdsByExportEntity(string $exportEntity): array
+    {
+        return $this
+            ->getEntityManager()
+            ->nativeQuery('SELECT id FROM `export_feed` WHERE deleted=0 AND `export_feed`.data LIKE "%\"entity\":\"' . $exportEntity . '\"%"')
+            ->fetchAll(\PDO::FETCH_COLUMN);
+    }
 }

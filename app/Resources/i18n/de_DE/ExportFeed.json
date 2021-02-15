@@ -23,6 +23,7 @@
     "channel": "Kanal"
   },
   "labels": {
+    "ignoreFilter": "Filter im Feed ignorieren",
     "Create ExportFeed": "Export Feed erstellen",
     "simpleTypeSettings": "Simple Typ Einstellungen",
     "Product Simple Type Settings": "Simple Typ Einstellungen für Produkte",
@@ -40,7 +41,8 @@
     "singleQuote": "Anführungszeichen"
   },
   "messages": {
-    "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein."
+    "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein.",
+    "noExportFeedSelected": "Kein ExportFeed ausgewählt."
   },
   "additionalTranslates": {
     "exportName": "Datenexport beim Feed '%s'",

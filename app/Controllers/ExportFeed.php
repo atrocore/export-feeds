@@ -98,4 +98,16 @@ class ExportFeed extends Base
 
         return $this->getRecordService()->exportChannel($data->id);
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function fetchListParamsFromRequest(&$params, $request, $data)
+    {
+        parent::fetchListParamsFromRequest($params, $request, $data);
+
+        if ($request->get('exportEntity')) {
+            $params['exportEntity'] = $request->get('exportEntity');
+        }
+    }
 }

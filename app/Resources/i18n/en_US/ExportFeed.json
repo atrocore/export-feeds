@@ -19,6 +19,7 @@
     "exportByOrChannel":"Export By/Channel"
   },
   "labels": {
+    "ignoreFilter": "Ignore filter in the feed",
     "Create ExportFeed": "Create Export Feed",
     "simpleTypeSettings": "Simple Type Settings",
     "Product Simple Type Settings": "Product Simple Type Settings",
@@ -36,7 +37,8 @@
     "singleQuote": "Single Quote"
   },
   "messages": {
-    "delimitersMustBeDifferent": "Delimiters for fields and field values must be different."
+    "delimitersMustBeDifferent": "Delimiters for fields and field values must be different.",
+    "noExportFeedSelected": "No ExportFeed selected."
   },
   "additionalTranslates": {
     "exportName": "Export: <strong>%s</strong>",
