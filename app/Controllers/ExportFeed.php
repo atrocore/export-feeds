@@ -62,7 +62,7 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $this->getRecordService()->exportFile($data->id);
+        return $this->getRecordService()->exportFile($data);
     }
 
     /**

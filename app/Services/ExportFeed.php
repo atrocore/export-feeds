@@ -36,29 +36,32 @@ class ExportFeed extends Base
     /**
      * Export file
      *
-     * @param Entity|string $feed
-     * @param string        $id
+     * @param \stdClass $requestData
      *
      * @return bool
-     * @throws Exceptions\Error
      */
-    public function exportFile($feed, string $id = null): bool
+    public function exportFile(\stdClass $requestData): bool
     {
-        // prepare feed
-        if (!$feed instanceof Entity) {
-            $feed = $this->getEntityManager()->getEntity('ExportFeed', $feed);
-        }
-
-        // prepare id
-        if (empty($id)) {
-            $id = Util::generateId();
-        }
-
-        // prepare data
         $data = [
-            'id'   => $id,
-            'feed' => $feed->toArray()
+            'id'   => Util::generateId(),
+            'feed' => $this->getEntityManager()->getEntity('ExportFeed', $requestData->id)->toArray()
         ];
+
+        if (!empty($requestData->ignoreFilter)) {
+            $data['feed']['data']->where = [];
+        }
+
+        if (!empty($requestData->entityFilterData)) {
+            if (!empty($requestData->entityFilterData->byWhere)) {
+                $data['feed']['data']->where = array_merge($data['feed']['data']->where, $requestData->entityFilterData->where);
+            } else {
+                $data['feed']['data']->where[] = [
+                    'type'      => 'in',
+                    'attribute' => 'id',
+                    'value'     => $requestData->entityFilterData->ids
+                ];
+            }
+        }
 
         return $this->pushExport($data);
     }
