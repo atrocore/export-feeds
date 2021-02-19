@@ -68,7 +68,7 @@ class Simple extends AbstractType
 
         $this->storeCsvFile($data, $repository->getFilePath($attachment));
 
-        $attachment->set('type', \mime_content_type($repository->getFilePath($attachment)));
+        $attachment->set('type', 'text/csv');
         $attachment->set('size', \filesize($repository->getFilePath($attachment)));
 
         $this->getEntityManager()->saveEntity($attachment);
@@ -97,7 +97,7 @@ class Simple extends AbstractType
 
         $this->storeXlsxFile($data, $repository->getFilePath($attachment));
 
-        $attachment->set('type', \mime_content_type($repository->getFilePath($attachment)));
+        $attachment->set('type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $attachment->set('size', \filesize($repository->getFilePath($attachment)));
 
         $this->getEntityManager()->saveEntity($attachment);
@@ -279,7 +279,7 @@ class Simple extends AbstractType
 
         // load a CSV file and save as a XLS
         $spreadsheet = $reader->load($csvFileName);
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xls($spreadsheet);
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
         $writer->save($fileName);
 
         // delete csv file

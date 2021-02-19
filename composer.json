@@ -1,7 +1,6 @@
 {
   "name": "atrocore/export-feeds",
   "require": {
-    "ext-fileinfo": "*",
     "atrocore/core": "~1.1.0",
     "atrocore/pim": "~1.1.0"
   },
