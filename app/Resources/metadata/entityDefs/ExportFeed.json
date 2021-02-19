@@ -55,11 +55,8 @@
     },
     "fileType": {
       "type": "enum",
-      "required": true,
-      "options": [
-        "xlsx",
-        "csv"
-      ],
+      "required": false,
+      "options": [],
       "view": "export:views/export-feed/fields/file-type",
       "prohibitedEmptyValue": true
     },

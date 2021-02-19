@@ -39,6 +39,10 @@ class Simple extends AbstractType
      */
     public function export(): bool
     {
+        if (empty($this->data['feed']['fileType'])) {
+            $this->data['feed']['fileType'] = 'xlsx';
+        }
+
         $attachmentCreatorName = 'export' . ucfirst($this->data['feed']['fileType']);
         if (!method_exists($this, $attachmentCreatorName)) {
             throw new Error('Unsupported file type.');
