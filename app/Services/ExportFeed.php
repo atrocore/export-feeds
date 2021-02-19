@@ -70,36 +70,26 @@ class ExportFeed extends Base
      * Export all channel feeds
      *
      * @param string $channelId
-     * @param string $id
      *
      * @return bool
      */
-    public function exportChannel(string $channelId, string $id = null): bool
+    public function exportChannel(string $channelId): bool
     {
         // prepare result
         $result = false;
 
         if (!empty($channel = $this->getChannel($channelId)) && !empty($feeds = $this->getChannelFeeds($channel))) {
-            // prepare id
-            if (empty($id)) {
-                $id = Util::generateId();
+            foreach ($feeds as $feed) {
+                $requestData = new \stdClass();
+                $requestData->id = $feed->get('id');
+
+                try {
+                    $this->exportFile($requestData);
+                } catch (\Throwable $e) {
+                    $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
+                }
             }
-
-            // prepare data
-            $data = [
-                'id'      => $id,
-                'channel' => [
-                    'id'   => $channel->get('id'),
-                    'name' => $channel->get('name'),
-                ],
-                'catalog' => [
-                    'id'   => $channel->get('catalogId'),
-                    'name' => $channel->get('catalogName'),
-                ],
-                'feeds'   => $feeds->toArray()
-            ];
-
-            $result = $this->pushChannelExport($data);
+            $result = true;
         }
 
         return $result;

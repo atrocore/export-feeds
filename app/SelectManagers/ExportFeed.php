@@ -23,7 +23,7 @@ namespace Export\SelectManagers;
 use Treo\Core\SelectManagers\Base;
 
 /**
- * ExportFeed select manager
+ * Class ExportFeed
  */
 class ExportFeed extends Base
 {
@@ -36,7 +36,7 @@ class ExportFeed extends Base
         $params['where'][] = [
             'type'      => 'in',
             'attribute' => 'type',
-            'value'     => $this->getMetadata()->get(['entityDefs', 'ExportFeed', 'fields', 'type', 'options'], [])
+            'value'     => array_keys($this->getMetadata()->get(['app', 'export', 'type']))
         ];
 
         if (!empty($params['exportEntity'])) {

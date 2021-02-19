@@ -22,185 +22,46 @@ declare(strict_types=1);
 
 namespace Export\ExportType;
 
-use Espo\Core\SelectManagers\Base as SelectManager;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 use Espo\ORM\EntityManager;
-use Treo\Core\EventManager\Event;
-use Treo\Traits\ContainerTrait;
+use Treo\Core\Container;
 
 /**
  * Abstract export type
  */
 abstract class AbstractType
 {
-    use ContainerTrait;
+    /**
+     * @var Container
+     */
+    protected $container;
 
     /**
      * @var array
      */
-    protected $feed;
+    protected $data;
 
     /**
-     * @var int
-     */
-    protected $offset = 0;
-
-    /**
-     * @var array
-     */
-    protected $query = [];
-
-    /**
-     * Get export data
+     * AbstractType constructor.
      *
-     * @param array $query
-     *
-     * @return array
+     * @param Container $container
+     * @param array     $data
      */
-    abstract public function getData(): array;
-
-    /**
-     * Get export data count
-     *
-     * @return int
-     */
-    abstract public function getCount(): int;
-
-    /**
-     * Set feed
-     *
-     * @param array $feed
-     *
-     * @return AbstractType
-     */
-    public function setFeed(array $feed): AbstractType
+    public function __construct(Container $container, array $data)
     {
-        $this->feed = $feed;
-
-        return $this;
+        $this->container = $container;
+        $this->data = $data;
     }
 
     /**
-     * Set offset
-     *
-     * @param int $offset
-     *
-     * @return AbstractType
+     * @return bool
      */
-    public function setOffset(int $offset): AbstractType
-    {
-        $this->offset = $offset;
+    abstract public function export(): bool;
 
-        return $this;
-    }
-
-    /**
-     * Set query
-     *
-     * @param array $query
-     *
-     * @return AbstractType
-     */
-    public function setQuery(array $query): AbstractType
-    {
-        $this->query = $query;
-
-        return $this;
-    }
-
-    /**
-     * Get query
-     *
-     * @return array
-     */
-    public function getQuery(): array
-    {
-        return $this->query;
-    }
-
-    /**
-     * Get feed
-     *
-     * @return array
-     */
-    protected function getFeed(): array
-    {
-        return $this->feed;
-    }
-
-    /**
-     * Get offset
-     *
-     * @return int
-     */
-    protected function getOffset(): int
-    {
-        return $this->offset;
-    }
-
-
-    /**
-     * Get entity manager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager(): EntityManager
-    {
-        return $this->getContainer()->get('entityManager');
-    }
-
-    /**
-     * Get config
-     *
-     * @return Config
-     */
-    protected function getConfig(): Config
-    {
-        return $this->getContainer()->get('config');
-    }
-
-    /**
-     * Get SelectManager
-     *
-     * @param string $name
-     *
-     * @return SelectManager
-     */
-    protected function getSelectManager(string $name): SelectManager
-    {
-        return $this->getContainer()->get('selectManagerFactory')->create($name);
-    }
-
-    /**
-     * Get select params
-     *
-     * @return array
-     */
-    protected function getSelectParams(): array
-    {
-        return $this
-            ->getSelectManager($this->getFeed()['data']['entity'])
-            ->getSelectParams($this->getQuery(), true, true);
-    }
-
-    /**
-     * Get entity field type
-     *
-     * @param string $entityType
-     * @param string $field
-     *
-     * @return string|null
-     */
-    public function getFieldType(string $entityType, string $field): ?string
-    {
-        return $this
-            ->getContainer()
-            ->get('metadata')
-            ->get(['entityDefs', $entityType, 'fields', $field, 'type']);
-    }
 
     /**
      * Prepare entity field value
@@ -217,7 +78,7 @@ abstract class AbstractType
         // get field
         $field = isset($params['field']) ? $params['field'] : $params['name'];
 
-        $delimiter = $this->getFeed()['data']['delimiter'];
+        $delimiter = $this->data['feed']['data']['delimiter'];
 
         // check is field is 'id'
         if ($field == 'id') {
@@ -225,7 +86,7 @@ abstract class AbstractType
         }
 
         // get field type
-        $type = $this->getFieldType($entity->getEntityType(), $field);
+        $type = $this->getMetadata()->get(['entityDefs', $entity->getEntityType(), 'fields', $field, 'type']);
 
         // if field exist in export entity
         if (isset($type)) {
@@ -273,15 +134,23 @@ abstract class AbstractType
         return $result;
     }
 
-    /**
-     * @param string $target
-     * @param string $action
-     * @param array  $data
-     *
-     * @return array
-     */
-    protected function dispatch(string $target, string $action, array $data = []): Event
+    protected function getEntityManager(): EntityManager
     {
-        return $this->getContainer()->get('eventManager')->dispatch($target, $action, new Event($data));
+        return $this->container->get('entityManager');
+    }
+
+    protected function getConfig(): Config
+    {
+        return $this->container->get('config');
+    }
+
+    protected function getMetadata(): Metadata
+    {
+        return $this->container->get('metadata');
+    }
+
+    protected function getSelectManager(string $name): \Espo\Core\SelectManagers\Base
+    {
+        return $this->container->get('selectManagerFactory')->create($name);
     }
 }

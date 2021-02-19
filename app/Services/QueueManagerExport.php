@@ -22,33 +22,33 @@ declare(strict_types=1);
 
 namespace Export\Services;
 
+use Espo\Core\Exceptions\Error;
+use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
-use Export\ExportType\ExportTypeFactory;
-use Espo\Entities\Attachment;
+use Export\ExportType\AbstractType;
+use Treo\Services\QueueManagerBase;
 
 /**
  * Class QueueManagerExport
  */
-class QueueManagerExport extends \Treo\Services\QueueManagerBase
+class QueueManagerExport extends QueueManagerBase
 {
     /**
-     * @inheritdoc
+     * @param array $data
+     *
+     * @return bool
+     * @throws Error
      */
     public function run(array $data = []): bool
     {
-        $attributeExportService = $this->getAttributeExportService();
+        /** @var string $feedTypeClass */
+        $feedTypeClass = $this->getMetadata()->get(['app', 'export', 'type', $data['feed']['type']], '');
 
-        if ($this->checkExistProductsAttributes($data, $attributeExportService)) {
-            $this->setConfiguratorData($data, $attributeExportService->getAttributesConfig($data));
+        if (empty($feedTypeClass) || !is_a($feedTypeClass, AbstractType::class, true)) {
+            throw new Error($this->getContainer()->get('language')->translate('wrongExportFeedType', 'exceptions', 'ExportFeed'));
         }
 
-        // get data
-        $entityData = $this->getData($data);
-
-        // create attachment
-        $this->createAttachment($data['feed'], $entityData, $data['id']);
-
-        return true;
+        return (new $feedTypeClass($this->getContainer(), $data))->export();
     }
 
     /**
@@ -66,7 +66,7 @@ class QueueManagerExport extends \Treo\Services\QueueManagerBase
                 ->getEntityManager()
                 ->getRepository('Attachment')
                 ->select(['id'])
-                ->where(['relatedId' => $entity->get('data')->id])
+                ->where(['relatedType' => 'ExportResult', 'relatedId' => $entity->get('data')->id])
                 ->findOne();
 
             if (!empty($attachment)) {
@@ -81,98 +81,10 @@ class QueueManagerExport extends \Treo\Services\QueueManagerBase
     }
 
     /**
-     * @return ExportTypeFactory
+     * @return Metadata
      */
-    protected function getExportTypeFactory(): ExportTypeFactory
+    protected function getMetadata(): Metadata
     {
-        return $this->getContainer()->get('exportTypeFactory');
-    }
-
-    /**
-     * @param array $data
-     *
-     * @return array
-     */
-    protected function getData(array $data): array
-    {
-        return $this
-            ->getExportTypeFactory()
-            ->create($data['feed']['type'])
-            ->setFeed($data['feed'])
-            ->getData();
-    }
-
-    /**
-     * @param array       $feed
-     * @param array       $data
-     * @param string|null $id
-     *
-     * @return Attachment
-     */
-    protected function createAttachment(array $feed, array $data, string $id = null): Attachment
-    {
-        // get config data
-        $config = $this->getExportTypeFactory()->getExportConfig();
-
-        // create
-        $attachment = (new $config['fileType'][$feed['fileType']]())
-            ->setFileManager($this->getContainer()->get('fileStorageManager'))
-            ->setEntityManager($this->getEntityManager())
-            ->setFeed($feed)
-            ->setData($data)
-            ->create();
-
-        if (!empty($id)) {
-            $attachment->set('relatedId', $id);
-            $this->getEntityManager()->saveEntity($attachment, ['skipAll']);
-        }
-
-        return $attachment;
-    }
-
-    /**
-     * @return AttributeExport
-     */
-    protected function getAttributeExportService(): AttributeExport
-    {
-        return $this->getContainer()->get("serviceFactory")->create("AttributeExport");
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function getConfiguratorData(array $data): array
-    {
-        if (isset($data['feed']['data']['configuration'])) {
-            return $data['feed']['data']['configuration'];
-        }
-
-        return [];
-    }
-
-    /**
-     * @param array $data
-     * @param array $newData
-     * @return QueueManagerExport
-     */
-    protected function setConfiguratorData(array &$data, array $newData): QueueManagerExport
-    {
-        if (isset($data['feed']['data']['configuration'])) {
-            $data['feed']['data']['configuration'] = array_merge($data['feed']['data']['configuration'], $newData);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param array           $data
-     * @param AttributeExport $attributeExportService
-     * @return bool
-     */
-    private function checkExistProductsAttributes(array $data, AttributeExport $attributeExportService): bool
-    {
-        return !$attributeExportService->configHasAttributes($this->getConfiguratorData($data))
-            && $data['feed']['data']['entity'] === "Product";
+        return $this->getContainer()->get('metadata');
     }
 }

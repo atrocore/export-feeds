@@ -1,17 +1,11 @@
 {
-    "type": {
-        "simple": "Export\\ExportType\\Simple",
-        "productImage": "Export\\ExportType\\ProductImage",
-        "productAsset": "Export\\ExportType\\ProductAsset"
-    },
-    "fileType": {
-        "xlsx": "Export\\File\\Xlsx",
-        "csv": "Export\\File\\Csv",
-        "zip": "Export\\File\\Zip"
-    },
-    "defaultFileType": {
-        "simple": "csv",
-        "productImage": "csv",
-        "productAsset": "csv"
-    }
+  "type": {
+    "simple": "Export\\ExportType\\Simple"
+  },
+  "fileTypes": {
+    "simple": [
+      "csv",
+      "xlsx"
+    ]
+  }
 }

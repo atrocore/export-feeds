@@ -1,4 +1,3 @@
-<?php
 /*
  * Export Feeds
  * Free Extension
@@ -18,27 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+Espo.define('export:views/export-feed/fields/file-type', 'views/fields/enum',
+    Dep => Dep.extend({
 
-namespace Export\Core\FileStorage\Storages;
+        setup() {
+            this.params.options = this.getMetadata().get(`app.export.fileTypes.${this.model.get('type')}`) || [];
 
-use Espo\Entities\Attachment;
-use Export\File\Zip;
+            Dep.prototype.setup.call(this);
+        },
 
-/**
- * ExportZip Storage
- */
-class ExportZip extends AbstractStorage
-{
-    /**
-     * Get file path
-     *
-     * @param Attachment $attachment
-     *
-     * @return string
-     */
-    protected function getFilePath(Attachment $attachment): string
-    {
-        return sprintf(Zip::$filePathZip, $attachment->get('id'));
-    }
-}
+    })
+);

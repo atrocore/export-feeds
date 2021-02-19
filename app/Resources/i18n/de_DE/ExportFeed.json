@@ -52,6 +52,7 @@
     "channelWithoutExportFeeds": "Keine Export Feeds, die mit dem aktuellen Kanal verknüpft sind"
   },
   "exceptions": {
+    "wrongExportFeedType": "Falscher Export-Feed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
     "configuratorSettingsIncorrect": "Konfiguratoreinstellungen falsch"
   },

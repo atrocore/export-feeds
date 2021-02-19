@@ -1,5 +1,0 @@
-{
-    "progressActionViews": {
-        "download_export_file": "export:views/progress-manager/actions/download-export-file"
-    }
-}

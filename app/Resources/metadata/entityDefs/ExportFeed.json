@@ -46,7 +46,8 @@
       "options": [
         "simple"
       ],
-      "default": "simple"
+      "default": "simple",
+      "prohibitedEmptyValue": true
     },
     "isActive": {
       "notNull": true,
@@ -59,7 +60,8 @@
         "xlsx",
         "csv"
       ],
-      "default": "xlsx"
+      "view": "export:views/export-feed/fields/file-type",
+      "prohibitedEmptyValue": true
     },
     "isFileHeaderRow": {
       "type": "bool",
@@ -74,7 +76,8 @@
         "|"
       ],
       "default": ";",
-      "view": "export:views/export-feed/fields/field-delimiter"
+      "view": "export:views/export-feed/fields/field-delimiter",
+      "prohibitedEmptyValue": true
     },
     "csvTextQualifier": {
       "type": "enum",
@@ -82,7 +85,8 @@
         "doubleQuote",
         "singleQuote"
       ],
-      "default": "doubleQuote"
+      "default": "doubleQuote",
+      "prohibitedEmptyValue": true
     },
     "channel": {
       "type": "link",
