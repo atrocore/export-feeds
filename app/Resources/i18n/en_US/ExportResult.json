@@ -13,6 +13,10 @@
     "exportFeed": "Export Feed"
   },
   "labels": {
-    "Create ExportResult": "Create Export Result"
+    "Create ExportResult": "Create Export Result",
+    "Pending": "Pending",
+    "Running": "Running",
+    "Done": "Done",
+    "Failed": "Failed"
   }
 }
