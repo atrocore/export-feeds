@@ -4,6 +4,7 @@
     "exportFeed": "Export Feed",
     "file": "Exported File",
     "state": "State",
+    "stateMessage": "Message",
     "start": "Start",
     "end": "End"
   },

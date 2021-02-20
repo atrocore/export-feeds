@@ -48,6 +48,7 @@ Espo.define('export:views/export-feed/record/panels/export-results', 'views/reco
                     window.clearInterval(this.refreshInterval);
                 }
             });
-        }
+        },
+
     })
 );

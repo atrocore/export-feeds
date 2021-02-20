@@ -62,6 +62,9 @@
       "default": "Pending",
       "readOnly": true
     },
+    "stateMessage": {
+      "type": "text"
+    },
     "start": {
       "type": "datetime",
       "readOnly": true
