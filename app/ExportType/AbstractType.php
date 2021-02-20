@@ -25,6 +25,7 @@ namespace Export\ExportType;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Metadata;
+use Espo\Entities\Attachment;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 use Espo\ORM\EntityManager;
@@ -58,9 +59,9 @@ abstract class AbstractType
     }
 
     /**
-     * @return bool
+     * @return Attachment
      */
-    abstract public function export(): bool;
+    abstract public function export(): Attachment;
 
 
     /**

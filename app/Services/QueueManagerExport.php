@@ -41,14 +41,36 @@ class QueueManagerExport extends QueueManagerBase
      */
     public function run(array $data = []): bool
     {
-        /** @var string $feedTypeClass */
-        $feedTypeClass = $this->getMetadata()->get(['app', 'export', 'type', $data['feed']['type']], '');
+        $exportResult = $this->getEntityManager()->getEntity('ExportResult', $data['exportResultId']);
+        if (empty($exportResult)) {
+            return false;
+        }
+        $exportResult->set('state', 'Running');
+        $this->getEntityManager()->saveEntity($exportResult);
 
-        if (empty($feedTypeClass) || !is_a($feedTypeClass, AbstractType::class, true)) {
-            throw new Error($this->getContainer()->get('language')->translate('wrongExportFeedType', 'exceptions', 'ExportFeed'));
+        try {
+            /** @var string $feedTypeClass */
+            $feedTypeClass = $this->getMetadata()->get(['app', 'export', 'type', $data['feed']['type']], '');
+
+            if (empty($feedTypeClass) || !is_a($feedTypeClass, AbstractType::class, true)) {
+                throw new Error($this->getContainer()->get('language')->translate('wrongExportFeedType', 'exceptions', 'ExportFeed'));
+            }
+
+            $attachment = (new $feedTypeClass($this->getContainer(), $data))->export();
+            $exportResult->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
+            $exportResult->set('state', 'Done');
+            $exportResult->set('fileId', $attachment->get('id'));
+            $this->getEntityManager()->saveEntity($exportResult);
+        } catch (\Throwable $e) {
+            $exportResult->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
+            $exportResult->set('state', 'Failed');
+            $this->getEntityManager()->saveEntity($exportResult);
+            $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
+
+            return false;
         }
 
-        return (new $feedTypeClass($this->getContainer(), $data))->export();
+        return true;
     }
 
     /**

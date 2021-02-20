@@ -24,7 +24,7 @@ namespace Export\ExportType;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
-use Espo\Repositories\Attachment;
+use Espo\Entities\Attachment;
 use Export\ExportData\Record;
 use Treo\Core\FilePathBuilder;
 
@@ -34,10 +34,10 @@ use Treo\Core\FilePathBuilder;
 class Simple extends AbstractType
 {
     /**
-     * @return bool
+     * @return Attachment
      * @throws Error
      */
-    public function export(): bool
+    public function export(): Attachment
     {
         if (empty($this->data['feed']['fileType'])) {
             $this->data['feed']['fileType'] = 'xlsx';
@@ -54,11 +54,10 @@ class Simple extends AbstractType
     /**
      * @param array $data
      *
-     * @return bool
+     * @return Attachment
      */
-    protected function exportCsv(array $data): bool
+    protected function exportCsv(array $data): Attachment
     {
-        /** @var Attachment $repository */
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
         // create attachment
@@ -77,17 +76,16 @@ class Simple extends AbstractType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return true;
+        return $attachment;
     }
 
     /**
      * @param array $data
      *
-     * @return bool
+     * @return Attachment
      */
-    protected function exportXlsx(array $data): bool
+    protected function exportXlsx(array $data): Attachment
     {
-        /** @var Attachment $repository */
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
         // create attachment
@@ -106,7 +104,7 @@ class Simple extends AbstractType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return true;
+        return $attachment;
     }
 
     /**

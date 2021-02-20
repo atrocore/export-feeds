@@ -25,6 +25,7 @@ namespace Export\Services;
 use Espo\Core\Exceptions;
 use Espo\Core\Templates\Services\Base;
 use Espo\Core\Utils\Util;
+use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 
@@ -104,6 +105,7 @@ class ExportFeed extends Base
 
         $this->addDependency('queueManager');
         $this->addDependency('language');
+        $this->addDependency('user');
     }
 
 
@@ -127,6 +129,25 @@ class ExportFeed extends Base
      */
     protected function pushExport(array $data): bool
     {
+        /** @var User $user */
+        $user = $this->getInjection('user');
+
+        $exportResult = $this->getEntityManager()->getEntity('ExportResult');
+        $exportResult->set('name', (new \DateTime())->format('Y-m-d H:i:s'));
+        $exportResult->set('exportFeedId', $data['feed']['id']);
+        $exportResult->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
+        $exportResult->set('ownerUserId', $user->get('id'));
+        $exportResult->set('assignedUserId', $user->get('id'));
+        $exportResult->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
+
+        if (!empty($data['feed']['channelId'])) {
+            $exportResult->set('channelId', $data['feed']['channelId']);
+        }
+
+        $this->getEntityManager()->saveEntity($exportResult);
+
+        $data['exportResultId'] = $exportResult->get('id');
+
         // prepare name
         $name = sprintf($this->translate('exportName'), $data['feed']['name']);
 
