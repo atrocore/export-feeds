@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,16 +18,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/record/detail', 'views/record/detail',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        setup() {
-            Dep.prototype.setup.call(this);
+namespace Export\Entities;
 
-            if (this.options.setEditMode) {
-                this.listenToOnce(this, 'after:render', () => this.actionEdit());
-            }
-        },
+use Espo\Core\Templates\Entities\Base;
 
-    })
-);
+/**
+ * Class ExportResult
+ */
+class ExportResult extends Base
+{
+    /**
+     * @var string
+     */
+    protected $entityType = "ExportResult";
+}

@@ -17,16 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/record/detail', 'views/record/detail',
-    Dep => Dep.extend({
+Espo.define('export:views/export-result/record/detail', 'views/record/detail', function (Dep) {
 
-        setup() {
-            Dep.prototype.setup.call(this);
+    return Dep.extend({
 
-            if (this.options.setEditMode) {
-                this.listenToOnce(this, 'after:render', () => this.actionEdit());
-            }
-        },
+        duplicateAction: false
 
-    })
-);
+    });
+
+});

@@ -1,0 +1,17 @@
+{
+  "fields": {
+    "channel": "Channel",
+    "exportFeed": "Export Feed",
+    "file": "Exported File",
+    "state": "State",
+    "start": "Start",
+    "end": "End"
+  },
+  "links": {
+    "channel": "Channel",
+    "exportFeed": "Export Feed"
+  },
+  "labels": {
+    "Create ExportResult": "Create Export Result"
+  }
+}

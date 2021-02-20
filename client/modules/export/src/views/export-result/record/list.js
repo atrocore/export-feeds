@@ -17,29 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/fields/export-link', 'views/fields/varchar',
+Espo.define('export:views/export-result/record/list', 'views/record/list',
     Dep => Dep.extend({
-        listTemplate: 'export:fields/export-link/detail',
 
-        detailTemplate: 'export:fields/export-link/detail',
+        rowActionsView: 'views/record/row-actions/remove-only'
 
-        editTemplate: 'export:fields/export-link/detail',
-
-        events: {
-            'click .action[data-action="setUrl"]': function () {
-                this.actionSetLink();
-            }
-        },
-
-        actionSetLink() {
-            let url = this.model.getFieldParam(this.name, 'dataUrl');
-            if (url) {
-                this.ajaxGetRequest(url).then(function (response) {
-                    if (response.link) {
-                        this.model.set({[this.name]: response.link});
-                    }
-                }.bind(this));
-            }
-        }
     })
 );

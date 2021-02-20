@@ -95,6 +95,13 @@
       "layoutListDisabled": true,
       "layoutMassUpdateDisabled": true,
       "layoutFiltersDisabled": true
+    },
+    "exportResults": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutMassUpdateDisabled": true,
+      "noLoad": true,
+      "importDisabled": true
     }
   },
   "links": {
@@ -123,6 +130,11 @@
     "channel": {
       "type": "belongsTo",
       "entity": "Channel"
+    },
+    "exportResults": {
+      "type": "hasMany",
+      "foreign": "exportFeed",
+      "entity": "ExportResult"
     }
   },
   "collection": {

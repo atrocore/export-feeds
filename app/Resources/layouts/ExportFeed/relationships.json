@@ -1,8 +1,11 @@
 [
-    {
-        "name": "simpleTypeProductFilter"
-    },
-    {
-        "name": "simpleTypeSettings"
-    }
+  {
+    "name": "simpleTypeProductFilter"
+  },
+  {
+    "name": "simpleTypeSettings"
+  },
+  {
+    "name": "exportResults"
+  }
 ]

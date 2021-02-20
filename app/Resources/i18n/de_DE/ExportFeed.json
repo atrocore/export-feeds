@@ -17,10 +17,12 @@
     "fieldOrAttribute": "Feld/Attribut",
     "delimiter": "Trennzeichen",
     "exportByOrChannel":"Export von/Kanal",
-    "data": "Daten"
+    "data": "Daten",
+    "exportResults": "Export Results"
   },
   "links": {
-    "channel": "Kanal"
+    "channel": "Kanal",
+    "exportResults": "Export Results"
   },
   "labels": {
     "ignoreFilter": "Filter im Feed ignorieren",

@@ -16,7 +16,12 @@
     "attribute": "Attribute",
     "fieldOrAttribute": "Field/Attribute",
     "delimiter": "Field Value Delimiter",
-    "exportByOrChannel":"Export By/Channel"
+    "exportByOrChannel":"Export By/Channel",
+    "exportResults": "Export Results"
+  },
+  "links": {
+    "channel": "Channel",
+    "exportResults": "Export Results"
   },
   "labels": {
     "ignoreFilter": "Ignore filter in the feed",

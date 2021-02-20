@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,16 +18,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/record/detail', 'views/record/detail',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        setup() {
-            Dep.prototype.setup.call(this);
+namespace Export\Repositories;
 
-            if (this.options.setEditMode) {
-                this.listenToOnce(this, 'after:render', () => this.actionEdit());
-            }
-        },
+use Espo\Core\Templates\Repositories\Base;
+use Espo\ORM\Entity;
 
-    })
-);
+/**
+ * Class ExportResult
+ */
+class ExportResult extends Base
+{
+    /**
+     * @param Entity $entity
+     * @param array  $options
+     */
+    protected function afterRemove(Entity $entity, array $options = [])
+    {
+        if (!empty($file = $entity->get('file'))) {
+            $this->getEntityManager()->removeEntity($file);
+        }
+
+        parent::afterRemove($entity, $options);
+    }
+}

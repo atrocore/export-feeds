@@ -8,6 +8,13 @@
       "layoutFiltersDisabled": true,
       "noLoad": true,
       "importDisabled": true
+    },
+    "exportResults": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutMassUpdateDisabled": true,
+      "noLoad": true,
+      "importDisabled": true
     }
   },
   "links": {
@@ -15,6 +22,12 @@
       "type": "hasMany",
       "foreign": "channel",
       "entity": "ExportFeed"
+    },
+    "exportResults": {
+      "type": "hasMany",
+      "foreign": "channel",
+      "entity": "ExportResult",
+      "audited": false
     }
   },
   "collection": {

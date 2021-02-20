@@ -1,5 +1,3 @@
-
-
 /*
  * Export Feeds
  * Free Extension

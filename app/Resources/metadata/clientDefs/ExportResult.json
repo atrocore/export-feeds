@@ -1,0 +1,13 @@
+{
+  "controller": "controllers/record",
+  "boolFilterList": [
+    "onlyMy"
+  ],
+  "views": {
+    "list": "export:views/export-result/list"
+  },
+  "recordViews": {
+    "list": "export:views/export-result/record/list",
+    "detail": "export:views/export-result/record/detail"
+  }
+}

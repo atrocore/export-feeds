@@ -1,0 +1,21 @@
+[
+  {
+    "name": "name",
+    "link": true
+  },
+  {
+    "name": "exportFeed"
+  },
+  {
+    "name": "file"
+  },
+  {
+    "name": "state"
+  },
+  {
+    "name": "start"
+  },
+  {
+    "name": "end"
+  }
+]

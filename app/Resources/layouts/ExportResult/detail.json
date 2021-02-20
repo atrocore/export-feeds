@@ -1,0 +1,38 @@
+[
+  {
+    "rows": [
+      [
+        {
+          "name": "name"
+        },
+        {
+          "name": "state"
+        }
+      ],
+      [
+        {
+          "name": "start"
+        },
+        {
+          "name": "end"
+        }
+      ],
+      [
+        {
+          "name": "exportFeed"
+        },
+        {
+          "name": "channel"
+        }
+      ],
+      [
+        {
+          "name": "file"
+        },
+        false
+      ]
+    ],
+    "style": "default",
+    "label": "Overview"
+  }
+]

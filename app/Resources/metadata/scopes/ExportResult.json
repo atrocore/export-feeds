@@ -1,0 +1,17 @@
+{
+  "entity": true,
+  "layouts": false,
+  "tab": true,
+  "acl": true,
+  "customizable": false,
+  "importable": false,
+  "notifications": true,
+  "stream": false,
+  "disabled": false,
+  "type": "Base",
+  "module": "Export",
+  "object": true,
+  "hasAssignedUser": true,
+  "hasTeam": true,
+  "hasOwner": true
+}
