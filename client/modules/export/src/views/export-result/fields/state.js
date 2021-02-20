@@ -1,4 +1,3 @@
-<?php
 /*
  * Export Feeds
  * Free Extension
@@ -18,19 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+Espo.define('export:views/export-result/fields/state', 'views/fields/colored-enum',
+    Dep => Dep.extend({
 
-namespace Export\Services;
+        listTemplate: 'export:fields/export-result-state/detail',
 
-use Espo\Core\Templates\Services\Base;
+        data() {
+            let data = Dep.prototype.data.call(this);
+            data['stateMessage'] = this.model.get('stateMessage');
 
-/**
- * Class ExportResult
- */
-class ExportResult extends Base
-{
-    /**
-     * @var array
-     */
-    protected $mandatorySelectAttributeList = ["state", "stateMessage"];
-}
+            return data;
+        },
+
+    })
+);

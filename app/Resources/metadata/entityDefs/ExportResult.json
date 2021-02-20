@@ -60,7 +60,8 @@
         "EC0000"
       ],
       "default": "Pending",
-      "readOnly": true
+      "readOnly": true,
+      "view": "export:views/export-result/fields/state"
     },
     "stateMessage": {
       "type": "text"

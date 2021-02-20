@@ -64,6 +64,7 @@ class QueueManagerExport extends QueueManagerBase
         } catch (\Throwable $e) {
             $exportResult->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
             $exportResult->set('state', 'Failed');
+            $exportResult->set('stateMessage', $e->getMessage());
             $this->getEntityManager()->saveEntity($exportResult);
             $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
 
