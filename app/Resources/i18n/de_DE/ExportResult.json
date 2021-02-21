@@ -1,22 +1,22 @@
 {
   "fields": {
-    "channel": "Channel",
-    "exportFeed": "Export Feed",
-    "file": "Exported File",
-    "state": "State",
-    "stateMessage": "Message",
+    "channel": "Kanal",
+    "exportFeed": "Exportfeed",
+    "file": "Exportierte Datei",
+    "state": "Status",
+    "stateMessage": "Statusmeldung",
     "start": "Start",
     "end": "End"
   },
   "links": {
-    "channel": "Channel",
-    "exportFeed": "Export Feed"
+    "channel": "Kanal",
+    "exportFeed": "Exportfeed"
   },
   "labels": {
-    "Create ExportResult": "Create Export Result",
-    "Pending": "Pending",
-    "Running": "Running",
-    "Done": "Done",
-    "Failed": "Failed"
+    "Create ExportResult": "Exportergebnisse erstellen",
+    "Pending": "Steht aus",
+    "Running": "In Arbeit",
+    "Done": "Erledigt",
+    "Failed": "Fehlgeschlagen"
   }
 }
