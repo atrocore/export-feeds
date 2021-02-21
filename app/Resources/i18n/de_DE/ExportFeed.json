@@ -5,7 +5,7 @@
     "channel": "Kanal",
     "isActive": "Aktiv",
     "fileType": "Format",
-    "isFileHeaderRow": "Header Zeile",
+    "isFileHeaderRow": "Header-Zeile",
     "csvFieldDelimiter": "Feld-Trennzeichen",
     "csvTextQualifier": "Text-Qualifier",
     "field": "Feld",
@@ -18,17 +18,17 @@
     "delimiter": "Trennzeichen",
     "exportByOrChannel":"Export von/Kanal",
     "data": "Daten",
-    "exportResults": "Export Results"
+    "exportResults": "Exportergebnisse"
   },
   "links": {
     "channel": "Kanal",
-    "exportResults": "Export Results"
+    "exportResults": "Exportergebnisse"
   },
   "labels": {
     "ignoreFilter": "Filter im Feed ignorieren",
-    "Create ExportFeed": "Export Feed erstellen",
-    "simpleTypeSettings": "Simple Typ Einstellungen",
-    "Product Simple Type Settings": "Simple Typ Einstellungen für Produkte",
+    "Create ExportFeed": "Exportfeed erstellen",
+    "simpleTypeSettings": "Simple-Typ-Einstellungen",
+    "Product Simple Type Settings": "Simple-Typ-Einstellungen für Produkte",
     "productsFilter": "Produktfilter",
     "Configurator": "Konfigurator",
     "addEntityField": "Entitätsfeld hinzufügen",
@@ -44,21 +44,21 @@
   },
   "messages": {
     "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein.",
-    "noExportFeedSelected": "Kein ExportFeed ausgewählt."
+    "noExportFeedSelected": "Kein Exportfeed ausgewählt."
   },
   "additionalTranslates": {
-    "exportName": "Datenexport beim Feed '%s'",
+    "exportName": "Datenexport im Feed '%s'",
     "channelDataArchive": "Datenexport für den Kanal '%s'",
     "jobCreated": "Exportjob erfolgreich erstellt",
     "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
-    "channelWithoutExportFeeds": "Keine Export Feeds, die mit dem aktuellen Kanal verknüpft sind"
+    "channelWithoutExportFeeds": "Keine Exportfeeds, die mit dem aktuellen Kanal verknüpft sind."
   },
   "exceptions": {
-    "wrongExportFeedType": "Falscher Export-Feed-Typ.",
+    "wrongExportFeedType": "Falscher Exportfeed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
-    "configuratorSettingsIncorrect": "Konfiguratoreinstellungen falsch"
+    "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch."
   },
   "tooltips": {
-    "channel": "Verknüpfen Sie den Export Feed mit dem angegebenen Kanal. Beim Export von der Kanalseite wird dieser Feed enthalten."
+    "channel": "Verknüpfen Sie den Exportfeed mit dem angegebenen Kanal. Beim Export von der Kanalseite wird dieser Feed genutzt."
   }
 }
