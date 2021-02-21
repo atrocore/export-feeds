@@ -59,6 +59,6 @@
     "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch."
   },
   "tooltips": {
-    "channel": "Verknüpfen Sie den Exportfeed mit dem angegebenen Kanal. Beim Export von der Kanalseite wird dieser Feed genutzt."
+    "channel": "Mit diesen Kanälen wird der Feed verknüpft."
   }
 }
