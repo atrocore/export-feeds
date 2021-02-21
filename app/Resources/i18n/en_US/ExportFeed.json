@@ -58,6 +58,6 @@
     "configuratorSettingsIncorrect": "Configurator settings incorrect"
   },
   "tooltips": {
-    "channel": "Link Export Feed to specified channel. Export from channel page will include this feed."
+    "channel": "Export Feed to will be linked to these channels."
   }
 }
