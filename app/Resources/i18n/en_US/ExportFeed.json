@@ -2,7 +2,7 @@
   "fields": {
     "entity": "Entity",
     "type": "Type",
-    "channel": "Channel",
+    "channels": "Channels",
     "isActive": "Active",
     "fileType": "Format",
     "isFileHeaderRow": "Header Row",
@@ -20,7 +20,7 @@
     "exportResults": "Export Results"
   },
   "links": {
-    "channel": "Channel",
+    "channels": "Channels",
     "exportResults": "Export Results"
   },
   "labels": {
@@ -58,6 +58,6 @@
     "configuratorSettingsIncorrect": "Configurator settings incorrect"
   },
   "tooltips": {
-    "channel": "Export Feed to will be linked to these channels."
+    "channels": "Export Feed to will be linked to these channels."
   }
 }

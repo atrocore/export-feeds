@@ -44,7 +44,9 @@ class V1Dot1Dot5 extends Base
      */
     public function down(): void
     {
-        $this->execute("DROP TABLE `export_result`");
+        $this->execute("DROP TABLE channel_export_feed");
+        $this->execute("ALTER TABLE `export_feed` ADD channel_id VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("CREATE INDEX IDX_CHANNEL_ID ON `export_feed` (channel_id)");
     }
 
     /**

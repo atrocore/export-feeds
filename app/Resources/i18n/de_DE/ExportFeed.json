@@ -2,7 +2,7 @@
   "fields": {
     "entity": "Entität",
     "type": "Typ",
-    "channel": "Kanal",
+    "channels": "Kanäle",
     "isActive": "Aktiv",
     "fileType": "Format",
     "isFileHeaderRow": "Header-Zeile",
@@ -21,7 +21,7 @@
     "exportResults": "Exportergebnisse"
   },
   "links": {
-    "channel": "Kanal",
+    "channels": "Kanäle",
     "exportResults": "Exportergebnisse"
   },
   "labels": {
@@ -59,6 +59,6 @@
     "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch."
   },
   "tooltips": {
-    "channel": "Mit diesen Kanälen wird der Feed verknüpft."
+    "channels": "Mit diesen Kanälen wird der Feed verknüpft."
   }
 }
