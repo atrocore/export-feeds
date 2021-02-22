@@ -24,14 +24,14 @@ namespace Export\Services;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
-use Espo\ORM\Entity;
 use Export\ExportType\AbstractType;
-use Treo\Services\QueueManagerBase;
+use Treo\Services\AbstractService;
+use Treo\Services\QueueManagerServiceInterface;
 
 /**
  * Class QueueManagerExport
  */
-class QueueManagerExport extends QueueManagerBase
+class QueueManagerExport extends AbstractService implements QueueManagerServiceInterface
 {
     /**
      * @param array $data
@@ -72,35 +72,6 @@ class QueueManagerExport extends QueueManagerBase
         }
 
         return true;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSuccessStatusActions(Entity $entity): array
-    {
-        // prepare actions
-        $actions = parent::getSuccessStatusActions($entity);
-
-        // push download action
-        if (isset($entity->get('data')->id)) {
-            // get attachment
-            $attachment = $this
-                ->getEntityManager()
-                ->getRepository('Attachment')
-                ->select(['id'])
-                ->where(['relatedType' => 'ExportResult', 'relatedId' => $entity->get('data')->id])
-                ->findOne();
-
-            if (!empty($attachment)) {
-                $actions[] = [
-                    'type' => 'download',
-                    'data' => ['attachmentId' => $attachment->get('id')],
-                ];
-            }
-        }
-
-        return $actions;
     }
 
     /**
