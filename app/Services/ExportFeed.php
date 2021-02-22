@@ -40,12 +40,17 @@ class ExportFeed extends Base
      * @param \stdClass $requestData
      *
      * @return bool
+     * @throws Exceptions\NotFound
      */
     public function exportFile(\stdClass $requestData): bool
     {
+        if (empty($exportFeed = $this->getEntityManager()->getEntity('ExportFeed', $requestData->id))) {
+            throw new Exceptions\NotFound();
+        }
+
         $data = [
             'id'   => Util::generateId(),
-            'feed' => $this->getEntityManager()->getEntity('ExportFeed', $requestData->id)->toArray()
+            'feed' => $exportFeed->toArray()
         ];
 
         if (!empty($requestData->ignoreFilter)) {
@@ -64,7 +69,22 @@ class ExportFeed extends Base
             }
         }
 
-        return $this->pushExport($data);
+        if (!empty($requestData->exportByChannelId)) {
+            $data['exportByChannelId'] = $requestData->exportByChannelId;
+            $this->pushExport($data);
+        } else {
+            $channelsIds = array_column($exportFeed->get('channels')->toArray(), 'id');
+            if (empty($channelsIds)) {
+                $this->pushExport($data);
+            } else {
+                foreach ($channelsIds as $channelId) {
+                    $data['exportByChannelId'] = $channelId;
+                    $this->pushExport($data);
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -83,6 +103,7 @@ class ExportFeed extends Base
             foreach ($feeds as $feed) {
                 $requestData = new \stdClass();
                 $requestData->id = $feed->get('id');
+                $requestData->exportByChannelId = $channelId;
 
                 try {
                     $this->exportFile($requestData);
@@ -140,8 +161,8 @@ class ExportFeed extends Base
         $exportResult->set('assignedUserId', $user->get('id'));
         $exportResult->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
 
-        if (!empty($data['feed']['channelId'])) {
-            $exportResult->set('channelId', $data['feed']['channelId']);
+        if (!empty($data['exportByChannelId'])) {
+            $exportResult->set('channelId', $data['exportByChannelId']);
         }
 
         $this->getEntityManager()->saveEntity($exportResult);

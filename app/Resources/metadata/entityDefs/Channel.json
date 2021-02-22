@@ -20,7 +20,7 @@
   "links": {
     "exportFeeds": {
       "type": "hasMany",
-      "foreign": "channel",
+      "foreign": "channels",
       "entity": "ExportFeed"
     },
     "exportResults": {
