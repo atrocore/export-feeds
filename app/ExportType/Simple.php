@@ -163,9 +163,35 @@ class Simple extends AbstractType
     {
         $data = $this->getFeedData();
 
+        $params = [
+            'where' => !empty($data['where']) ? $data['where'] : []
+        ];
+
+        if (!empty($this->data['exportByChannelId'])) {
+            $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
+            foreach ($links as $link => $linkData) {
+                if ($linkData['entity'] == 'Channel') {
+                    if ($linkData['type'] == 'hasMany') {
+                        $params['where'][] = [
+                            'type'      => 'linkedWith',
+                            'attribute' => $link,
+                            'value'     => [$this->data['exportByChannelId']]
+                        ];
+                    }
+                    if ($linkData['type'] == 'belongsTo') {
+                        $params['where'][] = [
+                            'type'      => 'equals',
+                            'attribute' => $link . 'Id',
+                            'value'     => [$this->data['exportByChannelId']]
+                        ];
+                    }
+                }
+            }
+        }
+
         $selectParams = $this
             ->getSelectManager($this->data['feed']['data']['entity'])
-            ->getSelectParams(isset($data['where']) ? ['where' => $data['where']] : [], true, true);
+            ->getSelectParams($params, true, true);
 
         return $this
             ->getEntityManager()
