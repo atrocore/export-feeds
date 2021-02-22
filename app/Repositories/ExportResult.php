@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Repositories;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
 use Espo\ORM\Entity;
 
@@ -30,6 +31,28 @@ use Espo\ORM\Entity;
  */
 class ExportResult extends Base
 {
+    /**
+     * @inheritDoc
+     */
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function beforeRemove(Entity $entity, array $options = [])
+    {
+        if ($entity->get('state') == 'Running') {
+            throw new BadRequest($this->getInjection('language')->translate('exportIsRunning', 'exceptions', 'ExportResult'));
+        }
+
+        parent::beforeRemove($entity, $options);
+    }
+
     /**
      * @param Entity $entity
      * @param array  $options
@@ -40,6 +63,19 @@ class ExportResult extends Base
             $this->getEntityManager()->removeEntity($file);
         }
 
+        $this->deleteQueueItem((string)$entity->get('id'));
+
         parent::afterRemove($entity, $options);
+    }
+
+    /**
+     * @param string $id
+     */
+    protected function deleteQueueItem(string $id): void
+    {
+        $this
+            ->getEntityManager()
+            ->getPDO()
+            ->exec("UPDATE queue_item SET deleted=1 WHERE data LIKE '%\"exportResultId\":\"$id\"%'");
     }
 }

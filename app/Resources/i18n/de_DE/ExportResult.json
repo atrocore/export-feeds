@@ -19,5 +19,8 @@
     "Done": "Erledigt",
     "Failed": "Fehlgeschlagen",
     "exportDownloadNotification": "Sie können die Datei <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">herunterladen</a>."
+  },
+  "exceptions": {
+    "exportIsRunning": "exportIsRunning"
   }
 }
