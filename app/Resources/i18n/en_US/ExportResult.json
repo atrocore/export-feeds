@@ -21,6 +21,6 @@
     "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
   },
   "exceptions": {
-    "exportIsRunning": "Export result for a running task cannot be removed."
+    "exportIsRunning": "Export result for a running queue item cannot be removed."
   }
 }
