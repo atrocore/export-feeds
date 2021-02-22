@@ -85,9 +85,11 @@
       "default": "doubleQuote",
       "prohibitedEmptyValue": true
     },
-    "channel": {
-      "type": "link",
-      "tooltip": true
+    "channels": {
+      "type": "linkMultiple",
+      "tooltip": true,
+      "noLoad": false,
+      "importDisabled": true
     },
     "data": {
       "type": "jsonObject",
@@ -127,8 +129,9 @@
       "relationName": "EntityTeam",
       "layoutRelationshipsDisabled": true
     },
-    "channel": {
-      "type": "belongsTo",
+    "channels": {
+      "type": "hasMany",
+      "foreign": "exportFeeds",
       "entity": "Channel"
     },
     "exportResults": {

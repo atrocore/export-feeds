@@ -25,14 +25,11 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.hideField('channel');
             this.listenTo(this.model, 'configuration-entity-changed', condition => {
                 if (condition) {
                     this.showPanel('simpleTypeProductFilter');
-                    this.showField('channel');
                 } else {
                     this.hidePanel('simpleTypeProductFilter');
-                    this.hideField('channel');
                 }
             });
 
