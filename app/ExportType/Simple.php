@@ -168,22 +168,30 @@ class Simple extends AbstractType
         ];
 
         if (!empty($this->data['exportByChannelId'])) {
-            $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
-            foreach ($links as $link => $linkData) {
-                if ($linkData['entity'] == 'Channel') {
-                    if ($linkData['type'] == 'hasMany') {
-                        $params['where'][] = [
-                            'type'      => 'linkedWith',
-                            'attribute' => $link,
-                            'value'     => [$this->data['exportByChannelId']]
-                        ];
-                    }
-                    if ($linkData['type'] == 'belongsTo') {
-                        $params['where'][] = [
-                            'type'      => 'equals',
-                            'attribute' => $link . 'Id',
-                            'value'     => [$this->data['exportByChannelId']]
-                        ];
+            if ($this->data['feed']['data']['entity'] == 'Product') {
+                $params['where'][] = [
+                    'type'  => 'bool',
+                    'value' => ['activeForChannel'],
+                    'data'  => ['activeForChannel' => $this->data['exportByChannelId']]
+                ];
+            } else {
+                $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
+                foreach ($links as $link => $linkData) {
+                    if ($linkData['entity'] == 'Channel') {
+                        if ($linkData['type'] == 'hasMany') {
+                            $params['where'][] = [
+                                'type'      => 'linkedWith',
+                                'attribute' => $link,
+                                'value'     => [$this->data['exportByChannelId']]
+                            ];
+                        }
+                        if ($linkData['type'] == 'belongsTo') {
+                            $params['where'][] = [
+                                'type'      => 'equals',
+                                'attribute' => $link . 'Id',
+                                'value'     => [$this->data['exportByChannelId']]
+                            ];
+                        }
                     }
                 }
             }
