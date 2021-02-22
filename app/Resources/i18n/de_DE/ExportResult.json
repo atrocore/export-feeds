@@ -17,6 +17,7 @@
     "Pending": "Steht aus",
     "Running": "In Arbeit",
     "Done": "Erledigt",
-    "Failed": "Fehlgeschlagen"
+    "Failed": "Fehlgeschlagen",
+    "exportDownloadNotification": "Sie können die Datei <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">herunterladen</a>."
   }
 }

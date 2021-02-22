@@ -58,7 +58,7 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
             exportButton.prop('disabled', true);
             this.ajaxPostRequest('ExportFeed/action/exportFile', {id: this.model.id}).then(response => {
                 this.notify(this.translate(response ? 'jobCreated' : 'jobNotCreated', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
-                Backbone.trigger('showQueuePanel');
+                $('.action[data-action="refresh"][data-panel="exportResults"]').click();
             }).always(() => {
                 exportButton.prop('disabled', false);
             });

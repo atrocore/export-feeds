@@ -17,6 +17,7 @@
     "Pending": "Pending",
     "Running": "Running",
     "Done": "Done",
-    "Failed": "Failed"
+    "Failed": "Failed",
+    "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
   }
 }

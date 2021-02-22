@@ -24,14 +24,14 @@ namespace Export\Services;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
+use Espo\ORM\Entity;
 use Export\ExportType\AbstractType;
-use Treo\Services\AbstractService;
-use Treo\Services\QueueManagerServiceInterface;
+use Treo\Services\QueueManagerBase;
 
 /**
  * Class QueueManagerExport
  */
-class QueueManagerExport extends AbstractService implements QueueManagerServiceInterface
+class QueueManagerExport extends QueueManagerBase
 {
     /**
      * @param array $data
@@ -72,6 +72,27 @@ class QueueManagerExport extends AbstractService implements QueueManagerServiceI
         }
 
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNotificationMessage(Entity $queueItem): string
+    {
+        $message = parent::getNotificationMessage($queueItem);
+
+        if ($queueItem->get('status') === 'Success') {
+            try {
+                $exportResult = $this->getEntityManager()->getEntity('ExportResult', $queueItem->get('data')->exportResultId);
+            } catch (\Throwable $e) {
+                $GLOBALS['log']->error('Export Notification Error: ' . $e->getMessage());
+                return $message;
+            }
+
+            $message .= ' ' . sprintf($this->translate('exportDownloadNotification', 'labels', 'ExportResult'), $exportResult->get('fileId'));
+        }
+
+        return $message;
     }
 
     /**
