@@ -21,6 +21,6 @@
     "exportDownloadNotification": "Sie können die Datei <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">herunterladen</a>."
   },
   "exceptions": {
-    "exportIsRunning": "Sie können einen aktuell ausgeführten Export nicht löschen."
+    "exportIsRunning": "Das Exportergebnis für eine laufende Aufgabe kann nicht entfernt werden."
   }
 }
