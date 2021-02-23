@@ -26,7 +26,7 @@ use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
 use Export\ExportType\AbstractType;
-use Treo\Services\QueueManagerBase;
+use Espo\Services\QueueManagerBase;
 
 /**
  * Class QueueManagerExport
