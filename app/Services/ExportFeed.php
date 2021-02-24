@@ -154,7 +154,6 @@ class ExportFeed extends Base
         $user = $this->getInjection('user');
 
         $exportResult = $this->getEntityManager()->getEntity('ExportResult');
-        $exportResult->set('name', (new \DateTime())->format('Y-m-d H:i:s'));
         $exportResult->set('exportFeedId', $data['feed']['id']);
         $exportResult->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
         $exportResult->set('ownerUserId', $user->get('id'));

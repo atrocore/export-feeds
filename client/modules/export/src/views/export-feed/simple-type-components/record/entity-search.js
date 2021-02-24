@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/simple-type-components/record/product-search', 'pim:views/product/record/search',
+Espo.define('export:views/export-feed/simple-type-components/record/entity-search', 'views/record/search',
     Dep => Dep.extend({
 
         disableSavePreset: true,

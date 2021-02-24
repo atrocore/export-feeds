@@ -21,9 +21,9 @@
   "bottomPanels": {
     "detail": [
       {
-        "name": "simpleTypeProductFilter",
-        "label": "productsFilter",
-        "view": "export:views/export-feed/simple-type-components/record/panels/simple-type-product-filter",
+        "name": "simpleTypeEntityFilter",
+        "label": "entityFilter",
+        "view": "export:views/export-feed/simple-type-components/record/panels/simple-type-entity-filter",
         "notRefreshable": true
       },
       {

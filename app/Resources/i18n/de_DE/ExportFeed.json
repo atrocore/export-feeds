@@ -29,7 +29,7 @@
     "Create ExportFeed": "Exportfeed erstellen",
     "simpleTypeSettings": "Simple-Typ-Einstellungen",
     "Product Simple Type Settings": "Simple-Typ-Einstellungen für Produkte",
-    "productsFilter": "Produktfilter",
+    "entityFilter": "Filter",
     "Configurator": "Konfigurator",
     "addEntityField": "Entitätsfeld hinzufügen",
     "addProductAttribute": "Produktattribut hinzufügen",

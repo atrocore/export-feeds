@@ -170,7 +170,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     this.updatePanelModelAttributes();
                     this.createConfiguratorList();
                     this.reRender();
-                    this.model.trigger('configuration-entity-changed', this.panelModel.get('entity') === 'Product');
+                    this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
                 });
 
                 this.createView('entity', 'views/fields/enum', {
@@ -184,6 +184,14 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     inlineEditDisabled: true,
                     mode: this.mode
                 }, view => view.render());
+
+                this.listenTo(this.panelModel, 'change:delimiter', () => {
+                    if (!this.validateDelimiters()) {
+                        let data = this.model.get('data');
+                        data.delimiter = this.panelModel.get('delimiter');
+                        this.model.set('data', data, {silent: true});
+                    }
+                });
 
                 this.createView('delimiter', 'export:views/export-feed/fields/field-value-delimiter', {
                     model: this.panelModel,

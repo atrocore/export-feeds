@@ -25,14 +25,6 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'configuration-entity-changed', condition => {
-                if (condition) {
-                    this.showPanel('simpleTypeProductFilter');
-                } else {
-                    this.hidePanel('simpleTypeProductFilter');
-                }
-            });
-
             this.listenTo(this.model, 'after:save', () => {
                 this.handleExportButtonVisibility();
             });

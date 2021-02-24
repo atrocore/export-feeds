@@ -17,10 +17,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/simple-type-components/record/panels/simple-type-product-filter', ['views/record/panels/bottom', 'search-manager'],
+Espo.define('export:views/export-feed/simple-type-components/record/panels/simple-type-entity-filter', ['views/record/panels/bottom', 'search-manager'],
     (Dep, SearchManager) => Dep.extend({
 
-        template: 'export:export-feed/simple-type-components/record/panels/simple-type-product-filter',
+        template: 'export:export-feed/simple-type-components/record/panels/simple-type-entity-filter',
 
         searchManager: null,
 
@@ -29,19 +29,30 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.scope = 'Product';
-
+            this.scope = this.model.get('data').entity;
             this.wait(true);
             this.getCollectionFactory().create(this.scope, collection => {
                 this.collection = collection;
-                this.searchManager = new SearchManager(this.collection, 'exportProductSimpleType', null, this.getDateTime(), (this.model.get('data') || {}).whereData || [], true);
+                this.searchManager = new SearchManager(this.collection, `export${this.scope}SimpleType`, null, this.getDateTime(), (this.model.get('data') || {}).whereData || [], true);
                 this.setupSearchPanel(() => this.wait(false));
+            });
+
+            this.listenTo(this.model, 'configuration-entity-changed', function (entity) {
+                this.scope = entity;
+
+                console.log(this.scope)
+
+                this.getView('search').reRender();
             });
         },
 
         setupSearchPanel(callback) {
             const hiddenBoolFilterList = this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [];
-            const searchView = 'export:views/export-feed/simple-type-components/record/product-search';
+
+            let searchView = 'export:views/export-feed/simple-type-components/record/entity-search';
+            if (this.scope === 'Product') {
+                searchView = 'export:views/export-feed/simple-type-components/record/product-search';
+            }
 
             this.createView('search', searchView, {
                 collection: this.collection,
@@ -51,7 +62,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
                 viewMode: 'list',
                 hiddenBoolFilterList: hiddenBoolFilterList,
             }, view => {
-                this.listenTo(view, 'saveProductsFilter', () => {
+                this.listenTo(view, 'saveEntityFilter', () => {
                     this.notify('Saving...');
                     let data = _.extend({}, this.model.get('data'), {
                         where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),

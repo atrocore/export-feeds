@@ -42,6 +42,23 @@ class ExportResult extends Base
     }
 
     /**
+     * @param Entity $entity
+     * @param array  $options
+     */
+    protected function beforeSave(Entity $entity, array $options = [])
+    {
+        if ($entity->isNew() && empty($entity->get('name'))) {
+            $name = (new \DateTime())->format('Y-m-d H:i:s');
+            if (!empty($count = $this->where(['name*' => "$name%"])->count())) {
+                $name .= " ($count)";
+            }
+            $entity->set('name', $name);
+        }
+
+        parent::beforeSave($entity, $options);
+    }
+
+    /**
      * @inheritDoc
      */
     protected function beforeRemove(Entity $entity, array $options = [])
