@@ -29,53 +29,60 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.scope = this.model.get('data').entity;
+            this.listenTo(this.model, 'configuration-entity-changed', function (entity) {
+                this.scope = entity;
+
+                let data = _.extend({}, this.model.get('data'));
+                if (typeof data.whereScope === 'undefined' || data.whereScope !== this.scope) {
+                    data = _.extend(data, {
+                        where: null,
+                        whereData: null,
+                        whereScope: this.scope,
+                    });
+                    this.model.set({data: data});
+                }
+                this.setupSearchPanel();
+            });
+        },
+
+        setupSearchPanel() {
             this.wait(true);
             this.getCollectionFactory().create(this.scope, collection => {
                 this.collection = collection;
                 this.searchManager = new SearchManager(this.collection, `export${this.scope}SimpleType`, null, this.getDateTime(), (this.model.get('data') || {}).whereData || [], true);
-                this.setupSearchPanel(() => this.wait(false));
-            });
 
-            this.listenTo(this.model, 'configuration-entity-changed', function (entity) {
-                this.scope = entity;
+                const hiddenBoolFilterList = this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [];
 
-                console.log(this.scope)
+                let searchView = 'export:views/export-feed/simple-type-components/record/entity-search';
+                if (this.scope === 'Product') {
+                    searchView = 'export:views/export-feed/simple-type-components/record/product-search';
+                }
 
-                this.getView('search').reRender();
-            });
-        },
-
-        setupSearchPanel(callback) {
-            const hiddenBoolFilterList = this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [];
-
-            let searchView = 'export:views/export-feed/simple-type-components/record/entity-search';
-            if (this.scope === 'Product') {
-                searchView = 'export:views/export-feed/simple-type-components/record/product-search';
-            }
-
-            this.createView('search', searchView, {
-                collection: this.collection,
-                el: `${this.options.el} .search-container`,
-                searchManager: this.searchManager,
-                scope: this.scope,
-                viewMode: 'list',
-                hiddenBoolFilterList: hiddenBoolFilterList,
-            }, view => {
-                this.listenTo(view, 'saveEntityFilter', () => {
-                    this.notify('Saving...');
-                    let data = _.extend({}, this.model.get('data'), {
-                        where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
-                        whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
+                this.createView('search', searchView, {
+                    collection: this.collection,
+                    el: `${this.options.el} .search-container`,
+                    searchManager: this.searchManager,
+                    scope: this.scope,
+                    viewMode: 'list',
+                    hiddenBoolFilterList: hiddenBoolFilterList,
+                }, view => {
+                    view.render();
+                    this.listenTo(view, 'saveEntityFilter', () => {
+                        this.notify('Saving...');
+                        let data = _.extend({}, this.model.get('data'), {
+                            where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
+                            whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
+                            whereScope: this.scope,
+                        });
+                        this.model.set({data: data});
+                        this.model.save(null, {
+                            success: () => this.notify('Saved', 'success'),
+                            error: () => this.notify(false)
+                        });
                     });
-                    this.model.set({data: data});
-                    this.model.save(null, {
-                        success: () => this.notify('Saved', 'success'),
-                        error: () => this.notify(false)
-                    });
+
+                    this.wait(false);
                 });
-
-                callback();
             });
         },
 

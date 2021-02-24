@@ -261,7 +261,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     selectedFields: this.selectedFields,
                 }, view => {
                     this.listenToOnce(view, 'after:render', () => {
-                        this.model.trigger('configuration-entity-changed', this.panelModel.get('entity') === 'Product');
+                        this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
                     });
                     view.render();
                 });
