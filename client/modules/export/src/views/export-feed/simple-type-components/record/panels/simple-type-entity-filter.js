@@ -49,9 +49,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
             this.wait(true);
             this.getCollectionFactory().create(this.scope, collection => {
                 this.collection = collection;
-                this.searchManager = new SearchManager(this.collection, `export${this.scope}SimpleType`, null, this.getDateTime(), (this.model.get('data') || {}).whereData || [], true);
-
-                const hiddenBoolFilterList = this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [];
+                this.searchManager = new SearchManager(this.collection, `exportSimpleType`, null, this.getDateTime(), (this.model.get('data') || {}).whereData || [], true);
 
                 let searchView = 'export:views/export-feed/simple-type-components/record/entity-search';
                 if (this.scope === 'Product') {
@@ -64,23 +62,10 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
                     searchManager: this.searchManager,
                     scope: this.scope,
                     viewMode: 'list',
-                    hiddenBoolFilterList: hiddenBoolFilterList,
+                    hiddenBoolFilterList: this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [],
+                    feedModel: this.model,
                 }, view => {
                     view.render();
-                    this.listenTo(view, 'saveEntityFilter', () => {
-                        this.notify('Saving...');
-                        let data = _.extend({}, this.model.get('data'), {
-                            where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
-                            whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
-                            whereScope: this.scope,
-                        });
-                        this.model.set({data: data});
-                        this.model.save(null, {
-                            success: () => this.notify('Saved', 'success'),
-                            error: () => this.notify(false)
-                        });
-                    });
-
                     this.wait(false);
                 });
             });

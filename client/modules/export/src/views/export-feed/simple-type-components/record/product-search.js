@@ -17,39 +17,48 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/simple-type-components/record/product-search', 'pim:views/product/record/search',
-    Dep => Dep.extend({
+Espo.define('export:views/export-feed/simple-type-components/record/product-search', ['pim:views/product/record/search', 'export:views/export-feed/simple-type-components/record/entity-search'], function (Dep, Filter) {
+        return Dep.extend({
 
-        disableSavePreset: true,
+            disableSavePreset: true,
 
-        setup() {
-            Dep.prototype.setup.call(this);
+            setup() {
+                Dep.prototype.setup.call(this);
 
-            this.presetFilterList = [];
-            this.boolFilterList = [];
-        },
+                this.presetFilterList = [];
+                this.boolFilterList = [];
+            },
 
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
+            afterRender() {
+                Dep.prototype.afterRender.call(this);
 
-            const formGroup = this.$el.find('.search-row > .form-group');
-            formGroup.attr('class', formGroup.attr('class').replace(/\bcol-[a-z]{2}-\d+\b/g, ''));
-            formGroup.addClass('col-md-12');
+                Filter.prototype.afterRenderExportFilterPanel.call(this);
+            },
 
-            this.$el.find('.search[data-action="search"]').html(`<span class="fa fa-save"></span><span>${this.translate('Save')}</span>`);
-        },
+            isLeftDropdown() {
+                return Filter.prototype.isLeftDropdown.call(this);
+            },
 
-        isLeftDropdown() {
-            return true;
-        },
+            resetFilters() {
+                return Filter.prototype.resetFilters.call(this);
+            },
 
-        refresh() {
-            //leave empty
-        },
+            refresh() {
+                return Filter.prototype.refresh.call(this);
+            },
 
-        updateCollection() {
-            this.trigger('saveEntityFilter')
-        }
+            updateCollection() {
+                return Filter.prototype.updateCollection.call(this);
+            },
 
-    })
+            setFilterDetailMode() {
+                return Filter.prototype.setFilterDetailMode.call(this);
+            },
+
+            setFilterMode() {
+                return Filter.prototype.setFilterMode.call(this);
+            },
+
+        })
+    }
 );

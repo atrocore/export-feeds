@@ -32,24 +32,73 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            const formGroup = this.$el.find('.search-row > .form-group');
-            formGroup.attr('class', formGroup.attr('class').replace(/\bcol-[a-z]{2}-\d+\b/g, ''));
-            formGroup.addClass('col-md-12');
+            this.afterRenderExportFilterPanel();
+        },
 
-            this.$el.find('.search[data-action="search"]').html(`<span class="fa fa-save"></span><span>${this.translate('Save')}</span>`);
+        afterRenderExportFilterPanel() {
+            this.$el.find('.search-row > .form-group').attr('class', 'form-group col-md-12');
+            this.$el.find('.search[data-action="search"]').remove();
+
+            this.setFilterMode();
+
+            this.listenTo(this.options.feedModel, 'after:set-feed-mode', function (mode) {
+                this.setFilterMode();
+            });
+
+            this.listenTo(this.options.feedModel, 'before:save', (attrs) => {
+                this.search();
+
+                let data = _.extend({}, this.model.get('data'), {
+                    where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
+                    whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
+                    whereScope: this.scope,
+                });
+
+                this.options.feedModel.set('data', data);
+
+                attrs.data.where = data.where;
+                attrs.data.whereData = data.whereData;
+                attrs.data.whereScope = data.whereScope;
+            });
+
+            this.listenTo(this.options.feedModel, 'after:save', () => {
+                this.setFilterMode();
+            });
         },
 
         isLeftDropdown() {
             return true;
         },
 
+        resetFilters() {
+            if (this.getParentView().getParentView().getParentView().mode !== 'edit') {
+                return false;
+            }
+
+            return Dep.prototype.resetFilters.call(this);
+        },
+
         refresh() {
-            //leave empty
+            // leave empty
         },
 
         updateCollection() {
-            this.trigger('saveEntityFilter')
-        }
+            // leave empty
+        },
+
+        setFilterMode() {
+            if (this.getParentView().getParentView().getParentView().mode === 'edit') {
+                this.$el.find('.filters-button').removeClass('disabled');
+                this.$el.find('.text-filter').removeClass('disabled').removeAttr('disabled');
+                this.$el.find('.reset[data-action="reset"]').removeClass('disabled');
+                this.$el.find('.remove-filter').show();
+            } else {
+                this.$el.find('.filters-button').addClass('disabled');
+                this.$el.find('.text-filter').addClass('disabled').attr('disabled', 'disabled');
+                this.$el.find('.reset[data-action="reset"]').addClass('disabled');
+                this.$el.find('.remove-filter').hide();
+            }
+        },
 
     })
 );

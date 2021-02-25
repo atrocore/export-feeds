@@ -71,6 +71,8 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
                 }
             }
             Dep.prototype.setDetailMode.call(this);
+
+            this.model.trigger('after:set-feed-mode', 'detail');
         },
 
         setEditMode() {
@@ -84,6 +86,8 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
                     }
                 }
             }
+
+            this.model.trigger('after:set-feed-mode', 'edit');
         },
 
         cancelEdit() {
@@ -153,12 +157,12 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
 
             attrs =  _.extend(attrs, changesFromPanels);
 
-            model.set(attrs, {silent: true});
-
             this.beforeSave();
 
-            this.trigger('before:save');
-            model.trigger('before:save');
+            this.trigger('before:save', attrs);
+            model.trigger('before:save', attrs);
+
+            model.set(attrs, {silent: true});
 
             model.save(attrs, {
                 success: function () {
