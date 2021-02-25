@@ -203,19 +203,4 @@ class ExportFeed extends Base
 
         return (empty($result)) ? null : new EntityCollection($result);
     }
-
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
-    protected function pushChannelExport(array $data): bool
-    {
-        // prepare name
-        $name = sprintf($this->translate('channelDataArchive'), $data['channel']['name']);
-
-        return $this
-            ->getInjection('queueManager')
-            ->push($name, 'QueueManagerChannelExport', $data);
-    }
 }

@@ -48,7 +48,6 @@
   },
   "additionalTranslates": {
     "exportName": "Datenexport im Feed '%s'",
-    "channelDataArchive": "Datenexport für den Kanal '%s'",
     "jobCreated": "Exportjob erfolgreich erstellt",
     "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
     "channelWithoutExportFeeds": "Keine Exportfeeds, die mit dem aktuellen Kanal verknüpft sind."

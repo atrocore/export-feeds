@@ -47,7 +47,6 @@
   },
   "additionalTranslates": {
     "exportName": "Export: %s",
-    "channelDataArchive": "Channel export: %s",
     "jobCreated": "Export job created successfully",
     "jobNotCreated": "Export job created failed",
     "channelWithoutExportFeeds": "No Export Feeds linked with current Channel"
