@@ -67,6 +67,9 @@ class ExportFeed extends Base
                     'value'     => $requestData->entityFilterData->ids
                 ];
             }
+
+            $this->pushExport($data);
+            return true;
         }
 
         if (!empty($requestData->exportByChannelId)) {
