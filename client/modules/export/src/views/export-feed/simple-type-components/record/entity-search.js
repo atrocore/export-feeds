@@ -88,15 +88,17 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
 
         setFilterMode() {
             if (this.getParentView().getParentView().getParentView().mode === 'edit') {
-                this.$el.find('.filters-button').removeClass('disabled');
-                this.$el.find('.text-filter').removeClass('disabled').removeAttr('disabled');
-                this.$el.find('.reset[data-action="reset"]').removeClass('disabled');
-                this.$el.find('.remove-filter').show();
+                this.$el.find('select, input, button, .selectize-input').removeClass('disabled').removeAttr('disabled');
+                this.$el.find('.remove-filter, .remove-attribute-filter').show();
+                $('.selectized').each(function () {
+                    this.selectize.enable();
+                });
             } else {
-                this.$el.find('.filters-button').addClass('disabled');
-                this.$el.find('.text-filter').addClass('disabled').attr('disabled', 'disabled');
-                this.$el.find('.reset[data-action="reset"]').addClass('disabled');
-                this.$el.find('.remove-filter').hide();
+                this.$el.find('select, input, button, .selectize-input').addClass('disabled').attr('disabled', true);
+                this.$el.find('.remove-filter, .remove-attribute-filter').hide();
+                $('.selectized').each(function () {
+                    this.selectize.disable();
+                });
             }
         },
 
