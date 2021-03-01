@@ -173,15 +173,21 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
                 });
 
+                let entityTranslatedOptions = [];
+                (this.entitiesList || []).forEach(function (entity) {
+                    entityTranslatedOptions[entity] = this.translate(entity, 'scopeNames', 'Global');
+                }, this);
+
                 this.createView('entity', 'views/fields/enum', {
                     model: this.panelModel,
                     el: `${this.options.el} .field[data-name="entity"]`,
                     name: 'entity',
                     params: {
-                        options: this.entitiesList,
-                        translatedOptions: this.entitiesList.reduce((prev, curr) => prev[curr] = this.translate(curr, 'scopeNames'), {})
+                        options: this.entitiesList || [],
+                        translatedOptions: entityTranslatedOptions
                     },
                     inlineEditDisabled: true,
+                    prohibitedEmptyValue: true,
                     mode: this.mode
                 }, view => view.render());
 
