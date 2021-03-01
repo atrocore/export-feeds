@@ -47,7 +47,7 @@
     "noExportFeedSelected": "Kein Exportfeed ausgewählt."
   },
   "additionalTranslates": {
-    "exportName": "Datenexport im Feed '%s'",
+    "exportName": "Datenexport im Feed %s",
     "jobCreated": "Exportjob erfolgreich erstellt",
     "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
     "channelWithoutExportFeeds": "Keine Exportfeeds, die mit dem aktuellen Kanal verknüpft sind."
