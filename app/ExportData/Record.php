@@ -108,11 +108,17 @@ class Record
                     break;
                 case 'link':
                     $linked = $entity->get($field);
-                    $exportBy = isset($row['exportBy']) ? $row['exportBy'] : 'id';
+                    $exportBy = isset($row['exportBy']) ? $row['exportBy'] : ['id'];
 
                     if (!empty($linked)) {
-                        if ($linked instanceof Entity && $linked->hasField($exportBy)) {
-                            $result[$column] = $linked->get($exportBy);
+                        if ($linked instanceof Entity) {
+                            $fieldResult = [];
+                            foreach ($exportBy as $v) {
+                                if ($linked->hasField($v)) {
+                                    $fieldResult[] = $linked->get($v);
+                                }
+                            }
+                            $result[$column] = implode('|', $fieldResult);
                         }
                     } else {
                         $result[$column] = null;
@@ -121,15 +127,21 @@ class Record
                     break;
                 case 'linkMultiple':
                     $linked = $entity->get($field);
-                    $exportBy = isset($row['exportBy']) ? $row['exportBy'] : 'id';
+                    $exportBy = isset($row['exportBy']) ? $row['exportBy'] : ['id'];
 
                     if ($linked instanceof EntityCollection) {
                         if (count($linked) > 0) {
                             $delimiter = !empty($delimiter) ? $delimiter : ',';
 
                             foreach ($linked as $item) {
-                                if ($item->hasField($exportBy)) {
-                                    $result[$column][] = $item->get($exportBy);
+                                if ($item instanceof Entity) {
+                                    $fieldResult = [];
+                                    foreach ($exportBy as $v) {
+                                        if ($item->hasField($v)) {
+                                            $fieldResult[] = $item->get($v);
+                                        }
+                                    }
+                                    $result[$column][] = implode('|', $fieldResult);
                                 }
                             }
 
