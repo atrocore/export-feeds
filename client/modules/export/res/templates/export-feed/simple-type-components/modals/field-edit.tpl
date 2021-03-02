@@ -20,19 +20,11 @@
             </label>
             <div class="field" data-name="exportBy">{{{exportBy}}}</div>
         </div>
-    </div>
-    <div class="row">
         <div class="cell col-sm-6">
             <label class="control-label">
-                <span class="label-text">{{translate 'scope' scope='ProductAttributeValue' category='fields'}}</span>
+                <span class="label-text">{{translate 'exportIntoSeparateColumns' scope='ExportFeed' category='fields'}}</span>
             </label>
-            <div class="field" data-name="scope">{{{scope}}}</div>
-        </div>
-        <div class="cell col-sm-6">
-            <label class="control-label">
-                <span class="label-text">{{translate 'Channel' scope='Global' category='scopeNames'}}</span>
-            </label>
-            <div class="field" data-name="channel">{{{channel}}}</div>
+            <div class="field" data-name="exportIntoSeparateColumns">{{{exportIntoSeparateColumns}}}</div>
         </div>
     </div>
 </div>

@@ -37,7 +37,10 @@ Espo.define('export:views/export-feed/fields/varchar-with-info', 'views/fields/v
 
             let exportByTranslation = this.getExportByTranslation();
             if (this.model.get('exportBy') && exportByTranslation) {
-                extraInfo = `${this.translate('exportBy', 'fields', 'ExportFeed')}: ${exportByTranslation}`;
+                extraInfo = `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
+                if (this.model.get('exportIntoSeparateColumns')) {
+                    extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportFeed')}`;
+                }
             }
 
             if (this.model.get('attributeId')) {

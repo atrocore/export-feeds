@@ -10,7 +10,7 @@
     "csvTextQualifier": "Text-Qualifier",
     "field": "Feld",
     "column": "Spalte",
-    "exportBy": "Export von",
+    "exportBy": "Verwandte Entitätsfelder",
     "remove": "Löschen",
     "isAttribute": "Ist Attribut",
     "attribute": "Attribut",
@@ -18,13 +18,15 @@
     "delimiter": "Trennzeichen",
     "exportByOrChannel":"Export von/Kanal",
     "data": "Daten",
-    "exportResults": "Exportergebnisse"
+    "exportResults": "Exportergebnisse",
+    "exportIntoSeparateColumns": "Separate Spalten"
   },
   "links": {
     "channels": "Kanäle",
     "exportResults": "Exportergebnisse"
   },
   "labels": {
+    "fields": "Felder",
     "ignoreFilter": "Filter im Feed ignorieren",
     "Create ExportFeed": "Exportfeed erstellen",
     "simpleTypeSettings": "Simple-Typ-Einstellungen",

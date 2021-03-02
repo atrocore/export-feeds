@@ -10,20 +10,22 @@
     "csvTextQualifier": "Text Qualifier",
     "field": "Field",
     "column": "Column",
-    "exportBy": "Export By",
+    "exportBy": "Related Entity Fields",
     "remove": "Remove",
     "isAttribute": "Is Attribute",
     "attribute": "Attribute",
     "fieldOrAttribute": "Field/Attribute",
     "delimiter": "Field Value Delimiter",
     "exportByOrChannel":"Export By/Channel",
-    "exportResults": "Export Results"
+    "exportResults": "Export Results",
+    "exportIntoSeparateColumns": "Separate columns"
   },
   "links": {
     "channels": "Channels",
     "exportResults": "Export Results"
   },
   "labels": {
+    "fields": "Fields",
     "ignoreFilter": "Ignore filter in the feed",
     "Create ExportFeed": "Create Export Feed",
     "simpleTypeSettings": "Simple Type Settings",

@@ -17,17 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/export-by', 'views/fields/enum',
+Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enum',
     Dep => Dep.extend({
 
         setup() {
             Dep.prototype.setup.call(this);
 
             this.listenTo(this.model, 'change:field', () => {
-                if (this.model.get('field')) {
-                    this.setupOptions();
-                    this.reRender();
-                }
+                this.setupOptions();
+                this.reRender();
+                this.model.set('exportBy', null);
             });
         },
 

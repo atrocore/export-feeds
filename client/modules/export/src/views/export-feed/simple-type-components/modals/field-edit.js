@@ -30,14 +30,14 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
             this.scope = this.options.scope;
 
             this.buttonList.push({
-                name: 'save',
-                label: 'Save',
-                style: 'primary'
-            },
-            {
-                name: 'cancel',
-                label: 'Cancel'
-            });
+                    name: 'save',
+                    label: 'Save',
+                    style: 'primary'
+                },
+                {
+                    name: 'cancel',
+                    label: 'Cancel'
+                });
 
             this.id = this.options.id;
 
@@ -57,8 +57,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 } else {
                     this.model = model;
                     this.model.set({
-                        entity: this.scope,
-                        scope: 'Global'
+                        entity: this.scope
                     });
                 }
             });
@@ -71,10 +70,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
 
             this.listenTo(this.model, 'change:field', () => {
                 this.applyDynamicChanges();
-            });
-
-            this.listenTo(this.model, 'change:scope change:channelId', () => {
-                this.model.set({column: this.getColumnFromCategory()});
             });
         },
 
@@ -102,6 +97,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 name: 'field',
                 el: `${this.options.el} .field[data-name="field"]`,
                 mode: 'edit',
+                prohibitedEmptyValue: true,
                 params: {
                     options: this.allowedFields,
                     translatedOptions: this.allowedFields.reduce((prev, curr) => {
@@ -109,7 +105,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                         return prev;
                     }, {'id': this.translate('id', 'fields', 'Global')})
                 }
-            }, view => {});
+            });
 
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
@@ -119,7 +115,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 params: {
                     required: true
                 }
-            }, view => {});
+            });
 
             this.createView('exportBy', 'export:views/export-feed/fields/export-by', {
                 model: this.model,
@@ -130,33 +126,14 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                     options: [],
                     translatedOptions: {}
                 }
-            }, view => {});
-
-            this.createView('scope', 'views/fields/enum', {
-                model: this.model,
-                name: 'scope',
-                el: `${this.options.el} .field[data-name="scope"]`,
-                mode: 'edit',
-                params: {
-                    options: ['Global', 'Channel']
-                }
-            }, view => {
-                this.listenTo(this.model, 'change:scope', () => {
-                    this.checkChannelVisibility();
-                });
             });
 
-            this.createView('channel', 'export:views/export-feed/fields/channel', {
+            this.createView('exportIntoSeparateColumns', 'export:views/export-feed/fields/separate-columns', {
                 model: this.model,
-                name: 'channel',
-                el: `${this.options.el} .field[data-name="channel"]`,
+                name: 'exportIntoSeparateColumns',
+                el: `${this.options.el} .field[data-name="exportIntoSeparateColumns"]`,
                 mode: 'edit',
-                params: {
-                    required: true
-                },
-                labelText: this.translate('channel', 'scopeNames', 'Global'),
-                createDisabled: true
-            }, view => {});
+            });
         },
 
         applyDynamicChanges() {
@@ -165,42 +142,10 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
             if (column) {
                 column.reRender();
             }
-            this.checkScopeVisibility();
-            this.checkChannelVisibility();
         },
 
         getColumnFromCategory() {
-            let column = this.translate(this.model.get('field'), 'fields', this.scope);
-            if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productCategories') {
-                let channelName = this.model.get('channelName');
-                if (this.model.get('scope') === 'Channel' && channelName) {
-                    column += ` (Channel: ${channelName})`;
-                } else {
-                    column += ` (${this.model.get('scope')})`;
-                }
-            }
-            return column;
-        },
-
-        checkChannelVisibility() {
-            let channel = this.getView('channel');
-            if (this.model.get('scope') === 'Channel') {
-                channel.params.required = true;
-                channel.show();
-            } else {
-                channel.params.required = false;
-                channel.hide();
-            }
-            channel.reRender();
-        },
-
-        checkScopeVisibility() {
-            let scope = this.getView('scope');
-            if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productCategories') {
-                scope.show();
-            } else {
-                scope.hide();
-            }
+            return this.translate(this.model.get('field'), 'fields', this.scope);
         },
 
         actionSave() {
