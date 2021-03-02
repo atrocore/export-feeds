@@ -193,9 +193,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
                 this.listenTo(this.panelModel, 'change:delimiter', () => {
                     if (!this.validateDelimiters()) {
-                        let data = this.model.get('data');
-                        data.delimiter = this.panelModel.get('delimiter');
-                        this.model.set('data', data, {silent: true});
+                        this.configData.delimiter = this.panelModel.get('delimiter');
                     }
                 });
 
@@ -335,20 +333,6 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     view: "export:views/export-feed/fields/column"
                 }
             ];
-
-            if (this.panelModel.get('entity') === 'Product') {
-                listLayout.push({
-                    name: 'channel',
-                    customLabel: this.translate('Channel', 'scopeNames', 'Global'),
-                    notSortable: true,
-                    type: 'link',
-                    params: {
-                        readOnly: true,
-                        required: true
-                    },
-                    view: 'export:views/export-feed/fields/channel'
-                });
-            }
 
             listLayout.push({
                 name: 'remove',

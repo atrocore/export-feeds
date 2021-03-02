@@ -27,15 +27,8 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
 
             this.listenTo(this.model, 'change:attributeId', () => {
                 this.model.set({
-                    column: this.getColumnFromAttribute(),
-                    scope: 'Global',
-                    channelId: null,
-                    channelName: null
+                    column: this.getColumnFromAttribute()
                 });
-            });
-
-            this.listenTo(this.model, 'change:scope change:channelId', () => {
-                this.model.set({column: this.getColumnFromAttribute()});
             });
         },
 
@@ -50,7 +43,8 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 },
                 foreignScope: 'Attribute',
                 createDisabled: true
-            }, view => {});
+            }, view => {
+            });
 
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
@@ -60,66 +54,23 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 params: {
                     required: true
                 }
-            }, view => {});
-
-
-            this.createView('scope', 'views/fields/enum', {
-                model: this.model,
-                name: 'scope',
-                el: `${this.options.el} .field[data-name="scope"]`,
-                mode: 'edit',
-                params: {
-                    options: ['Global', 'Channel']
-                }
             }, view => {
-                this.listenTo(this.model, 'change:scope', () => {
-                    this.checkChannelVisibility();
-                });
             });
-
-            this.createView('channel', 'export:views/export-feed/fields/channel', {
-                model: this.model,
-                name: 'channel',
-                el: `${this.options.el} .field[data-name="channel"]`,
-                mode: 'edit',
-                params: {
-                    required: true
-                },
-                labelText: this.translate('channel', 'scopeNames', 'Global'),
-                createDisabled: true
-            }, view => {});
         },
 
         getColumnFromAttribute() {
             let column = '';
             if (this.model.get('attributeId')) {
                 column = this.model.get('attributeName');
-                let channelName = this.model.get('channelName');
-                if (this.model.get('scope') === 'Channel' && channelName) {
-                    column += ` (Channel: ${channelName})`;
-                } else {
-                    column += ` (${this.model.get('scope')})`;
-                }
             }
+
             return column;
         },
 
-        checkChannelVisibility() {
-            let channel = this.getView('channel');
-            if (this.model.get('scope') === 'Channel') {
-                channel.params.required = true;
-                channel.show();
-            } else {
-                channel.params.required = false;
-                channel.hide();
-            }
-            channel.reRender();
+        setAllowedFields() {
         },
 
-        setAllowedFields() {},
-
         applyDynamicChanges() {
-            this.checkChannelVisibility();
         },
 
         actionSave() {
