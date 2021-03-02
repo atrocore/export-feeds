@@ -20,36 +20,49 @@
 
 namespace Export\ExportData;
 
+use Espo\Core\Container;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
-use Treo\Core\Utils\Metadata;
-use Treo\Traits\ContainerTrait;
+use Espo\Core\Utils\Metadata;
+use Espo\ORM\EntityManager;
 
 /**
  * Class Record
  */
 class Record
 {
-    use ContainerTrait;
+    /**
+     * @var Container
+     */
+    protected $container;
+
+    /**
+     * Record constructor.
+     *
+     * @param Container $container
+     */
+    public function __construct(Container $container)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @param Entity $entity
-     * @param array $data
-     * @param string $delimiter
+     * @param array  $row
+     * @param array  $data
      *
      * @return array
      */
-    public function prepare(Entity $entity, array $data, string $delimiter): array
+    public function prepare(Entity $entity, array $row, array $data): array
     {
-        $result = null;
+        $result = [];
 
-        if (isset($data['field'])) {
-            $method = 'prepare' . ucfirst($data['field']);
-
+        if (isset($row['field'])) {
+            $method = 'prepare' . ucfirst($row['field']);
             if (method_exists($this, $method)) {
-                $result = $this->$method($entity, $data, $delimiter);
+                $result = $this->$method($entity, $row, $data);
             } else {
-                $result = $this->default($entity, $data, $delimiter);
+                $result = $this->defaultPrepare($entity, $row, $data);
             }
         }
 
@@ -58,17 +71,18 @@ class Record
 
     /**
      * @param Entity $entity
-     * @param array $data
-     * @param string $delimiter
+     * @param array  $row
+     * @param array  $data
      *
      * @return array
      */
-    protected function default(Entity $entity, array $data, string $delimiter): array
+    protected function defaultPrepare(Entity $entity, array $row, array $data): array
     {
-        $field = $data['field'];
-        $column = $data['column'];
-
         $result = [];
+
+        $field = $row['field'];
+        $column = $row['column'];
+        $delimiter = $data['delimiter'];
 
         // check is field is 'id'
         if ($field == 'id') {
@@ -94,7 +108,7 @@ class Record
                     break;
                 case 'link':
                     $linked = $entity->get($field);
-                    $exportBy = isset($data['exportBy']) ? $data['exportBy'] : 'id';
+                    $exportBy = isset($row['exportBy']) ? $row['exportBy'] : 'id';
 
                     if (!empty($linked)) {
                         if ($linked instanceof Entity && $linked->hasField($exportBy)) {
@@ -107,7 +121,7 @@ class Record
                     break;
                 case 'linkMultiple':
                     $linked = $entity->get($field);
-                    $exportBy = isset($data['exportBy']) ? $data['exportBy'] : 'id';
+                    $exportBy = isset($row['exportBy']) ? $row['exportBy'] : 'id';
 
                     if ($linked instanceof EntityCollection) {
                         if (count($linked) > 0) {
@@ -149,6 +163,14 @@ class Record
      */
     protected function getMetadata(): Metadata
     {
-        return $this->getContainer()->get('metadata');
+        return $this->container->get('metadata');
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getEntityManager(): EntityManager
+    {
+        return $this->container->get('entityManager');
     }
 }

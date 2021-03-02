@@ -35,111 +35,55 @@ class Product extends Record
 
     /**
      * @param Entity $entity
-     * @param array $data
-     * @param string $delimiter
+     * @param array  $row
+     * @param array  $data
      *
      * @return array
      */
-    public function prepare(Entity $entity, array $data, string $delimiter): array
+    public function prepare(Entity $entity, array $row, array $data): array
     {
-        if (isset($data['attributeId'])) {
+        if (isset($row['attributeId'])) {
             $this->productAttributes = $entity->get('productAttributeValues');
-            return $this->prepareAttributeValue($data, $delimiter);
+            return $this->prepareAttributeValue($row, $data);
         } else {
-            return parent::prepare($entity, $data, $delimiter);
+            return parent::prepare($entity, $row, $data);
         }
     }
 
     /**
-     * @param Entity $entity
+     * @param array $row
      * @param array $data
-     * @param string $delimiter
      *
      * @return array
      */
-    public function prepareProductCategories(Entity $entity, array $data, string $delimiter): array
+    protected function prepareAttributeValue(array $row, array $data): array
     {
-        $result = null;
+        $result = [$row['column'] => null];
 
-        $productCategories = $entity->get('productCategories');
-
-        if (count($productCategories) > 0) {
-            $delimiter = !empty($delimiter) ? $delimiter : ',';
-
-            foreach ($productCategories as $productCategory) {
-                $category = $productCategory->get('category');
-
-                if ($productCategory->get('scope') == $data['scope'] && $category->hasField($data['exportBy'])) {
-                    switch ($data['scope']) {
-                        case 'Global':
-                            $result[] = $category->get($data['exportBy']);
-                            break;
-                        case 'Channel':
-                            if (isset($data['channelId'])
-                                && in_array($data['channelId'], array_column($productCategory->get('channels')->toArray(), 'id'))) {
-                                $result[] = $category->get($data['exportBy']);
-                            }
-                            break;
-                    }
-                }
-            }
-
-            $result = implode($delimiter, $result);
-        }
-
-        return [$data['column'] => $result];
-    }
-
-    /**
-     * @param array $data
-     * @param string $delimiter
-     *
-     * @return array
-     */
-    protected function prepareAttributeValue(array $data, string $delimiter): array
-    {
-        $result = [$data['column'] => null];
-
-        $attributeId = $data['attributeId'];
-        $scope = $data['scope'];
-        $channelId = isset($data['channelId']) ? $data['channelId'] : '';
+        $attributeId = $row['attributeId'];
+        $delimiter = $data['delimiter'];
+        $channelId = isset($row['channelId']) ? $row['channelId'] : '';
 
         if (!empty($type = $this->getAttributeType($attributeId))) {
-            if ($type == 'unit') {
-                $result[$data['column'] . ' Unit'] = null;
-            }
+            $attribute = $this->getAttribute($attributeId, $channelId);
 
-            $attribute = $this->getAttribute($attributeId, $scope, $channelId);
-
-            // get attribute value if attribute is found
-            if ($scope == 'Channel' && (empty($attribute) || $attribute->get('value') == '')) {
-                $data['scope'] = 'Global';
-                $result = $this->prepareAttributeValue($data, $delimiter);
-            } elseif (!empty($attribute)) {
+            if (!empty($attribute)) {
                 switch ($type) {
                     case 'array':
                     case 'arrayMultiLang':
                     case 'multiEnum':
                     case 'multiEnumMultiLang':
-                        if (!empty($value = Json::decode($attribute->get('value'), true))) {
-                            $result[$data['column']] = implode($delimiter, $value);
-                        } elseif ($data['scope'] == 'Channel') {
-                            $data['scope'] = 'Global';
-                            $result = $this->prepareAttributeValue($data, $delimiter);
-                        }
-
+                        $result[$row['column']] = implode($delimiter, Json::decode($attribute->get('value'), true));
                         break;
                     case 'bool':
-                        $result[$data['column']] = (int)$attribute->get('value');
-
+                        $result[$row['column']] = (int)$attribute->get('value');
                         break;
                     case 'unit':
-                        $result[$data['column']] = $attribute->get('value');
-                        $result[$data['column'].' Unit'] = $attribute->get('data')->unit;
-
+                        $result[$row['column']] = $attribute->get('value');
+                        $result[$row['column'] . ' Unit'] = $attribute->get('data')->unit;
                         break;
                     default:
-                        $result[$data['column']] = $attribute->get('value');
+                        $result[$row['column']] = $attribute->get('value');
                 }
             }
         }
@@ -149,26 +93,24 @@ class Product extends Record
 
     /**
      * @param string $attributeId
-     * @param string $scope
      * @param string $channelId
      *
      * @return Entity|null
      */
-    protected function getAttribute(string $attributeId, string $scope, string $channelId = ''): ?Entity
+    protected function getAttribute(string $attributeId, string $channelId): ?Entity
     {
         $result = null;
 
         foreach ($this->productAttributes as $item) {
-            if ($item->get('attributeId') == $attributeId && $item->get('scope') == $scope) {
-                switch ($scope) {
-                    case 'Global':
-                        $result = $item;
-                        break;
-                    case 'Channel':
-                        if ($channelId == $item->get('channelId')) {
-                            $result = $item;
-                        }
-                        break;
+            if ($item->get('attributeId') == $attributeId && $item->get('scope') == 'Global') {
+                $result = $item;
+            }
+        }
+
+        if (!empty($channelId)) {
+            foreach ($this->productAttributes as $item) {
+                if ($item->get('attributeId') == $attributeId && $item->get('scope') == 'Channel' && $channelId == $item->get('channelId')) {
+                    $result = $item;
                 }
             }
         }
@@ -185,7 +127,7 @@ class Product extends Record
     {
         $result = null;
 
-        $attribute = $this->getContainer()->get('entityManager')->getEntity('Attribute', $attributeId);
+        $attribute = $this->getEntityManager()->getEntity('Attribute', $attributeId);
 
         if (!empty($attribute)) {
             $result = $attribute->get('type');

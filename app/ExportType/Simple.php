@@ -140,8 +140,7 @@ class Simple extends AbstractType
                 $result[$entity->get('id')] = [];
 
                 foreach ($data['configuration'] as $row) {
-                    $result[$entity->get('id')]
-                        = array_merge($result[$entity->get('id')], $dataPrepare->prepare($entity, $row, $data['delimiter']));
+                    $result[$entity->get('id')] = array_merge($result[$entity->get('id')], $dataPrepare->prepare($entity, $this->prepareRow($row), $data));
                 }
             }
             $result = array_values($result);
@@ -220,7 +219,20 @@ class Simple extends AbstractType
             $prepareDataClassName = "Export\\ExportData\\Record";
         }
 
-        return (new $prepareDataClassName())->setContainer($this->container);
+        return new $prepareDataClassName($this->container);
+    }
+
+    /**
+     * @param array $row
+     *
+     * @return array
+     */
+    protected function prepareRow(array $row): array
+    {
+        // set channel
+        $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
+
+        return $row;
     }
 
     /**
