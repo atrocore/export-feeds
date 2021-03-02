@@ -69,8 +69,7 @@
       "options": [
         ";",
         ",",
-        "\\t",
-        "|"
+        "\\t"
       ],
       "default": ";",
       "view": "export:views/export-feed/fields/field-delimiter",

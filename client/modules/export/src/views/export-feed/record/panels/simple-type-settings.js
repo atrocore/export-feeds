@@ -452,13 +452,31 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         validateDelimiters() {
             let validate = false;
-            if (this.model.get('csvFieldDelimiter') === this.panelModel.get('delimiter')) {
-                let delimiter = this.getView('delimiter');
-                delimiter.trigger('invalid');
-                let msg = this.translate('delimitersMustBeDifferent', 'messages', 'ExportFeed');
-                delimiter.showValidationMessage(msg);
+            let msg = '';
+
+            let delimiter = this.panelModel.get('delimiter') || '';
+
+            if (delimiter.indexOf('|') >= 0) {
+                msg = this.translate('systemDelimiter', 'messages', 'ExportFeed');
                 validate = true;
             }
+
+            if (!validate && this.model.get('fileType') === 'csv') {
+                let csvDelimiter = this.model.get('csvFieldDelimiter') || '';
+                for (let i = 0; i < delimiter.length; i++) {
+                    if (csvDelimiter.indexOf(delimiter.charAt(i)) >= 0) {
+                        msg = this.translate('delimitersMustBeDifferent', 'messages', 'ExportFeed');
+                        validate = true;
+                    }
+                }
+            }
+
+            if (validate) {
+                let delimiter = this.getView('delimiter');
+                delimiter.trigger('invalid');
+                delimiter.showValidationMessage(msg);
+            }
+
             return validate;
         },
 

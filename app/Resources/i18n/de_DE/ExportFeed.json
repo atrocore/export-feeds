@@ -41,7 +41,8 @@
     "singleQuote": "Anführungszeichen"
   },
   "messages": {
-    "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein.",
+    "systemDelimiter": "\"|\" kann nicht im Trennzeichen verwendet werden.",
+    "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein und dürfen sich nicht gegenseitig einschließen.",
     "noExportFeedSelected": "Kein Exportfeed ausgewählt."
   },
   "additionalTranslates": {

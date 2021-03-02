@@ -35,10 +35,12 @@ class ExportFeed extends Base
     /**
      * @param Entity $entity
      * @param array  $options
+     *
+     * @throws BadRequest
      */
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if (!$this->isValid($entity)) {
+        if ($entity->get('type') == 'simple' && !$this->isDelimiterValid($entity)) {
             throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
         }
 
@@ -72,28 +74,21 @@ class ExportFeed extends Base
      * @param Entity $entity
      *
      * @return bool
+     * @throws BadRequest
      */
-    protected function isValid(Entity $entity): bool
+    protected function isDelimiterValid(Entity $entity): bool
     {
-        $configuration = Json::decode(Json::encode($entity->get('data')->configuration), true);
-
-        foreach ($configuration as $key => $item) {
-            if (isset($item['attributeId'])) {
-                foreach ($configuration as $k => $i) {
-                    if (isset($i['attributeId']) && $key != $k && $i['attributeId'] == $item['attributeId']
-                        && $i['scope'] == $item['scope']) {
-                        if ($i['scope'] == 'Global' || ($i['scope'] == 'Channel' && $i['channelId'] == $item['channelId'])) {
-                            return false;
-                        }
-                    }
-                }
-            } elseif ($entity->get('data')->entity == 'Product' && $item['field'] == 'productCategories') {
-                foreach ($configuration as $k => $i) {
-                    if ($i['field'] == $item['field'] && $key != $k && $i['scope'] == $item['scope']) {
-                        if ($i['scope'] == 'Global' || ($i['scope'] == 'Channel' && $i['channelId'] == $item['channelId'])) {
-                            return false;
-                        }
-                    }
+        $delimiter = $entity->get('data')->delimiter;
+        if (strpos($delimiter, '|') !== false) {
+            throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
+        }
+        if ($entity->get('fileType') == 'csv') {
+            if (strpos($entity->get('csvFieldDelimiter'), '|') !== false) {
+                throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
+            }
+            foreach (str_split($delimiter) as $char) {
+                if (strpos($entity->get('csvFieldDelimiter'), $char) !== false) {
+                    throw new BadRequest($this->getInjection('language')->translate('delimitersMustBeDifferent', 'messages', 'ExportFeed'));
                 }
             }
         }
