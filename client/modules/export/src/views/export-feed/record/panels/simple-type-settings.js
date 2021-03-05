@@ -145,7 +145,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     };
                     if (['link', 'linkMultiple'].includes(field.type)) {
                         _.extend(data, {
-                            exportBy: 'id'
+                            exportBy: ['id']
                         });
                     }
                     result.push(data);
