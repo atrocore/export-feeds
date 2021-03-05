@@ -40,8 +40,12 @@ class ExportFeed extends Base
      */
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if ($entity->get('type') == 'simple' && !$this->isDelimiterValid($entity)) {
-            throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
+        if ($entity->get('type') == 'simple') {
+            if (!empty($entity->get('data'))) {
+                if (!$this->isDelimiterValid($entity)) {
+                    throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
+                }
+            }
         }
 
         parent::beforeSave($entity, $options);
