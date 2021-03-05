@@ -31,6 +31,11 @@ use Espo\ORM\Entity;
  */
 class ExportResult extends Base
 {
+    public function getExportResultJob(string $exportResultId): ?Entity
+    {
+        return $this->getEntityManager()->getRepository('QueueItem')->where(['data*' => '%"exportResultId":"' . $exportResultId . '"%'])->findOne();
+    }
+
     /**
      * @inheritDoc
      */
@@ -59,12 +64,17 @@ class ExportResult extends Base
     }
 
     /**
-     * @inheritDoc
+     * @param Entity $entity
+     * @param array  $options
+     *
+     * @throws BadRequest
      */
     protected function beforeRemove(Entity $entity, array $options = [])
     {
-        if ($entity->get('state') == 'Running') {
-            throw new BadRequest($this->getInjection('language')->translate('exportIsRunning', 'exceptions', 'ExportResult'));
+        if (!empty($job = $this->getExportResultJob($entity->get('id')))) {
+            if ($job->get('status') == 'Running') {
+                throw new BadRequest($this->getInjection('language')->translate('exportIsRunning', 'exceptions', 'ExportResult'));
+            }
         }
 
         parent::beforeRemove($entity, $options);

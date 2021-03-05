@@ -133,6 +133,7 @@ class Record
                         if (count($linked) > 0) {
                             $delimiter = !empty($delimiter) ? $delimiter : ',';
 
+                            $links = [];
                             foreach ($linked as $item) {
                                 if ($item instanceof Entity) {
                                     $fieldResult = [];
@@ -141,11 +142,18 @@ class Record
                                             $fieldResult[] = $item->get($v);
                                         }
                                     }
-                                    $result[$column][] = implode('|', $fieldResult);
+                                    $links[] = implode('|', $fieldResult);
                                 }
                             }
 
-                            $result[$column] = implode($delimiter, $result[$column]);
+                            if (!empty($row['exportIntoSeparateColumns'])) {
+                                foreach ($links as $k => $link) {
+                                    $columnName = empty($k) ? $column : $column . ' ' . $k;
+                                    $result[$columnName] = $link;
+                                }
+                            } else {
+                                $result[$column] = implode($delimiter, $links);
+                            }
                         } else {
                             $result[$column] = null;
                         }

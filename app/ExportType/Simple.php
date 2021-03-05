@@ -134,22 +134,38 @@ class Simple extends AbstractType
         // get prepare data class
         $dataPrepare = $this->getPrepareDataClass($data['entity']);
 
+        $columns = [];
         if (!empty($entities)) {
             // prepare result
             foreach ($entities as $entity) {
-                $result[$entity->get('id')] = [];
-
+                $resultData[$entity->get('id')] = [];
                 foreach ($data['configuration'] as $row) {
-                    $result[$entity->get('id')] = array_merge($result[$entity->get('id')], $dataPrepare->prepare($entity, $this->prepareRow($row), $data));
+                    $rowData = $dataPrepare->prepare($entity, $this->prepareRow($row), $data);
+                    $resultData[$entity->get('id')] = array_merge($resultData[$entity->get('id')], $rowData);
+
+                    // set columns
+                    $columns[$row['column']] = !isset($columns[$row['column']]) ? [] : $columns[$row['column']];
+                    $columns[$row['column']] = array_unique(array_merge($columns[$row['column']], array_keys($rowData)));
                 }
             }
-            $result = array_values($result);
+            $resultData = array_values($resultData);
         }
 
-        if (empty($result)) {
+        if (empty($resultData)) {
             foreach ($data['configuration'] as $row) {
-                $result[0][$row['column']] = '';
+                $resultData[0][$row['column']] = '';
             }
+        }
+
+        foreach ($resultData as $rowData) {
+            $resultRow = [];
+            foreach ($columns as $columnData) {
+                foreach ($columnData as $column) {
+                    $resultRow[$column] = isset($rowData[$column]) ? $rowData[$column] : null;
+                }
+            }
+
+            $result[] = $resultRow;
         }
 
         return $result;
