@@ -148,7 +148,7 @@ class Record
 
                             if (!empty($row['exportIntoSeparateColumns'])) {
                                 foreach ($links as $k => $link) {
-                                    $columnName = empty($k) ? $column : $column . ' ' . $k;
+                                    $columnName = $column . ' ' . ($k + 1);
                                     $result[$columnName] = $link;
                                 }
                             } else {

@@ -54,22 +54,27 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
         },
 
         getTranslatesForExportByField() {
-            let result = {};
+            let result = {'id': this.translate('id', 'fields', 'Global')};
             let fieldLinkDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('field')]);
             if (fieldLinkDefs) {
                 let entity = this.getMetadata().get(['clientDefs', 'ExportFeed', 'customEntities', this.model.get('entity'), this.model.get('field'), 'entity'])
                     || fieldLinkDefs.entity;
                 if (entity) {
                     let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
-                    result = Object.keys(fields)
-                        .filter(name => ['varchar'].includes(fields[name].type) && !fields[name].customizationDisabled &&
-                            !fields[name].disabled && !fields[name].notStorable && (name === 'code' || !fields[name].emHidden))
-                        .reduce((prev, curr) => {
-                            prev[curr] = this.translate(curr, 'fields', entity);
-                            return prev;
-                        }, {'id': this.translate('id', 'fields', 'Global')});
+
+                    $.each(fields, function (field, fieldData) {
+                        if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled) {
+                            if (['varchar'].includes(fieldData.type)) {
+                                result[field] = this.translate(field, 'fields', entity);
+                            }
+                            if (fieldData.type === 'link') {
+                                result[field + 'Id'] = this.translate(field, 'fields', entity);
+                            }
+                        }
+                    }.bind(this));
                 }
             }
+
             return result;
         },
 

@@ -1,4 +1,3 @@
-
 /*
  * Export Feeds
  * Free Extension
@@ -51,17 +50,26 @@ Espo.define('export:views/export-feed/fields/varchar-with-info', 'views/fields/v
         },
 
         getExportByTranslation() {
-            let translation;
-            let field = this.model.get('exportBy');
-            if (field === 'id') {
-                translation = this.translate('id', 'fields', 'Global');
-            } else {
-                let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('field'), 'entity']);
-                if (entity) {
-                    translation = this.translate(field, 'fields', entity);
+            let translations = [];
+
+            let fields = this.model.get('exportBy') || [];
+
+            fields.forEach(function (field) {
+                if (field === 'id') {
+                    translations.push(this.translate('id', 'fields', 'Global'));
+                } else {
+                    let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('field'), 'entity']);
+                    if (entity) {
+                        if (field.substring(field.length - 2) === 'Id') {
+                            translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity));
+                        } else {
+                            translations.push(this.translate(field, 'fields', entity));
+                        }
+                    }
                 }
-            }
-            return translation;
+            }, this);
+
+            return translations.join(', ');
         },
 
         getValueForDisplay() {

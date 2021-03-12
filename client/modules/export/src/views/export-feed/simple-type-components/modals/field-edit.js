@@ -120,9 +120,11 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
             this.createView('exportBy', 'export:views/export-feed/fields/export-by', {
                 model: this.model,
                 name: 'exportBy',
+                labelText: this.translate('exportBy', 'fields', 'ExportFeed'),
                 el: `${this.options.el} .field[data-name="exportBy"]`,
                 mode: 'edit',
                 params: {
+                    required: true,
                     options: [],
                     translatedOptions: {}
                 }
