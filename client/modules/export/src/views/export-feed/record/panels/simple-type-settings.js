@@ -395,10 +395,11 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
         },
 
         save(callback) {
+            let self = this;
             let data = _.extend({}, this.model.get('data'), this.configData);
             this.model.set({data: data}, {silent: true});
             this.notify('Loading...');
-            this.model.save({data: data}, {
+            this.model.save({data: data, _silentMode: true}, {
                 success: () => {
                     this.notify('Saved', 'success');
                     this.initialData = Espo.Utils.cloneDeep(this.configData);
@@ -406,8 +407,13 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                         callback();
                     }
                 },
-                error: () => {
-                    this.cancelEdit();
+                error: (e, xhr) => {
+                    let statusReason = xhr.getResponseHeader('X-Status-Reason') || '';
+                    if (xhr.status === 304) {
+                        Espo.Ui.notify(self.translate('notModified', 'messages'), 'warning', 1000 * 60 * 60 * 2, true);
+                    } else {
+                        Espo.Ui.notify(`${self.translate("Error")} ${xhr.status}: ${statusReason}`, "error", 1000 * 60 * 60 * 2, true);
+                    }
                 },
                 patch: !this.model.isNew()
             });

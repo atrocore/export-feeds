@@ -164,6 +164,8 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
 
             model.set(attrs, {silent: true});
 
+            attrs['_silentMode'] = true;
+
             model.save(attrs, {
                 success: function () {
                     this.afterSave();
@@ -186,26 +188,12 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
                     }
                 }.bind(this),
                 error: function (e, xhr) {
-                    var r = xhr.getAllResponseHeaders();
-                    var response = null;
+                    let statusReason = xhr.getResponseHeader('X-Status-Reason') || '';
 
-                    if (~[409, 500].indexOf(xhr.status)) {
-                        var statusReasonHeader = xhr.getResponseHeader('X-Status-Reason');
-                        if (statusReasonHeader) {
-                            try {
-                                var response = JSON.parse(statusReasonHeader);
-                            } catch (e) {
-                                console.error('Could not parse X-Status-Reason header');
-                            }
-                        }
-                    }
-
-                    if (response && response.reason) {
-                        var methodName = 'errorHandler' + Espo.Utils.upperCaseFirst(response.reason.toString());
-                        if (methodName in this) {
-                            xhr.errorIsHandled = true;
-                            this[methodName](response.data);
-                        }
+                    if (xhr.status === 304) {
+                        Espo.Ui.notify(self.translate('notModified', 'messages'), 'warning', 1000 * 60 * 60 * 2, true);
+                    } else {
+                        Espo.Ui.notify(`${self.translate("Error")} ${xhr.status}: ${statusReason}`, "error", 1000 * 60 * 60 * 2, true);
                     }
 
                     this.afterSaveError();

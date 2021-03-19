@@ -42,6 +42,10 @@ Espo.define('export:views/export-feed/fields/varchar-with-info', 'views/fields/v
                 }
             }
 
+            if (this.model.get('useAttributeNameAsColumnName')) {
+                extraInfo += `<br>${this.translate('useAttributeNameAsColumnName', 'fields', 'ExportFeed')}`;
+            }
+
             if (this.model.get('attributeId')) {
                 extraInfo = `${this.translate('Attribute', 'scopeNames', 'Global')}`;
             }
