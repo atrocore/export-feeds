@@ -81,6 +81,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/simple-type-
                     scope: model.get('entity'),
                     id: data.id,
                     model: model,
+                    configurator: this.getParentView().configData,
                     entityFields: this.options.entityFields,
                     selectedFields: this.options.selectedFields
                 }, view => {
