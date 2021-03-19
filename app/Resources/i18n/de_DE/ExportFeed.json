@@ -44,7 +44,8 @@
   "messages": {
     "systemDelimiter": "\"|\" kann nicht im Trennzeichen verwendet werden.",
     "delimitersMustBeDifferent": "Trennzeichen für Felder und Feldwerte müssen unterschiedlich sein und dürfen sich nicht gegenseitig einschließen.",
-    "noExportFeedSelected": "Kein Exportfeed ausgewählt."
+    "noExportFeedSelected": "Kein Exportfeed ausgewählt.",
+    "columnAlreadyExist": "Eine Spalte mit diesem Namen existiert bereits."
   },
   "additionalTranslates": {
     "exportName": "Datenexport im Feed %s",

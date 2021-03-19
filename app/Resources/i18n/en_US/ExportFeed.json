@@ -43,7 +43,8 @@
   "messages": {
     "systemDelimiter": "\"|\" cannot be used in delimiter.",
     "delimitersMustBeDifferent": "Delimiters for fields and field values must be different and should not include each other.",
-    "noExportFeedSelected": "No ExportFeed selected."
+    "noExportFeedSelected": "No ExportFeed selected.",
+    "columnAlreadyExist": "A column with such name already exists."
   },
   "additionalTranslates": {
     "exportName": "Export: %s",

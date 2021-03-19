@@ -131,5 +131,28 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
                 }
             }
         },
+
+        validate: function () {
+            let configuration = this.options.configurator.configuration || {};
+            let value = this.model.get(this.name);
+
+            let isNotValid = false;
+            $.each(configuration, function (k, item) {
+                if (_.isEqual(item.column, value)) {
+                    this.showValidationMessage(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'));
+                    isNotValid = true;
+                }
+
+                if (typeof item.exportIntoSeparateColumns !== 'undefined' && item.exportIntoSeparateColumns) {
+                    if (value.match(new RegExp(`^${item.column} [0-9]+$`, 'gm'))) {
+                        this.showValidationMessage(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'));
+                        isNotValid = true;
+                    }
+                }
+            }.bind(this));
+
+            return isNotValid;
+        },
+
     })
 });

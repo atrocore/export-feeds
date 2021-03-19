@@ -353,6 +353,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
             this.createView('modal', this.configFieldEditView, {
                 scope: this.panelModel.get('entity'),
+                configurator: this.configData,
                 entityFields: this.entityFields,
                 selectedFields: this.selectedFields
             }, view => {

@@ -80,11 +80,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
         },
 
         setAllowedFields() {
-            this.allowedFields = Object.keys(this.entityFields).filter(item => !this.selectedFields.includes(item));
-            let currentField = this.model.get('field');
-            if (currentField && !this.allowedFields.includes(currentField)) {
-                this.allowedFields.unshift(currentField);
-            }
+            this.allowedFields = ['id'].concat(Object.keys(this.entityFields));
         },
 
         createBaseFields() {
@@ -109,6 +105,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
 
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
+                configurator: this.options.configurator,
                 name: 'column',
                 el: `${this.options.el} .field[data-name="column"]`,
                 mode: 'edit',
@@ -124,7 +121,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 el: `${this.options.el} .field[data-name="exportBy"]`,
                 mode: 'edit',
                 params: {
-                    required: true,
                     options: [],
                     translatedOptions: {}
                 }

@@ -39,8 +39,7 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
         },
 
         checkFieldVisibility() {
-            let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('field')]);
-            if (fieldDefs && ['link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length) {
+            if (this.isRequired()) {
                 this.show();
             } else {
                 this.hide();
@@ -63,7 +62,7 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
                     let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
 
                     $.each(fields, function (field, fieldData) {
-                        if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled) {
+                        if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled && fieldData.type !== 'jsonObject' && fieldData.type !== 'linkMultiple') {
                             if (fieldData.type === 'link') {
                                 result[field + 'Id'] = this.translate(field, 'fields', entity);
                             } else {
@@ -75,6 +74,12 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
             }
 
             return result;
+        },
+
+        isRequired() {
+            let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('field')]);
+
+            return fieldDefs && ['link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length;
         },
 
     })
