@@ -28,10 +28,34 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
         init: function () {
             Dep.prototype.init.call(this);
 
-            if (this.mode === 'list' || this.mode === 'detail') {
-                if (!this.inlineEditDisabled) {
-                    this.listenTo(this, 'after:render', this.initInlineEdit, this);
-                }
+            this.listenTo(this.model, 'change:useAttributeNameAsColumnName', () => {
+                this.reRender();
+            });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            if (this.mode === 'list' && !this.inlineEditDisabled) {
+                this.listenTo(this, 'after:render', this.initInlineEdit, this);
+            }
+
+            if (this.mode === 'edit') {
+                this.checkFieldDisability();
+            }
+        },
+
+        checkFieldDisability() {
+            if (this.model.get('entity') !== 'Product' || this.model.get('field') !== 'productAttributeValues') {
+                return;
+            }
+
+            if (this.model.get('useAttributeNameAsColumnName')) {
+                this.model.set('column', '...');
+                this.$el.find('input').attr('disabled', 'disabled');
+            } else {
+                this.$el.find('input').removeAttr('disabled');
+                this.model.set('column', this.translate('productAttributeValues', 'fields', 'Product'));
             }
         },
 
@@ -44,7 +68,7 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
                 return;
             }
             $cell.css({'position': "relative", 'paddingRight': "12px"});
-            $editLink.css({'position':'absolute', 'right':'0'});
+            $editLink.css({'position': 'absolute', 'right': '0'});
 
             $cell.prepend($editLink);
 

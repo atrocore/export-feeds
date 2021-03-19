@@ -136,6 +136,13 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 el: `${this.options.el} .field[data-name="exportIntoSeparateColumns"]`,
                 mode: 'edit',
             });
+
+            this.createView('useAttributeNameAsColumnName', 'export:views/export-feed/fields/use-attribute-name-as-column-name', {
+                model: this.model,
+                name: 'useAttributeNameAsColumnName',
+                el: `${this.options.el} .field[data-name="useAttributeNameAsColumnName"]`,
+                mode: 'edit',
+            });
         },
 
         applyDynamicChanges() {

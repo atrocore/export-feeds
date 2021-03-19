@@ -19,7 +19,8 @@
     "exportByOrChannel":"Export von/Kanal",
     "data": "Daten",
     "exportResults": "Exportergebnisse",
-    "exportIntoSeparateColumns": "Separate Spalten"
+    "exportIntoSeparateColumns": "Separate Spalten",
+    "useAttributeNameAsColumnName": "Attributnamen als Spaltennamen verwenden"
   },
   "links": {
     "channels": "Kanäle",

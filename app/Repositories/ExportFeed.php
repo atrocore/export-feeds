@@ -82,7 +82,7 @@ class ExportFeed extends Base
      */
     protected function isDelimiterValid(Entity $entity): bool
     {
-        $delimiter = $entity->get('data')->delimiter;
+        $delimiter = (string)$entity->get('data')->delimiter;
         if (strpos($delimiter, '|') !== false) {
             throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
         }

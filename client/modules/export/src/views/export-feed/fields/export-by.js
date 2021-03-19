@@ -64,11 +64,10 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
 
                     $.each(fields, function (field, fieldData) {
                         if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled) {
-                            if (['varchar'].includes(fieldData.type)) {
-                                result[field] = this.translate(field, 'fields', entity);
-                            }
                             if (fieldData.type === 'link') {
                                 result[field + 'Id'] = this.translate(field, 'fields', entity);
+                            } else {
+                                result[field] = this.translate(field, 'fields', entity);
                             }
                         }
                     }.bind(this));
