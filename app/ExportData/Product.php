@@ -29,6 +29,8 @@ use Espo\ORM\EntityCollection;
  */
 class Product extends Record
 {
+    public const ATTRIBUTE_SEPARATOR = ' | ';
+
     /**
      * @var array
      */
@@ -80,8 +82,7 @@ class Product extends Record
                         $result[$row['column']] = (int)$attribute->get('value');
                         break;
                     case 'unit':
-                        $result[$row['column']] = $attribute->get('value');
-                        $result[$row['column'] . ' Unit'] = $attribute->get('data')->unit;
+                        $result[$row['column']] = $attribute->get('value') . ' ' . $attribute->get('data')->unit;
                         break;
                     default:
                         $result[$row['column']] = $attribute->get('value');
@@ -93,22 +94,20 @@ class Product extends Record
     }
 
     /**
-     * @param array $row
-     * @param array $data
+     * @param Entity $entity
+     * @param array  $row
+     * @param array  $data
      *
      * @return array
      */
-    protected function prepareAttributeValues(array $row, array $data): array
+    protected function prepareProductAttributeValues(Entity $entity, array $row, array $data): array
     {
-        echo '<pre>';
-        print_r('123');
-        die();
         $result = [];
 
         $column = $row['column'];
         $delimiter = $data['delimiter'];
 
-        $linked = $this->productAttributes;
+        $linked = $entity->get('productAttributeValues');
         $exportBy = isset($row['exportBy']) ? $row['exportBy'] : ['id'];
 
         if ($linked instanceof EntityCollection) {
@@ -130,16 +129,21 @@ class Product extends Record
 
                 if (!empty($row['exportIntoSeparateColumns'])) {
                     foreach ($links as $k => $link) {
-                        if (!empty($row['useAttributeCodeAsColumnName'])) {
-                            $attributeName = $item->get('attribute')->get('name');
-                            $channelName = $item->get('scope') === 'Global' ? 'Global' : $item->get('channel')->get('name');
-
-                            $columnName = $attributeName . ' | ' . $channelName;
-                        } else {
-                            $columnName = $column . ' ' . ($k + 1);
+                        if (empty($attribute = $item->get('attribute'))) {
+                            continue 1;
+                        }
+                        if ($item->get('scope') === 'Channel' && empty($channel = $item->get('channel'))) {
+                            continue 1;
                         }
 
-                        $result[$columnName] = $link;
+                        $columnName = [];
+                        if ($row['attributeColumn'] === 'attributeName') {
+                            $columnName[] .= $attribute->get('name');
+                        }
+                        $columnName[] = $attribute->get('code');
+                        $columnName[] = $item->get('scope') === 'Channel' ? $channel->get('code') : 'Global';
+
+                        $result[implode(self::ATTRIBUTE_SEPARATOR, $columnName)] = $link;
                     }
                 } else {
                     $result[$column] = implode($delimiter, $links);

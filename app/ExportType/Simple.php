@@ -25,6 +25,7 @@ namespace Export\ExportType;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
+use Export\ExportData\Product;
 use Export\ExportData\Record;
 use Treo\Core\FilePathBuilder;
 
@@ -161,7 +162,15 @@ class Simple extends AbstractType
             $resultRow = [];
             foreach ($columns as $columnData) {
                 foreach ($columnData as $column) {
-                    $resultRow[$column] = isset($rowData[$column]) ? $rowData[$column] : null;
+                    $preparedColumnName = $column;
+
+                    // prepare column name for product attribute values
+                    $columnParts = explode(Product::ATTRIBUTE_SEPARATOR, $column);
+                    if (count($columnParts) === 3) {
+                        $preparedColumnName = $columnParts[0] . Product::ATTRIBUTE_SEPARATOR . $columnParts[2];
+                    }
+
+                    $resultRow[$preparedColumnName] = isset($rowData[$column]) ? $rowData[$column] : null;
                 }
             }
 
