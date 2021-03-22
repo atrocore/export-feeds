@@ -133,11 +133,19 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 mode: 'edit',
             });
 
-            this.createView('useAttributeNameAsColumnName', 'export:views/export-feed/fields/use-attribute-name-as-column-name', {
+            this.createView('attributeColumn', 'export:views/export-feed/fields/attribute-column', {
                 model: this.model,
-                name: 'useAttributeNameAsColumnName',
-                el: `${this.options.el} .field[data-name="useAttributeNameAsColumnName"]`,
+                name: 'attributeColumn',
+                el: `${this.options.el} .field[data-name="attributeColumn"]`,
                 mode: 'edit',
+                prohibitedEmptyValue: true,
+                params: {
+                    options: ["attributeName", "attributeCode"],
+                    translatedOptions: {
+                        "attributeName": this.translate("attributeName", "labels", "ExportFeed"),
+                        "attributeCode": this.translate("attributeCode", "labels", "ExportFeed")
+                    }
+                }
             });
         },
 

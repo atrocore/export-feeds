@@ -18,14 +18,17 @@
     "delimiter": "Field Value Delimiter",
     "exportByOrChannel":"Export By/Channel",
     "exportResults": "Export Results",
-    "exportIntoSeparateColumns": "Separate columns",
-    "useAttributeNameAsColumnName": "Use attribute name as a column name"
+    "exportIntoSeparateColumns": "Separate columns"
   },
   "links": {
     "channels": "Channels",
     "exportResults": "Export Results"
   },
   "labels": {
+    "attributeName": "Attribute Name",
+    "attributeCode": "Attribute Code",
+    "useAttributeNameAsColumnName": "Use attribute name as a column name",
+    "useAttributeCodeAsColumnName": "Use attribute code as a column name",
     "fields": "Fields",
     "ignoreFilter": "Ignore filter in the feed",
     "Create ExportFeed": "Create Export Feed",

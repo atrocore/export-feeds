@@ -22,6 +22,7 @@ namespace Export\ExportData;
 
 use Espo\Core\Utils\Json;
 use Espo\ORM\Entity;
+use Espo\ORM\EntityCollection;
 
 /**
  * Class Product
@@ -85,6 +86,66 @@ class Product extends Record
                     default:
                         $result[$row['column']] = $attribute->get('value');
                 }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $row
+     * @param array $data
+     *
+     * @return array
+     */
+    protected function prepareAttributeValues(array $row, array $data): array
+    {
+        echo '<pre>';
+        print_r('123');
+        die();
+        $result = [];
+
+        $column = $row['column'];
+        $delimiter = $data['delimiter'];
+
+        $linked = $this->productAttributes;
+        $exportBy = isset($row['exportBy']) ? $row['exportBy'] : ['id'];
+
+        if ($linked instanceof EntityCollection) {
+            if (count($linked) > 0) {
+                $delimiter = !empty($delimiter) ? $delimiter : ',';
+
+                $links = [];
+                foreach ($linked as $item) {
+                    if ($item instanceof Entity) {
+                        $fieldResult = [];
+                        foreach ($exportBy as $v) {
+                            if ($item->hasField($v)) {
+                                $fieldResult[] = $item->get($v);
+                            }
+                        }
+                        $links[] = implode('|', $fieldResult);
+                    }
+                }
+
+                if (!empty($row['exportIntoSeparateColumns'])) {
+                    foreach ($links as $k => $link) {
+                        if (!empty($row['useAttributeCodeAsColumnName'])) {
+                            $attributeName = $item->get('attribute')->get('name');
+                            $channelName = $item->get('scope') === 'Global' ? 'Global' : $item->get('channel')->get('name');
+
+                            $columnName = $attributeName . ' | ' . $channelName;
+                        } else {
+                            $columnName = $column . ' ' . ($k + 1);
+                        }
+
+                        $result[$columnName] = $link;
+                    }
+                } else {
+                    $result[$column] = implode($delimiter, $links);
+                }
+            } else {
+                $result[$column] = null;
             }
         }
 

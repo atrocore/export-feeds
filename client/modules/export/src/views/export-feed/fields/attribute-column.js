@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/use-attribute-name-as-column-name', 'views/fields/bool',
+Espo.define('export:views/export-feed/fields/attribute-column', 'views/fields/enum',
     Dep => Dep.extend({
 
         setup() {
@@ -38,10 +38,9 @@ Espo.define('export:views/export-feed/fields/use-attribute-name-as-column-name',
 
         checkFieldVisibility() {
             if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues' && this.model.get('exportIntoSeparateColumns')) {
-                this.show();
+                this.$el.show();
             } else {
-                this.model.set('useAttributeNameAsColumnName', false);
-                this.hide();
+                this.$el.hide();
             }
         },
 

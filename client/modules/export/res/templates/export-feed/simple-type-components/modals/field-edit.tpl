@@ -11,6 +11,7 @@
                 <span class="label-text">{{translate 'column' scope='ExportFeed' category='fields'}}</span>
             </label>
             <div class="field" data-name="column">{{{column}}}</div>
+            <div class="field" data-name="attributeColumn">{{{attributeColumn}}}</div>
         </div>
     </div>
     <div class="row">
@@ -25,14 +26,6 @@
                 <span class="label-text">{{translate 'exportIntoSeparateColumns' scope='ExportFeed' category='fields'}}</span>
             </label>
             <div class="field" data-name="exportIntoSeparateColumns">{{{exportIntoSeparateColumns}}}</div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="cell col-sm-6">
-            <label class="control-label">
-                <span class="label-text">{{translate 'useAttributeNameAsColumnName' scope='ExportFeed' category='fields'}}</span>
-            </label>
-            <div class="field" data-name="useAttributeNameAsColumnName">{{{useAttributeNameAsColumnName}}}</div>
         </div>
     </div>
 </div>

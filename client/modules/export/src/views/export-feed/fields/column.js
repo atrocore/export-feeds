@@ -28,7 +28,11 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
         init: function () {
             Dep.prototype.init.call(this);
 
-            this.listenTo(this.model, 'change:useAttributeNameAsColumnName', () => {
+            if (this.params.listView) {
+                this.inlineEditDisabled = true;
+            }
+
+            this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns', () => {
                 this.reRender();
             });
         },
@@ -40,23 +44,35 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
                 this.listenTo(this, 'after:render', this.initInlineEdit, this);
             }
 
-            if (this.mode === 'edit') {
-                this.checkFieldDisability();
+            if (this.mode === 'edit' || this.mode === 'detail') {
+                if (this.params.listView) {
+                    this.checkFieldDisability();
+                } else {
+                    this.checkFieldVisibility();
+                }
             }
         },
 
         checkFieldDisability() {
-            if (this.model.get('entity') !== 'Product' || this.model.get('field') !== 'productAttributeValues') {
-                return;
-            }
-
-            if (this.model.get('useAttributeNameAsColumnName')) {
-                this.model.set('column', '...');
+            if (this.isPavs()) {
                 this.$el.find('input').attr('disabled', 'disabled');
             } else {
                 this.$el.find('input').removeAttr('disabled');
-                this.model.set('column', this.translate('productAttributeValues', 'fields', 'Product'));
             }
+        },
+
+        checkFieldVisibility() {
+            if (this.isPavs()) {
+                this.model.set('column', '...');
+                this.$el.hide();
+            } else {
+                this.model.set('column', this.translate('productAttributeValues', 'fields', 'Product'));
+                this.$el.show();
+            }
+        },
+
+        isPavs() {
+            return this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues' && this.model.get('exportIntoSeparateColumns');
         },
 
         initInlineEdit: function () {

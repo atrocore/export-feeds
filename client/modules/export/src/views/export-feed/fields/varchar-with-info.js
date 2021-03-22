@@ -39,11 +39,15 @@ Espo.define('export:views/export-feed/fields/varchar-with-info', 'views/fields/v
                 extraInfo = `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
                 if (this.model.get('exportIntoSeparateColumns')) {
                     extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportFeed')}`;
-                }
-            }
 
-            if (this.model.get('useAttributeNameAsColumnName')) {
-                extraInfo += `<br>${this.translate('useAttributeNameAsColumnName', 'fields', 'ExportFeed')}`;
+                    if (this.model.get('attributeColumn') === 'attributeName') {
+                        extraInfo += `<br>${this.translate('useAttributeNameAsColumnName', 'labels', 'ExportFeed')}`;
+                    }
+
+                    if (this.model.get('attributeColumn') === 'attributeCode') {
+                        extraInfo += `<br>${this.translate('useAttributeCodeAsColumnName', 'labels', 'ExportFeed')}`;
+                    }
+                }
             }
 
             if (this.model.get('attributeId')) {
