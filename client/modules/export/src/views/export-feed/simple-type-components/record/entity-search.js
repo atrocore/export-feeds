@@ -46,19 +46,20 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
             });
 
             this.listenTo(this.options.feedModel, 'before:save', (attrs) => {
-                this.search();
+                if (attrs.data) {
+                    this.search();
+                    let data = _.extend({}, this.model.get('data'), {
+                        where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
+                        whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
+                        whereScope: this.scope,
+                    });
 
-                let data = _.extend({}, this.model.get('data'), {
-                    where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
-                    whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
-                    whereScope: this.scope,
-                });
+                    this.options.feedModel.set('data', data);
 
-                this.options.feedModel.set('data', data);
-
-                attrs.data.where = data.where;
-                attrs.data.whereData = data.whereData;
-                attrs.data.whereScope = data.whereScope;
+                    attrs.data.where = data.where;
+                    attrs.data.whereData = data.whereData;
+                    attrs.data.whereScope = data.whereScope;
+                }
             });
 
             this.listenTo(this.options.feedModel, 'after:save', () => {

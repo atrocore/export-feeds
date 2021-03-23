@@ -28,7 +28,7 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
         init: function () {
             Dep.prototype.init.call(this);
 
-            if (this.params.listView) {
+            if (this.model.get('column') === '...') {
                 this.inlineEditDisabled = true;
             }
 
