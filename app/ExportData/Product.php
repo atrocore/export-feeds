@@ -22,7 +22,6 @@ namespace Export\ExportData;
 
 use Espo\Core\Utils\Json;
 use Espo\ORM\Entity;
-use Espo\ORM\EntityCollection;
 use Pim\Services\ProductAttributeValue;
 
 /**
