@@ -161,13 +161,11 @@ class Record
 
                     break;
                 case 'currency':
-                    $result[$column] = $entity->get($field);
-                    $result[$column . ' Currency'] = $entity->get($field . 'Currency');
+                    $result[$column] = $entity->get($field) . ' ' . $entity->get($field . 'Currency');
 
                     break;
                 case 'unit':
-                    $result[$column] = $entity->get($field);
-                    $result[$column . ' Unit'] = $entity->get($field . 'Unit');
+                    $result[$column] = $entity->get($field) . ' ' . $entity->get($field . 'Unit');
 
                     break;
                 default:
