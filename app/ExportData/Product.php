@@ -71,7 +71,7 @@ class Product extends Record
         $channelId = isset($row['channelId']) ? $row['channelId'] : '';
 
         if (!empty($pav = $this->getAttribute($row['attributeId'], $channelId))) {
-            $result[$row['column']] = $this->preparePavValue($pav, $data['delimiter']);
+            $result[$row['column']] = $this->getPavFieldValue($pav, 'value', $data['delimiter']);
         }
 
         return $result;
@@ -88,56 +88,37 @@ class Product extends Record
     {
         $result = [];
 
-        $column = $row['column'];
-        $delimiter = $data['delimiter'];
-
         $linked = $entity->get('productAttributeValues');
         $exportBy = isset($row['exportBy']) ? $row['exportBy'] : ['id'];
 
         if (count($linked) > 0) {
-            $delimiter = !empty($delimiter) ? $delimiter : ',';
-
-            $links = [];
+            $delimiter = !empty($data['delimiter']) ? $data['delimiter'] : ',';
             foreach ($linked as $item) {
+                if (empty($attribute = $item->get('attribute'))) {
+                    continue 1;
+                }
+
+                if ($item->get('scope') === 'Channel' && empty($channel = $item->get('channel'))) {
+                    continue 1;
+                }
+
                 $this->getPavService()->prepareEntityForOutput($item);
 
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
                     if ($item->hasField($v)) {
-                        if ($v === 'value') {
-                            $fieldResult[] = $this->preparePavValue($item, $delimiter);
-                        } else {
-                            $fieldResult[] = $item->get($v);
-                        }
-
+                        $fieldResult[] = $this->getPavFieldValue($item, $v, $delimiter);
                     }
                 }
-                $links[] = implode('|', $fieldResult);
-            }
-
-            if (!empty($row['exportIntoSeparateColumns'])) {
-                foreach ($links as $k => $link) {
-                    if (empty($attribute = $item->get('attribute'))) {
-                        continue 1;
-                    }
-                    if ($item->get('scope') === 'Channel' && empty($channel = $item->get('channel'))) {
-                        continue 1;
-                    }
-
-                    $columnName = [];
-                    if ($row['attributeColumn'] === 'attributeName') {
-                        $columnName[] .= $attribute->get('name');
-                    }
-                    $columnName[] = $attribute->get('code');
-                    $columnName[] = $item->get('scope') === 'Channel' ? $channel->get('code') : 'Global';
-
-                    $result[implode(self::ATTRIBUTE_SEPARATOR, $columnName)] = $link;
+                $columnName = [];
+                if ($row['attributeColumn'] === 'attributeName') {
+                    $columnName[] .= $attribute->get('name');
                 }
-            } else {
-                $result[$column] = implode($delimiter, $links);
+                $columnName[] = $attribute->get('code');
+                $columnName[] = $item->get('scope') === 'Channel' ? $channel->get('code') : 'Global';
+
+                $result[implode(self::ATTRIBUTE_SEPARATOR, $columnName)] = implode('|', $fieldResult);
             }
-        } else {
-            $result[$column] = null;
         }
 
         return $result;
@@ -145,28 +126,33 @@ class Product extends Record
 
     /**
      * @param Entity $pav
+     * @param string $field
      * @param string $delimiter
      *
      * @return mixed
      */
-    protected function preparePavValue(Entity $pav, string $delimiter)
+    protected function getPavFieldValue(Entity $pav, string $field, string $delimiter)
     {
         $this->getPavService()->prepareEntityForOutput($pav);
 
-        $result = $pav->get('value');
+        $result = $pav->get($field);
+
+        if (strpos($field, 'value') === false) {
+            return $result;
+        }
 
         switch ($pav->get('attributeType')) {
             case 'array':
             case 'arrayMultiLang':
             case 'multiEnum':
             case 'multiEnumMultiLang':
-                $result = implode($delimiter, Json::decode($pav->get('value'), true));
+                $result = implode($delimiter, $pav->get($field));
                 break;
             case 'unit':
-                $result = $pav->get('value') . ' ' . $pav->get('valueUnit');
+                $result = $pav->get($field) . ' ' . $pav->get('data')->unit;
                 break;
             case 'currency':
-                $result = $pav->get('value') . ' ' . $pav->get('valueCurrency');
+                $result = $pav->get($field) . ' ' . $pav->get('data')->currency;
                 break;
         }
 

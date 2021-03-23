@@ -158,6 +158,14 @@ class Simple extends AbstractType
             }
         }
 
+        // sort columns for product attribute values
+        $attributesColumnKey = '...';
+        if (isset($columns[$attributesColumnKey])) {
+            $sortedAttributes = $columns[$attributesColumnKey];
+            sort($sortedAttributes);
+            $columns[$attributesColumnKey] = $sortedAttributes;
+        }
+
         foreach ($resultData as $rowData) {
             $resultRow = [];
             foreach ($columns as $columnData) {
