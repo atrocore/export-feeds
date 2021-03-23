@@ -23,6 +23,12 @@ Espo.define('export:views/export-feed/fields/attribute-column', 'views/fields/en
         setup() {
             Dep.prototype.setup.call(this);
 
+            this.listenTo(this.model, 'change:field', () => {
+                if (!this.model.get('attributeColumn')) {
+                    this.model.set('attributeColumn', 'attributeName');
+                }
+            });
+
             this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns', () => {
                 this.reRender();
             });

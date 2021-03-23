@@ -169,7 +169,11 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
             $.each(configuration, function (k, item) {
                 if (this.model.id !== (k + 1)) {
                     if (_.isEqual(item.column, value)) {
-                        this.showValidationMessage(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'));
+                        if (value === '...') {
+                            Espo.Ui.notify(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'), 'error', 1000 * 60 * 60 * 2, true);
+                        } else {
+                            this.showValidationMessage(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'));
+                        }
                         isNotValid = true;
                     }
 

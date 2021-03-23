@@ -33,6 +33,16 @@ Espo.define('export:views/export-feed/fields/separate-columns', 'views/fields/bo
 
             if (this.mode === 'edit' || this.mode === 'detail') {
                 this.checkFieldVisibility();
+                this.checkFieldDisability();
+            }
+        },
+
+        checkFieldDisability() {
+            if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues') {
+                this.$el.find('input').attr('disabled', 'disabled');
+                this.model.set('exportIntoSeparateColumns', true);
+            } else {
+                this.$el.find('input').removeAttr('disabled');
             }
         },
 
