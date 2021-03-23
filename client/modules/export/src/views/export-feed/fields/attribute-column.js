@@ -36,12 +36,27 @@ Espo.define('export:views/export-feed/fields/attribute-column', 'views/fields/en
             }
         },
 
+        isRequired() {
+            return true;
+        },
+
         checkFieldVisibility() {
-            if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues' && this.model.get('exportIntoSeparateColumns')) {
+            if (this.isVisible()) {
                 this.$el.show();
             } else {
                 this.$el.hide();
             }
+        },
+
+        isVisible() {
+            return this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues' && this.model.get('exportIntoSeparateColumns')
+        },
+
+        validateRequired: function () {
+            if (!this.isVisible()) {
+                return false;
+            }
+            Dep.prototype.validateRequired.call(this);
         },
 
     })

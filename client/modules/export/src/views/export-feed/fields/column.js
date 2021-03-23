@@ -66,9 +66,13 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
                 this.model.set('column', '...');
                 this.$el.hide();
             } else {
-                this.model.set('column', this.translate('productAttributeValues', 'fields', 'Product'));
+                this.model.set('column', this.translate(this.model.get('field'), 'fields', 'Product'));
                 this.$el.show();
             }
+        },
+
+        isRequired() {
+            return true;
         },
 
         isPavs() {
@@ -149,7 +153,16 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
         },
 
         validate: function () {
-            let configuration = this.options.configurator.configuration || {};
+            let configuration = {};
+
+            if (this.params.configurator) {
+                configuration = this.params.configurator.configuration;
+            }
+
+            if (this.options.configurator) {
+                configuration = this.options.configurator.configuration;
+            }
+
             let value = this.model.get(this.name);
 
             let isNotValid = false;

@@ -108,10 +108,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 configurator: this.options.configurator,
                 name: 'column',
                 el: `${this.options.el} .field[data-name="column"]`,
-                mode: 'edit',
-                params: {
-                    required: true
-                }
+                mode: 'edit'
             });
 
             this.createView('exportBy', 'export:views/export-feed/fields/export-by', {

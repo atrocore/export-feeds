@@ -329,6 +329,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     params: {
                         required: true,
                         listView: true,
+                        configurator: this.configData,
                         inlineEditDisabled: !this.getAcl().check('ExportFeed', 'edit')
                     },
                     view: "export:views/export-feed/fields/column"

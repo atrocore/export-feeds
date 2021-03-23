@@ -50,10 +50,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 model: this.model,
                 name: 'column',
                 el: `${this.options.el} .field[data-name="column"]`,
-                mode: 'edit',
-                params: {
-                    required: true
-                }
+                mode: 'edit'
             }, view => {
             });
         },
