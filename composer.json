@@ -2,7 +2,7 @@
   "name": "atrocore/export-feeds",
   "require": {
     "atrocore/core": "~1.1.23",
-    "atrocore/pim": "~1.1.0"
+    "atrocore/export-feeds-common": "~1.0.0"
   },
   "autoload": {
     "psr-4": {
