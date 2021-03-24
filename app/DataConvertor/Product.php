@@ -139,6 +139,8 @@ class Product extends Base
                 $columnName = implode('_', [$productAttribute['attributeId'], $locale, $productAttribute['channelId']]);
 
                 $attributeLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['attributeName'] : $productAttribute['attributeCode'];
+                $attributeLabel = str_replace('›', '>', $attributeLabel);
+
                 $channelLabel = 'Global';
                 if ($productAttribute['scope'] === 'Channel') {
                     $channelLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['channelName'] : $productAttribute['channelCode'];
