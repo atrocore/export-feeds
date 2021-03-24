@@ -27,6 +27,7 @@ use Espo\Core\Utils\Metadata;
 use Espo\Entities\Attachment;
 use Espo\ORM\EntityManager;
 use Espo\Core\Container;
+use Espo\Services\Record;
 
 /**
  * Class AbstractType
@@ -42,6 +43,11 @@ abstract class AbstractType
      * @var array
      */
     protected $data;
+
+    /**
+     * @var array
+     */
+    private $services = [];
 
     /**
      * AbstractType constructor.
@@ -66,6 +72,20 @@ abstract class AbstractType
     protected function getEntityManager(): EntityManager
     {
         return $this->container->get('entityManager');
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return Record
+     */
+    protected function getService(string $serviceName): Record
+    {
+        if (!isset($this->services[$serviceName])) {
+            $this->services[$serviceName] = $this->container->get('serviceFactory')->create($serviceName);
+        }
+
+        return $this->services[$serviceName];
     }
 
     /**

@@ -60,9 +60,13 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
                     || fieldLinkDefs.entity;
                 if (entity) {
                     let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
+                    let notAllowedType = ['jsonObject', 'linkMultiple'];
+                    if (fieldLinkDefs.type === 'hasMany') {
+                        notAllowedType = notAllowedType.concat(['array', 'arrayMultiLang', 'multiEnum', 'multiEnumMultiLang']);
+                    }
 
                     $.each(fields, function (field, fieldData) {
-                        if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled && fieldData.type !== 'jsonObject' && fieldData.type !== 'linkMultiple') {
+                        if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
                             if (fieldData.type === 'link') {
                                 result[field + 'Id'] = this.translate(field, 'fields', entity);
                             } else {

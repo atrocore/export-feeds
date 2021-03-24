@@ -25,8 +25,7 @@ namespace Export\ExportType;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
-use Export\ExportData\Product;
-use Export\ExportData\Record;
+use Export\DataConvertor\Base;
 use Treo\Core\FilePathBuilder;
 
 /**
@@ -34,6 +33,11 @@ use Treo\Core\FilePathBuilder;
  */
 class Simple extends AbstractType
 {
+    /**
+     * @var Base|null
+     */
+    private $dataConvertor = null;
+
     /**
      * @return Attachment
      * @throws Error
@@ -129,28 +133,24 @@ class Simple extends AbstractType
         // prepare export feed data
         $data = $this->getFeedData();
 
-        // entities
-        $entities = $this->getEntities();
-
-        // get prepare data class
-        $dataPrepare = $this->getPrepareDataClass($data['entity']);
-
         $columns = [];
-        if (!empty($entities)) {
-            // prepare result
-            foreach ($entities as $entity) {
-                $resultData[$entity->get('id')] = [];
-                foreach ($data['configuration'] as $row) {
-                    $rowData = $dataPrepare->prepare($entity, $this->prepareRow($row), $data);
-                    $resultData[$entity->get('id')] = array_merge($resultData[$entity->get('id')], $rowData);
 
-                    // set columns
-                    $columns[$row['column']] = !isset($columns[$row['column']]) ? [] : $columns[$row['column']];
-                    $columns[$row['column']] = array_unique(array_merge($columns[$row['column']], array_keys($rowData)));
-                }
+        $resultData = [];
+
+        foreach ($this->getRecords() as $record) {
+            $resultData[$record['id']] = [];
+            foreach ($data['configuration'] as $row) {
+                // convert record data
+                $rowData = $this->getDataConvertor($data['entity'])->convert($record, $this->prepareRow($row));
+
+                $resultData[$record['id']] = array_merge($resultData[$record['id']], $rowData);
+
+                // set columns
+                $columns[$row['column']] = !isset($columns[$row['column']]) ? [] : $columns[$row['column']];
+                $columns[$row['column']] = array_unique(array_merge($columns[$row['column']], array_keys($rowData)));
             }
-            $resultData = array_values($resultData);
         }
+        $resultData = array_values($resultData);
 
         if (empty($resultData)) {
             foreach ($data['configuration'] as $row) {
@@ -158,45 +158,40 @@ class Simple extends AbstractType
             }
         }
 
-        // sort columns for product attribute values
-        $attributesColumnKey = '...';
-        if (isset($columns[$attributesColumnKey])) {
-            $sortedAttributes = $columns[$attributesColumnKey];
-            sort($sortedAttributes);
-            $columns[$attributesColumnKey] = $sortedAttributes;
+        // sorting columns
+        foreach ($columns as $k => $rows) {
+            sort($rows);
+            $columns[$k] = $rows;
         }
 
         foreach ($resultData as $rowData) {
             $resultRow = [];
             foreach ($columns as $columnData) {
                 foreach ($columnData as $column) {
-                    $preparedColumnName = $column;
-
-                    // prepare column name for product attribute values
-                    $columnParts = explode(Product::ATTRIBUTE_SEPARATOR, $column);
-                    if (count($columnParts) === 3) {
-                        $preparedColumnName = $columnParts[0] . Product::ATTRIBUTE_SEPARATOR . $columnParts[2];
-                    }
-
-                    $resultRow[$preparedColumnName] = isset($rowData[$column]) ? $rowData[$column] : null;
+                    $resultRow[$column] = isset($rowData[$column]) ? $rowData[$column] : null;
                 }
             }
-
             $result[] = $resultRow;
         }
 
-        return $result;
+        return $this->getDataConvertor($data['entity'])->prepareResult($result, $this->data);
     }
 
     /**
-     * @return mixed
+     * @return array
      */
-    protected function getEntities()
+    protected function getRecords(): array
     {
+        $maxSize = 200;
+
         $data = $this->getFeedData();
 
         $params = [
-            'where' => !empty($data['where']) ? $data['where'] : []
+            'sortBy'  => 'id',
+            'asc'     => true,
+            'offset'  => 0,
+            'maxSize' => $maxSize,
+            'where'   => !empty($data['where']) ? $data['where'] : []
         ];
 
         if (!empty($this->data['exportByChannelId'])) {
@@ -229,30 +224,47 @@ class Simple extends AbstractType
             }
         }
 
-        $selectParams = $this
-            ->getSelectManager($this->data['feed']['data']['entity'])
-            ->getSelectParams($params, true, true);
+        $records = [];
+        while (true) {
+            $result = $this->getService($data['entity'])->findEntities($params);
 
-        return $this
-            ->getEntityManager()
-            ->getRepository($data['entity'])
-            ->find($selectParams);
+            $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
+
+            if (count($list) == 0) {
+                break;
+            }
+
+            $records = array_merge($records, $list);
+
+            $params['offset'] = $params['offset'] + $maxSize;
+        }
+
+        return $records;
     }
 
     /**
-     * @param string $entityName
+     * @param string $scope
      *
-     * @return Record
+     * @return Base
+     * @throws Error
      */
-    protected function getPrepareDataClass(string $entityName): Record
+    protected function getDataConvertor(string $scope): Base
     {
-        $prepareDataClassName = "Export\\ExportData\\" . $entityName;
+        if (empty($this->dataConvertor)) {
+            $className = "Export\\DataConvertor\\" . $scope;
 
-        if (!class_exists($prepareDataClassName)) {
-            $prepareDataClassName = "Export\\ExportData\\Record";
+            if (!class_exists($className)) {
+                $className = Base::class;
+            }
+
+            if (!is_a($className, Base::class, true)) {
+                throw new Error($className . ' should be instance of ' . Base::class);
+            }
+
+            $this->dataConvertor = new $className($this->container);
         }
 
-        return new $prepareDataClassName($this->container);
+        return $this->dataConvertor;
     }
 
     /**
@@ -262,8 +274,11 @@ class Simple extends AbstractType
      */
     protected function prepareRow(array $row): array
     {
-        // set channel
+        $feedData = $this->getFeedData();
+
         $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
+        $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
+        $row['entity'] = $feedData['entity'];
 
         return $row;
     }
