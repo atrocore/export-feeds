@@ -166,7 +166,6 @@ class Product extends Base
                 $columnName = self::createColumnName($productAttribute['attributeId'], $locale, (string)$productAttribute['channelId']);
 
                 $attributeLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['attributeName'] : $productAttribute['attributeCode'];
-                $attributeLabel = str_replace('›', '>', $attributeLabel);
 
                 $channelLabel = 'Global';
                 if ($productAttribute['scope'] === 'Channel') {
