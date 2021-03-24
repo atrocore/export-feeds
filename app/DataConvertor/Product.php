@@ -56,15 +56,42 @@ class Product extends Base
      */
     public function prepareResult(array $result, array $configuration): array
     {
-//        $configuration['exportByChannelId']
+        $cropped = [];
+        if (!empty($configuration['exportByChannelId'])) {
+            foreach ($result as $k => $rows) {
+                foreach ($rows as $column => $value) {
+                    if (isset($this->columnData[$column])) {
+                        $data = $this->columnData[$column];
+                        if (!empty($data['channelId'])) {
+                            continue 1;
+                        }
+                        $channelColumn = self::createColumnName($data['attributeId'], $data['locale'], $configuration['exportByChannelId']);
+                        if (!empty($result[$k][$channelColumn])) {
+                            $cropped[$k][$column] = $result[$k][$channelColumn];
+                        } else {
+                            $cropped[$k][$column] = $value;
+                        }
+                    } else {
+                        $cropped[$k][$column] = $value;
+                    }
+                }
+            }
+        } else {
+            $cropped = $result;
+        }
 
         $preparedResult = [];
-        foreach ($result as $k => $rows) {
+        foreach ($cropped as $k => $rows) {
             foreach ($rows as $column => $value) {
                 if (isset($this->columnData[$column])) {
-                    $column = $this->columnData[$column];
+                    if (!empty($configuration['exportByChannelId'])) {
+                        $preparedResult[$k][$this->columnData[$column]['attributeLabel']] = $value;
+                    } else {
+                        $preparedResult[$k][$this->columnData[$column]['attributeLabel'] . ' | ' . $this->columnData[$column]['channelLabel']] = $value;
+                    }
+                } else {
+                    $preparedResult[$k][$column] = $value;
                 }
-                $preparedResult[$k][$column] = $value;
             }
         }
 
@@ -136,7 +163,7 @@ class Product extends Base
                     $locale = $parts[1];
                 }
 
-                $columnName = implode('_', [$productAttribute['attributeId'], $locale, $productAttribute['channelId']]);
+                $columnName = self::createColumnName($productAttribute['attributeId'], $locale, (string)$productAttribute['channelId']);
 
                 $attributeLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['attributeName'] : $productAttribute['attributeCode'];
                 $attributeLabel = str_replace('›', '>', $attributeLabel);
@@ -146,7 +173,13 @@ class Product extends Base
                     $channelLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['channelName'] : $productAttribute['channelCode'];
                 }
 
-                $this->columnData[$columnName] = $attributeLabel . ' | ' . $channelLabel;
+                $this->columnData[$columnName] = [
+                    'attributeId'    => $productAttribute['attributeId'],
+                    'attributeLabel' => $attributeLabel,
+                    'locale'         => $locale,
+                    'channelId'      => $productAttribute['channelId'],
+                    'channelLabel'   => $channelLabel
+                ];
 
                 $result[$columnName] = implode('|', $fieldResult);
             }
@@ -181,5 +214,17 @@ class Product extends Base
         }
 
         return $this->productAttributes[$productId];
+    }
+
+    /**
+     * @param string $attributeId
+     * @param string $locale
+     * @param string $channelId
+     *
+     * @return string
+     */
+    private static function createColumnName(string $attributeId, string $locale, string $channelId): string
+    {
+        return implode('_', ['attr', $attributeId, $locale, $channelId]);
     }
 }
