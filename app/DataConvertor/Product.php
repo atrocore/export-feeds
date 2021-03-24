@@ -66,7 +66,7 @@ class Product extends Base
                             continue 1;
                         }
                         $channelColumn = self::createColumnName($data['attributeId'], $data['locale'], $configuration['exportByChannelId']);
-                        if (!empty($result[$k][$channelColumn])) {
+                        if (!self::isEmpty($result[$k][$channelColumn])) {
                             $cropped[$k][$column] = $result[$k][$channelColumn];
                         } else {
                             $cropped[$k][$column] = $value;
@@ -226,5 +226,15 @@ class Product extends Base
     private static function createColumnName(string $attributeId, string $locale, string $channelId): string
     {
         return implode('_', ['attr', $attributeId, $locale, $channelId]);
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    private static function isEmpty($value): bool
+    {
+        return empty($value) && $value !== 0 && $value !== '0';
     }
 }
