@@ -40,17 +40,20 @@ class ExportFeed extends Base
      */
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if ($entity->get('type') == 'simple') {
-            if (!empty($entity->get('data'))) {
-                if (!$this->isDelimiterValid($entity)) {
+        if (!$entity->isNew()) {
+            if ($entity->get('type') == 'simple') {
+                if (empty($entity->get('data')) || !$this->isDelimiterValid($entity)) {
                     throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
                 }
             }
-        }
-
-        if ($entity->isNew() && empty($entity->get('fileType'))) {
-            $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
-            $entity->set('fileType', array_shift($types));
+        } else {
+            if (empty($entity->get('fileType'))) {
+                $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
+                $first = array_shift($types);
+                if (!empty($first)) {
+                    $entity->set('fileType', $first);
+                }
+            }
         }
 
         parent::beforeSave($entity, $options);
