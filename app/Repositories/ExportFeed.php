@@ -42,7 +42,7 @@ class ExportFeed extends Base
     {
         if (!$entity->isNew()) {
             if ($entity->get('type') == 'simple') {
-                if (empty($entity->get('data')) || !$this->isDelimiterValid($entity)) {
+                if (empty($entity->get('data')) || empty($entity->get('data')->configuration) || !$this->isDelimiterValid($entity)) {
                     throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
                 }
             }

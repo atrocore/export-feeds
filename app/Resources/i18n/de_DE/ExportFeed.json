@@ -59,7 +59,8 @@
   "exceptions": {
     "wrongExportFeedType": "Falscher Exportfeed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
-    "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch."
+    "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch.",
+    "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden."
   },
   "tooltips": {
     "channels": "Mit diesen Kanälen wird der Feed verknüpft."

@@ -105,13 +105,12 @@ Espo.define('export:views/export-feed/simple-type-components/record/simple-type-
             let id = data.id;
             if (!id) return;
 
-            this.confirm({
-                message: this.translate('removeRecordConfirmation', 'messages'),
-                confirmText: this.translate('Remove')
-            }, () => {
+            if (this.collection.total > 1) {
                 this.removeRecordFromList(id);
-                this.collection.trigger('configuration-update')
-            });
+                this.collection.trigger('configuration-update');
+            } else {
+                Espo.Ui.notify(this.translate('lastRecordIsRequired', 'exceptions', 'ExportFeed'), "error", 1000 * 60 * 60 * 2, true);
+            }
         }
 
     })

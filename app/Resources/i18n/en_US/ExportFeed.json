@@ -58,7 +58,8 @@
   "exceptions": {
     "wrongExportFeedType": "Wrong Export Feed type.",
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
-    "configuratorSettingsIncorrect": "Configurator settings incorrect"
+    "configuratorSettingsIncorrect": "Configurator settings incorrect.",
+    "lastRecordIsRequired": "Last record in the configurator cannot be removed."
   },
   "tooltips": {
     "channels": "Export Feed to will be linked to these channels."
