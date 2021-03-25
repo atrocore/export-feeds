@@ -48,6 +48,11 @@ class ExportFeed extends Base
             }
         }
 
+        if ($entity->isNew() && empty($entity->get('fileType'))) {
+            $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
+            $entity->set('fileType', array_shift($types));
+        }
+
         parent::beforeSave($entity, $options);
     }
 
