@@ -32,6 +32,8 @@ use Espo\ORM\Entity;
  */
 class ExportFeed extends Base
 {
+    public const DEFAULT_DELIMITER = ',';
+
     /**
      * @param Entity $entity
      * @param array  $options
@@ -40,18 +42,28 @@ class ExportFeed extends Base
      */
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if (!$entity->isNew()) {
-            if ($entity->get('type') == 'simple') {
+        if ($entity->get('type') == 'simple') {
+            if ($entity->isNew()) {
+                if (empty($entity->get('fileType'))) {
+                    $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
+                    $first = array_shift($types);
+                    if (!empty($first)) {
+                        $entity->set('fileType', $first);
+                    }
+                }
+
+                $data = [
+                    'entity'        => empty($this->getMetadata()->get(['scopes', 'Product'])) ? 'User' : 'Product',
+                    'allFields'     => true,
+                    'delimiter'     => self::DEFAULT_DELIMITER,
+                    'configuration' => []
+                ];
+
+                $entity->set('data', $data);
+
+            } else {
                 if (empty($entity->get('data')) || empty($entity->get('data')->configuration) || !$this->isDelimiterValid($entity)) {
                     throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
-                }
-            }
-        } else {
-            if (empty($entity->get('fileType'))) {
-                $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
-                $first = array_shift($types);
-                if (!empty($first)) {
-                    $entity->set('fileType', $first);
                 }
             }
         }

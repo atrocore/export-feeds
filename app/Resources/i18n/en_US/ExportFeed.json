@@ -18,7 +18,8 @@
     "delimiter": "Field Value Delimiter",
     "exportByOrChannel":"Export By/Channel",
     "exportResults": "Export Results",
-    "exportIntoSeparateColumns": "Separate columns"
+    "exportIntoSeparateColumns": "Separate columns",
+    "allFields": "All Fields"
   },
   "links": {
     "channels": "Channels",

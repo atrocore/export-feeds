@@ -44,6 +44,10 @@ Espo.define('export:views/export-feed/fields/remove', 'view', function (Dep) {
 
             this.buttonDisabled = !this.getAcl().check('ExportFeed', 'edit');
 
+            if (this.model.get('allFields')) {
+                this.buttonDisabled = true;
+            }
+
             this.listenTo(this.model.collection, 'model-removing', () => {
                 this.buttonDisabled = true;
                 this.$el.find('button').prop('disabled', true);

@@ -30,17 +30,13 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         configAttributeEditView: 'export:views/export-feed/simple-type-components/modals/attribute-edit',
 
-        configuratorFields: ['entity', 'delimiter'],
+        configuratorFields: ['entity', 'delimiter', 'allFields'],
 
         validations: ['configurator', 'delimiters'],
 
         initialData: null,
 
         configData: null,
-
-        defaultEntity: 'Product',
-
-        defaultDelimiter: ',',
 
         events: _.extend({
             'click button[data-name="configuratorActions"]': function (e) {
@@ -56,6 +52,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             let data = Dep.prototype.data.call(this);
             data.scope = this.model.name;
             data.configuratorActions = this.getConfiguratorActions();
+
             return data;
         },
 
@@ -87,18 +84,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         loadConfiguration(entity) {
             this.entitiesList = this.getEntitiesList();
-            let data = this.model.get('data');
+            this.entityFields = this.getEntityFields(entity);
+            this.configData = this.model.get('data');
 
-            if (!entity && Espo.Utils.isObject(data)) {
-                this.entityFields = this.getEntityFields(data.entity);
-            } else {
-                data = {};
-                data.delimiter = this.defaultDelimiter;
-                data.entity = entity || (this.entitiesList.includes(this.defaultEntity) ? this.defaultEntity : this.entitiesList[0]);
-                this.entityFields = this.getEntityFields(data.entity);
-                data.configuration = this.getEntityConfiguration(data.entity);
-            }
-            this.configData = data;
             this.setupSelected();
         },
 
@@ -131,29 +119,6 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             return result;
         },
 
-        getEntityConfiguration(entity) {
-            let result = [{
-                field: 'id',
-                column: this.translate('id', 'fields', 'Global')
-            }];
-            Object.keys(this.entityFields).forEach(name => {
-                let field = this.entityFields[name];
-                if (field.required) {
-                    let data = {
-                        field: name,
-                        column: this.translate(name, 'fields', entity)
-                    };
-                    if (['link', 'linkMultiple'].includes(field.type)) {
-                        _.extend(data, {
-                            exportBy: ['id']
-                        });
-                    }
-                    result.push(data);
-                }
-            });
-            return result;
-        },
-
         setupSelected() {
             this.selectedFields = ((this.configData || {}).configuration || [])
                 .filter(item => !item.attributeId && !(this.entityFields[item.field] || {}).exportMultipleField)
@@ -166,11 +131,20 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 this.updatePanelModelAttributes();
 
                 this.listenTo(this.panelModel, 'change:entity', () => {
+                    this.panelModel.set('allFields', true, {silent: true});
                     this.loadConfiguration(this.panelModel.get('entity'));
                     this.updatePanelModelAttributes();
                     this.createConfiguratorList();
                     this.reRender();
                     this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
+                });
+
+                this.listenTo(this.panelModel, 'change:allFields', () => {
+                    if (this.panelModel.get('allFields')) {
+                        // prepare configurator
+                    }
+
+                    this.createConfiguratorList();
                 });
 
                 let entityTranslatedOptions = [];
@@ -204,13 +178,22 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     inlineEditDisabled: true,
                     mode: this.mode
                 }, view => view.render());
+
+                this.createView('allFields', 'views/fields/bool', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="allFields"]`,
+                    name: 'allFields',
+                    inlineEditDisabled: true,
+                    mode: this.mode
+                }, view => view.render());
             });
         },
 
         updatePanelModelAttributes() {
             this.panelModel.set({
                 entity: (this.configData || {}).entity || null,
-                delimiter: (this.configData || {}).delimiter || null
+                delimiter: (this.configData || {}).delimiter || null,
+                allFields: (this.configData || {}).allFields || null,
             }, {silent: true});
         },
 
@@ -248,6 +231,16 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     }
                 });
 
+                let mode = this.mode;
+                let rowActionsView = this.configRowActionsView;
+                let dragableListRows = true;
+
+                if (this.panelModel.get('allFields')) {
+                    mode = 'list';
+                    rowActionsView = 'views/record/row-actions/empty';
+                    dragableListRows = false;
+                }
+
                 this.createView('configurator', this.configListView, {
                     scope: this.model.name,
                     collection: collection,
@@ -255,19 +248,25 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     listLayout: this.getCollectionLayout(),
                     checkboxes: false,
                     showMore: false,
-                    rowActionsView: this.configRowActionsView,
+                    rowActionsView: rowActionsView,
                     buttonsDisabled: true,
-                    dragableListRows: true,
-                    mode: this.mode === 'detail' ? 'list' : this.mode,
+                    dragableListRows: dragableListRows,
+                    mode: mode === 'detail' ? 'list' : mode,
                     configFieldEditView: this.configFieldEditView,
                     configAttributeEditView: this.configAttributeEditView,
                     entityFields: this.entityFields,
-                    selectedFields: this.selectedFields,
+                    selectedFields: this.selectedFields
                 }, view => {
                     this.listenToOnce(view, 'after:render', () => {
                         this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
                     });
                     view.render();
+
+                    if (this.panelModel.get('allFields')) {
+                        $(`${this.options.el} .panel-heading .btn-group`).hide();
+                    } else {
+                        $(`${this.options.el} .panel-heading .btn-group`).show();
+                    }
                 });
             });
         },
@@ -293,7 +292,10 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             this.collection.total = configuration.length;
             configuration.forEach((item, i) => {
                 this.getModelFactory().create(null, model => {
-                    model.set(_.extend(item, {entity: this.panelModel.get('entity')}));
+                    model.set(_.extend(item, {
+                        entity: this.panelModel.get('entity'),
+                        allFields: this.panelModel.get('allFields')
+                    }));
                     model.id = i + 1;
                     this.collection.add(model);
                     this.collection._byId[model.id] = model;
@@ -302,46 +304,52 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
         },
 
         getCollectionLayout() {
-            let listLayout = [
-                {
-                    widthPx: '40',
-                    align: 'center',
-                    notSortable: true,
-                    customLabel: '',
-                    name: 'draggableIcon',
-                    view: 'treo-core:views/fields/draggable-list-icon'
+            let listLayout = [];
+
+            listLayout.push({
+                widthPx: '40',
+                align: 'center',
+                notSortable: true,
+                customLabel: '',
+                params: {
+                    allFields: this.panelModel.get('allFields'),
                 },
-                {
-                    name: 'field',
-                    notSortable: true,
-                    type: 'varchar',
-                    params: {
-                        readOnly: true,
-                        required: true,
-                        inlineEditDisabled: true
-                    },
-                    view: 'export:views/export-feed/fields/varchar-with-info'
+                name: 'draggableIcon',
+                view: 'export:views/fields/draggable-list-icon'
+            });
+
+            listLayout.push({
+                name: 'field',
+                notSortable: true,
+                type: 'varchar',
+                params: {
+                    readOnly: true,
+                    required: true,
+                    inlineEditDisabled: true,
                 },
-                {
-                    name: 'column',
-                    notSortable: true,
-                    type: 'varchar',
-                    params: {
-                        required: true,
-                        listView: true,
-                        configurator: this.configData,
-                        inlineEditDisabled: !this.getAcl().check('ExportFeed', 'edit')
-                    },
-                    view: "export:views/export-feed/fields/column"
-                }
-            ];
+                view: 'export:views/export-feed/fields/varchar-with-info'
+            });
+
+            listLayout.push({
+                name: 'column',
+                notSortable: true,
+                type: 'varchar',
+                params: {
+                    required: true,
+                    listView: true,
+                    configurator: this.configData,
+                    inlineEditDisabled: !this.getAcl().check('ExportFeed', 'edit') || this.panelModel.get('allFields')
+                },
+                view: "export:views/export-feed/fields/column"
+            });
 
             listLayout.push({
                 name: 'remove',
                 notSortable: true,
                 params: {
                     readOnly: true,
-                    inlineEditDisabled: true
+                    inlineEditDisabled: true,
+                    allFields: this.panelModel.get('allFields'),
                 },
                 view: "export:views/export-feed/fields/remove",
                 width: '20'

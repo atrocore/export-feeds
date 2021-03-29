@@ -12,6 +12,14 @@
         </div>
     </div>
 </div>
+<div class="row">
+    <div class="cell form-group col-sm-6 col-xs-12" data-name="allFields">
+        <label class="control-label" data-name="allFields"><span class="label-text">{{translate 'allFields' scope=scope category='fields'}}</span></label>
+        <div class="field" data-name="allFields">
+            {{{allFields}}}
+        </div>
+    </div>
+</div>
 <div class="panel panel-default panel-configurator">
     <div class="panel-heading">
         <div class="pull-right btn-group">
