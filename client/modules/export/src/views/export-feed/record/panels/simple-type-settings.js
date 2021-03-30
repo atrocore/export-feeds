@@ -269,13 +269,18 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     this.listenToOnce(view, 'after:render', () => {
                         this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
                     });
-                    view.render();
 
-                    if (this.panelModel.get('allFields')) {
-                        $(`${this.options.el} .panel-heading .btn-group`).hide();
-                    } else {
-                        $(`${this.options.el} .panel-heading .btn-group`).show();
-                    }
+                    this.listenTo(view, 'after:render', () => {
+                        const $buttonGroup = view.$el.parent().parent().find('.panel-heading .btn-group');
+
+                        if (this.configData.allFields) {
+                            $buttonGroup.hide();
+                        } else {
+                            $buttonGroup.show();
+                        }
+                    });
+
+                    view.render();
                 });
             });
         },
@@ -540,7 +545,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 }
             });
             let configurator = this.getView('configurator');
-            if (configurator) {
+            if (configurator && !this.configData.allFields) {
                 configurator.setEditMode();
             }
         },
