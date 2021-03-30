@@ -28,6 +28,8 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
+use Export\ExportType\AbstractType;
+use Export\ExportType\Simple;
 
 /**
  * ExportFeed service
@@ -120,63 +122,14 @@ class ExportFeed extends Base
         return $result;
     }
 
+    /**
+     * @param string $scope
+     *
+     * @return array
+     */
     public function getAllFieldsConfigurator(string $scope): array
     {
-        $configuration = [['field' => 'id', 'column' => 'ID']];
-
-        /** @var array $allFields */
-        $allFields = $this->getMetadata()->get(['entityDefs', $scope, 'fields'], []);
-
-        foreach ($allFields as $field => $data) {
-            if (
-                !empty($data['notStorable'])
-                || !empty($data['exportDisabled'])
-                || !empty($data['customizationDisabled'])
-                || !empty($data['disabled'])
-                || !empty($data['emHidden'])
-                || in_array($data['type'], ['jsonObject', 'linkParent', 'currencyConverted', 'available-currency', 'file', 'attachmentMultiple'])
-            ) {
-                continue 1;
-            }
-
-            $row = [
-                'field'  => $field,
-                'column' => $this->getInjection('language')->translate($field, 'fields', $scope)
-            ];
-
-            if (isset($configuration[$row['column']])) {
-                continue 1;
-            }
-
-            if (in_array($data['type'], ['link', 'linkMultiple'])) {
-                $row['exportBy'] = ['id'];
-            }
-
-            if ($data['type'] === 'linkMultiple') {
-                $row['exportIntoSeparateColumns'] = false;
-                if ($scope === 'Product' && $field === 'productAttributeValues') {
-                    $row['column'] = '...';
-                    $row['exportIntoSeparateColumns'] = true;
-                }
-            }
-
-            $configuration[$row['column']] = $row;
-
-            // push locales fields
-            if (!empty($data['isMultilang'])) {
-                foreach ($allFields as $langField => $langData) {
-                    if (!empty($langData['multilangField']) && $langData['multilangField'] == $field) {
-                        $langRow = [
-                            'field'  => $langField,
-                            'column' => $this->getInjection('language')->translate($langField, 'fields', $scope)
-                        ];
-                        $configuration[$langRow['column']] = $langRow;
-                    }
-                }
-            }
-        }
-
-        return array_values($configuration);
+        return Simple::getAllFieldsConfiguration($scope, $this->getMetadata(), $this->getInjection('language'));
     }
 
     /**

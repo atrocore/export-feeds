@@ -24,6 +24,8 @@ namespace Export\ExportType;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
+use Espo\Core\Utils\Language;
+use Espo\Core\Utils\Metadata;
 use Espo\Entities\Attachment;
 use Export\DataConvertor\Base;
 use Treo\Core\FilePathBuilder;
@@ -37,6 +39,72 @@ class Simple extends AbstractType
      * @var Base|null
      */
     private $dataConvertor = null;
+
+    /**
+     * @param string   $scope
+     * @param Metadata $metadata
+     * @param Language $language
+     *
+     * @return array
+     */
+    public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
+    {
+        $configuration = [['field' => 'id', 'column' => 'ID']];
+
+        /** @var array $allFields */
+        $allFields = $metadata->get(['entityDefs', $scope, 'fields'], []);
+
+        foreach ($allFields as $field => $data) {
+            if (
+                !empty($data['notStorable'])
+                || !empty($data['exportDisabled'])
+                || !empty($data['customizationDisabled'])
+                || !empty($data['disabled'])
+                || !empty($data['emHidden'])
+                || in_array($data['type'], ['jsonObject', 'linkParent', 'currencyConverted', 'available-currency', 'file', 'attachmentMultiple'])
+            ) {
+                continue 1;
+            }
+
+            $row = [
+                'field'  => $field,
+                'column' => $language->translate($field, 'fields', $scope)
+            ];
+
+            if (isset($configuration[$row['column']])) {
+                continue 1;
+            }
+
+            if (in_array($data['type'], ['link', 'linkMultiple'])) {
+                $row['exportBy'] = ['id'];
+            }
+
+            if ($data['type'] === 'linkMultiple') {
+                $row['exportIntoSeparateColumns'] = false;
+                if ($scope === 'Product' && $field === 'productAttributeValues') {
+                    $row['column'] = '...';
+                    $row['exportIntoSeparateColumns'] = true;
+                }
+            }
+
+            $configuration[$row['column']] = $row;
+
+            // push locales fields
+            if (!empty($data['isMultilang'])) {
+                foreach ($allFields as $langField => $langData) {
+                    if (!empty($langData['multilangField']) && $langData['multilangField'] == $field) {
+                        $langRow = [
+                            'field'  => $langField,
+                            'column' => $language->translate($langField, 'fields', $scope)
+                        ];
+                        $configuration[$langRow['column']] = $langRow;
+                    }
+                }
+            }
+        }
+
+        return array_values($configuration);
+    }
 
     /**
      * @return Attachment
@@ -137,9 +205,15 @@ class Simple extends AbstractType
 
         $resultData = [];
 
+        if (empty($data['allFields'])) {
+            $configuration = $data['configuration'];
+        } else {
+            $configuration = self::getAllFieldsConfiguration($data['entity'], $this->getMetadata(), $this->container->get('language'));
+        }
+
         foreach ($this->getRecords() as $record) {
             $resultData[$record['id']] = [];
-            foreach ($data['configuration'] as $row) {
+            foreach ($configuration as $row) {
                 // convert record data
                 $rowData = $this->getDataConvertor($data['entity'])->convert($record, $this->prepareRow($row));
 
@@ -153,7 +227,7 @@ class Simple extends AbstractType
         $resultData = array_values($resultData);
 
         if (empty($resultData)) {
-            foreach ($data['configuration'] as $row) {
+            foreach ($configuration as $row) {
                 $resultData[0][$row['column']] = '';
             }
         }
