@@ -100,6 +100,30 @@ class ExportFeed extends Base
     }
 
     /**
+     * @param array     $params
+     * @param \stdClass $data
+     * @param Request   $request
+     *
+     * @return array
+     * @throws Exceptions\BadRequest
+     * @throws Exceptions\Forbidden
+     */
+    public function actionGetAllFieldsConfigurator($params, $data, Request $request): array
+    {
+        // checking request
+        if (!$request->isGet() || empty($request->get('scope'))) {
+            throw new Exceptions\BadRequest();
+        }
+
+        // checking rules
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $this->getRecordService()->getAllFieldsConfigurator((string)$request->get('scope'));
+    }
+
+    /**
      * @inheritDoc
      */
     protected function fetchListParamsFromRequest(&$params, $request, $data)

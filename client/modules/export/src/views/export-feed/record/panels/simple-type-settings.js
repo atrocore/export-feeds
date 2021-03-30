@@ -82,10 +82,10 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             return configuratorActions;
         },
 
-        loadConfiguration(entity) {
-            this.entitiesList = this.getEntitiesList();
-            this.entityFields = this.getEntityFields(entity);
+        loadConfiguration() {
             this.configData = this.model.get('data');
+            this.entitiesList = this.getEntitiesList();
+            this.entityFields = this.getEntityFields(this.configData.entity);
 
             this.setupSelected();
         },
@@ -129,21 +129,18 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             this.getModelFactory().create(null, model => {
                 this.panelModel = model;
                 this.updatePanelModelAttributes();
+                this.loadAllFields()
 
                 this.listenTo(this.panelModel, 'change:entity', () => {
-                    this.panelModel.set('allFields', true, {silent: true});
-                    this.loadConfiguration(this.panelModel.get('entity'));
-                    this.updatePanelModelAttributes();
-                    this.createConfiguratorList();
-                    this.reRender();
+                    this.configData.entity = this.panelModel.get('entity');
+                    this.panelModel.set('allFields', false, {silent: true});
+                    this.panelModel.set('allFields', true);
                     this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
                 });
 
                 this.listenTo(this.panelModel, 'change:allFields', () => {
-                    if (this.panelModel.get('allFields')) {
-                        // prepare configurator
-                    }
-
+                    this.configData.allFields = this.panelModel.get('allFields');
+                    this.loadAllFields();
                     this.createConfiguratorList();
                 });
 
@@ -187,6 +184,18 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     mode: this.mode
                 }, view => view.render());
             });
+        },
+
+        loadAllFields() {
+            if (!this.panelModel.get('allFields')) {
+                return false;
+            }
+
+            this.ajaxGetRequest(`ExportFeed/action/GetAllFieldsConfigurator?scope=${this.panelModel.get('entity')}`, {}, {async: false}).then(configuration => {
+                this.configData.configuration = configuration;
+            });
+
+            return true;
         },
 
         updatePanelModelAttributes() {
