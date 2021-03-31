@@ -84,6 +84,7 @@ class Simple extends AbstractType
                 if ($scope === 'Product' && $field === 'productAttributeValues') {
                     $row['column'] = '...';
                     $row['exportIntoSeparateColumns'] = true;
+                    $row['exportBy'] = ['value'];
                 }
             }
 
