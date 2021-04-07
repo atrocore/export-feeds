@@ -184,7 +184,7 @@ class ExportFeed extends Base
         $data['exportResultId'] = $exportResult->get('id');
 
         // prepare name
-        $name = sprintf($this->translate('exportName'), $data['feed']['name']);
+        $name = sprintf($this->translate('exportName'), '<span style="font-style:italic">' . $data['feed']['name'] . '</span>');
 
         return $this
             ->getInjection('queueManager')
