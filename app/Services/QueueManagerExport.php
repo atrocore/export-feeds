@@ -79,9 +79,7 @@ class QueueManagerExport extends QueueManagerBase
      */
     public function getNotificationMessage(Entity $queueItem): string
     {
-//        $name = '<span style="font-style:italic">' . $queueItem->get('name') . '</span>';
-
-        $message = sprintf($this->translate('queueItemDone', 'notificationMessages', 'QueueItem'), $queueItem->get('name'), $queueItem->get('status'));
+        $message = parent::getNotificationMessage($queueItem);
 
         if ($queueItem->get('status') === 'Success') {
             try {
