@@ -1,8 +1,10 @@
 {
   "name": "atrocore/export-feeds",
+  "description": "",
   "require": {
     "atrocore/core": ">=1.1.46 <1.3.0",
-    "atrocore/export-feeds-common": "~1.0.0"
+    "atrocore/export-feeds-common": "~1.0.0",
+    "phpoffice/phpspreadsheet": "1.8.2"
   },
   "autoload": {
     "psr-4": {
