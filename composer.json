@@ -1,7 +1,7 @@
 {
   "name": "atrocore/export-feeds",
   "require": {
-    "atrocore/core": "~1.1.23",
+    "atrocore/core": ">=1.1.46 <1.3.0",
     "atrocore/export-feeds-common": "~1.0.0"
   },
   "autoload": {
