@@ -201,7 +201,11 @@ class Base
             case 'arrayMultiLang':
             case 'multiEnum':
             case 'multiEnumMultiLang':
-                $result = implode($delimiter, $record[$field]);
+                if (!empty($record[$field]) && !empty($delimiter)) {
+                    $result = implode($delimiter, $record[$field]);
+                } else {
+                    $result = null;
+                }
                 break;
             case 'currency':
                 $result = $record[$field] . ' ' . $record[$field . 'Currency'];
