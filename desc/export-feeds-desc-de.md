@@ -169,6 +169,10 @@ Um die Liste der mit dem Kanal verknüpften Export Feeds in einem separaten Pane
 
 Bei der Verwendung des Kanalexports werden die Daten in ein einzelnes Archiv mit separaten Dateien für jeden aktiven Export Feed exportiert, der mit dem angegebenen Kanal verknüpft ist.
 
-***Erwerben Sie das Modul „Export Feeds“ jetzt, um Ihre Daten über höchst anpassbare und wiederverwendbare Exporttemplates zu exportieren!***
+## Anpassung
+Das Modul kann an Ihre Bedürfnisse angepasst werden – zusätzliche Funktionen können hinzu programmiert werden, vorhandene Funktionen können geändert werden. Bitte kontaktieren Sie uns diesbezüglich. Es gelten unsere AGB (Allgemeine Geschäftsbedingungen).
+
+## Demo
+Bitte kontaktieren Sie uns und wir senden Ihnen die Zugangsdaten für die Demoversion.
 
 
