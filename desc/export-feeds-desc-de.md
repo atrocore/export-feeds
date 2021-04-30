@@ -173,6 +173,6 @@ Bei der Verwendung des Kanalexports werden die Daten in ein einzelnes Archiv mit
 Das Modul kann an Ihre Bedürfnisse angepasst werden – zusätzliche Funktionen können hinzu programmiert werden, vorhandene Funktionen können geändert werden. Bitte kontaktieren Sie uns diesbezüglich. Es gelten unsere AGB (Allgemeine Geschäftsbedingungen).
 
 ## Demo
-Bitte kontaktieren Sie uns und wir senden Ihnen die Zugangsdaten für die Demoversion.
+https://demo.atropim.com/
 
 
