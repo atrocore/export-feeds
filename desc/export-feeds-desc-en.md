@@ -199,5 +199,5 @@ When the channel export is used, the data is exported into a single archive with
 The module can be adapted to your needs, additional functions can be programmed, existing functions can be changed. Please contact us regarding this. Our GTC (General Terms and Conditions) apply.
 
 ## Demo
-Please contact us, and we will send you the access data for the demo version.
+https://demo.atropim.com/
 
