@@ -77,6 +77,7 @@ class Base
         $type = (string)$this->getMetadata()->get(['entityDefs', $entity, 'fields', $field, 'type'], 'varchar');
 
         switch ($type) {
+            case 'asset':
             case 'link':
                 $result[$column] = null;
 

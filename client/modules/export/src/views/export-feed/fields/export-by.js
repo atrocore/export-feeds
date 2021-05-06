@@ -66,7 +66,7 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
                     }
 
                     $.each(fields, function (field, fieldData) {
-                        if (!fieldData.disabled && !fieldData.notStorable && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
+                        if (!fieldData.disabled && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
                             if (fieldData.type === 'link') {
                                 result[field + 'Id'] = this.translate(field, 'fields', entity);
                             } else {
@@ -83,7 +83,7 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
         isRequired() {
             let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('field')]);
 
-            return fieldDefs && ['link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length;
+            return fieldDefs && ['asset', 'link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length;
         },
 
     })
