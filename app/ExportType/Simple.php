@@ -55,14 +55,7 @@ class Simple extends AbstractType
         $allFields = $metadata->get(['entityDefs', $scope, 'fields'], []);
 
         foreach ($allFields as $field => $data) {
-            if (
-                !empty($data['notStorable'])
-                || !empty($data['exportDisabled'])
-                || !empty($data['customizationDisabled'])
-                || !empty($data['disabled'])
-                || !empty($data['emHidden'])
-                || in_array($data['type'], ['jsonObject', 'linkParent', 'currencyConverted', 'available-currency', 'file', 'attachmentMultiple'])
-            ) {
+            if (!empty($data['exportDisabled']) || !empty($data['disabled']) || in_array($data['type'], ['jsonObject', 'linkParent', 'currencyConverted', 'available-currency', 'file', 'attachmentMultiple'])) {
                 continue 1;
             }
 

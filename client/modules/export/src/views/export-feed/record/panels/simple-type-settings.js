@@ -110,8 +110,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 let fields = this.getMetadata().get(['entityDefs', entity, 'fields']);
                 Object.keys(fields).forEach(name => {
                     let field = fields[name];
-                    if (!notExportedType.includes(field.type) && (name === 'code' || !field.emHidden) && !field.disabled
-                        && !field.exportDisabled && !field.customizationDisabled && !field.notStorable) {
+                    if (!notExportedType.includes(field.type) && (name === 'code' || !field.emHidden) && !field.disabled && !field.exportDisabled) {
                         result[name] = fields[name];
                     }
                 });
