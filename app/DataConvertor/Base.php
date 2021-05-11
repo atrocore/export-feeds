@@ -132,8 +132,13 @@ class Base
                 }
                 break;
             case 'linkMultiple':
+                $params = [];
+                if (!empty($configuration['channelId'])){
+                    $params['channelId'] = $configuration['channelId'];
+                }
+
                 try {
-                    $foreignResult = $this->getService($entity)->findLinkedEntities($record['id'], $field, []);
+                    $foreignResult = $this->getService($entity)->findLinkedEntities($record['id'], $field, $params);
                 } catch (\Throwable $e) {
                     $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
                 }
