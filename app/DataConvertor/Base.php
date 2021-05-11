@@ -134,7 +134,7 @@ class Base
             case 'linkMultiple':
                 $params = [];
                 if (!empty($configuration['channelId'])){
-                    $params['channelId'] = $configuration['channelId'];
+                    $params['exportByChannelId'] = $configuration['channelId'];
                 }
 
                 try {
