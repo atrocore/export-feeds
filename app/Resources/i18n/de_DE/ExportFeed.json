@@ -26,6 +26,11 @@
     "channels": "Kanäle",
     "exportResults": "Exportergebnisse"
   },
+  "columnType": {
+    "name": "Name",
+    "internal": "Interner Name",
+    "custom": "Benutzerdefinierter Name"
+  },
   "labels": {
     "attributeName": "Attributname",
     "attributeCode": "Attributcode",

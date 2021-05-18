@@ -67,16 +67,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
             this.setAllowedFields();
 
             this.createBaseFields();
-
-            this.listenTo(this.model, 'change:field', () => {
-                this.applyDynamicChanges();
-            });
-        },
-
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            this.applyDynamicChanges();
         },
 
         setAllowedFields() {
@@ -103,9 +93,18 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 }
             });
 
+            this.createView('columnType', 'export:views/export-feed/fields/column-type', {
+                model: this.model,
+                configurator: this.options.configurator,
+                name: 'columnType',
+                el: `${this.options.el} .field[data-name="columnType"]`,
+                mode: 'edit'
+            });
+
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
                 configurator: this.options.configurator,
+                translates: this.options.translates,
                 name: 'column',
                 el: `${this.options.el} .field[data-name="column"]`,
                 mode: 'edit'
@@ -144,18 +143,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                     }
                 }
             });
-        },
-
-        applyDynamicChanges() {
-            this.model.set({column: this.getColumnFromCategory()});
-            let column = this.getView('column');
-            if (column) {
-                column.reRender();
-            }
-        },
-
-        getColumnFromCategory() {
-            return this.translate(this.model.get('field'), 'fields', this.scope);
         },
 
         actionSave() {

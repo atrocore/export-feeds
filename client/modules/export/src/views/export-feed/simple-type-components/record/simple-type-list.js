@@ -83,7 +83,8 @@ Espo.define('export:views/export-feed/simple-type-components/record/simple-type-
                     model: model,
                     configurator: this.getParentView().configData,
                     entityFields: this.options.entityFields,
-                    selectedFields: this.options.selectedFields
+                    selectedFields: this.options.selectedFields,
+                    translates: this.options.translates
                 }, view => {
                     view.once('after:render', () => {
                         this.notify(false);

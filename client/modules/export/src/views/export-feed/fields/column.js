@@ -32,7 +32,7 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
                 this.inlineEditDisabled = true;
             }
 
-            this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns', () => {
+            this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns change:columnType', () => {
                 this.reRender();
             });
         },
@@ -45,16 +45,18 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
             }
 
             if (this.mode === 'edit' || this.mode === 'detail') {
-                if (this.params.listView) {
+                if (this.params.listView || !this.isCustomType()) {
                     this.checkFieldDisability();
                 } else {
                     this.checkFieldVisibility();
                 }
             }
+
+            this.prepareValue();
         },
 
         checkFieldDisability() {
-            if (this.isPavs()) {
+            if (this.isPavs() || !this.isCustomType()) {
                 this.$el.find('input').attr('disabled', 'disabled');
             } else {
                 this.$el.find('input').removeAttr('disabled');
@@ -66,8 +68,36 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
                 this.model.set('column', '...');
                 this.$el.hide();
             } else {
-                this.model.set('column', this.translate(this.model.get('field'), 'fields', 'Product'));
                 this.$el.show();
+            }
+        },
+
+        isCustomType() {
+            return this.model.get('columnType') === 'custom';
+        },
+
+        prepareValue() {
+            if (!this.model.get('columnType') || this.model.get('columnType') === 'name') {
+                let locale = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('field')}.multilangLocale`);
+                if (locale) {
+                    let translates = this.options.translates || this.params.translates;
+                    let originField = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('field')}.multilangField`);
+                    let columnName = originField;
+
+                    if (translates[locale][this.model.get('entity')] && translates[locale][this.model.get('entity')]['fields'][originField]) {
+                        columnName = translates[locale][this.model.get('entity')]['fields'][originField];
+                    } else if (translates[locale]['Global'] && translates[locale]['Global']['fields'][originField]) {
+                        columnName = translates[locale]['Global']['fields'][originField];
+                    }
+
+                    this.model.set('column', columnName);
+                } else {
+                    this.model.set('column', this.translate(this.model.get('field'), 'fields', this.model.get('entity')));
+                }
+            }
+
+            if (this.model.get('columnType') === 'internal') {
+                this.model.set('column', this.translate(this.model.get('field'), 'fields', this.model.get('entity')));
             }
         },
 

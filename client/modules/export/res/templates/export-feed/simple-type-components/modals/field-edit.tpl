@@ -10,6 +10,7 @@
             <label class="control-label">
                 <span class="label-text">{{translate 'column' scope='ExportFeed' category='fields'}}</span>
             </label>
+            <div class="field" data-name="columnType">{{{columnType}}}</div>
             <div class="field" data-name="column">{{{column}}}</div>
             <div class="field" data-name="attributeColumn">{{{attributeColumn}}}</div>
         </div>

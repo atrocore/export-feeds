@@ -38,6 +38,8 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         configData: null,
 
+        translates: {},
+
         events: _.extend({
             'click button[data-name="configuratorActions"]': function (e) {
                 let actions = this.getConfiguratorActions();
@@ -58,6 +60,16 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         setup() {
             Dep.prototype.setup.call(this);
+
+            const inputLanguageList = this.getConfig().get('inputLanguageList') || [];
+
+            if (inputLanguageList.length > 0) {
+                inputLanguageList.forEach(locale => {
+                    this.ajaxGetRequest(`I18n`, {locale: locale}, {async: false}).then(responseData => {
+                        this.translates[locale] = responseData;
+                    });
+                });
+            }
 
             this.loadConfiguration();
             this.initialData = Espo.Utils.cloneDeep(this.configData);
@@ -261,6 +273,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     dragableListRows: dragableListRows,
                     mode: mode === 'detail' ? 'list' : mode,
                     configFieldEditView: this.configFieldEditView,
+                    translates: this.translates,
                     configAttributeEditView: this.configAttributeEditView,
                     entityFields: this.entityFields,
                     selectedFields: this.selectedFields
@@ -351,6 +364,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     required: true,
                     listView: true,
                     configurator: this.configData,
+                    translates: this.translates,
                     inlineEditDisabled: !this.getAcl().check('ExportFeed', 'edit') || this.panelModel.get('allFields')
                 },
                 view: "export:views/export-feed/fields/column"
@@ -378,6 +392,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 scope: this.panelModel.get('entity'),
                 configurator: this.configData,
                 entityFields: this.entityFields,
+                translates: this.translates,
                 selectedFields: this.selectedFields
             }, view => {
                 view.once('after:render', () => {
