@@ -31,6 +31,7 @@
     "custom": "Custom Name"
   },
   "labels": {
+    "Language": "Language",
     "attributeName": "Attribute Name",
     "attributeCode": "Attribute Code",
     "useAttributeNameAsColumnName": "Use attribute name as a column name",

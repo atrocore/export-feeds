@@ -31,7 +31,7 @@ Espo.define('export:views/export-feed/fields/column-type', 'views/fields/enum',
                     this.model.set('columnType', 'name', {silent: true});
                 }
 
-                this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns change:columnType', () => {
+                this.listenTo(this.model, 'change:field', () => {
                     this.reRender();
                 });
             },
@@ -47,6 +47,26 @@ Espo.define('export:views/export-feed/fields/column-type', 'views/fields/enum',
 
             isRequired() {
                 return true;
+            },
+
+            afterRender() {
+                Dep.prototype.afterRender.call(this);
+
+                if (this.mode === 'edit' || this.mode === 'detail') {
+                    this.checkFieldVisibility();
+                }
+            },
+
+            checkFieldVisibility() {
+                if (this.isPavs()) {
+                    this.$el.hide();
+                } else {
+                    this.$el.show();
+                }
+            },
+
+            isPavs() {
+                return this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues';
             },
 
         })

@@ -28,13 +28,21 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
         init: function () {
             Dep.prototype.init.call(this);
 
-            if (this.model.get('column') === '...') {
-                this.inlineEditDisabled = true;
-            }
+            this.inlineEditDisabled = true;
 
-            this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns change:columnType', () => {
+            this.listenTo(this.model, 'change:field change:exportIntoSeparateColumns change:columnType change:attributeId change:locale', () => {
                 this.reRender();
             });
+        },
+
+        data() {
+            let data = Dep.prototype.data.call(this);
+
+            if (this.isPavs()) {
+                data.value = '...';
+            }
+
+            return data;
         },
 
         afterRender() {
@@ -45,14 +53,22 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
             }
 
             if (this.mode === 'edit' || this.mode === 'detail') {
-                if (this.params.listView || !this.isCustomType()) {
+                if (this.params.listView) {
                     this.checkFieldDisability();
                 } else {
-                    this.checkFieldVisibility();
+                    if (!this.isPavs()) {
+                        this.checkFieldDisability();
+                    } else {
+                        this.checkFieldVisibility();
+                    }
                 }
             }
 
-            this.prepareValue();
+            if (this.model.get('attributeId')) {
+                this.prepareAttributeValue();
+            } else {
+                this.prepareValue();
+            }
         },
 
         checkFieldDisability() {
@@ -65,7 +81,6 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
 
         checkFieldVisibility() {
             if (this.isPavs()) {
-                this.model.set('column', '...');
                 this.$el.hide();
             } else {
                 this.$el.show();
@@ -101,12 +116,35 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
             }
         },
 
+        prepareAttributeValue() {
+            let locale = this.model.get('locale');
+
+            if (!this.model.get('columnType') || this.model.get('columnType') === 'name') {
+                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
+                    let name = 'name';
+                    if (locale && attribute.isMultilang) {
+                        name = name + locale.charAt(0).toUpperCase() + locale.charAt(1) + locale.charAt(3) + locale.charAt(4).toLowerCase();
+                    }
+                    this.model.set('column', attribute[name]);
+                });
+            }
+
+            if (this.model.get('columnType') === 'internal') {
+                let name = this.model.get('attributeName');
+                if (locale) {
+                    name = name + ' › ' + locale;
+                }
+
+                this.model.set('column', name);
+            }
+        },
+
         isRequired() {
             return true;
         },
 
         isPavs() {
-            return this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues' && this.model.get('exportIntoSeparateColumns');
+            return this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues';
         },
 
         initInlineEdit: function () {

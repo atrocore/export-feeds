@@ -22,16 +22,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
 
         template: 'export:export-feed/simple-type-components/modals/attribute-edit',
 
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            this.listenTo(this.model, 'change:attributeId', () => {
-                this.model.set({
-                    column: this.getColumnFromAttribute()
-                });
-            });
-        },
-
         createBaseFields() {
             this.createView('attribute', 'views/fields/link', {
                 model: this.model,
@@ -46,6 +36,29 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
             }, view => {
             });
 
+            this.createView('columnType', 'export:views/export-feed/fields/column-type', {
+                model: this.model,
+                configurator: this.options.configurator,
+                name: 'columnType',
+                el: `${this.options.el} .field[data-name="columnType"]`,
+                mode: 'edit'
+            });
+
+            let locales = [''];
+            (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
+                locales.push(locale)
+            });
+
+            this.createView('locale', 'views/fields/enum', {
+                model: this.model,
+                name: 'locale',
+                el: `${this.options.el} .field[data-name="locale"]`,
+                mode: 'edit',
+                params: {
+                    options: locales
+                }
+            });
+
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
                 name: 'column',
@@ -53,15 +66,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 mode: 'edit'
             }, view => {
             });
-        },
-
-        getColumnFromAttribute() {
-            let column = '';
-            if (this.model.get('attributeId')) {
-                column = this.model.get('attributeName');
-            }
-
-            return column;
         },
 
         setAllowedFields() {

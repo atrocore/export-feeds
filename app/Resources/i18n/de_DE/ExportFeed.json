@@ -32,6 +32,7 @@
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {
+    "Language": "Sprache",
     "attributeName": "Attributname",
     "attributeCode": "Attributcode",
     "useAttributeNameAsColumnName": "Attributnamen als Spaltennamen verwenden",
