@@ -393,7 +393,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 configurator: this.configData,
                 entityFields: this.entityFields,
                 translates: this.translates,
-                selectedFields: this.selectedFields
+                selectedFields: this.selectedFields,
+                collection: this.collection,
+                isAdd: true,
             }, view => {
                 view.once('after:render', () => {
                     this.notify(false);
@@ -405,7 +407,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     this.clearView('modal');
                 });
 
-                this.listenToOnce(view, 'after:save', m => this.collection.trigger('configuration-update', m));
+                this.listenTo(view, 'after:save', model => {
+                    this.collection.trigger('configuration-update', model)
+                });
             });
         },
 

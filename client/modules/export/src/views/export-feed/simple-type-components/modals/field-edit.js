@@ -158,6 +158,34 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 }
                 this.model.set(data, {silent: true});
                 this.trigger('after:save', this.model);
+
+                // auto-create locales fields
+                if (this.options.isAdd && this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${data.field}.isMultilang`)) {
+                    (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
+                        this.getModelFactory().create(null, model => {
+                            model.set('entity', this.model.get('entity'));
+
+                            let localeData = _.extend({}, data);
+                            localeData.field = localeData.field + locale.charAt(0).toUpperCase() + locale.charAt(1) + locale.charAt(3) + locale.charAt(4).toLowerCase();
+                            if (localeData.columnType === 'custom') {
+                                localeData.columnType = 'name';
+                            }
+
+                            let exists = false;
+                            (this.options.collection.models || []).forEach(m => {
+                                if (m.get('field') === localeData.field) {
+                                    exists = true;
+                                }
+                            });
+
+                            if (!exists) {
+                                model.set(localeData, {silent: true});
+                                this.trigger('after:save', model);
+                            }
+                        });
+                    });
+                }
+
                 this.dialog.close();
             }
         },
