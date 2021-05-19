@@ -33,6 +33,7 @@
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {
+    "mainLocale": "Hauptsprache",
     "Language": "Sprache",
     "attributeName": "Attributname",
     "internalAttributeName": "Interner Attributname",

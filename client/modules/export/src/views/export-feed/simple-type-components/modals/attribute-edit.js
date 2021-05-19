@@ -44,19 +44,11 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 mode: 'edit'
             });
 
-            let locales = [''];
-            (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
-                locales.push(locale)
-            });
-
-            this.createView('locale', 'views/fields/enum', {
+            this.createView('locale', 'export:views/export-feed/fields/locale', {
                 model: this.model,
                 name: 'locale',
                 el: `${this.options.el} .field[data-name="locale"]`,
-                mode: 'edit',
-                params: {
-                    options: locales
-                }
+                mode: 'edit'
             });
 
             this.createView('column', 'export:views/export-feed/fields/column', {

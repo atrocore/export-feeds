@@ -131,7 +131,7 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
 
             if (this.model.get('columnType') === 'internal') {
                 let name = this.model.get('attributeName');
-                if (locale) {
+                if (locale && locale !== 'mainLocale') {
                     name = name + ' › ' + locale;
                 }
 

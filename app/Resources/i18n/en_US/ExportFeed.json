@@ -32,6 +32,7 @@
     "custom": "Custom Name"
   },
   "labels": {
+    "mainLocale": "Main Language",
     "Language": "Language",
     "attributeName": "Attribute Name",
     "internalAttributeName": "Internal Attribute Name",
