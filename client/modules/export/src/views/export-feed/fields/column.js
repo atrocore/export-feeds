@@ -81,9 +81,9 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
 
         checkFieldVisibility() {
             if (this.isPavs()) {
-                this.$el.hide();
+                this.$el.parent().hide();
             } else {
-                this.$el.show();
+                this.$el.parent().show();
             }
         },
 
