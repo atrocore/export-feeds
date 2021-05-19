@@ -74,6 +74,8 @@ Espo.define('export:views/export-feed/fields/varchar-with-info', 'views/fields/v
                     if (entity) {
                         if (field.substring(field.length - 2) === 'Id') {
                             translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity));
+                        } else if (field.substring(field.length - 4) === 'Name') {
+                            translations.push(this.translate(field.substring(0, field.length - 4), 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global'));
                         } else {
                             translations.push(this.translate(field, 'fields', entity));
                         }
