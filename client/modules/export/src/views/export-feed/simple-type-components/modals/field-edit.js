@@ -136,9 +136,10 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 mode: 'edit',
                 prohibitedEmptyValue: true,
                 params: {
-                    options: ["attributeName", "attributeCode"],
+                    options: ["attributeName", "internalAttributeName", "attributeCode"],
                     translatedOptions: {
                         "attributeName": this.translate("attributeName", "labels", "ExportFeed"),
+                        "internalAttributeName": this.translate("internalAttributeName", "labels", "ExportFeed"),
                         "attributeCode": this.translate("attributeCode", "labels", "ExportFeed")
                     }
                 }

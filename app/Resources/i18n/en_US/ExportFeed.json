@@ -33,8 +33,10 @@
   "labels": {
     "Language": "Language",
     "attributeName": "Attribute Name",
+    "internalAttributeName": "Internal Attribute Name",
     "attributeCode": "Attribute Code",
     "useAttributeNameAsColumnName": "Use attribute name as a column name",
+    "useInternalAttributeNameAsColumnName": "Use internal attribute name as a column name",
     "useAttributeCodeAsColumnName": "Use attribute code as a column name",
     "fields": "Fields",
     "ignoreFilter": "Ignore filter in the feed",

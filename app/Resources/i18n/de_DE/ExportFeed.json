@@ -34,8 +34,10 @@
   "labels": {
     "Language": "Sprache",
     "attributeName": "Attributname",
+    "internalAttributeName": "Interner Attributname",
     "attributeCode": "Attributcode",
     "useAttributeNameAsColumnName": "Attributnamen als Spaltennamen verwenden",
+    "useInternalAttributeNameAsColumnName": "Interner Attributnamen als Spaltennamen verwenden",
     "useAttributeCodeAsColumnName": "Attributcode als Spaltenname verwenden",
     "fields": "Felder",
     "ignoreFilter": "Filter im Feed ignorieren",
