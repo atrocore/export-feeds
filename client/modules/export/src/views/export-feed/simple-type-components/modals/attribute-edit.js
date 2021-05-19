@@ -78,6 +78,37 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 }
                 this.model.set(data, {silent: true});
                 this.trigger('after:save', this.model);
+
+                // auto-create locales attributes
+                if (this.options.isAdd) {
+                    this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
+                        if (attribute.isMultilang && data.locale === 'mainLocale') {
+                            (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
+                                this.getModelFactory().create(null, model => {
+                                    let localeData = _.extend({}, data);
+                                    localeData.locale = locale;
+
+                                    if (localeData.columnType === 'custom') {
+                                        localeData.columnType = 'name';
+                                    }
+
+                                    let exists = false;
+                                    (this.options.collection.models || []).forEach(m => {
+                                        if (m.get('attributeId') + m.get('locale') === localeData.attributeId + localeData.locale) {
+                                            exists = true;
+                                        }
+                                    });
+
+                                    if (!exists) {
+                                        model.set(localeData, {silent: true});
+                                        this.options.collection.trigger('configuration-update', model);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+
                 this.dialog.close();
             }
         },

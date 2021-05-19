@@ -180,7 +180,7 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
 
                             if (!exists) {
                                 model.set(localeData, {silent: true});
-                                this.trigger('after:save', model);
+                                this.options.collection.trigger('configuration-update', model);
                             }
                         });
                     });

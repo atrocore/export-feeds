@@ -118,6 +118,9 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
 
         prepareAttributeValue() {
             let locale = this.model.get('locale');
+            if (locale === 'mainLocale') {
+                locale = '';
+            }
 
             if (!this.model.get('columnType') || this.model.get('columnType') === 'name') {
                 this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
@@ -131,7 +134,7 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
 
             if (this.model.get('columnType') === 'internal') {
                 let name = this.model.get('attributeName');
-                if (locale && locale !== 'mainLocale') {
+                if (locale) {
                     name = name + ' › ' + locale;
                 }
 

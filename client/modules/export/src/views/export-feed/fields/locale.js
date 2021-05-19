@@ -27,6 +27,12 @@ Espo.define('export:views/export-feed/fields/locale', 'views/fields/enum',
             isAttributeMultiLang: false,
 
             init: function () {
+                if (this.model.get('attributeId')) {
+                    this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, {}, {async: false}).then(attribute => {
+                        this.isAttributeMultiLang = attribute.isMultilang;
+                    });
+                }
+
                 Dep.prototype.init.call(this);
 
                 this.listenTo(this.model, 'change:attributeId', () => {
