@@ -9,5 +9,6 @@
   "recordViews": {
     "list": "export:views/export-result/record/list",
     "detail": "export:views/export-result/record/detail"
-  }
+  },
+  "iconClass": "fas fa-cloud"
 }
