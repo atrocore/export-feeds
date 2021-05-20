@@ -220,11 +220,25 @@ class Simple extends AbstractType
             $configuration = self::getAllFieldsConfiguration($data['entity'], $this->getMetadata(), $this->container->get('language'));
         }
 
+        if (!empty($this->data['exportByChannelId'])) {
+            $channel = $this->getEntityManager()->getEntity('Channel', $this->data['exportByChannelId']);
+            if (empty($channel)) {
+                throw new BadRequest('No such channel found.');
+            }
+            $channelLocales = $channel->get('locales');
+        }
+
         foreach ($this->getRecords() as $record) {
             $resultData[$record['id']] = [];
             foreach ($configuration as $row) {
+                $row = $this->prepareRow($row);
+
+                if (!empty($channelLocales) && !empty($row['locale']) && !in_array($row['locale'], $channelLocales)) {
+                    continue 1;
+                }
+
                 // convert record data
-                $rowData = $this->getDataConvertor($data['entity'])->convert($record, $this->prepareRow($row));
+                $rowData = $this->getDataConvertor($data['entity'])->convert($record, $row);
 
                 $resultData[$record['id']] = array_merge($resultData[$record['id']], $rowData);
 
@@ -236,7 +250,7 @@ class Simple extends AbstractType
         $resultData = array_values($resultData);
 
         if (empty($resultData)) {
-          throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
+            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
 
         // sorting columns
@@ -353,7 +367,7 @@ class Simple extends AbstractType
      *
      * @return array
      */
-    protected function prepareRow(array &$row): array
+    protected function prepareRow(array $row): array
     {
         $feedData = $this->getFeedData();
 
@@ -361,6 +375,13 @@ class Simple extends AbstractType
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['entity'] = $feedData['entity'];
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
+
+        if (empty($row['attributeId'])) {
+            $row['locale'] = $this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'multilangLocale']);
+            if ($this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'isMultilang'])) {
+                $row['locale'] = 'mainLocale';
+            }
+        }
 
         return $row;
     }

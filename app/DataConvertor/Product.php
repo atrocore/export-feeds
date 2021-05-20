@@ -23,6 +23,7 @@ declare(strict_types=1);
 namespace Export\DataConvertor;
 
 use Espo\Core\Utils\Util;
+use Espo\ORM\EntityManager;
 use Pim\Services\ProductAttributeValue;
 
 /**
@@ -167,7 +168,21 @@ class Product extends Base
 
                 $columnName = self::createColumnName($productAttribute['attributeId'], $locale, (string)$productAttribute['channelId']);
 
-                $attributeLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['attributeName'] : $productAttribute['attributeCode'];
+                if (empty($configuration['attributeColumn']) || $configuration['attributeColumn'] == 'attributeName') {
+                    $attributeLabel = $productAttribute['attributeName'];
+                    if (!empty($productAttribute['attributeIsMultilang']) && !empty($locale)) {
+                        $attribute = $this->getEntityManager()->getEntity('Attribute', $productAttribute['attributeId']);
+                        $attributeLabel = $attribute->get(Util::toCamelCase(strtolower('name_' . $locale)));
+                    }
+                }
+
+                if ($configuration['attributeColumn'] == 'internalAttributeName') {
+                    $attributeLabel = $productAttribute['attributeName'];
+                }
+
+                if ($configuration['attributeColumn'] == 'attributeCode') {
+                    $attributeLabel = $productAttribute['attributeCode'];
+                }
 
                 $channelLabel = 'Global';
                 if ($productAttribute['scope'] === 'Channel') {
@@ -237,5 +252,10 @@ class Product extends Base
     private static function isEmpty($value): bool
     {
         return empty($value) && $value !== 0 && $value !== '0';
+    }
+
+    private function getEntityManager(): EntityManager
+    {
+        return $this->container->get('entityManager');
     }
 }
