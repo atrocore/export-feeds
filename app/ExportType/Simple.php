@@ -31,6 +31,7 @@ use Espo\Core\Utils\Language;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
+use Espo\ORM\Entity;
 use Export\DataConvertor\Base;
 use Treo\Core\FilePathBuilder;
 
@@ -48,6 +49,11 @@ class Simple extends AbstractType
      * @var array
      */
     private $languages = [];
+
+    /**
+     * @var array
+     */
+    private $foundAttrs = [];
 
     /**
      * @param string   $scope
@@ -225,7 +231,7 @@ class Simple extends AbstractType
             if (empty($channel)) {
                 throw new BadRequest('No such channel found.');
             }
-            $channelLocales = $channel->get('locales');
+            $this->data['channelLocales'] = $channel->get('locales');
         }
 
         foreach ($this->getRecords() as $record) {
@@ -233,7 +239,7 @@ class Simple extends AbstractType
             foreach ($configuration as $row) {
                 $row = $this->prepareRow($row);
 
-                if (!empty($channelLocales) && !empty($row['locale']) && !in_array($row['locale'], $channelLocales)) {
+                if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                     continue 1;
                 }
 
@@ -376,10 +382,19 @@ class Simple extends AbstractType
         $row['entity'] = $feedData['entity'];
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
-        if (empty($row['attributeId'])) {
-            $row['locale'] = $this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'multilangLocale']);
-            if ($this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'isMultilang'])) {
-                $row['locale'] = 'mainLocale';
+        if (!empty($this->data['channelLocales'])) {
+            $row['channelLocales'] = $this->data['channelLocales'];
+
+            if (empty($row['attributeId'])) {
+                $row['locale'] = $this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'multilangLocale']);
+                if ($this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'isMultilang'])) {
+                    $row['locale'] = 'mainLocale';
+                }
+            } else {
+                $attribute = $this->getAttributeById($row['attributeId']);
+                if (empty($attribute->get('isMultilang'))) {
+                    $row['locale'] = null;
+                }
             }
         }
 
@@ -489,10 +504,7 @@ class Simple extends AbstractType
     {
         // for attributes
         if (!empty($row['attributeId'])) {
-            $attribute = $this->getEntityManager()->getEntity('Attribute', $row['attributeId']);
-            if (empty($attribute)) {
-                throw new NotFound("Can't find provided attribute.");
-            }
+            $attribute = $this->getAttributeById($row['attributeId']);
 
             $locale = $row['locale'];
             if ($locale === 'mainLocale') {
@@ -543,5 +555,18 @@ class Simple extends AbstractType
         }
 
         return $this->languages[$locale];
+    }
+
+    protected function getAttributeById(string $id): Entity
+    {
+        if (!isset($this->foundAttrs[$id])) {
+            $attribute = $this->getEntityManager()->getEntity('Attribute', $id);
+            if (empty($attribute)) {
+                throw new NotFound("Can't find provided attribute.");
+            }
+            $this->foundAttrs[$id] = $attribute;
+        }
+
+        return $this->foundAttrs[$id];
     }
 }

@@ -189,6 +189,11 @@ class Product extends Base
                     $channelLabel = $configuration['attributeColumn'] === 'attributeName' ? $productAttribute['channelName'] : $productAttribute['channelCode'];
                 }
 
+                $attrLocale = empty($locale) ? 'mainLocale' : $locale;
+                if (!empty($productAttribute['attributeIsMultilang']) && !empty($configuration['channelLocales']) && !in_array($attrLocale, $configuration['channelLocales'])) {
+                    continue 1;
+                }
+
                 $this->columnData[$columnName] = [
                     'attributeId'    => $productAttribute['attributeId'],
                     'attributeLabel' => $attributeLabel,
