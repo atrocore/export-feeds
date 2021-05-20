@@ -9,7 +9,8 @@
     "csvFieldDelimiter": "Feld-Trennzeichen",
     "csvTextQualifier": "Text-Qualifier",
     "field": "Feld",
-    "column": "Spalte",
+    "columnType": "Spaltenbezeichnung",
+    "column": "Spaltenname",
     "exportBy": "Verwandte Entitätsfelder",
     "remove": "Löschen",
     "isAttribute": "Ist Attribut",
@@ -26,10 +27,19 @@
     "channels": "Kanäle",
     "exportResults": "Exportergebnisse"
   },
+  "columnType": {
+    "name": "Name",
+    "internal": "Interner Name",
+    "custom": "Benutzerdefinierter Name"
+  },
   "labels": {
+    "mainLocale": "Hauptsprache",
+    "Language": "Sprache",
     "attributeName": "Attributname",
+    "internalAttributeName": "Interner Attributname",
     "attributeCode": "Attributcode",
     "useAttributeNameAsColumnName": "Attributnamen als Spaltennamen verwenden",
+    "useInternalAttributeNameAsColumnName": "Internen Attributnamen als Spaltennamen verwenden",
     "useAttributeCodeAsColumnName": "Attributcode als Spaltenname verwenden",
     "fields": "Felder",
     "ignoreFilter": "Filter im Feed ignorieren",
@@ -58,6 +68,7 @@
     "channelWithoutExportFeeds": "Keine Exportfeeds, die mit dem aktuellen Kanal verknüpft sind."
   },
   "exceptions": {
+    "noDataFound": "Feed hat nichts zu exportieren.",
     "wrongExportFeedType": "Falscher Exportfeed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
     "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch.",

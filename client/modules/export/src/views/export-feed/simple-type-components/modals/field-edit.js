@@ -67,16 +67,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
             this.setAllowedFields();
 
             this.createBaseFields();
-
-            this.listenTo(this.model, 'change:field', () => {
-                this.applyDynamicChanges();
-            });
-        },
-
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
-
-            this.applyDynamicChanges();
         },
 
         setAllowedFields() {
@@ -103,9 +93,18 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 }
             });
 
+            this.createView('columnType', 'export:views/export-feed/fields/column-type', {
+                model: this.model,
+                configurator: this.options.configurator,
+                name: 'columnType',
+                el: `${this.options.el} .field[data-name="columnType"]`,
+                mode: 'edit'
+            });
+
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
                 configurator: this.options.configurator,
+                translates: this.options.translates,
                 name: 'column',
                 el: `${this.options.el} .field[data-name="column"]`,
                 mode: 'edit'
@@ -137,25 +136,14 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 mode: 'edit',
                 prohibitedEmptyValue: true,
                 params: {
-                    options: ["attributeName", "attributeCode"],
+                    options: ["attributeName", "internalAttributeName", "attributeCode"],
                     translatedOptions: {
                         "attributeName": this.translate("attributeName", "labels", "ExportFeed"),
+                        "internalAttributeName": this.translate("internalAttributeName", "labels", "ExportFeed"),
                         "attributeCode": this.translate("attributeCode", "labels", "ExportFeed")
                     }
                 }
             });
-        },
-
-        applyDynamicChanges() {
-            this.model.set({column: this.getColumnFromCategory()});
-            let column = this.getView('column');
-            if (column) {
-                column.reRender();
-            }
-        },
-
-        getColumnFromCategory() {
-            return this.translate(this.model.get('field'), 'fields', this.scope);
         },
 
         actionSave() {
@@ -170,6 +158,34 @@ Espo.define('export:views/export-feed/simple-type-components/modals/field-edit',
                 }
                 this.model.set(data, {silent: true});
                 this.trigger('after:save', this.model);
+
+                // auto-create locales fields
+                if (this.options.isAdd && this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${data.field}.isMultilang`)) {
+                    (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
+                        this.getModelFactory().create(null, model => {
+                            model.set('entity', this.model.get('entity'));
+
+                            let localeData = _.extend({}, data);
+                            localeData.field = localeData.field + locale.charAt(0).toUpperCase() + locale.charAt(1) + locale.charAt(3) + locale.charAt(4).toLowerCase();
+                            if (localeData.columnType === 'custom') {
+                                localeData.columnType = 'name';
+                            }
+
+                            let exists = false;
+                            (this.options.collection.models || []).forEach(m => {
+                                if (m.get('field') === localeData.field) {
+                                    exists = true;
+                                }
+                            });
+
+                            if (!exists) {
+                                model.set(localeData, {silent: true});
+                                this.options.collection.trigger('configuration-update', model);
+                            }
+                        });
+                    });
+                }
+
                 this.dialog.close();
             }
         },

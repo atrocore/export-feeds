@@ -104,6 +104,11 @@ abstract class AbstractType
         return $this->container->get('metadata');
     }
 
+    protected function translate(string $key, string $tab, string $scope = 'Global'): string
+    {
+        return $this->container->get('language')->translate($key, $tab, $scope);
+    }
+
     /**
      * @param string $name
      *

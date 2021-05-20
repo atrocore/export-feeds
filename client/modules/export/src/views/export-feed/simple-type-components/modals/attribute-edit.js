@@ -22,16 +22,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
 
         template: 'export:export-feed/simple-type-components/modals/attribute-edit',
 
-        setup() {
-            Dep.prototype.setup.call(this);
-
-            this.listenTo(this.model, 'change:attributeId', () => {
-                this.model.set({
-                    column: this.getColumnFromAttribute()
-                });
-            });
-        },
-
         createBaseFields() {
             this.createView('attribute', 'views/fields/link', {
                 model: this.model,
@@ -46,6 +36,21 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
             }, view => {
             });
 
+            this.createView('columnType', 'export:views/export-feed/fields/column-type', {
+                model: this.model,
+                configurator: this.options.configurator,
+                name: 'columnType',
+                el: `${this.options.el} .field[data-name="columnType"]`,
+                mode: 'edit'
+            });
+
+            this.createView('locale', 'export:views/export-feed/fields/locale', {
+                model: this.model,
+                name: 'locale',
+                el: `${this.options.el} .field[data-name="locale"]`,
+                mode: 'edit'
+            });
+
             this.createView('column', 'export:views/export-feed/fields/column', {
                 model: this.model,
                 name: 'column',
@@ -53,15 +58,6 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 mode: 'edit'
             }, view => {
             });
-        },
-
-        getColumnFromAttribute() {
-            let column = '';
-            if (this.model.get('attributeId')) {
-                column = this.model.get('attributeName');
-            }
-
-            return column;
         },
 
         setAllowedFields() {
@@ -82,6 +78,37 @@ Espo.define('export:views/export-feed/simple-type-components/modals/attribute-ed
                 }
                 this.model.set(data, {silent: true});
                 this.trigger('after:save', this.model);
+
+                // auto-create locales attributes
+                if (this.options.isAdd) {
+                    this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
+                        if (attribute.isMultilang && data.locale === 'mainLocale') {
+                            (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
+                                this.getModelFactory().create(null, model => {
+                                    let localeData = _.extend({}, data);
+                                    localeData.locale = locale;
+
+                                    if (localeData.columnType === 'custom') {
+                                        localeData.columnType = 'name';
+                                    }
+
+                                    let exists = false;
+                                    (this.options.collection.models || []).forEach(m => {
+                                        if (m.get('attributeId') + m.get('locale') === localeData.attributeId + localeData.locale) {
+                                            exists = true;
+                                        }
+                                    });
+
+                                    if (!exists) {
+                                        model.set(localeData, {silent: true});
+                                        this.options.collection.trigger('configuration-update', model);
+                                    }
+                                });
+                            });
+                        }
+                    });
+                }
+
                 this.dialog.close();
             }
         },

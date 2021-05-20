@@ -68,7 +68,8 @@ Espo.define('export:views/export-feed/fields/export-by', 'views/fields/multi-enu
                     $.each(fields, function (field, fieldData) {
                         if (!fieldData.disabled && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
                             if (fieldData.type === 'link') {
-                                result[field + 'Id'] = this.translate(field, 'fields', entity);
+                                result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
+                                result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
                             } else {
                                 result[field] = this.translate(field, 'fields', entity);
                             }
