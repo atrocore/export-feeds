@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Espo\Core\Utils\Util;
 use Pim\Services\ProductAttributeValue;
 
 /**
@@ -112,19 +113,14 @@ class Product extends Base
          * Find needed product attribute
          */
         foreach ($this->getProductAttributes($record['id']) as $v) {
-            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && empty($productAttribute['isLocale'])) {
+            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
                 $productAttribute = $v;
                 break 1;
             }
         }
         if (!empty($configuration['channelId'])) {
             foreach ($this->getProductAttributes($record['id']) as $v) {
-                if (
-                    $v['attributeId'] == $configuration['attributeId']
-                    && $v['scope'] == 'Channel'
-                    && $configuration['channelId'] == $v['channelId']
-                    && empty($productAttribute['isLocale'])
-                ) {
+                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
                     $productAttribute = $v;
                     break 1;
                 }
@@ -132,7 +128,13 @@ class Product extends Base
         }
 
         if (!empty($productAttribute)) {
-            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration['delimiter']);
+            $value = 'value';
+
+            if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
+                $value = Util::toCamelCase(strtolower($value . '_' . $configuration['locale']));
+            }
+
+            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $value, $configuration['delimiter']);
         }
 
         return $result;

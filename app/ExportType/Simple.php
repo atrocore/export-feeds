@@ -22,10 +22,14 @@ declare(strict_types=1);
 
 namespace Export\ExportType;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\Exception;
+use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\Metadata;
+use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
 use Export\DataConvertor\Base;
 use Treo\Core\FilePathBuilder;
@@ -39,6 +43,11 @@ class Simple extends AbstractType
      * @var Base|null
      */
     private $dataConvertor = null;
+
+    /**
+     * @var array
+     */
+    private $languages = [];
 
     /**
      * @param string   $scope
@@ -55,7 +64,10 @@ class Simple extends AbstractType
         $allFields = $metadata->get(['entityDefs', $scope, 'fields'], []);
 
         foreach ($allFields as $field => $data) {
-            if (!empty($data['exportDisabled']) || !empty($data['disabled']) || in_array($data['type'], ['jsonObject', 'linkParent', 'currencyConverted', 'available-currency', 'file', 'attachmentMultiple'])) {
+            if (!empty($data['exportDisabled']) || !empty($data['disabled'])
+                || in_array(
+                    $data['type'], ['jsonObject', 'linkParent', 'currencyConverted', 'available-currency', 'file', 'attachmentMultiple']
+                )) {
                 continue 1;
             }
 
@@ -186,6 +198,9 @@ class Simple extends AbstractType
 
     /**
      * @return array
+     * @throws BadRequest
+     * @throws Error
+     * @throws NotFound
      */
     protected function getData(): array
     {
@@ -221,9 +236,7 @@ class Simple extends AbstractType
         $resultData = array_values($resultData);
 
         if (empty($resultData)) {
-            foreach ($configuration as $row) {
-                $resultData[0][$row['column']] = '';
-            }
+          throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
 
         // sorting columns
@@ -340,13 +353,14 @@ class Simple extends AbstractType
      *
      * @return array
      */
-    protected function prepareRow(array $row): array
+    protected function prepareRow(array &$row): array
     {
         $feedData = $this->getFeedData();
 
         $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['entity'] = $feedData['entity'];
+        $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         return $row;
     }
@@ -448,5 +462,65 @@ class Simple extends AbstractType
 
         // delete csv file
         unlink($csvFileName);
+    }
+
+    protected function getColumnName(array $row, string $entity): string
+    {
+        // for attributes
+        if (!empty($row['attributeId'])) {
+            $attribute = $this->getEntityManager()->getEntity('Attribute', $row['attributeId']);
+            if (empty($attribute)) {
+                throw new NotFound("Can't find provided attribute.");
+            }
+
+            $locale = $row['locale'];
+            if ($locale === 'mainLocale') {
+                $locale = '';
+            }
+
+            if (empty($row['columnType']) || $row['columnType'] == 'name') {
+                $name = 'name';
+
+                if (!empty($attribute->get('isMultilang')) && !empty($locale)) {
+                    $name = Util::toCamelCase(strtolower($name . '_' . $locale));
+                }
+
+                return $attribute->get($name);
+            }
+
+            if ($row['columnType'] == 'internal') {
+                $value = $attribute->get('name');
+                if (!empty($locale)) {
+                    $value .= ' › ' . $locale;
+                }
+
+                return $value;
+            }
+        }
+
+        if (empty($row['columnType']) || $row['columnType'] == 'name') {
+            $locale = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangLocale']);
+            if ($locale) {
+                $originField = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangField']);
+                return $this->getLanguage($locale)->translate($originField, 'fields', $entity);
+            } else {
+                return $this->translate($row['field'], 'fields', $entity);
+            }
+        }
+
+        if ($row['columnType'] == 'internal') {
+            return $this->translate($row['field'], 'fields', $entity);
+        }
+
+        return $row['column'];
+    }
+
+    protected function getLanguage(string $locale): Language
+    {
+        if (!isset($this->languages[$locale])) {
+            $this->languages[$locale] = new Language($locale, $this->container->get('fileManager'), $this->container->get('metadata'), $this->container->get('eventManager'));
+        }
+
+        return $this->languages[$locale];
     }
 }
