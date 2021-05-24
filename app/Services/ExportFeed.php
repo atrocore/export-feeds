@@ -218,4 +218,14 @@ class ExportFeed extends Base
 
         return (empty($result)) ? null : new EntityCollection($result);
     }
+
+    protected function isEntityUpdated(Entity $entity, \stdClass $data): bool
+    {
+        return true;
+    }
+
+    protected function getFieldsThatConflict(Entity $entity, \stdClass $data): array
+    {
+        return [];
+    }
 }

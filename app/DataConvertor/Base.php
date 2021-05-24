@@ -181,15 +181,9 @@ class Base
         return $result;
     }
 
-    /**
-     * @param array $result
-     * @param array $configuration
-     *
-     * @return array
-     */
-    public function prepareResult(array $result, array $configuration): array
+    public function getColumnLabel(string $colName, array $configuration): string
     {
-        return $result;
+        return $colName;
     }
 
     /**

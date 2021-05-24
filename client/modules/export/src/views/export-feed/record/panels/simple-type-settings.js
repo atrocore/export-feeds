@@ -236,11 +236,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     }
                     this.configData = this.getConfigurationData();
                     this.setupSelected();
-                    if (this.mode !== 'edit') {
-                        this.save(() => this.createConfiguratorList());
-                    } else {
-                        this.createConfiguratorList();
-                    }
+                    this.save(() => this.createConfiguratorList());
                 });
 
                 this.listenTo(this.collection, 'configuration-sorted', ids => {
@@ -532,6 +528,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
         getConfigurationData() {
             let data = {
                 entity: this.panelModel.get('entity'),
+                allFields: this.panelModel.get('allFields'),
                 delimiter: this.panelModel.get('delimiter')
             };
             data.configuration = this.collection.map(model => model.getClonedAttributes());

@@ -210,15 +210,8 @@ class Simple extends AbstractType
      */
     protected function getData(): array
     {
-        // prepare result
-        $result = [];
-
         // prepare export feed data
         $data = $this->getFeedData();
-
-        $columns = [];
-
-        $resultData = [];
 
         if (empty($data['allFields'])) {
             $configuration = $data['configuration'];
@@ -234,42 +227,62 @@ class Simple extends AbstractType
             $this->data['channelLocales'] = $channel->get('locales');
         }
 
+        $resultData = [];
         foreach ($this->getRecords() as $record) {
             $resultData[$record['id']] = [];
-            foreach ($configuration as $row) {
+            foreach ($configuration as $k => $row) {
                 $row = $this->prepareRow($row);
 
                 if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                     continue 1;
                 }
 
-                // convert record data
-                $rowData = $this->getDataConvertor($data['entity'])->convert($record, $row);
-
-                $resultData[$record['id']] = array_merge($resultData[$record['id']], $rowData);
-
-                // set columns
-                $columns[$row['column']] = !isset($columns[$row['column']]) ? [] : $columns[$row['column']];
-                $columns[$row['column']] = array_unique(array_merge($columns[$row['column']], array_keys($rowData)));
+                $resultData[$record['id']][$k] = $this->getDataConvertor($data['entity'])->convert($record, $row);
             }
         }
-        $resultData = array_values($resultData);
 
         if (empty($resultData)) {
             throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
 
-        foreach ($resultData as $rowData) {
-            $resultRow = [];
-            foreach ($columns as $columnData) {
-                foreach ($columnData as $column) {
-                    $resultRow[$column] = isset($rowData[$column]) ? $rowData[$column] : null;
+        // prepare columns
+        $columns = [];
+        foreach ($resultData as $rows) {
+            foreach ($rows as $rowNumber => $rowData) {
+                $n = 0;
+                foreach ($rowData as $colName => $value) {
+                    $pos = $rowNumber * 1000 + $n;
+
+                    if (isset($columns[$pos])) {
+                        continue 1;
+                    }
+
+                    $columns[$pos] = [
+                        'number' => $rowNumber,
+                        'name'   => $colName,
+                        'label'  => $this->getDataConvertor($data['entity'])->getColumnLabel($colName, $this->data)
+                    ];
+
+                    $n++;
                 }
             }
-            $result[] = $resultRow;
+        }
+        ksort($columns);
+
+        $result = ['columns' => $columns, 'data' => []];
+        foreach ($resultData as $rowData) {
+            $resultRow = [];
+            foreach ($columns as $pos => $columnData) {
+                if (isset($rowData[$columnData['number']][$columnData['name']])) {
+                    $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
+                } else {
+                    $resultRow[$pos] = null;
+                }
+            }
+            $result['data'][] = $resultRow;
         }
 
-        return $this->getDataConvertor($data['entity'])->prepareResult($result, $this->data);
+        return $result;
     }
 
     /**
@@ -434,7 +447,7 @@ class Simple extends AbstractType
          * Prepare data
          */
         $rows = [];
-        foreach ($data as $row) {
+        foreach ($data['data'] as $row) {
             foreach ($row as $key => $field) {
                 if (is_array($field)) {
                     $row[$key] = '[' . implode(",", $field) . ']';
@@ -448,7 +461,7 @@ class Simple extends AbstractType
 
         // prepare header
         if ($this->data['feed']['isFileHeaderRow']) {
-            fputcsv($fp, array_keys($data[0]), $delimiter, $enclosure);
+            fputcsv($fp, array_column($data['columns'], 'label'), $delimiter, $enclosure);
         }
 
         // prepare rows

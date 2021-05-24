@@ -53,51 +53,22 @@ class Product extends Base
         return parent::convert($record, $configuration);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function prepareResult(array $result, array $configuration): array
+    public function getColumnLabel(string $colName, array $configuration): string
     {
-        $cropped = [];
-        if (!empty($configuration['exportByChannelId'])) {
-            foreach ($result as $k => $rows) {
-                foreach ($rows as $column => $value) {
-                    if (isset($this->columnData[$column])) {
-                        $data = $this->columnData[$column];
-                        if (!empty($data['channelId'])) {
-                            continue 1;
-                        }
-                        $channelColumn = self::createColumnName($data['attributeId'], $data['locale'], $configuration['exportByChannelId']);
-                        if (!self::isEmpty($result[$k][$channelColumn])) {
-                            $cropped[$k][$column] = $result[$k][$channelColumn];
-                        } else {
-                            $cropped[$k][$column] = $value;
-                        }
-                    } else {
-                        $cropped[$k][$column] = $value;
-                    }
-                }
+        if (isset($this->columnData[$colName])) {
+            $label = '';
+            if (isset($this->columnData[$colName]['attributeLabel'])) {
+                $label .= $this->columnData[$colName]['attributeLabel'];
             }
-        } else {
-            $cropped = $result;
+
+            if (empty($configuration['exportByChannelId'])) {
+                $label .= ' | ' . $this->columnData[$colName]['channelLabel'];
+            }
+
+            return $label;
         }
 
-        $preparedResult = [];
-        foreach ($cropped as $k => $rows) {
-            foreach ($rows as $column => $value) {
-                if (isset($this->columnData[$column])) {
-                    if (!empty($configuration['exportByChannelId'])) {
-                        $preparedResult[$k][$this->columnData[$column]['attributeLabel']] = $value;
-                    } else {
-                        $preparedResult[$k][$this->columnData[$column]['attributeLabel'] . ' | ' . $this->columnData[$column]['channelLabel']] = $value;
-                    }
-                } else {
-                    $preparedResult[$k][$column] = $value;
-                }
-            }
-        }
-
-        return $preparedResult;
+        return $colName;
     }
 
     /**
@@ -166,8 +137,6 @@ class Product extends Base
                     $locale = $parts[1];
                 }
 
-                $columnName = self::createColumnName($productAttribute['attributeId'], $locale, (string)$productAttribute['channelId']);
-
                 if (empty($configuration['attributeColumn']) || $configuration['attributeColumn'] == 'attributeName') {
                     $attributeLabel = $productAttribute['attributeName'];
                     if (!empty($productAttribute['attributeIsMultilang']) && !empty($locale)) {
@@ -194,6 +163,8 @@ class Product extends Base
                     continue 1;
                 }
 
+                $columnName = self::createColumnName($productAttribute['attributeId'], $locale, (string)$productAttribute['channelId']);
+
                 $this->columnData[$columnName] = [
                     'attributeId'    => $productAttribute['attributeId'],
                     'attributeLabel' => $attributeLabel,
@@ -203,6 +174,30 @@ class Product extends Base
                 ];
 
                 $result[$columnName] = implode('|', $fieldResult);
+            }
+
+            /**
+             * Filter columns by channel
+             */
+            if (!empty($configuration['channelId'])) {
+                // channel value to general value
+                foreach ($this->columnData as $key => $val) {
+                    if ($val['channelId'] === $configuration['channelId']) {
+                        $channelColumn = self::createColumnName($val['attributeId'], $val['locale'], $val['channelId']);
+                        if (!self::isEmpty($result[$channelColumn])) {
+                            $result[self::createColumnName($val['attributeId'], $val['locale'], '')] = $result[$channelColumn];
+                        }
+                    }
+                }
+
+                // remove channels columns
+                foreach ($this->columnData as $key => $val) {
+                    if (!empty($val['channelId']) && !empty($val['channelId'])) {
+                        unset($this->columnData[$key]);
+                        unset($result[self::createColumnName($val['attributeId'], $val['locale'], $val['channelId'])]);
+                        continue 1;
+                    }
+                }
             }
         }
 
