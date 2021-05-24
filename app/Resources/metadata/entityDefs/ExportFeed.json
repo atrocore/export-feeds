@@ -87,7 +87,7 @@
     "channels": {
       "type": "linkMultiple",
       "tooltip": true,
-      "noLoad": false,
+      "noLoad": true,
       "importDisabled": true
     },
     "data": {

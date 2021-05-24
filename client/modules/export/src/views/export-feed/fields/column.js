@@ -224,40 +224,7 @@ Espo.define('export:views/export-feed/fields/column', 'views/fields/base', funct
         },
 
         validate: function () {
-            let configuration = {};
-
-            if (this.params.configurator) {
-                configuration = this.params.configurator.configuration;
-            }
-
-            if (this.options.configurator) {
-                configuration = this.options.configurator.configuration;
-            }
-
-            let value = this.model.get(this.name);
-
-            let isNotValid = false;
-            $.each(configuration, function (k, item) {
-                if (this.model.id !== (k + 1)) {
-                    if (_.isEqual(item.column, value)) {
-                        if (value === '...') {
-                            Espo.Ui.notify(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'), 'error', 1000 * 60 * 60 * 2, true);
-                        } else {
-                            this.showValidationMessage(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'));
-                        }
-                        isNotValid = true;
-                    }
-
-                    if (typeof item.exportIntoSeparateColumns !== 'undefined' && item.exportIntoSeparateColumns) {
-                        if (value.match(new RegExp(`^${item.column} [0-9]+$`, 'gm'))) {
-                            this.showValidationMessage(this.translate('columnAlreadyExist', 'messages', 'ExportFeed'));
-                            isNotValid = true;
-                        }
-                    }
-                }
-            }.bind(this));
-
-            return isNotValid;
+            return false;
         },
 
     })

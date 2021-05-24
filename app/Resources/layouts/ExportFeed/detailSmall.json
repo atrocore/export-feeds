@@ -1,16 +1,16 @@
 [
-    {
-        "label": "Overview",
-        "style": "default",
-        "rows": [
-            [
-                {
-                    "name": "name"
-                },
-                {
-                    "name": "type"
-                }
-            ]
-        ]
-    }
+  {
+    "label": "Overview",
+    "style": "default",
+    "rows": [
+      [
+        {
+          "name": "name"
+        },
+        {
+          "name": "type"
+        }
+      ]
+    ]
+  }
 ]
