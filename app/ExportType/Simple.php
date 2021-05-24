@@ -24,7 +24,6 @@ namespace Export\ExportType;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Exceptions\Exception;
 use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
@@ -116,6 +115,22 @@ class Simple extends AbstractType
         }
 
         return array_values($configuration);
+    }
+
+    public static function cmpColumns(array $a, array $b): int
+    {
+        $name = 'pos';
+
+        // for attributes. attributes should sorting as string
+        if (preg_match('/^attr_(.*)$/', $a['name'])) {
+            $name = 'name';
+        }
+
+        if ($a[$name] == $b[$name]) {
+            return 0;
+        }
+
+        return ($a[$name] > $b[$name]) ? +1 : -1;
     }
 
     /**
@@ -251,23 +266,18 @@ class Simple extends AbstractType
             foreach ($rows as $rowNumber => $rowData) {
                 $n = 0;
                 foreach ($rowData as $colName => $value) {
-                    $pos = $rowNumber * 1000 + $n;
-
-                    if (isset($columns[$pos])) {
-                        continue 1;
-                    }
-
-                    $columns[$pos] = [
+                    $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
+                        'pos'    => $rowNumber * 1000 + $n,
                         'name'   => $colName,
-                        'label'  => $this->getDataConvertor($data['entity'])->getColumnLabel($colName, $this->data)
+                        'label'  => $this->getDataConvertor($data['entity'])->getColumnLabel($colName, $this->data, $rowNumber)
                     ];
-
                     $n++;
                 }
             }
         }
-        ksort($columns);
+
+        usort($columns, [self::class, 'cmpColumns']);
 
         $result = ['columns' => $columns, 'data' => []];
         foreach ($resultData as $rowData) {

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Utils\Util;
 use Espo\ORM\EntityManager;
 use Pim\Services\ProductAttributeValue;
@@ -53,13 +54,15 @@ class Product extends Base
         return parent::convert($record, $configuration);
     }
 
-    public function getColumnLabel(string $colName, array $configuration): string
+    public function getColumnLabel(string $colName, array $configuration, int $num): string
     {
         if (isset($this->columnData[$colName])) {
-            $label = '';
-            if (isset($this->columnData[$colName]['attributeLabel'])) {
-                $label .= $this->columnData[$colName]['attributeLabel'];
+            if (!isset($this->columnData[$colName]['attributeLabel'])) {
+                $attribute = $this->getEntityManager()->getEntity('Attribute', $this->columnData[$colName]['attributeId']);
+                throw new BadRequest(sprintf($this->translate('noAttributeLabel', 'exceptions', 'ExportFeed'), $attribute->get('name'), $this->columnData[$colName]['locale']));
             }
+
+            $label = $this->columnData[$colName]['attributeLabel'];
 
             if (empty($configuration['exportByChannelId'])) {
                 $label .= ' | ' . $this->columnData[$colName]['channelLabel'];
@@ -68,7 +71,7 @@ class Product extends Base
             return $label;
         }
 
-        return $colName;
+        return parent::getColumnLabel($colName, $configuration, $num);
     }
 
     /**

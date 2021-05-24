@@ -72,7 +72,9 @@
     "wrongExportFeedType": "Falscher Exportfeed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
     "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch.",
-    "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden."
+    "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden.",
+    "noFieldLabel": "Die Bezeichnung für das Feld '%s' für die Sprache '%s' ist nicht gesetzt.",
+    "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt."
   },
   "tooltips": {
     "channels": "Mit diesen Kanälen wird der Feed verknüpft."

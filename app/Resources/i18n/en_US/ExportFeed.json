@@ -71,7 +71,9 @@
     "wrongExportFeedType": "Wrong Export Feed type.",
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
     "configuratorSettingsIncorrect": "Configurator settings incorrect.",
-    "lastRecordIsRequired": "Last record in the configurator cannot be removed."
+    "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
+    "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
+    "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set."
   },
   "tooltips": {
     "channels": "Export Feed to will be linked to these channels."

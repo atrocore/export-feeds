@@ -23,6 +23,8 @@ declare(strict_types=1);
 namespace Export\DataConvertor;
 
 use Espo\Core\Container;
+use Espo\Core\Exceptions\BadRequest;
+use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
 use Espo\Services\Record;
 
@@ -133,7 +135,7 @@ class Base
                 break;
             case 'linkMultiple':
                 $params = [];
-                if (!empty($configuration['channelId'])){
+                if (!empty($configuration['channelId'])) {
                     $params['exportByChannelId'] = $configuration['channelId'];
                 }
 
@@ -181,8 +183,21 @@ class Base
         return $result;
     }
 
-    public function getColumnLabel(string $colName, array $configuration): string
+    public function getColumnLabel(string $colName, array $configuration, int $num): string
     {
+        if (empty($colName)) {
+            $entity = $configuration['feed']['data']['entity'];
+            $field = $configuration['feed']['data']['configuration'][$num]['field'];
+
+            $fieldData = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $field]);
+
+            if (empty($fieldData['multilangLocale'])) {
+                throw new Error('Locale field expected.');
+            }
+
+            throw new BadRequest(sprintf($this->translate('noFieldLabel', 'exceptions', 'ExportFeed'), $fieldData['multilangField'], $fieldData['multilangLocale']));
+        }
+
         return $colName;
     }
 
@@ -221,7 +236,7 @@ class Base
                 }
                 break;
             case 'link':
-                $result = $record[$field. 'Id'];
+                $result = $record[$field . 'Id'];
                 break;
             case 'linkMultiple':
                 $result = null;
@@ -253,5 +268,10 @@ class Base
         }
 
         return $this->services[$serviceName];
+    }
+
+    protected function translate(string $key, string $tab, string $scope): string
+    {
+        return $this->container->get('language')->translate($key, $tab, $scope);
     }
 }
