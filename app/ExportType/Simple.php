@@ -259,12 +259,6 @@ class Simple extends AbstractType
             throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
 
-        // sorting columns
-        foreach ($columns as $k => $rows) {
-            sort($rows);
-            $columns[$k] = $rows;
-        }
-
         foreach ($resultData as $rowData) {
             $resultRow = [];
             foreach ($columns as $columnData) {

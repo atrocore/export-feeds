@@ -219,8 +219,15 @@ class Base
             case 'unit':
                 $result = $record[$field] . ' ' . $record[$field . 'Unit'];
                 break;
+            case 'image':
+            case 'asset':
+                $result = $record[$field . 'Id'];
+                if (!empty($result) && !empty($attachment = $this->getService('Attachment')->getEntity($result))) {
+                    $result = $attachment->get('url');
+                }
+                break;
             case 'link':
-                $result = $record[$field] . 'Id';
+                $result = $record[$field. 'Id'];
                 break;
             case 'linkMultiple':
                 $result = null;
