@@ -397,7 +397,6 @@ class Simple extends AbstractType
         $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['entity'] = $feedData['entity'];
-        $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         if (!empty($this->data['channelLocales'])) {
             $row['channelLocales'] = $this->data['channelLocales'];
@@ -414,6 +413,7 @@ class Simple extends AbstractType
                 }
             }
         }
+        $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         return $row;
     }
@@ -554,7 +554,11 @@ class Simple extends AbstractType
                 $originField = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangField']);
                 return $this->getLanguage($locale)->translate($originField, 'fields', $entity);
             } else {
-                return $this->translate($row['field'], 'fields', $entity);
+                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'mainLocale') {
+                    return $this->getLanguage($row['channelLocales'][0])->translate($row['field'], 'fields', $entity);
+                } else {
+                    return $this->translate($row['field'], 'fields', $entity);
+                }
             }
         }
 
