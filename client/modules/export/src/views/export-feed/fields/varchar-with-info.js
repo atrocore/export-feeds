@@ -73,7 +73,7 @@ Espo.define('export:views/export-feed/fields/varchar-with-info', 'views/fields/v
                     let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('field'), 'entity']);
                     if (entity) {
                         if (field.substring(field.length - 2) === 'Id') {
-                            translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity));
+                            translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity) + ' ' + this.translate('id', 'fields', 'Global'));
                         } else if (field.substring(field.length - 4) === 'Name') {
                             translations.push(this.translate(field.substring(0, field.length - 4), 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global'));
                         } else {
