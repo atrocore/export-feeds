@@ -1,0 +1,26 @@
+{
+  "fields": {
+    "channel": "Channel",
+    "exportFeed": "Export Feed",
+    "file": "Exported File",
+    "state": "State",
+    "stateMessage": "Message",
+    "start": "Start",
+    "end": "End"
+  },
+  "links": {
+    "channel": "Channel",
+    "exportFeed": "Export Feed"
+  },
+  "labels": {
+    "Create ExportResult": "Create Export Result",
+    "Pending": "Pending",
+    "Running": "Running",
+    "Done": "Done",
+    "Failed": "Failed",
+    "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
+  },
+  "exceptions": {
+    "exportIsRunning": "Export result for a running queue item cannot be removed."
+  }
+}
