@@ -1,26 +1,26 @@
 {
   "fields": {
-    "channel": "Channel",
-    "exportFeed": "Export Feed",
-    "file": "Exported File",
-    "state": "State",
-    "stateMessage": "Message",
-    "start": "Start",
-    "end": "End"
+    "channel": "Канал",
+    "exportFeed": "Экспорт. фид",
+    "file": "Экспортированный файл",
+    "state": "Статус",
+    "stateMessage": "Сообщение",
+    "start": "Старт",
+    "end": "Завершение"
   },
   "links": {
-    "channel": "Channel",
-    "exportFeed": "Export Feed"
+    "channel": "Канал",
+    "exportFeed": "Экспорт. фид"
   },
   "labels": {
-    "Create ExportResult": "Create Export Result",
-    "Pending": "Pending",
-    "Running": "Running",
-    "Done": "Done",
-    "Failed": "Failed",
-    "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
+    "Create ExportResult": "Сгенерировать результат экспорта",
+    "Pending": "В очереди",
+    "Running": "Выполняется",
+    "Done": "Создано",
+    "Failed": "Не выполнено",
+    "exportDownloadNotification": "Вы можете <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> файл."
   },
   "exceptions": {
-    "exportIsRunning": "Export result for a running queue item cannot be removed."
+    "exportIsRunning": "Результат экспорта для работающего элемента очереди не может быть удален."
   }
 }
