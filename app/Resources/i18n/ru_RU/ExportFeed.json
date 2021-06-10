@@ -1,81 +1,81 @@
 {
   "fields": {
-    "entity": "Entity",
-    "type": "Type",
-    "channels": "Channels",
-    "isActive": "Active",
-    "fileType": "Format",
-    "isFileHeaderRow": "Header Row",
-    "csvFieldDelimiter": "Field Delimiter",
-    "csvTextQualifier": "Text Qualifier",
-    "field": "Field",
-    "columnType": "Column Label",
-    "column": "Column Name",
-    "exportBy": "Related Entity Fields",
-    "remove": "Remove",
-    "isAttribute": "Is Attribute",
-    "attribute": "Attribute",
-    "fieldOrAttribute": "Field/Attribute",
-    "delimiter": "Field Value Delimiter",
-    "exportByOrChannel":"Export By/Channel",
-    "exportResults": "Export Results",
-    "exportIntoSeparateColumns": "Separate columns",
-    "allFields": "All Fields"
+    "entity": "Сущность",
+    "type": "Тип",
+    "channels": "Каналы",
+    "isActive": "Активный",
+    "fileType": "Формат",
+    "isFileHeaderRow": "Строка заголовка",
+    "csvFieldDelimiter": "Разделитель полей",
+    "csvTextQualifier": "Классификатор текста",
+    "field": "Поле",
+    "columnType": "Метка колонки",
+    "column": "Название колонки",
+    "exportBy": "Поля связанных сущностей",
+    "remove": "Удалить",
+    "isAttribute": "Является атрибутом",
+    "attribute": "Атрибут",
+    "fieldOrAttribute": "Поле/Атрибут",
+    "delimiter": "Разделитель значений поля",
+    "exportByOrChannel":"Экспортировать по/каналу",
+    "exportResults": "Правила экспорта",
+    "exportIntoSeparateColumns": "Отдельные колонки",
+    "allFields": "Все поля"
   },
   "links": {
-    "channels": "Channels",
-    "exportResults": "Export Results"
+    "channels": "Каналы",
+    "exportResults": "Результаты экспорта"
   },
   "columnType": {
-    "name": "Name",
-    "internal": "Internal Name",
-    "custom": "Custom Name"
+    "name": "Название",
+    "internal": "Внутренее название",
+    "custom": "Пользовательское название"
   },
   "labels": {
-    "mainLocale": "Main Language",
-    "Language": "Language",
-    "attributeName": "Attribute Name",
-    "internalAttributeName": "Internal Attribute Name",
-    "attributeCode": "Attribute Code",
-    "useAttributeNameAsColumnName": "Use attribute name as a column name",
-    "useInternalAttributeNameAsColumnName": "Use internal attribute name as a column name",
-    "useAttributeCodeAsColumnName": "Use attribute code as a column name",
-    "fields": "Fields",
-    "ignoreFilter": "Ignore filter in the feed",
-    "Create ExportFeed": "Create Export Feed",
-    "simpleTypeSettings": "Simple Type Settings",
-    "entityFilter": "Filter",
-    "Configurator": "Configurator",
-    "addEntityField": "Add Entity Field",
-    "addProductAttribute": "Add Product Attribute",
-    "simple": "Simple",
+    "mainLocale": "Осн. язык",
+    "Language": "Язык",
+    "attributeName": "Название атрибута",
+    "internalAttributeName": "Внутр. название атрибута",
+    "attributeCode": "Код атрибута",
+    "useAttributeNameAsColumnName": "Использовать название атрибута в качестве названия колонки",
+    "useInternalAttributeNameAsColumnName": "Использовать название внутр. атрибута в качестве названия колонки",
+    "useAttributeCodeAsColumnName": "Использовать код атрибута в качестве названия колонки",
+    "fields": "Поля",
+    "ignoreFilter": "Игнорировать фильтр в фиде",
+    "Create ExportFeed": "Создать экспортный фид",
+    "simpleTypeSettings": "Настройки простого типа",
+    "entityFilter": "Фильтр",
+    "Configurator": "Конфигуратор",
+    "addEntityField": "Создать сущность поле",
+    "addProductAttribute": "Добавить атрибут продукта",
+    "simple": "Простой",
     "xlsx": "XLSX (Excel)",
     "csv": "CSV",
-    "doubleQuote": "Double Quote",
-    "singleQuote": "Single Quote"
+    "doubleQuote": "Двойные кавычки",
+    "singleQuote": "Одинарная кавычка"
   },
   "messages": {
-    "systemDelimiter": "\"|\" cannot be used in delimiter.",
-    "delimitersMustBeDifferent": "Delimiters for fields and field values must be different and should not include each other.",
-    "noExportFeedSelected": "No ExportFeed selected.",
-    "columnAlreadyExist": "A column with such name already exists."
+    "systemDelimiter": "\"|\" нельзя использовать в разделителе.",
+    "delimitersMustBeDifferent": "Разделители полей и значений полей должны быть разными и не включать друг друга.",
+    "noExportFeedSelected": "Экспортный фид не выбран.",
+    "columnAlreadyExist": "Колонка с таким названием уже существует."
   },
   "additionalTranslates": {
-    "exportName": "Export: %s",
-    "jobCreated": "Export job created successfully",
-    "jobNotCreated": "Export job created failed",
-    "channelWithoutExportFeeds": "No Export Feeds linked with current Channel"
+    "exportName": "Экспорт: %s",
+    "jobCreated": "Задание на экспорт успешно создано",
+    "jobNotCreated": "Не удалось создать задание экспорта",
+    "channelWithoutExportFeeds": "Нет экспорт. фидов, связанных с текущим каналом"
   },
   "exceptions": {
-    "noDataFound": "Feed has nothing to export.",
-    "wrongExportFeedType": "Wrong Export Feed type.",
-    "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
-    "configuratorSettingsIncorrect": "Configurator settings incorrect.",
-    "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
-    "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
-    "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set."
+    "noDataFound": "Не найдено данных для экспорт. фида.",
+    "wrongExportFeedType": "Неправильный тип экспорт. файла.",
+    "exportValidationFailed": "Вы не можете экспортировать такой файл. Пожалуйста, проверьте форму ввода данных и попробуйте еще раз.",
+    "configuratorSettingsIncorrect": "Неправильные настройки конфигуратора.",
+    "lastRecordIsRequired": "Последнюю запись в конфигураторе удалить нельзя.",
+    "noFieldLabel": "Метка для поля '%s' для языка'%s' не назначена.",
+    "noAttributeLabel": "Метка для атрибута '%s' для языка '%s' не назначена."
   },
   "tooltips": {
-    "channels": "Export Feed to will be linked to these channels."
+    "channels": "Экспорт. фид будет связан с этими каналами."
   }
 }
