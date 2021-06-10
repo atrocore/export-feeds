@@ -1,13 +1,13 @@
 {
   "scopeNames": {
-    "ExportFeed": "Export Feed",
-    "ExportResult": "Export Result"
+    "ExportFeed": "Экспортный фид",
+    "ExportResult": "Результат экспорта"
   },
   "scopeNamesPlural": {
-    "ExportFeed": "Export Feeds",
-    "ExportResult": "Export Results"
+    "ExportFeed": "Экспортные фиды",
+    "ExportResult": "Результаты экспорта"
   },
   "labels": {
-    "Generate": "Generate"
+    "Generate": "Сгенерировать"
   }
 }
