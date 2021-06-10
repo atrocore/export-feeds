@@ -1,14 +1,14 @@
 {
     "fieldTypes": {
-        "exportLink": "Export Link"
+        "exportLink": "Ссылка для экспорта"
     },
     "fields": {
-        "dataUrl": "Data Url"
+        "dataUrl": "URL данных"
     },
     "labels": {
-        "exportFeed": "Export Feeds"
+        "exportFeed": "Фиды экспорта"
     },
     "descriptions": {
-        "exportFeed": "Configuration of export templates to be used for exporting data from the TreoCore entities"
+        "exportFeed": "Конфигурация шаблонов экспорта, которые будут использоваться для экспорта данных из сущностей TreoCore"
     }
 }
