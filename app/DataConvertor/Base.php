@@ -33,6 +33,8 @@ use Espo\Services\Record;
  */
 class Base
 {
+    public const SYSTEM_DELIMITER = '\|';
+
     /**
      * @var Container
      */
@@ -116,7 +118,7 @@ class Base
                             }
 
                             if (!empty($fieldResult)) {
-                                $result[$column] = implode('|', $fieldResult);
+                                $result[$column] = implode(self::SYSTEM_DELIMITER, $fieldResult);
                             }
                         }
                     } else {
@@ -128,7 +130,7 @@ class Base
                             }
                         }
                         if (!empty($fieldResult)) {
-                            $result[$column] = implode('|', $fieldResult);
+                            $result[$column] = implode(self::SYSTEM_DELIMITER, $fieldResult);
                         }
                     }
                 }
@@ -163,7 +165,7 @@ class Base
                             $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                             $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter);
                         }
-                        $links[] = implode('|', $fieldResult);
+                        $links[] = implode(self::SYSTEM_DELIMITER, $fieldResult);
                     }
 
                     if (!empty($configuration['exportIntoSeparateColumns'])) {

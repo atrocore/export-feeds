@@ -176,7 +176,7 @@ class Product extends Base
                     'channelLabel'   => $channelLabel
                 ];
 
-                $result[$columnName] = implode('|', $fieldResult);
+                $result[$columnName] = implode(self::SYSTEM_DELIMITER, $fieldResult);
             }
 
             /**

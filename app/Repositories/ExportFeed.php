@@ -24,8 +24,8 @@ namespace Export\Repositories;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
-use Espo\Core\Utils\Json;
 use Espo\ORM\Entity;
+use Export\DataConvertor\Base as BaseConvertor;
 
 /**
  * ExportFeed Repository
@@ -103,11 +103,11 @@ class ExportFeed extends Base
     protected function isDelimiterValid(Entity $entity): bool
     {
         $delimiter = (string)$entity->get('data')->delimiter;
-        if (strpos($delimiter, '|') !== false) {
+        if (strpos($delimiter, BaseConvertor::SYSTEM_DELIMITER) !== false) {
             throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
         }
         if ($entity->get('fileType') == 'csv') {
-            if (strpos($entity->get('csvFieldDelimiter'), '|') !== false) {
+            if (strpos($entity->get('csvFieldDelimiter'), BaseConvertor::SYSTEM_DELIMITER) !== false) {
                 throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
             }
             foreach (str_split($delimiter) as $char) {
