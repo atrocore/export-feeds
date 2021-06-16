@@ -572,7 +572,7 @@ class Simple extends AbstractType
     protected function getLanguage(string $locale): Language
     {
         if (!isset($this->languages[$locale])) {
-            $this->languages[$locale] = new Language($locale, $this->container->get('fileManager'), $this->container->get('metadata'), $this->container->get('eventManager'));
+            $this->languages[$locale] = new Language($this->container, $locale);
         }
 
         return $this->languages[$locale];
