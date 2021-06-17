@@ -103,11 +103,11 @@ class ExportFeed extends Base
     protected function isDelimiterValid(Entity $entity): bool
     {
         $delimiter = (string)$entity->get('data')->delimiter;
-        if (strpos($delimiter, BaseConvertor::SYSTEM_DELIMITER) !== false) {
+        if (strpos($delimiter, BaseConvertor::DELIMITER) !== false) {
             throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
         }
         if ($entity->get('fileType') == 'csv') {
-            if (strpos($entity->get('csvFieldDelimiter'), BaseConvertor::SYSTEM_DELIMITER) !== false) {
+            if (strpos($entity->get('csvFieldDelimiter'), BaseConvertor::DELIMITER) !== false) {
                 throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
             }
             foreach (str_split($delimiter) as $char) {

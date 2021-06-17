@@ -33,7 +33,7 @@ use Espo\Services\Record;
  */
 class Base
 {
-    public const SYSTEM_DELIMITER = '\|';
+    public const DELIMITER = '|';
 
     /**
      * @var Container
@@ -118,7 +118,7 @@ class Base
                             }
 
                             if (!empty($fieldResult)) {
-                                $result[$column] = implode(self::SYSTEM_DELIMITER, $fieldResult);
+                                $result[$column] = implode(self::DELIMITER, self::escapeValues($fieldResult));
                             }
                         }
                     } else {
@@ -130,7 +130,7 @@ class Base
                             }
                         }
                         if (!empty($fieldResult)) {
-                            $result[$column] = implode(self::SYSTEM_DELIMITER, $fieldResult);
+                            $result[$column] = implode(self::DELIMITER, self::escapeValues($fieldResult));
                         }
                     }
                 }
@@ -165,16 +165,16 @@ class Base
                             $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                             $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter);
                         }
-                        $links[] = implode(self::SYSTEM_DELIMITER, $fieldResult);
+                        $links[] = implode(self::DELIMITER, self::escapeValues($fieldResult));
                     }
 
                     if (!empty($configuration['exportIntoSeparateColumns'])) {
                         foreach ($links as $k => $link) {
                             $columnName = $column . ' ' . ($k + 1);
-                            $result[$columnName] = $link;
+                            $result[$columnName] = self::escapeValue($link, $delimiter);
                         }
                     } else {
-                        $result[$column] = implode($delimiter, $links);
+                        $result[$column] = implode($delimiter, self::escapeValues($links, $delimiter));
                     }
                 }
                 break;
@@ -219,7 +219,7 @@ class Base
             case 'multiEnum':
             case 'multiEnumMultiLang':
                 if (!empty($record[$field]) && !empty($delimiter)) {
-                    $result = implode($delimiter, $record[$field]);
+                    $result = implode($delimiter, self::escapeValues($record[$field], $delimiter));
                 } else {
                     $result = null;
                 }
@@ -244,7 +244,7 @@ class Base
                 $result = null;
                 break;
             default:
-                $result = $record[$field];
+                $result = self::escapeValue($record[$field], $delimiter);
         }
 
         return $result;
@@ -275,5 +275,29 @@ class Base
     protected function translate(string $key, string $tab, string $scope): string
     {
         return $this->container->get('language')->translate($key, $tab, $scope);
+    }
+
+    protected static function escapeValues(array $values, string $delimiter = self::DELIMITER): array
+    {
+        foreach ($values as $k => $value) {
+            $values[$k] = self::escapeValue($value, $delimiter);
+        }
+
+        return $values;
+    }
+
+    /**
+     * @param mixed  $value
+     * @param string $delimiter
+     *
+     * @return mixed
+     */
+    protected static function escapeValue($value, string $delimiter = self::DELIMITER)
+    {
+        if (!is_string($value)) {
+            return $value;
+        }
+
+        return str_replace($delimiter, '\\' . $delimiter, str_replace('\\' . $delimiter, $delimiter, $value));
     }
 }
