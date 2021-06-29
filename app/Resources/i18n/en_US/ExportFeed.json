@@ -20,7 +20,9 @@
     "exportByOrChannel":"Export By/Channel",
     "exportResults": "Export Results",
     "exportIntoSeparateColumns": "Separate columns",
-    "allFields": "All Fields"
+    "allFields": "All Fields",
+    "emptyValue": "Empty Value",
+    "nullValue": "Null Value"
   },
   "links": {
     "channels": "Channels",

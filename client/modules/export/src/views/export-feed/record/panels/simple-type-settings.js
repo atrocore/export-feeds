@@ -30,7 +30,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         configAttributeEditView: 'export:views/export-feed/simple-type-components/modals/attribute-edit',
 
-        configuratorFields: ['entity', 'delimiter', 'allFields'],
+        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue'],
 
         validations: ['configurator', 'delimiters'],
 
@@ -194,6 +194,22 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     inlineEditDisabled: true,
                     mode: this.mode
                 }, view => view.render());
+
+                this.createView('emptyValue', 'views/fields/varchar', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="emptyValue"]`,
+                    name: 'emptyValue',
+                    inlineEditDisabled: true,
+                    mode: this.mode
+                }, view => view.render());
+
+                this.createView('nullValue', 'views/fields/varchar', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="nullValue"]`,
+                    name: 'nullValue',
+                    inlineEditDisabled: true,
+                    mode: this.mode
+                }, view => view.render());
             });
         },
 
@@ -214,6 +230,8 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 entity: (this.configData || {}).entity || null,
                 delimiter: (this.configData || {}).delimiter || null,
                 allFields: (this.configData || {}).allFields || null,
+                emptyValue: (this.configData || {}).emptyValue || 'None',
+                nullValue: (this.configData || {}).nullValue || 'Null',
             }, {silent: true});
         },
 
