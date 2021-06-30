@@ -109,7 +109,7 @@ class Product extends Base
                 $value = Util::toCamelCase(strtolower($value . '_' . $configuration['locale']));
             }
 
-            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $value, $configuration['delimiter']);
+            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $value, $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
         }
 
         return $result;
@@ -130,9 +130,8 @@ class Product extends Base
             foreach ($productAttributes as $productAttribute) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
-                    $fieldResult[] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $v, $configuration['delimiter']);
+                    $fieldResult[] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $v, $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
                 }
-
 
                 $locale = '';
                 if (!empty($productAttribute['isLocale'])) {

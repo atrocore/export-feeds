@@ -195,6 +195,10 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     mode: this.mode
                 }, view => view.render());
 
+                this.listenTo(this.panelModel, 'change:emptyValue', () => {
+                    this.configData.emptyValue = this.panelModel.get('emptyValue');
+                });
+
                 this.createView('emptyValue', 'views/fields/varchar', {
                     model: this.panelModel,
                     el: `${this.options.el} .field[data-name="emptyValue"]`,
@@ -202,6 +206,10 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     inlineEditDisabled: true,
                     mode: this.mode
                 }, view => view.render());
+
+                this.listenTo(this.panelModel, 'change:nullValue', () => {
+                    this.configData.nullValue = this.panelModel.get('nullValue');
+                });
 
                 this.createView('nullValue', 'views/fields/varchar', {
                     model: this.panelModel,
@@ -334,7 +342,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 this.getModelFactory().create(null, model => {
                     model.set(_.extend(item, {
                         entity: this.panelModel.get('entity'),
-                        allFields: this.panelModel.get('allFields')
+                        allFields: this.panelModel.get('allFields'),
+                        emptyValue: this.panelModel.get('emptyValue'),
+                        nullValue: this.panelModel.get('nullValue')
                     }));
                     model.id = i + 1;
                     this.collection.add(model);
@@ -547,6 +557,8 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             let data = {
                 entity: this.panelModel.get('entity'),
                 allFields: this.panelModel.get('allFields'),
+                emptyValue: this.panelModel.get('emptyValue'),
+                nullValue: this.panelModel.get('nullValue'),
                 delimiter: this.panelModel.get('delimiter')
             };
             data.configuration = this.collection.map(model => model.getClonedAttributes());

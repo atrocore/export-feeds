@@ -396,6 +396,8 @@ class Simple extends AbstractType
 
         $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
+        $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : 'None';
+        $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
         $row['entity'] = $feedData['entity'];
 
         if (!empty($this->data['channelLocales'])) {
