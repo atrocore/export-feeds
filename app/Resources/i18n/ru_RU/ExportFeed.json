@@ -20,7 +20,9 @@
     "exportByOrChannel":"Экспортировать по/каналу",
     "exportResults": "Правила экспорта",
     "exportIntoSeparateColumns": "Отдельные колонки",
-    "allFields": "Все поля"
+    "allFields": "Все поля",
+    "emptyValue": "Пустое значение",
+    "nullValue": "Нулевое значение"
   },
   "links": {
     "channels": "Каналы",

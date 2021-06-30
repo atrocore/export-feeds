@@ -21,7 +21,9 @@
     "data": "Daten",
     "exportResults": "Exportergebnisse",
     "exportIntoSeparateColumns": "Separate Spalten",
-    "allFields": "Alle Felder"
+    "allFields": "Alle Felder",
+    "emptyValue": "Leerer Wert",
+    "nullValue": "Nullwert"
   },
   "links": {
     "channels": "Kanäle",

@@ -76,6 +76,8 @@ class Base
         $entity = $configuration['entity'];
         $column = $configuration['column'];
         $delimiter = $configuration['delimiter'];
+        $emptyValue = $configuration['emptyValue'];
+        $nullValue = $configuration['nullValue'];
 
         // get field type
         $type = (string)$this->getMetadata()->get(['entityDefs', $entity, 'fields', $field, 'type'], 'varchar');
@@ -83,7 +85,7 @@ class Base
         switch ($type) {
             case 'asset':
             case 'link':
-                $result[$column] = null;
+                $result[$column] = $nullValue;
 
                 $linkId = $record[$field . 'Id'];
 
@@ -114,12 +116,14 @@ class Base
                             $fieldResult = [];
                             foreach ($exportBy as $v) {
                                 $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-                                $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter);
+                                $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter, $emptyValue, $nullValue);
                             }
 
                             if (!empty($fieldResult)) {
                                 $result[$column] = implode(self::DELIMITER, self::escapeValues($fieldResult));
                             }
+                        } else {
+                            $result[$column] = $emptyValue;
                         }
                     } else {
                         $fieldResult = [];
@@ -147,7 +151,8 @@ class Base
                     $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
                 }
 
-                if (!empty($foreignResult)) {
+                $result[$column] = $emptyValue;
+                if (!empty($foreignResult['total'])) {
                     $foreignEntity = $this->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
 
                     if (isset($foreignResult['collection'])) {
@@ -163,7 +168,7 @@ class Base
                         $fieldResult = [];
                         foreach ($exportBy as $v) {
                             $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-                            $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter);
+                            $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter, $emptyValue, $nullValue);
                         }
                         $links[] = implode(self::DELIMITER, self::escapeValues($fieldResult));
                     }
@@ -179,7 +184,7 @@ class Base
                 }
                 break;
             default:
-                $result[$column] = $this->prepareSimpleType($type, $record, $field, $configuration['delimiter']);
+                $result[$column] = $this->prepareSimpleType($type, $record, $field, $delimiter, $emptyValue, $nullValue);
         }
 
         return $result;
@@ -208,43 +213,106 @@ class Base
      * @param array  $record
      * @param string $field
      * @param string $delimiter
+     * @param string $emptyValue
+     * @param string $nullValue
      *
      * @return mixed
      */
-    protected function prepareSimpleType(string $type, array $record, string $field, string $delimiter)
+    protected function prepareSimpleType(string $type, array $record, string $field, string $delimiter, string $emptyValue, string $nullValue)
     {
         switch ($type) {
             case 'array':
             case 'arrayMultiLang':
             case 'multiEnum':
             case 'multiEnumMultiLang':
-                if (!empty($record[$field]) && !empty($delimiter)) {
-                    $result = implode($delimiter, self::escapeValues($record[$field], $delimiter));
-                } else {
-                    $result = null;
+                $result = $nullValue;
+                if (isset($record[$field])) {
+                    if (empty($record[$field])) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = implode($delimiter, self::escapeValues($record[$field], $delimiter));
+                    }
                 }
                 break;
             case 'currency':
-                $result = $record[$field] . ' ' . $record[$field . 'Currency'];
+                $result = $nullValue;
+                if (isset($record[$field])) {
+                    if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = $record[$field] . ' ' . $record[$field . 'Currency'];
+                    }
+                }
                 break;
             case 'unit':
-                $result = $record[$field] . ' ' . $record[$field . 'Unit'];
+                $result = $nullValue;
+                if (isset($record[$field])) {
+                    if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = $record[$field] . ' ' . $record[$field . 'Unit'];
+                    }
+                }
                 break;
             case 'image':
             case 'asset':
-                $result = $record[$field . 'Id'];
-                if (!empty($result) && !empty($attachment = $this->getService('Attachment')->getEntity($result))) {
-                    $result = $attachment->get('url');
+                $result = $nullValue;
+                $field = $field . 'Id';
+                if (isset($record[$field])) {
+                    if (empty($record[$field])) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        if (!empty($attachment = $this->getService('Attachment')->getEntity($record[$field]))) {
+                            $result = $attachment->get('url');
+                        } else {
+                            $result = $emptyValue;
+                        }
+                    }
                 }
                 break;
             case 'link':
-                $result = $record[$field . 'Id'];
+                $result = $nullValue;
+                $field = $field . 'Id';
+                if (isset($record[$field])) {
+                    if (empty($record[$field])) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = $record[$field];
+                    }
+                }
                 break;
             case 'linkMultiple':
-                $result = null;
+                $result = $nullValue;
+                break;
+            case 'int':
+                $result = $nullValue;
+                if (isset($record[$field])) {
+                    if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = (int)$record[$field];
+                    }
+                }
+                break;
+            case 'float':
+                $result = $nullValue;
+                if (isset($record[$field])) {
+                    if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = (float)$record[$field];
+                    }
+                }
                 break;
             default:
-                $result = self::escapeValue($record[$field], $delimiter);
+                $result = $nullValue;
+                if (isset($record[$field])) {
+                    if (empty($record[$field])) {
+                        $result = $record[$field] === null ? $nullValue : $emptyValue;
+                    } else {
+                        $result = self::escapeValue($record[$field], $delimiter);
+                    }
+                }
         }
 
         return $result;
