@@ -304,6 +304,9 @@ class Base
                     }
                 }
                 break;
+            case 'bool':
+                $result = empty($record[$field]) ? 'TRUE' : 'FALSE';
+                break;
             default:
                 $result = $nullValue;
                 if (isset($record[$field])) {
