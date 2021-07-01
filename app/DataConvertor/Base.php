@@ -230,7 +230,9 @@ class Base
                     if (empty($record[$field])) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        $result = implode($delimiter, self::escapeValues($record[$field], $delimiter));
+                        if (is_array($record[$field])) {
+                            $result = implode($delimiter, self::escapeValues($record[$field], $delimiter));
+                        }
                     }
                 }
                 break;
