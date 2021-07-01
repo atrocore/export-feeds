@@ -315,7 +315,7 @@ class Base
                     if (empty($record[$field])) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        $result = self::escapeValue($record[$field], $delimiter);
+                        $result = $record[$field];
                     }
                 }
         }
