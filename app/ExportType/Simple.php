@@ -117,22 +117,6 @@ class Simple extends AbstractType
         return array_values($configuration);
     }
 
-    public static function cmpColumns(array $a, array $b): int
-    {
-        $name = 'pos';
-
-        // for attributes. attributes should sorting as string
-        if (preg_match('/^attr_(.*)$/', $a['name'])) {
-            $name = 'name';
-        }
-
-        if ($a[$name] == $b[$name]) {
-            return 0;
-        }
-
-        return ($a[$name] > $b[$name]) ? +1 : -1;
-    }
-
     /**
      * @return Attachment
      * @throws Error
@@ -277,12 +261,23 @@ class Simple extends AbstractType
             }
         }
 
-        usort($columns, [self::class, 'cmpColumns']);
+        // sorting
+        $sortedColumns = [];
+        $number = 0;
+        while (count($columns) > 0) {
+            foreach ($columns as $k => $row) {
+                if ($row['number'] == $number) {
+                    $sortedColumns[] = $row;
+                    unset($columns[$k]);
+                }
+            }
+            $number++;
+        }
 
-        $result = ['columns' => $columns, 'data' => []];
+        $result = ['columns' => $sortedColumns, 'data' => []];
         foreach ($resultData as $rowData) {
             $resultRow = [];
-            foreach ($columns as $pos => $columnData) {
+            foreach ($sortedColumns as $pos => $columnData) {
                 if (isset($rowData[$columnData['number']][$columnData['name']])) {
                     $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
                 } else {
