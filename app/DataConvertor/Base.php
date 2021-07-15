@@ -151,7 +151,10 @@ class Base
                     $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
                 }
 
-                $result[$column] = $emptyValue;
+                if (empty($configuration['exportIntoSeparateColumns'])) {
+                    $result[$column] = $emptyValue;
+                }
+
                 if (!empty($foreignResult['total'])) {
                     $foreignEntity = $this->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
 

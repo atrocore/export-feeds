@@ -286,7 +286,7 @@ class Simple extends AbstractType
                 if (isset($rowData[$columnData['number']][$columnData['name']])) {
                     $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
                 } else {
-                    $resultRow[$pos] = null;
+                    $resultRow[$pos] = $configuration[0]['emptyValue'];
                 }
             }
             $result['data'][] = $resultRow;
