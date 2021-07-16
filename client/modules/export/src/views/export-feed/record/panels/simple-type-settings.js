@@ -144,6 +144,8 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
                 this.listenTo(this.panelModel, 'change:entity', () => {
                     this.configData.entity = this.panelModel.get('entity');
+                    this.entitiesList = this.getEntitiesList();
+                    this.entityFields = this.getEntityFields(this.configData.entity);
                     this.panelModel.set('allFields', false, {silent: true});
                     this.panelModel.set('allFields', true);
                     this.model.trigger('configuration-entity-changed', this.panelModel.get('entity'));
