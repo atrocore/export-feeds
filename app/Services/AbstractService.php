@@ -27,7 +27,7 @@ use Export\Entities\ExportFeed;
 /**
  * Class AbstractService
  */
-abstract class AbstractService extends \Treo\Services\AbstractService
+abstract class AbstractService extends \Espo\Core\Templates\Services\HasContainer
 {
 
     /**
