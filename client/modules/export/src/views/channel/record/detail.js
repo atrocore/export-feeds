@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/channel/record/detail', 'pim:views/record/detail',
+Espo.define('export:views/channel/record/detail', 'pim:views/channel/record/detail',
     Dep => Dep.extend({
 
         template: 'export:channel/record/detail',
