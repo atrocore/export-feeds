@@ -468,12 +468,12 @@ class Simple extends AbstractType
 
         // prepare header
         if ($this->data['feed']['isFileHeaderRow']) {
-            fputcsv($fp, array_column($data['columns'], 'label'), $delimiter, $enclosure, '');
+            fputcsv($fp, array_column($data['columns'], 'label'), $delimiter, $enclosure, '~~~~~');
         }
 
         // prepare rows
         foreach ($rows as $item) {
-            fputcsv($fp, $item, $delimiter, $enclosure, '');
+            fputcsv($fp, $item, $delimiter, $enclosure, '~~~~~');
         }
 
         // rewind
