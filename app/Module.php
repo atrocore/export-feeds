@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export;
 
+use Espo\Core\OpenApiGenerator;
 use Treo\Core\ModuleManager\AbstractModule;
 
 /**
@@ -35,5 +36,58 @@ class Module extends AbstractModule
     public static function getLoadOrder(): int
     {
         return 5140;
+    }
+
+    public function prepareApiDocs(array &$data, array $schemas): void
+    {
+        parent::prepareApiDocs($data, $schemas);
+
+        $data['paths']["/ExportFeed/action/exportFile"]['post'] = [
+            'tags'        => ['ExportFeed'],
+            "summary"     => "Export data to file",
+            "description" => "Export data to file",
+            "operationId" => "exportFile",
+            'security'    => [['Authorization-Token' => []]],
+            'requestBody' => [
+                'required' => true,
+                'content'  => [
+                    'application/json' => [
+                        'schema' => [
+                            "type"       => "object",
+                            "properties" => [
+                                "id" => [
+                                    "type" => "string",
+                                ],
+                            ],
+                        ]
+                    ]
+                ],
+            ],
+            "responses"   => OpenApiGenerator::prepareResponses(["type" => "boolean"]),
+        ];
+
+        $data['paths']["/ExportFeed/action/exportChannel"]['post'] = [
+            'tags'        => ['ExportFeed'],
+            "summary"     => "Export channel data to file",
+            "description" => "Export channel data to file",
+            "operationId" => "exportChannel",
+            'security'    => [['Authorization-Token' => []]],
+            'requestBody' => [
+                'required' => true,
+                'content'  => [
+                    'application/json' => [
+                        'schema' => [
+                            "type"       => "object",
+                            "properties" => [
+                                "id" => [
+                                    "type" => "string",
+                                ],
+                            ],
+                        ]
+                    ]
+                ],
+            ],
+            "responses"   => OpenApiGenerator::prepareResponses(["type" => "boolean"]),
+        ];
     }
 }
