@@ -175,4 +175,6 @@ Das Modul kann an Ihre Bedürfnisse angepasst werden – zusätzliche Funktionen
 ## Demo
 https://demo.atropim.com/
 
+## Lizenz
+Dieses Modul wird unter der GNU GPLv3 [Lizenz](https://www.gnu.org/licenses/gpl-3.0.en.html) veröffentlicht.
 
