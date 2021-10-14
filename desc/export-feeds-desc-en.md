@@ -201,3 +201,6 @@ The module can be adapted to your needs, additional functions can be programmed,
 ## Demo
 https://demo.atropim.com/
 
+## License
+This module is published under the GNU GPLv3 [license](https://www.gnu.org/licenses/gpl-3.0.en.html).
+
