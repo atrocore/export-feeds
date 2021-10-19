@@ -54,7 +54,8 @@
     "xlsx": "XLSX (Excel)",
     "csv": "CSV",
     "doubleQuote": "Double Quote",
-    "singleQuote": "Single Quote"
+    "singleQuote": "Single Quote",
+    "Export": "Export"
   },
   "messages": {
     "systemDelimiter": "\"|\" cannot be used in delimiter.",

@@ -52,7 +52,7 @@ Espo.define('export:views/export-feed/record/row-actions/default', 'views/record
                 list = list.concat([
                     {
                         action: 'exportNow',
-                        label: 'Export now',
+                        label: this.translate('Export', 'labels', 'ExportFeed'),
                         data: {
                             id: this.model.id
                         }
