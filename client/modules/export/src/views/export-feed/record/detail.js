@@ -39,7 +39,11 @@ Espo.define('export:views/export-feed/record/detail', 'export:views/record/detai
         handleExportButtonVisibility() {
             const exportButton = this.$el.find('button[data-action="exportNow"]');
 
-            this.model.get('isActive') ? exportButton.show() : exportButton.hide();
+            if (this.model.get('isActive')) {
+                exportButton.attr('disabled', false);
+            } else {
+                exportButton.attr('disabled', true);
+            }
         },
 
         actionExportNow() {
