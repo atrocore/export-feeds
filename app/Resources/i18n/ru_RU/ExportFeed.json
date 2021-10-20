@@ -54,7 +54,8 @@
     "xlsx": "XLSX (Excel)",
     "csv": "CSV",
     "doubleQuote": "Двойные кавычки",
-    "singleQuote": "Одинарная кавычка"
+    "singleQuote": "Одинарная кавычка",
+    "Export": "Экспорт"
   },
   "messages": {
     "systemDelimiter": "\"|\" нельзя использовать в разделителе.",

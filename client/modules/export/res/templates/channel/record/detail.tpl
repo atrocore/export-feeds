@@ -14,7 +14,7 @@
             </ul>
             {{/if}}
             <button type="button" class="btn btn-default action" data-action="exportByChannel">
-                {{translate 'Export now'}}
+                {{translate 'Export' category='labels' scope='ExportFeed'}}
             </button>
         </div>
         <div class="panel-navigation">{{{panelnavigation}}}</div>
