@@ -30,14 +30,14 @@
   },
   "columnType": {
     "name": "Название",
-    "internal": "Внутренее название",
+    "internal": "Название › Язык",
     "custom": "Пользовательское название"
   },
   "labels": {
     "mainLocale": "Осн. язык",
     "Language": "Язык",
     "attributeName": "Название атрибута",
-    "internalAttributeName": "Внутр. название атрибута",
+    "internalAttributeName": "Название атрибута › Язык",
     "attributeCode": "Код атрибута",
     "useAttributeNameAsColumnName": "Использовать название атрибута в качестве названия колонки",
     "useInternalAttributeNameAsColumnName": "Использовать название внутр. атрибута в качестве названия колонки",

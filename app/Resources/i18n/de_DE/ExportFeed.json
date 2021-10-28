@@ -31,14 +31,14 @@
   },
   "columnType": {
     "name": "Name",
-    "internal": "Interner Name",
+    "internal": "Name › Sprache",
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {
     "mainLocale": "Hauptsprache",
     "Language": "Sprache",
     "attributeName": "Attributname",
-    "internalAttributeName": "Interner Attributname",
+    "internalAttributeName": "Attributname › Sprache",
     "attributeCode": "Attributcode",
     "useAttributeNameAsColumnName": "Attributnamen als Spaltennamen verwenden",
     "useInternalAttributeNameAsColumnName": "Internen Attributnamen als Spaltennamen verwenden",

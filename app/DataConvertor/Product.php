@@ -65,7 +65,7 @@ class Product extends Base
             $label = $this->columnData[$colName]['attributeLabel'];
 
             if (empty($configuration['exportByChannelId'])) {
-                $label .= ' ' . self::DELIMITER . ' ' . self::escapeValue($this->columnData[$colName]['channelLabel']);
+                $label .= self::DELIMITER . self::escapeValue($this->columnData[$colName]['channelLabel']);
             }
 
             return $label;
