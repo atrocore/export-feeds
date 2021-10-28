@@ -281,7 +281,7 @@ class Simple extends AbstractType
                 if (isset($rowData[$columnData['number']][$columnData['name']])) {
                     $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
                 } else {
-                    $resultRow[$pos] = $configuration[0]['emptyValue'];
+                    $resultRow[$pos] = $configuration[0]['nullValue'];
                 }
             }
             $result['data'][] = $resultRow;
@@ -391,7 +391,7 @@ class Simple extends AbstractType
 
         $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
-        $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : 'None';
+        $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
         $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
         $row['entity'] = $feedData['entity'];
 

@@ -152,7 +152,7 @@ class Base
                 }
 
                 if (empty($configuration['exportIntoSeparateColumns'])) {
-                    $result[$column] = $emptyValue;
+                    $result[$column] = $nullValue;
                 }
 
                 if (!empty($foreignResult['total'])) {

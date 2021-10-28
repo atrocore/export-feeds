@@ -240,7 +240,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 entity: (this.configData || {}).entity || null,
                 delimiter: (this.configData || {}).delimiter || null,
                 allFields: (this.configData || {}).allFields || null,
-                emptyValue: (this.configData || {}).emptyValue || 'None',
+                emptyValue: (this.configData || {}).emptyValue || '',
                 nullValue: (this.configData || {}).nullValue || 'Null',
             }, {silent: true});
         },
