@@ -84,18 +84,18 @@ class Product extends Base
     {
         $result[$configuration['column']] = null;
 
-        /**
-         * Find needed product attribute
-         */
+        $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale'  ? $configuration['locale'] : null;
+
         foreach ($this->getProductAttributes($record['id']) as $v) {
-            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
+            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && $v['locale'] == $locale) {
                 $productAttribute = $v;
                 break 1;
             }
         }
+
         if (!empty($configuration['channelId'])) {
             foreach ($this->getProductAttributes($record['id']) as $v) {
-                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
+                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $v['locale'] == $locale && $configuration['channelId'] == $v['channelId']) {
                     $productAttribute = $v;
                     break 1;
                 }
@@ -103,13 +103,7 @@ class Product extends Base
         }
 
         if (!empty($productAttribute)) {
-            $value = 'value';
-
-            if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
-                $value = Util::toCamelCase(strtolower($value . '_' . $configuration['locale']));
-            }
-
-            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $value, $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
+            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
         }
 
         return $result;
