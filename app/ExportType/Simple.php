@@ -281,7 +281,7 @@ class Simple extends AbstractType
                 if (isset($rowData[$columnData['number']][$columnData['name']])) {
                     $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
                 } else {
-                    $resultRow[$pos] = $configuration[0]['markForNotLinkedAttribute'];
+                    $resultRow[$pos] = isset($data['configuration'][0]['markForNotLinkedAttribute']) ? $data['configuration'][0]['markForNotLinkedAttribute'] : '--';
                 }
             }
             $result['data'][] = $resultRow;
