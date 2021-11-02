@@ -104,6 +104,8 @@ class Product extends Base
 
         if (!empty($productAttribute)) {
             $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
+        }else{
+            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
         return $result;

@@ -30,7 +30,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         configAttributeEditView: 'export:views/export-feed/simple-type-components/modals/attribute-edit',
 
-        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue'],
+        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue', 'markForNotLinkedAttribute'],
 
         validations: ['configurator', 'delimiters'],
 
@@ -220,6 +220,30 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     inlineEditDisabled: true,
                     mode: this.mode
                 }, view => view.render());
+
+                this.createView('markForNotLinkedAttribute', 'views/fields/varchar', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="markForNotLinkedAttribute"]`,
+                    name: 'markForNotLinkedAttribute',
+                    inlineEditDisabled: true,
+                    mode: this.mode
+                }, view => {
+                    view.render();
+
+                    if (this.panelModel.get('entity') !== 'Product') {
+                        view.hide();
+                    } else {
+                        view.show();
+                    }
+
+                    this.listenTo(this.panelModel, 'change:entity', () => {
+                        if (this.panelModel.get('entity') !== 'Product') {
+                            view.hide();
+                        } else {
+                            view.show();
+                        }
+                    });
+                });
             });
         },
 
@@ -242,6 +266,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 allFields: (this.configData || {}).allFields || null,
                 emptyValue: (this.configData || {}).emptyValue || '',
                 nullValue: (this.configData || {}).nullValue || 'Null',
+                markForNotLinkedAttribute: (this.configData || {}).markForNotLinkedAttribute || '--',
             }, {silent: true});
         },
 
@@ -346,7 +371,8 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                         entity: this.panelModel.get('entity'),
                         allFields: this.panelModel.get('allFields'),
                         emptyValue: this.panelModel.get('emptyValue'),
-                        nullValue: this.panelModel.get('nullValue')
+                        nullValue: this.panelModel.get('nullValue'),
+                        markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute')
                     }));
                     model.id = i + 1;
                     this.collection.add(model);
@@ -561,6 +587,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 allFields: this.panelModel.get('allFields'),
                 emptyValue: this.panelModel.get('emptyValue'),
                 nullValue: this.panelModel.get('nullValue'),
+                markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute'),
                 delimiter: this.panelModel.get('delimiter')
             };
             data.configuration = this.collection.map(model => model.getClonedAttributes());

@@ -33,6 +33,12 @@
             {{{allFields}}}
         </div>
     </div>
+    <div class="cell form-group col-sm-6 col-xs-12" data-name="markForNotLinkedAttribute">
+        <label class="control-label" data-name="markForNotLinkedAttribute"><span class="label-text">{{translate 'markForNotLinkedAttribute' scope=scope category='fields'}}</span></label>
+        <div class="field" data-name="markForNotLinkedAttribute">
+            {{{markForNotLinkedAttribute}}}
+        </div>
+    </div>
 </div>
 <div class="panel panel-default panel-configurator">
     <div class="panel-heading">

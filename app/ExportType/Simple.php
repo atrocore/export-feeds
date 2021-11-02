@@ -393,6 +393,7 @@ class Simple extends AbstractType
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
         $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
+        $row['markForNotLinkedAttribute'] = !empty($feedData['markForNotLinkedAttribute']) ? $feedData['markForNotLinkedAttribute'] : '--';
         $row['entity'] = $feedData['entity'];
 
         if (!empty($this->data['channelLocales'])) {

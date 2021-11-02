@@ -22,7 +22,8 @@
     "exportIntoSeparateColumns": "Отдельные колонки",
     "allFields": "Все поля",
     "emptyValue": "Пустое значение",
-    "nullValue": "Нулевое значение"
+    "nullValue": "Нулевое значение",
+    "markForNotLinkedAttribute": "Пометка непривязанного атрибута"
   },
   "links": {
     "channels": "Каналы",

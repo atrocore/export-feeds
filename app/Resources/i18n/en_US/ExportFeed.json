@@ -22,7 +22,8 @@
     "exportIntoSeparateColumns": "Separate columns",
     "allFields": "All Fields",
     "emptyValue": "Empty Value",
-    "nullValue": "Null Value"
+    "nullValue": "Null Value",
+    "markForNotLinkedAttribute": "Mark for a not linked attribute"
   },
   "links": {
     "channels": "Channels",

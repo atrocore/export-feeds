@@ -23,7 +23,8 @@
     "exportIntoSeparateColumns": "Separate Spalten",
     "allFields": "Alle Felder",
     "emptyValue": "Leerer Wert",
-    "nullValue": "Nullwert"
+    "nullValue": "Nullwert",
+    "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut"
   },
   "links": {
     "channels": "Kanäle",
