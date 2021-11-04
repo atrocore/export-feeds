@@ -30,9 +30,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         configAttributeEditView: 'export:views/export-feed/simple-type-components/modals/attribute-edit',
 
-        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue', 'markForNotLinkedAttribute'],
+        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue', 'markForNotLinkedAttribute', 'decimalMark', 'thousandSeparator'],
 
-        validations: ['configurator', 'delimiters'],
+        validations: ['configurator'],
 
         initialData: null,
 
@@ -244,6 +244,38 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                         }
                     });
                 });
+
+                this.listenTo(this.panelModel, 'change:markForNotLinkedAttribute', () => {
+                    this.configData.markForNotLinkedAttribute = this.panelModel.get('markForNotLinkedAttribute');
+                });
+
+                this.createView('decimalMark', 'views/fields/varchar', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="decimalMark"]`,
+                    name: 'decimalMark',
+                    inlineEditDisabled: true,
+                    mode: this.mode
+                }, view => {
+                    view.render();
+                });
+
+                this.listenTo(this.panelModel, 'change:decimalMark', () => {
+                    this.configData.decimalMark = this.panelModel.get('decimalMark');
+                });
+
+                this.createView('thousandSeparator', 'views/fields/varchar', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="thousandSeparator"]`,
+                    name: 'thousandSeparator',
+                    inlineEditDisabled: true,
+                    mode: this.mode
+                }, view => {
+                    view.render();
+                });
+
+                this.listenTo(this.panelModel, 'change:thousandSeparator', () => {
+                    this.configData.thousandSeparator = this.panelModel.get('thousandSeparator');
+                });
             });
         },
 
@@ -262,11 +294,13 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
         updatePanelModelAttributes() {
             this.panelModel.set({
                 entity: (this.configData || {}).entity || null,
-                delimiter: (this.configData || {}).delimiter || null,
+                delimiter: (this.configData || {}).delimiter || '_',
                 allFields: (this.configData || {}).allFields || null,
                 emptyValue: (this.configData || {}).emptyValue || '',
                 nullValue: (this.configData || {}).nullValue || 'Null',
                 markForNotLinkedAttribute: (this.configData || {}).markForNotLinkedAttribute || '--',
+                thousandSeparator: (this.configData || {}).thousandSeparator || '',
+                decimalMark: (this.configData || {}).decimalMark || ',',
             }, {silent: true});
         },
 
@@ -372,7 +406,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                         allFields: this.panelModel.get('allFields'),
                         emptyValue: this.panelModel.get('emptyValue'),
                         nullValue: this.panelModel.get('nullValue'),
-                        markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute')
+                        markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute'),
+                        thousandSeparator: this.panelModel.get('thousandSeparator'),
+                        decimalMark: this.panelModel.get('decimalMark')
                     }));
                     model.id = i + 1;
                     this.collection.add(model);
@@ -588,6 +624,8 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 emptyValue: this.panelModel.get('emptyValue'),
                 nullValue: this.panelModel.get('nullValue'),
                 markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute'),
+                thousandSeparator: this.panelModel.get('thousandSeparator'),
+                decimalMark: this.panelModel.get('decimalMark'),
                 delimiter: this.panelModel.get('delimiter')
             };
             data.configuration = this.collection.map(model => model.getClonedAttributes());

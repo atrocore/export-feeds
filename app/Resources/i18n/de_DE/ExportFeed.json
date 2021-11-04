@@ -24,6 +24,8 @@
     "allFields": "Alle Felder",
     "emptyValue": "Leerer Wert",
     "nullValue": "Nullwert",
+    "thousandSeparator": "Tausendertrennzeichen",
+    "decimalMark": "Dezimaltrennzeichen",
     "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut"
   },
   "links": {

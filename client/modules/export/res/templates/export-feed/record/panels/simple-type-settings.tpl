@@ -27,6 +27,20 @@
     </div>
 </div>
 <div class="row">
+    <div class="cell form-group col-sm-6 col-xs-12" data-name="thousandSeparator">
+        <label class="control-label" data-name="thousandSeparator"><span class="label-text">{{translate 'thousandSeparator' scope=scope category='fields'}}</span></label>
+        <div class="field" data-name="thousandSeparator">
+            {{{thousandSeparator}}}
+        </div>
+    </div>
+    <div class="cell form-group col-sm-6 col-xs-12" data-name="decimalMark">
+        <label class="control-label" data-name="decimalMark"><span class="label-text">{{translate 'decimalMark' scope=scope category='fields'}}</span></label>
+        <div class="field" data-name="decimalMark">
+            {{{decimalMark}}}
+        </div>
+    </div>
+</div>
+<div class="row">
     <div class="cell form-group col-sm-6 col-xs-12" data-name="allFields">
         <label class="control-label" data-name="allFields"><span class="label-text">{{translate 'allFields' scope=scope category='fields'}}</span></label>
         <div class="field" data-name="allFields">

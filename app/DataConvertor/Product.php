@@ -103,7 +103,7 @@ class Product extends Base
         }
 
         if (!empty($productAttribute)) {
-            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
+            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration);
         }else{
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
@@ -126,7 +126,7 @@ class Product extends Base
             foreach ($productAttributes as $productAttribute) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
-                    $fieldResult[] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $v, $configuration['delimiter'], $configuration['emptyValue'], $configuration['nullValue']);
+                    $fieldResult[] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $v, $configuration);
                 }
 
                 $locale = '';

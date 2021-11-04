@@ -116,7 +116,7 @@ class Base
                             $fieldResult = [];
                             foreach ($exportBy as $v) {
                                 $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-                                $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter, $emptyValue, $nullValue);
+                                $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $configuration);
                             }
 
                             if (!empty($fieldResult)) {
@@ -171,7 +171,7 @@ class Base
                         $fieldResult = [];
                         foreach ($exportBy as $v) {
                             $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-                            $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $delimiter, $emptyValue, $nullValue);
+                            $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $configuration);
                         }
                         $links[] = implode(self::DELIMITER, self::escapeValues($fieldResult));
                     }
@@ -187,7 +187,7 @@ class Base
                 }
                 break;
             default:
-                $result[$column] = $this->prepareSimpleType($type, $record, $field, $delimiter, $emptyValue, $nullValue);
+                $result[$column] = $this->prepareSimpleType($type, $record, $field, $configuration);
         }
 
         return $result;
@@ -215,14 +215,18 @@ class Base
      * @param string $type
      * @param array  $record
      * @param string $field
-     * @param string $delimiter
-     * @param string $emptyValue
-     * @param string $nullValue
+     * @param array  $configuration
      *
      * @return mixed
      */
-    protected function prepareSimpleType(string $type, array $record, string $field, string $delimiter, string $emptyValue, string $nullValue)
+    protected function prepareSimpleType(string $type, array $record, string $field, array $configuration)
     {
+        $delimiter = $configuration['delimiter'];
+        $emptyValue = $configuration['emptyValue'];
+        $nullValue = $configuration['nullValue'];
+        $decimalMark = $configuration['decimalMark'];
+        $thousandSeparator = $configuration['thousandSeparator'];
+
         switch ($type) {
             case 'array':
             case 'arrayMultiLang':
@@ -245,7 +249,7 @@ class Base
                     if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        $result = $record[$field] . ' ' . $record[$field . 'Currency'];
+                        $result = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator) . ' ' . $record[$field . 'Currency'];
                     }
                 }
                 break;
@@ -255,7 +259,7 @@ class Base
                     if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        $result = $record[$field] . ' ' . $record[$field . 'Unit'];
+                        $result = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator) . ' ' . $record[$field . 'Unit'];
                     }
                 }
                 break;
@@ -295,7 +299,7 @@ class Base
                     if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        $result = (int)$record[$field];
+                        $result = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
                     }
                 }
                 break;
@@ -305,7 +309,7 @@ class Base
                     if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        $result = (float)$record[$field];
+                        $result = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
                     }
                 }
                 break;
@@ -324,6 +328,11 @@ class Base
         }
 
         return $result;
+    }
+
+    protected function floatToNumber(float $value, $decimalMark, $thousandSeparator): string
+    {
+        return trim(trim(number_format($value, 3, $decimalMark, $thousandSeparator), '0'), $decimalMark);
     }
 
     /**

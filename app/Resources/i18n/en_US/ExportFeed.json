@@ -23,6 +23,8 @@
     "allFields": "All Fields",
     "emptyValue": "Empty Value",
     "nullValue": "Null Value",
+    "thousandSeparator": "Thousand Separator",
+    "decimalMark": "Decimal Mark",
     "markForNotLinkedAttribute": "Mark for a not linked attribute"
   },
   "links": {

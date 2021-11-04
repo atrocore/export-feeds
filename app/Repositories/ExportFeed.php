@@ -32,8 +32,6 @@ use Export\DataConvertor\Base as BaseConvertor;
  */
 class ExportFeed extends Base
 {
-    public const DEFAULT_DELIMITER = ',';
-
     /**
      * @param Entity $entity
      * @param array  $options
@@ -53,10 +51,13 @@ class ExportFeed extends Base
                 }
 
                 $data = [
-                    'entity'        => empty($this->getMetadata()->get(['scopes', 'Product'])) ? 'User' : 'Product',
-                    'allFields'     => true,
-                    'delimiter'     => self::DEFAULT_DELIMITER,
-                    'configuration' => []
+                    'entity'                    => empty($this->getMetadata()->get(['scopes', 'Product'])) ? 'User' : 'Product',
+                    'allFields'                 => true,
+                    'delimiter'                 => '_',
+                    'decimalMark'               => ',',
+                    'thousandSeparator'         => '',
+                    'markForNotLinkedAttribute' => '--',
+                    'configuration'             => []
                 ];
 
                 $entity->set('data', $data);
@@ -102,19 +103,30 @@ class ExportFeed extends Base
      */
     protected function isDelimiterValid(Entity $entity): bool
     {
-        $delimiter = (string)$entity->get('data')->delimiter;
-        if (strpos($delimiter, BaseConvertor::DELIMITER) !== false) {
-            throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
-        }
+        $data = $entity->get('data');
+
+        $delimiters = [
+            (string)$data->delimiter,
+            (string)$data->decimalMark,
+            (string)$data->thousandSeparator,
+        ];
+
         if ($entity->get('fileType') == 'csv') {
-            if (strpos($entity->get('csvFieldDelimiter'), BaseConvertor::DELIMITER) !== false) {
+            $delimiters[] = $entity->get('csvFieldDelimiter');
+        }
+
+        if ($entity->get('data')->entity === 'Product') {
+            $delimiters[] = (string)$data->markForNotLinkedAttribute;
+        }
+
+        foreach ($delimiters as $delimiter) {
+            if (BaseConvertor::DELIMITER === $delimiter) {
                 throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
             }
-            foreach (str_split($delimiter) as $char) {
-                if (strpos($entity->get('csvFieldDelimiter'), $char) !== false) {
-                    throw new BadRequest($this->getInjection('language')->translate('delimitersMustBeDifferent', 'messages', 'ExportFeed'));
-                }
-            }
+        }
+
+        if (count(array_unique($delimiters)) !== count($delimiters)) {
+            throw new BadRequest($this->getInjection('language')->translate('delimitersMustBeDifferent', 'messages', 'ExportFeed'));
         }
 
         return true;

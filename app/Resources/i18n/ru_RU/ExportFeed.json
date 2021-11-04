@@ -23,6 +23,8 @@
     "allFields": "Все поля",
     "emptyValue": "Пустое значение",
     "nullValue": "Нулевое значение",
+    "thousandSeparator": "Тысячный разделитель",
+    "decimalMark": "Десятичный разделитель",
     "markForNotLinkedAttribute": "Пометка непривязанного атрибута"
   },
   "links": {
