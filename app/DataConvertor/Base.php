@@ -332,7 +332,7 @@ class Base
 
     protected function floatToNumber(float $value, $decimalMark, $thousandSeparator): string
     {
-        return trim(trim(number_format($value, 3, $decimalMark, $thousandSeparator), '0'), $decimalMark);
+        return rtrim(rtrim(number_format($value, 3, $decimalMark, $thousandSeparator), '0'), $decimalMark);
     }
 
     /**
