@@ -26,8 +26,8 @@
     ]
   },
   {
-    "label": "File",
-    "style": "info",
+    "label": "Export Data Settings",
+    "style": "default",
     "rows": [
       [
         {
