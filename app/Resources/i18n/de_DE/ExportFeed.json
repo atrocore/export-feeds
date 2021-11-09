@@ -16,7 +16,7 @@
     "isAttribute": "Ist Attribut",
     "attribute": "Attribut",
     "fieldOrAttribute": "Feld/Attribut",
-    "delimiter": "Trennzeichen",
+    "delimiter": "Listenwerttrennzeichen",
     "exportByOrChannel":"Export von/Kanal",
     "data": "Daten",
     "exportResults": "Exportergebnisse",

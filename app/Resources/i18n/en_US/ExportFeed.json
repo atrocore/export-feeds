@@ -16,7 +16,7 @@
     "isAttribute": "Is Attribute",
     "attribute": "Attribute",
     "fieldOrAttribute": "Field/Attribute",
-    "delimiter": "Field Value Delimiter",
+    "delimiter": "List Value Separator",
     "exportByOrChannel":"Export By/Channel",
     "exportResults": "Export Results",
     "exportIntoSeparateColumns": "Separate columns",

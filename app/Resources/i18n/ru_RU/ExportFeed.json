@@ -16,7 +16,7 @@
     "isAttribute": "Является атрибутом",
     "attribute": "Атрибут",
     "fieldOrAttribute": "Поле/Атрибут",
-    "delimiter": "Разделитель значений поля",
+    "delimiter": "Разделитель значений списка",
     "exportByOrChannel":"Экспортировать по/каналу",
     "exportResults": "Правила экспорта",
     "exportIntoSeparateColumns": "Отдельные колонки",
