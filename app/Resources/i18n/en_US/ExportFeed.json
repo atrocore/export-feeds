@@ -63,7 +63,7 @@
   },
   "messages": {
     "systemDelimiter": "\"|\" cannot be used in delimiter.",
-    "delimitersMustBeDifferent": "Delimiters for fields and field values must be different and should not include each other.",
+    "delimitersMustBeDifferent": "All feed parameters should have unique values.",
     "noExportFeedSelected": "No ExportFeed selected.",
     "columnAlreadyExist": "A column with such name already exists."
   },
