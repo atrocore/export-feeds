@@ -1,2 +1,3 @@
-# Export Feeds Module
-Please read the description [here](/desc/export-feeds-desc-en.md).
+# Export Feeds
+
+Technical documentation is available here: https://help.atrocore.com/#/modules/export-feeds
