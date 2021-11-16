@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/record/panels/export-results', 'views/record/panels/relationship',
+Espo.define('export:views/export-feed/record/panels/export-jobs', 'views/record/panels/relationship',
     Dep => Dep.extend({
 
         refreshIntervalGap: 3000,
@@ -32,7 +32,7 @@ Espo.define('export:views/export-feed/record/panels/export-results', 'views/reco
             this.listenToOnce(this, 'after:render', () => {
                 if (this.collection) {
                     this.refreshInterval = window.setInterval(() => {
-                        if (!this.pauseRefreshInterval && $(`div[data-name='exportResults'] .open a[data-action='removeRelated']`).length === 0) {
+                        if (!this.pauseRefreshInterval && $(`div[data-name='exportJobs'] .open a[data-action='removeRelated']`).length === 0) {
                             this.actionRefresh();
                         }
                     }, this.refreshIntervalGap);

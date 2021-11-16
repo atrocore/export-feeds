@@ -9,7 +9,7 @@
       "noLoad": true,
       "importDisabled": true
     },
-    "exportResults": {
+    "exportJobs": {
       "type": "linkMultiple",
       "layoutDetailDisabled": true,
       "layoutMassUpdateDisabled": true,
@@ -23,10 +23,10 @@
       "foreign": "channels",
       "entity": "ExportFeed"
     },
-    "exportResults": {
+    "exportJobs": {
       "type": "hasMany",
       "foreign": "channel",
-      "entity": "ExportResult",
+      "entity": "ExportJob",
       "audited": false
     }
   },

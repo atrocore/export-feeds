@@ -97,7 +97,7 @@
       "layoutMassUpdateDisabled": true,
       "layoutFiltersDisabled": true
     },
-    "exportResults": {
+    "exportJobs": {
       "type": "linkMultiple",
       "layoutDetailDisabled": true,
       "layoutMassUpdateDisabled": true,
@@ -133,10 +133,10 @@
       "foreign": "exportFeeds",
       "entity": "Channel"
     },
-    "exportResults": {
+    "exportJobs": {
       "type": "hasMany",
       "foreign": "exportFeed",
-      "entity": "ExportResult"
+      "entity": "ExportJob"
     }
   },
   "collection": {

@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,12 +18,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-result/record/detail', 'views/record/detail', function (Dep) {
+declare(strict_types=1);
 
-    return Dep.extend({
+namespace Export\Entities;
 
-        duplicateAction: false
+use Espo\Core\Templates\Entities\Base;
 
-    });
-
-});
+class ExportJob extends Base
+{
+    /**
+     * @var string
+     */
+    protected $entityType = "ExportJob";
+}

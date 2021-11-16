@@ -13,7 +13,7 @@
     "exportFeed": "Export Feed"
   },
   "labels": {
-    "Create ExportResult": "Create Export Result",
+    "Create ExportJob": "Create Export Job",
     "Pending": "Pending",
     "Running": "Running",
     "Done": "Done",
@@ -21,6 +21,6 @@
     "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
   },
   "exceptions": {
-    "exportIsRunning": "Export result for a running queue item cannot be removed."
+    "exportIsRunning": "Export Job for a running queue item cannot be removed."
   }
 }

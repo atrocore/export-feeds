@@ -61,7 +61,7 @@
       ],
       "default": "Pending",
       "readOnly": true,
-      "view": "export:views/export-result/fields/state"
+      "view": "export:views/export-job/fields/state"
     },
     "stateMessage": {
       "type": "text"
@@ -96,12 +96,12 @@
     },
     "channel": {
       "type": "belongsTo",
-      "foreign": "exportResults",
+      "foreign": "exportJobs",
       "entity": "Channel"
     },
     "exportFeed": {
       "type": "belongsTo",
-      "foreign": "exportResults",
+      "foreign": "exportJobs",
       "entity": "ExportFeed"
     },
     "file": {

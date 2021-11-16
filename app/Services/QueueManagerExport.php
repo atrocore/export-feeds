@@ -41,12 +41,12 @@ class QueueManagerExport extends QueueManagerBase
      */
     public function run(array $data = []): bool
     {
-        $exportResult = $this->getEntityManager()->getEntity('ExportResult', $data['exportResultId']);
-        if (empty($exportResult)) {
+        $exportJob = $this->getEntityManager()->getEntity('ExportJob', $data['exportJobId']);
+        if (empty($exportJob)) {
             return false;
         }
-        $exportResult->set('state', 'Running');
-        $this->getEntityManager()->saveEntity($exportResult);
+        $exportJob->set('state', 'Running');
+        $this->getEntityManager()->saveEntity($exportJob);
 
         try {
             /** @var string $feedTypeClass */
@@ -57,15 +57,15 @@ class QueueManagerExport extends QueueManagerBase
             }
 
             $attachment = (new $feedTypeClass($this->getContainer(), $data))->export();
-            $exportResult->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
-            $exportResult->set('state', 'Done');
-            $exportResult->set('fileId', $attachment->get('id'));
-            $this->getEntityManager()->saveEntity($exportResult);
+            $exportJob->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
+            $exportJob->set('state', 'Done');
+            $exportJob->set('fileId', $attachment->get('id'));
+            $this->getEntityManager()->saveEntity($exportJob);
         } catch (\Throwable $e) {
-            $exportResult->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
-            $exportResult->set('state', 'Failed');
-            $exportResult->set('stateMessage', $e->getMessage());
-            $this->getEntityManager()->saveEntity($exportResult);
+            $exportJob->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
+            $exportJob->set('state', 'Failed');
+            $exportJob->set('stateMessage', $e->getMessage());
+            $this->getEntityManager()->saveEntity($exportJob);
             $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
 
             return false;
@@ -83,13 +83,13 @@ class QueueManagerExport extends QueueManagerBase
 
         if ($queueItem->get('status') === 'Success') {
             try {
-                $exportResult = $this->getEntityManager()->getEntity('ExportResult', $queueItem->get('data')->exportResultId);
+                $exportJob = $this->getEntityManager()->getEntity('ExportJob', $queueItem->get('data')->exportJobId);
             } catch (\Throwable $e) {
                 $GLOBALS['log']->error('Export Notification Error: ' . $e->getMessage());
                 return $message;
             }
 
-            $message .= ' ' . sprintf($this->translate('exportDownloadNotification', 'labels', 'ExportResult'), $exportResult->get('fileId'));
+            $message .= ' ' . sprintf($this->translate('exportDownloadNotification', 'labels', 'ExportJob'), $exportJob->get('fileId'));
         }
 
         return $message;

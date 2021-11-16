@@ -19,7 +19,7 @@
     "delimiter": "Listenwerttrennzeichen",
     "exportByOrChannel":"Export von/Kanal",
     "data": "Daten",
-    "exportResults": "Exportergebnisse",
+    "exportJobs": "Exportaufträge",
     "exportIntoSeparateColumns": "Separate Spalten",
     "allFields": "Alle Felder",
     "emptyValue": "Leerer Wert",
@@ -31,7 +31,7 @@
   },
   "links": {
     "channels": "Kanäle",
-    "exportResults": "Exportergebnisse"
+    "exportJobs": "Exportaufträge"
   },
   "columnType": {
     "name": "Name",

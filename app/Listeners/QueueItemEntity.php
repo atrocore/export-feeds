@@ -39,8 +39,8 @@ class QueueItemEntity extends AbstractListener
         // prepare entity
         $entity = $event->getArgument('entity');
 
-        if (!empty($entity->get('data')->exportResultId)) {
-            $this->updateExportResult($entity);
+        if (!empty($entity->get('data')->exportJobId)) {
+            $this->updateExportJob($entity);
         }
     }
 
@@ -52,8 +52,8 @@ class QueueItemEntity extends AbstractListener
         // prepare entity
         $entity = $event->getArgument('entity');
 
-        if (!empty($entity->get('data')->exportResultId)) {
-            $this->removeExportResult($entity);
+        if (!empty($entity->get('data')->exportJobId)) {
+            $this->removeExportJob($entity);
         }
     }
 
@@ -63,22 +63,22 @@ class QueueItemEntity extends AbstractListener
      * @return bool
      * @throws \Espo\Core\Exceptions\Error
      */
-    protected function updateExportResult(Entity $entity): bool
+    protected function updateExportJob(Entity $entity): bool
     {
-        $exportResult = $this->getEntityManager()->getEntity('ExportResult', $entity->get('data')->exportResultId);
+        $exportJob = $this->getEntityManager()->getEntity('ExportJob', $entity->get('data')->exportJobId);
 
-        if (empty($exportResult)) {
+        if (empty($exportJob)) {
             return false;
         }
 
-        if ($entity->get('status') == 'Failed' && $exportResult->get('state') != 'Failed') {
-            $exportResult->set('state', 'Failed');
-            $this->getEntityManager()->saveEntity($exportResult);
+        if ($entity->get('status') == 'Failed' && $exportJob->get('state') != 'Failed') {
+            $exportJob->set('state', 'Failed');
+            $this->getEntityManager()->saveEntity($exportJob);
             return true;
         }
 
         if ($entity->get('status') == 'Canceled') {
-            $this->getEntityManager()->removeEntity($exportResult);
+            $this->getEntityManager()->removeEntity($exportJob);
             return true;
         }
 
@@ -90,16 +90,16 @@ class QueueItemEntity extends AbstractListener
      *
      * @return bool
      */
-    protected function removeExportResult(Entity $entity): bool
+    protected function removeExportJob(Entity $entity): bool
     {
-        $exportResult = $this->getEntityManager()->getEntity('ExportResult', $entity->get('data')->exportResultId);
+        $exportJob = $this->getEntityManager()->getEntity('ExportJob', $entity->get('data')->exportJobId);
 
-        if (empty($exportResult)) {
+        if (empty($exportJob)) {
             return false;
         }
 
         if ($entity->get('status') == 'Pending') {
-            $this->getEntityManager()->removeEntity($exportResult);
+            $this->getEntityManager()->removeEntity($exportJob);
         }
 
         return true;

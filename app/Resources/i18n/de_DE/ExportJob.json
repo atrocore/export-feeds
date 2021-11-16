@@ -13,7 +13,7 @@
     "exportFeed": "Exportfeed"
   },
   "labels": {
-    "Create ExportResult": "Exportergebnisse erstellen",
+    "Create ExportJob": "Exportauftrag erstellen",
     "Pending": "Steht aus",
     "Running": "In Arbeit",
     "Done": "Erledigt",

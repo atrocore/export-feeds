@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,10 +18,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-result/record/list', 'views/record/list',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        rowActionsView: 'views/record/row-actions/remove-only'
+namespace Export\Services;
 
-    })
-);
+use Espo\Core\Templates\Services\Base;
+
+class ExportJob extends Base
+{
+    /**
+     * @var array
+     */
+    protected $mandatorySelectAttributeList = ["state", "stateMessage"];
+}

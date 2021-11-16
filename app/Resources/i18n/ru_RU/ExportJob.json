@@ -13,7 +13,7 @@
     "exportFeed": "Экспорт. фид"
   },
   "labels": {
-    "Create ExportResult": "Сгенерировать результат экспорта",
+    "Create ExportJob": "Создать задание экспорта",
     "Pending": "В очереди",
     "Running": "Выполняется",
     "Done": "Создано",

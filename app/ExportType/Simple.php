@@ -148,7 +148,7 @@ class Simple extends AbstractType
         $attachment = $repository->get();
         $attachment->set('name', $this->getExportFileName('csv'));
         $attachment->set('role', 'Export');
-        $attachment->set('relatedType', 'ExportResult');
+        $attachment->set('relatedType', 'ExportJob');
         $attachment->set('relatedId', $this->data['id']);
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->container->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD));
@@ -176,7 +176,7 @@ class Simple extends AbstractType
         $attachment = $repository->get();
         $attachment->set('name', $this->getExportFileName('xlsx'));
         $attachment->set('role', 'Export');
-        $attachment->set('relatedType', 'ExportResult');
+        $attachment->set('relatedType', 'ExportJob');
         $attachment->set('relatedId', $this->data['id']);
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->container->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD));
