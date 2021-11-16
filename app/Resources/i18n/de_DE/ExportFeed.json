@@ -26,7 +26,8 @@
     "nullValue": "Nullwert",
     "thousandSeparator": "Tausendertrennzeichen",
     "decimalMark": "Dezimaltrennzeichen",
-    "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut"
+    "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut",
+    "fieldDelimiterForRelation": "Feldtrennzeichen für Relation"
   },
   "links": {
     "channels": "Kanäle",
@@ -63,7 +64,6 @@
     "Export": "Export"
   },
   "messages": {
-    "systemDelimiter": "\"|\" kann nicht im Trennzeichen verwendet werden.",
     "delimitersMustBeDifferent": "Alle Feedparameter sollten eindeutige Werte haben.",
     "noExportFeedSelected": "Kein Exportfeed ausgewählt.",
     "columnAlreadyExist": "Eine Spalte mit diesem Namen existiert bereits."

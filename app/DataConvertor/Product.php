@@ -65,7 +65,12 @@ class Product extends Base
             $label = $this->columnData[$colName]['attributeLabel'];
 
             if (empty($configuration['exportByChannelId'])) {
-                $label .= self::DELIMITER . self::escapeValue($this->columnData[$colName]['channelLabel']);
+                $fieldDelimiterForRelation = \Export\DataConvertor\Base::DELIMITER;
+                if (!empty($configuration['feed']['data']['fieldDelimiterForRelation'])) {
+                    $fieldDelimiterForRelation = $configuration['feed']['data']['fieldDelimiterForRelation'];
+                }
+
+                $label .= $fieldDelimiterForRelation . self::escapeValue($this->columnData[$colName]['channelLabel'], $fieldDelimiterForRelation);
             }
 
             return $label;
@@ -84,7 +89,7 @@ class Product extends Base
     {
         $result[$configuration['column']] = null;
 
-        $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale'  ? $configuration['locale'] : null;
+        $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale' ? $configuration['locale'] : null;
 
         foreach ($this->getProductAttributes($record['id']) as $v) {
             if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && $v['locale'] == $locale) {
@@ -104,7 +109,7 @@ class Product extends Base
 
         if (!empty($productAttribute)) {
             $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration);
-        }else{
+        } else {
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
@@ -123,6 +128,7 @@ class Product extends Base
 
         if (!empty($productAttributes = $this->getProductAttributes($record['id']))) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
+            $fieldDelimiterForRelation = $configuration['fieldDelimiterForRelation'];
             foreach ($productAttributes as $productAttribute) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
@@ -171,7 +177,7 @@ class Product extends Base
                     'channelLabel'   => $channelLabel
                 ];
 
-                $result[$columnName] = implode(self::DELIMITER, self::escapeValues($fieldResult));
+                $result[$columnName] = implode($fieldDelimiterForRelation, self::escapeValues($fieldResult, $fieldDelimiterForRelation));
             }
 
             /**

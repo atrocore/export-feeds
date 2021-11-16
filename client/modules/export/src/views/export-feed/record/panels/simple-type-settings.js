@@ -30,7 +30,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
         configAttributeEditView: 'export:views/export-feed/simple-type-components/modals/attribute-edit',
 
-        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue', 'markForNotLinkedAttribute', 'decimalMark', 'thousandSeparator'],
+        configuratorFields: ['entity', 'delimiter', 'allFields', 'emptyValue', 'nullValue', 'markForNotLinkedAttribute', 'decimalMark', 'thousandSeparator', 'fieldDelimiterForRelation'],
 
         validations: ['configurator'],
 
@@ -176,9 +176,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 }, view => view.render());
 
                 this.listenTo(this.panelModel, 'change:delimiter', () => {
-                    if (!this.validateDelimiters()) {
-                        this.configData.delimiter = this.panelModel.get('delimiter');
-                    }
+                    this.configData.delimiter = this.panelModel.get('delimiter');
                 });
 
                 this.createView('delimiter', 'export:views/export-feed/fields/field-value-delimiter', {
@@ -186,6 +184,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     el: `${this.options.el} .field[data-name="delimiter"]`,
                     name: 'delimiter',
                     inlineEditDisabled: true,
+                    params: {
+                        required: true
+                    },
                     mode: this.mode
                 }, view => view.render());
 
@@ -254,6 +255,9 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     el: `${this.options.el} .field[data-name="decimalMark"]`,
                     name: 'decimalMark',
                     inlineEditDisabled: true,
+                    params: {
+                        required: true
+                    },
                     mode: this.mode
                 }, view => {
                     view.render();
@@ -275,6 +279,23 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
 
                 this.listenTo(this.panelModel, 'change:thousandSeparator', () => {
                     this.configData.thousandSeparator = this.panelModel.get('thousandSeparator');
+                });
+
+                this.createView('fieldDelimiterForRelation', 'views/fields/varchar', {
+                    model: this.panelModel,
+                    el: `${this.options.el} .field[data-name="fieldDelimiterForRelation"]`,
+                    name: 'fieldDelimiterForRelation',
+                    inlineEditDisabled: true,
+                    params: {
+                        required: true
+                    },
+                    mode: this.mode
+                }, view => {
+                    view.render();
+                });
+
+                this.listenTo(this.panelModel, 'change:fieldDelimiterForRelation', () => {
+                    this.configData.fieldDelimiterForRelation = this.panelModel.get('fieldDelimiterForRelation');
                 });
             });
         },
@@ -300,6 +321,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 nullValue: (this.configData || {}).nullValue || 'Null',
                 markForNotLinkedAttribute: (this.configData || {}).markForNotLinkedAttribute || '--',
                 thousandSeparator: (this.configData || {}).thousandSeparator || '',
+                fieldDelimiterForRelation: (this.configData || {}).fieldDelimiterForRelation || '|',
                 decimalMark: (this.configData || {}).decimalMark || ',',
             }, {silent: true});
         },
@@ -408,6 +430,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                         nullValue: this.panelModel.get('nullValue'),
                         markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute'),
                         thousandSeparator: this.panelModel.get('thousandSeparator'),
+                        fieldDelimiterForRelation: this.panelModel.get('fieldDelimiterForRelation'),
                         decimalMark: this.panelModel.get('decimalMark')
                     }));
                     model.id = i + 1;
@@ -587,36 +610,6 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
             return validate;
         },
 
-        validateDelimiters() {
-            let validate = false;
-            let msg = '';
-
-            let delimiter = this.panelModel.get('delimiter') || '';
-
-            if (delimiter.indexOf('|') >= 0) {
-                msg = this.translate('systemDelimiter', 'messages', 'ExportFeed');
-                validate = true;
-            }
-
-            if (!validate && this.model.get('fileType') === 'csv') {
-                let csvDelimiter = this.model.get('csvFieldDelimiter') || '';
-                for (let i = 0; i < delimiter.length; i++) {
-                    if (csvDelimiter.indexOf(delimiter.charAt(i)) >= 0) {
-                        msg = this.translate('delimitersMustBeDifferent', 'messages', 'ExportFeed');
-                        validate = true;
-                    }
-                }
-            }
-
-            if (validate) {
-                let delimiter = this.getView('delimiter');
-                delimiter.trigger('invalid');
-                delimiter.showValidationMessage(msg);
-            }
-
-            return validate;
-        },
-
         getConfigurationData() {
             let data = {
                 entity: this.panelModel.get('entity'),
@@ -625,6 +618,7 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                 nullValue: this.panelModel.get('nullValue'),
                 markForNotLinkedAttribute: this.panelModel.get('markForNotLinkedAttribute'),
                 thousandSeparator: this.panelModel.get('thousandSeparator'),
+                fieldDelimiterForRelation: this.panelModel.get('fieldDelimiterForRelation'),
                 decimalMark: this.panelModel.get('decimalMark'),
                 delimiter: this.panelModel.get('delimiter')
             };
