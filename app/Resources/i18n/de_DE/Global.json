@@ -1,11 +1,11 @@
 {
   "scopeNames": {
     "ExportFeed": "Exportfeed",
-    "ExportResult": "Exportergebnis"
+    "ExportJob": "Exportauftrag"
   },
   "scopeNamesPlural": {
     "ExportFeed": "Exportfeeds",
-    "ExportResult": "Exportergebnisse"
+    "ExportJob": "Exportaufträge"
   },
   "labels": {
     "Generate": "Generieren"

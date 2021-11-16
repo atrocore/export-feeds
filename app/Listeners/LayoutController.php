@@ -39,8 +39,8 @@ class LayoutController extends AbstractListener
         if (in_array($event->getArgument('params')['scope'], ['Channel']) && $event->getArgument('params')['name'] == 'relationships') {
             $result = Json::decode($event->getArgument('result'), true);
 
-            if (!in_array('exportResults', array_column($result, 'name'))) {
-                $result[] = ["name" => "exportResults"];
+            if (!in_array('exportJobs', array_column($result, 'name'))) {
+                $result[] = ["name" => "exportJobs"];
             }
 
             $event->setArgument('result', Json::encode($result));

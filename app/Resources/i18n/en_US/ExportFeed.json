@@ -18,7 +18,7 @@
     "fieldOrAttribute": "Field/Attribute",
     "delimiter": "List Value Separator",
     "exportByOrChannel":"Export By/Channel",
-    "exportResults": "Export Results",
+    "exportJobs": "Export Jobs",
     "exportIntoSeparateColumns": "Separate columns",
     "allFields": "All Fields",
     "emptyValue": "Empty Value",
@@ -30,7 +30,7 @@
   },
   "links": {
     "channels": "Channels",
-    "exportResults": "Export Results"
+    "exportJobs": "Export Jobs"
   },
   "columnType": {
     "name": "Name",

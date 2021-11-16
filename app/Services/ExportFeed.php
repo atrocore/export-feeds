@@ -168,20 +168,20 @@ class ExportFeed extends Base
         /** @var User $user */
         $user = $this->getInjection('user');
 
-        $exportResult = $this->getEntityManager()->getEntity('ExportResult');
-        $exportResult->set('exportFeedId', $data['feed']['id']);
-        $exportResult->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
-        $exportResult->set('ownerUserId', $user->get('id'));
-        $exportResult->set('assignedUserId', $user->get('id'));
-        $exportResult->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
+        $exportJob = $this->getEntityManager()->getEntity('ExportJob');
+        $exportJob->set('exportFeedId', $data['feed']['id']);
+        $exportJob->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
+        $exportJob->set('ownerUserId', $user->get('id'));
+        $exportJob->set('assignedUserId', $user->get('id'));
+        $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
 
         if (!empty($data['exportByChannelId'])) {
-            $exportResult->set('channelId', $data['exportByChannelId']);
+            $exportJob->set('channelId', $data['exportByChannelId']);
         }
 
-        $this->getEntityManager()->saveEntity($exportResult);
+        $this->getEntityManager()->saveEntity($exportJob);
 
-        $data['exportResultId'] = $exportResult->get('id');
+        $data['exportJobId'] = $exportJob->get('id');
 
         // prepare name
         $name = sprintf($this->translate('exportName'), $data['feed']['name']);

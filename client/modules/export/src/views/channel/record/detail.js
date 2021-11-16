@@ -47,7 +47,7 @@ Espo.define('export:views/channel/record/detail', 'pim:views/channel/record/deta
             this.notify('Please wait');
             this.ajaxPostRequest('ExportFeed/action/exportChannel', {id: this.model.id}).then(response => {
                 this.notify(this.translate(response ? 'jobCreated' : 'channelWithoutExportFeeds', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
-                $('.action[data-action="refresh"][data-panel="exportResults"]').click();
+                $('.action[data-action="refresh"][data-panel="exportJobs"]').click();
             }).always(() => {
                 button.prop('disabled', false);
             });

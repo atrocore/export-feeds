@@ -1,4 +1,3 @@
-<?php
 /*
  * Export Feeds
  * Free Extension
@@ -18,19 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+Espo.define('export:views/export-job/record/detail', 'views/record/detail', function (Dep) {
 
-namespace Export\Services;
+    return Dep.extend({
 
-use Espo\Core\Templates\Services\Base;
+        duplicateAction: false
 
-/**
- * Class ExportResult
- */
-class ExportResult extends Base
-{
-    /**
-     * @var array
-     */
-    protected $mandatorySelectAttributeList = ["state", "stateMessage"];
-}
+    });
+
+});

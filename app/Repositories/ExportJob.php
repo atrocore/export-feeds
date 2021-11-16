@@ -26,14 +26,11 @@ use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
 use Espo\ORM\Entity;
 
-/**
- * Class ExportResult
- */
-class ExportResult extends Base
+class ExportJob extends Base
 {
-    public function getExportResultJob(string $exportResultId): ?Entity
+    public function getExportJob(string $exportJobId): ?Entity
     {
-        return $this->getEntityManager()->getRepository('QueueItem')->where(['data*' => '%"exportResultId":"' . $exportResultId . '"%'])->findOne();
+        return $this->getEntityManager()->getRepository('QueueItem')->where(['data*' => '%"exportJobId":"' . $exportJobId . '"%'])->findOne();
     }
 
     /**
@@ -71,9 +68,9 @@ class ExportResult extends Base
      */
     protected function beforeRemove(Entity $entity, array $options = [])
     {
-        if (!empty($job = $this->getExportResultJob($entity->get('id')))) {
+        if (!empty($job = $this->getExportJob($entity->get('id')))) {
             if ($job->get('status') == 'Running') {
-                throw new BadRequest($this->getInjection('language')->translate('exportIsRunning', 'exceptions', 'ExportResult'));
+                throw new BadRequest($this->getInjection('language')->translate('exportIsRunning', 'exceptions', 'ExportJob'));
             }
         }
 
@@ -103,6 +100,6 @@ class ExportResult extends Base
         $this
             ->getEntityManager()
             ->getPDO()
-            ->exec("UPDATE queue_item SET deleted=1 WHERE data LIKE '%\"exportResultId\":\"$id\"%'");
+            ->exec("UPDATE queue_item SET deleted=1 WHERE data LIKE '%\"exportJobId\":\"$id\"%'");
     }
 }

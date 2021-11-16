@@ -35,11 +35,11 @@
     ]
   },
   "relationshipPanels": {
-    "exportResults": {
+    "exportJobs": {
       "create": false,
       "select": false,
       "rowActionsView": "views/record/row-actions/relationship-remove-only",
-      "view": "export:views/export-feed/record/panels/export-results",
+      "view": "export:views/export-feed/record/panels/export-jobs",
       "layout": "listInExportFeed"
     }
   },

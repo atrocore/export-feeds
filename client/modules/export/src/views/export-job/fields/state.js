@@ -1,4 +1,3 @@
-<?php
 /*
  * Export Feeds
  * Free Extension
@@ -18,15 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+Espo.define('export:views/export-job/fields/state', 'views/fields/colored-enum',
+    Dep => Dep.extend({
 
-namespace Export\Controllers;
+        listTemplate: 'export:fields/export-job-state/detail',
 
-use Espo\Core\Templates\Controllers\Base;
+        data() {
+            let data = Dep.prototype.data.call(this);
+            data['stateMessage'] = this.model.get('stateMessage');
 
-/**
- * Class ExportResult
- */
-class ExportResult extends Base
-{
-}
+            return data;
+        },
+
+    })
+);

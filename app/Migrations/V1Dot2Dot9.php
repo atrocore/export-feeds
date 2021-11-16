@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,10 +18,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-result/list', 'views/list',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        createButton: false,
+namespace Export\Migrations;
 
-    })
-);
+use Treo\Core\Migration\Base;
+
+class V1Dot2Dot9 extends Base
+{
+    public function up(): void
+    {
+        $this->execute("RENAME TABLE `export_result` TO `export_job`");
+    }
+
+    public function down(): void
+    {
+        $this->execute("RENAME TABLE `export_job` TO `export_result`");
+    }
+
+    protected function execute(string $sql): void
+    {
+        try {
+            $this->getPDO()->exec($sql);
+        } catch (\Throwable $e) {
+            // ignore all
+        }
+    }
+}

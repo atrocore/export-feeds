@@ -1,0 +1,14 @@
+{
+  "controller": "controllers/record",
+  "boolFilterList": [
+    "onlyMy"
+  ],
+  "views": {
+    "list": "export:views/export-job/list"
+  },
+  "recordViews": {
+    "list": "export:views/export-job/record/list",
+    "detail": "export:views/export-job/record/detail"
+  },
+  "iconClass": "fas fa-cloud"
+}

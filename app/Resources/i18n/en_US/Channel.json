@@ -1,10 +1,10 @@
 {
   "fields": {
     "exportFeeds": "Export Feeds",
-    "exportResults": "Export Results"
+    "exportJobs": "Export Jobs"
   },
   "links": {
     "exportFeeds": "Export Feeds",
-    "exportResults": "Export Results"
+    "exportJobs": "Export Jobs"
   }
 }

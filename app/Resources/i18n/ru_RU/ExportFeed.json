@@ -18,7 +18,7 @@
     "fieldOrAttribute": "Поле/Атрибут",
     "delimiter": "Разделитель значений списка",
     "exportByOrChannel":"Экспортировать по/каналу",
-    "exportResults": "Правила экспорта",
+    "exportJobs": "Задания экспорта",
     "exportIntoSeparateColumns": "Отдельные колонки",
     "allFields": "Все поля",
     "emptyValue": "Пустое значение",
@@ -30,7 +30,7 @@
   },
   "links": {
     "channels": "Каналы",
-    "exportResults": "Результаты экспорта"
+    "exportJobs": "Задания экспорта"
   },
   "columnType": {
     "name": "Название",
