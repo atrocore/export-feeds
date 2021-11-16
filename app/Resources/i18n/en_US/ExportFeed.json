@@ -25,7 +25,8 @@
     "nullValue": "Null Value",
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
-    "markForNotLinkedAttribute": "Mark for a not linked attribute"
+    "markForNotLinkedAttribute": "Mark for a not linked attribute",
+    "fieldDelimiterForRelation": "Field Delimiter for Relation"
   },
   "links": {
     "channels": "Channels",
@@ -62,7 +63,6 @@
     "Export": "Export"
   },
   "messages": {
-    "systemDelimiter": "\"|\" cannot be used in delimiter.",
     "delimitersMustBeDifferent": "All feed parameters should have unique values.",
     "noExportFeedSelected": "No ExportFeed selected.",
     "columnAlreadyExist": "A column with such name already exists."

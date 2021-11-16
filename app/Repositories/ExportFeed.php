@@ -57,6 +57,7 @@ class ExportFeed extends Base
                     'decimalMark'               => ',',
                     'thousandSeparator'         => '',
                     'markForNotLinkedAttribute' => '--',
+                    'fieldDelimiterForRelation' => \Export\DataConvertor\Base::DELIMITER,
                     'configuration'             => []
                 ];
 
@@ -105,10 +106,24 @@ class ExportFeed extends Base
     {
         $data = $entity->get('data');
 
+        $requiredMessage = $this->getInjection('language')->translate('fieldIsRequired', 'messages');
+        if (empty($data->delimiter)) {
+            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('delimiter', 'fields', 'ExportFeed'), $requiredMessage));
+        }
+
+        if (empty($data->decimalMark)) {
+            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('decimalMark', 'fields', 'ExportFeed'), $requiredMessage));
+        }
+
+        if (empty($data->fieldDelimiterForRelation)) {
+            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('fieldDelimiterForRelation', 'fields', 'ExportFeed'), $requiredMessage));
+        }
+
         $delimiters = [
             (string)$data->delimiter,
             (string)$data->decimalMark,
             (string)$data->thousandSeparator,
+            (string)$data->fieldDelimiterForRelation,
         ];
 
         if ($entity->get('fileType') == 'csv') {
@@ -117,12 +132,6 @@ class ExportFeed extends Base
 
         if ($entity->get('data')->entity === 'Product') {
             $delimiters[] = (string)$data->markForNotLinkedAttribute;
-        }
-
-        foreach ($delimiters as $delimiter) {
-            if (BaseConvertor::DELIMITER === $delimiter) {
-                throw new BadRequest($this->getInjection('language')->translate('systemDelimiter', 'messages', 'ExportFeed'));
-            }
         }
 
         if (count(array_unique($delimiters)) !== count($delimiters)) {

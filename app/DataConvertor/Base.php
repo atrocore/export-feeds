@@ -78,6 +78,7 @@ class Base
         $delimiter = $configuration['delimiter'];
         $emptyValue = $configuration['emptyValue'];
         $nullValue = $configuration['nullValue'];
+        $fieldDelimiterForRelation = $configuration['fieldDelimiterForRelation'];
 
         // get field type
         $type = (string)$this->getMetadata()->get(['entityDefs', $entity, 'fields', $field, 'type'], 'varchar');
@@ -120,7 +121,7 @@ class Base
                             }
 
                             if (!empty($fieldResult)) {
-                                $result[$column] = implode(self::DELIMITER, self::escapeValues($fieldResult));
+                                $result[$column] = implode($fieldDelimiterForRelation, self::escapeValues($fieldResult, $fieldDelimiterForRelation));
                             }
                         } else {
                             $result[$column] = $emptyValue;
@@ -134,7 +135,7 @@ class Base
                             }
                         }
                         if (!empty($fieldResult)) {
-                            $result[$column] = implode(self::DELIMITER, self::escapeValues($fieldResult));
+                            $result[$column] = implode($fieldDelimiterForRelation, self::escapeValues($fieldResult, $fieldDelimiterForRelation));
                         }
                     }
                 }
@@ -173,7 +174,7 @@ class Base
                             $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                             $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $configuration);
                         }
-                        $links[] = implode(self::DELIMITER, self::escapeValues($fieldResult));
+                        $links[] = implode($fieldDelimiterForRelation, self::escapeValues($fieldResult, $fieldDelimiterForRelation));
                     }
 
                     if (!empty($configuration['exportIntoSeparateColumns'])) {
@@ -362,7 +363,7 @@ class Base
         return $this->container->get('language')->translate($key, $tab, $scope);
     }
 
-    protected static function escapeValues(array $values, string $delimiter = self::DELIMITER): array
+    protected static function escapeValues(array $values, string $delimiter): array
     {
         foreach ($values as $k => $value) {
             $values[$k] = self::escapeValue($value, $delimiter);
@@ -377,7 +378,7 @@ class Base
      *
      * @return mixed
      */
-    protected static function escapeValue($value, string $delimiter = self::DELIMITER)
+    protected static function escapeValue($value, string $delimiter)
     {
         if (!is_string($value)) {
             return $value;

@@ -25,7 +25,8 @@
     "nullValue": "Нулевое значение",
     "thousandSeparator": "Тысячный разделитель",
     "decimalMark": "Десятичный разделитель",
-    "markForNotLinkedAttribute": "Пометка непривязанного атрибута"
+    "markForNotLinkedAttribute": "Пометка непривязанного атрибута",
+    "fieldDelimiterForRelation": "Разделитель полей для связи"
   },
   "links": {
     "channels": "Каналы",
@@ -62,7 +63,6 @@
     "Export": "Экспорт"
   },
   "messages": {
-    "systemDelimiter": "\"|\" нельзя использовать в разделителе.",
     "delimitersMustBeDifferent": "Все параметры фида должны иметь уникальные значения.",
     "noExportFeedSelected": "Экспортный фид не выбран.",
     "columnAlreadyExist": "Колонка с таким названием уже существует."
