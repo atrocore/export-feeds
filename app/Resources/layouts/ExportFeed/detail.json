@@ -61,14 +61,6 @@
       ],
       [
         {
-          "name": "emptyValue"
-        },
-        {
-          "name": "nullValue"
-        }
-      ],
-      [
-        {
           "name": "thousandSeparator"
         },
         {
@@ -77,7 +69,15 @@
       ],
       [
         {
-          "name": "allFields"
+          "name": "emptyValue"
+        },
+        {
+          "name": "nullValue"
+        }
+      ],
+      [
+        {
+          "name": "fieldDelimiterForRelation"
         },
         {
           "name": "markForNotLinkedAttribute"
@@ -85,7 +85,7 @@
       ],
       [
         {
-          "name": "fieldDelimiterForRelation"
+          "name": "allFields"
         },
         false
       ]

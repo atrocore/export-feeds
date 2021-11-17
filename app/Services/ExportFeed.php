@@ -153,15 +153,17 @@ class ExportFeed extends Base
         $this->addDependency('user');
     }
 
+    protected function beforeUpdateEntity(Entity $entity, $data)
+    {
+        parent::beforeUpdateEntity($entity, $data);
 
-    /**
-     * Translate field
-     *
-     * @param string $key
-     * @param string $tab
-     *
-     * @return string
-     */
+        foreach ($entity->getFeedFields() as $name => $value) {
+            if (!$entity->has($name)) {
+                $entity->set($name, $value);
+            }
+        }
+    }
+
     protected function translate(string $key, string $tab = 'additionalTranslates'): string
     {
         return $this->getInjection('language')->translate($key, $tab, 'ExportFeed');

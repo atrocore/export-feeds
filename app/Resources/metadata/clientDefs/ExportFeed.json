@@ -20,12 +20,6 @@
         "label": "entityFilter",
         "view": "export:views/export-feed/simple-type-components/record/panels/simple-type-entity-filter",
         "notRefreshable": true
-      },
-      {
-        "name": "simpleTypeSettings",
-        "label": "simpleTypeSettings",
-        "view": "export:views/export-feed/record/panels/simple-type-settings",
-        "notRefreshable": true
       }
     ]
   },
@@ -152,6 +146,17 @@
                 "xlsx",
                 "csv"
               ]
+            }
+          ]
+        }
+      },
+      "markForNotLinkedAttribute": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "entity",
+              "value": "Product"
             }
           ]
         }
