@@ -24,8 +24,9 @@ namespace Export\Repositories;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
+use Espo\Core\Utils\Json;
 use Espo\ORM\Entity;
-use Export\DataConvertor\Base as BaseConvertor;
+use Export\Entities\ExportFeed as ExportFeedEntity;
 
 /**
  * ExportFeed Repository
@@ -40,6 +41,8 @@ class ExportFeed extends Base
      */
     protected function beforeSave(Entity $entity, array $options = [])
     {
+        $this->setFeedFieldsToDataJson($entity);
+
         if ($entity->get('type') == 'simple') {
             if ($entity->isNew()) {
                 if (empty($entity->get('fileType'))) {
@@ -96,6 +99,22 @@ class ExportFeed extends Base
         $this->addDependency('language');
     }
 
+    protected function setFeedFieldsToDataJson(Entity $entity): void
+    {
+        $data = !empty($data = $entity->get('data')) ? Json::decode(Json::encode($data), true) : [];
+
+        foreach ($this->getMetadata()->get(['entityDefs', 'ExportFeed', 'fields'], []) as $field => $row) {
+            if (empty($row['notStorable']) || empty($row['dataField'])) {
+                continue 1;
+            }
+            if ($entity->has($field)) {
+                $data[ExportFeedEntity::DATA_FIELD][$field] = $entity->get($field);
+            }
+        }
+
+        $entity->set('data', Json::decode(Json::encode($data)));
+    }
+
     /**
      * @param Entity $entity
      *
@@ -126,8 +145,8 @@ class ExportFeed extends Base
             (string)$data->fieldDelimiterForRelation,
         ];
 
-        if ($entity->get('fileType') == 'csv') {
-            $delimiters[] = $entity->get('csvFieldDelimiter');
+        if ($entity->getFeedField('fileType') == 'csv') {
+            $delimiters[] = $entity->getFeedField('csvFieldDelimiter');
         }
 
         if ($entity->get('data')->entity === 'Product') {

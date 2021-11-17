@@ -132,6 +132,15 @@ class ExportFeed extends Base
         return Simple::getAllFieldsConfiguration($scope, $this->getMetadata(), $this->getInjection('language'));
     }
 
+    public function prepareEntityForOutput(Entity $entity)
+    {
+        parent::prepareEntityForOutput($entity);
+
+        foreach ($entity->getFeedFields() as $name => $value) {
+            $entity->set($name, $value);
+        }
+    }
+
     /**
      * Init
      */

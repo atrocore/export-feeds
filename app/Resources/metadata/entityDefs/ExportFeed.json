@@ -56,13 +56,17 @@
     "fileType": {
       "type": "enum",
       "required": false,
+      "notStorable": true,
+      "dataField": true,
       "options": [],
       "view": "export:views/export-feed/fields/file-type",
       "prohibitedEmptyValue": true
     },
     "isFileHeaderRow": {
       "type": "bool",
-      "default": "1"
+      "notStorable": true,
+      "dataField": true,
+      "default": true
     },
     "csvFieldDelimiter": {
       "type": "enum",
@@ -72,6 +76,8 @@
         "\\t"
       ],
       "default": ";",
+      "notStorable": true,
+      "dataField": true,
       "view": "export:views/export-feed/fields/field-delimiter",
       "prohibitedEmptyValue": true
     },
@@ -82,6 +88,8 @@
         "singleQuote"
       ],
       "default": "doubleQuote",
+      "notStorable": true,
+      "dataField": true,
       "prohibitedEmptyValue": true
     },
     "channels": {
