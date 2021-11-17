@@ -15,5 +15,7 @@
   "module": "Export",
   "customizable": false,
   "object": true,
-  "hasOwner": true
+  "hasOwner": true,
+  "hasAssignedUser": true,
+  "hasTeam": true
 }
