@@ -30,12 +30,7 @@ Espo.define('export:views/export-feed/fields/field-value-delimiter', 'views/fiel
         },
 
         validateDelimiters() {
-            if (this.model.get('csvFieldDelimiter') === this.model.get('valueDelimiter')) {
-                this.trigger('invalid');
-                let msg = this.translate('delimitersMustBeDifferent', 'messages', this.model.name);
-                this.showValidationMessage(msg);
-                return true;
-            }
+            return false;
         }
 
     })

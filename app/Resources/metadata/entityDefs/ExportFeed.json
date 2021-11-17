@@ -60,7 +60,7 @@
       "dataField": true,
       "options": [],
       "view": "export:views/export-feed/fields/file-type",
-      "prohibitedEmptyValue": true
+      "prohibitedEmptyValue": false
     },
     "isFileHeaderRow": {
       "type": "bool",

@@ -3,17 +3,12 @@
   "boolFilterList": [
     "onlyMy"
   ],
-  "quickCreate": true,
   "navigateToEntityAfterQuickCreate": true,
   "disabledSelectList": true,
   "quickCreateOptions": {
     "fullFormDisabled": true
   },
   "iconClass": "fas fa-cloud-upload-alt",
-  "views": {
-    "list": "export:views/list",
-    "detail": "export:views/detail"
-  },
   "recordViews": {
     "detail": "export:views/export-feed/record/detail",
     "list": "export:views/export-feed/record/list"
@@ -71,6 +66,15 @@
               "value": "simple"
             }
           ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
         }
       },
       "csvFieldDelimiter": {
@@ -87,28 +91,38 @@
               "value": "csv"
             }
           ]
-        }
-      },
-      "valueDelimiter": {
-        "visible": {
+        },
+        "required": {
           "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
             {
               "type": "equals",
               "attribute": "fileType",
               "value": "csv"
-            },
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
             }
           ]
         }
       },
       "csvTextQualifier": {
         "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
+            {
+              "type": "equals",
+              "attribute": "fileType",
+              "value": "csv"
+            }
+          ]
+        },
+        "required": {
           "conditionGroup": [
             {
               "type": "equals",
