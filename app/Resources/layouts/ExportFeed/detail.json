@@ -46,5 +46,49 @@
         }
       ]
     ]
+  },
+  {
+    "label": "Feed Settings",
+    "style": "default",
+    "rows": [
+      [
+        {
+          "name": "entity"
+        },
+        {
+          "name": "delimiter"
+        }
+      ],
+      [
+        {
+          "name": "emptyValue"
+        },
+        {
+          "name": "nullValue"
+        }
+      ],
+      [
+        {
+          "name": "thousandSeparator"
+        },
+        {
+          "name": "decimalMark"
+        }
+      ],
+      [
+        {
+          "name": "allFields"
+        },
+        {
+          "name": "markForNotLinkedAttribute"
+        }
+      ],
+      [
+        {
+          "name": "fieldDelimiterForRelation"
+        },
+        false
+      ]
+    ]
   }
 ]

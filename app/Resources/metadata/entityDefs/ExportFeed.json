@@ -92,6 +92,69 @@
       "dataField": true,
       "prohibitedEmptyValue": true
     },
+    "entity": {
+      "type": "enum",
+      "options": [],
+      "required": true,
+      "notStorable": true,
+      "dataField": true,
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-feed/fields/entity"
+    },
+    "delimiter": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": true,
+      "default": "_"
+    },
+    "fieldDelimiterForRelation": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": true,
+      "default": "|"
+    },
+    "emptyValue": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false,
+      "default": ""
+    },
+    "nullValue": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false,
+      "default": "Null"
+    },
+    "markForNotLinkedAttribute": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false,
+      "default": "--"
+    },
+    "decimalMark": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": true,
+      "default": ","
+    },
+    "thousandSeparator": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false
+    },
+    "allFields": {
+      "type": "bool",
+      "notStorable": true,
+      "dataField": true,
+      "required": false
+    },
     "channels": {
       "type": "linkMultiple",
       "tooltip": true,

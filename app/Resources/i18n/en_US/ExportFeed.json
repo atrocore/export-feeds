@@ -50,7 +50,7 @@
     "ignoreFilter": "Ignore filter in the feed",
     "Create ExportFeed": "Create Export Feed",
     "Export Data Settings": "Export Data Settings",
-    "simpleTypeSettings": "Feed Settings",
+    "Feed Settings": "Feed Settings",
     "entityFilter": "Filter",
     "Configurator": "Configurator",
     "addEntityField": "Add Entity Field",
@@ -77,7 +77,6 @@
     "noDataFound": "Feed has nothing to export.",
     "wrongExportFeedType": "Wrong Export Feed type.",
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
-    "configuratorSettingsIncorrect": "Configurator settings incorrect.",
     "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
     "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
     "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set."

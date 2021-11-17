@@ -157,39 +157,6 @@ Espo.define('export:views/export-feed/record/panels/simple-type-settings', 'view
                     this.createConfiguratorList();
                 });
 
-                let entityTranslatedOptions = [];
-                (this.entitiesList || []).forEach(function (entity) {
-                    entityTranslatedOptions[entity] = this.translate(entity, 'scopeNames', 'Global');
-                }, this);
-
-                this.createView('entity', 'views/fields/enum', {
-                    model: this.panelModel,
-                    el: `${this.options.el} .field[data-name="entity"]`,
-                    name: 'entity',
-                    params: {
-                        options: this.entitiesList || [],
-                        translatedOptions: entityTranslatedOptions
-                    },
-                    inlineEditDisabled: true,
-                    prohibitedEmptyValue: true,
-                    mode: this.mode
-                }, view => view.render());
-
-                this.listenTo(this.panelModel, 'change:delimiter', () => {
-                    this.configData.delimiter = this.panelModel.get('delimiter');
-                });
-
-                this.createView('delimiter', 'export:views/export-feed/fields/field-value-delimiter', {
-                    model: this.panelModel,
-                    el: `${this.options.el} .field[data-name="delimiter"]`,
-                    name: 'delimiter',
-                    inlineEditDisabled: true,
-                    params: {
-                        required: true
-                    },
-                    mode: this.mode
-                }, view => view.render());
-
                 this.createView('allFields', 'views/fields/bool', {
                     model: this.panelModel,
                     el: `${this.options.el} .field[data-name="allFields"]`,

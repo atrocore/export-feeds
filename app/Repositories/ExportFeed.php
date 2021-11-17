@@ -28,70 +28,29 @@ use Espo\Core\Utils\Json;
 use Espo\ORM\Entity;
 use Export\Entities\ExportFeed as ExportFeedEntity;
 
-/**
- * ExportFeed Repository
- */
 class ExportFeed extends Base
 {
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     *
-     * @throws BadRequest
-     */
     protected function beforeSave(Entity $entity, array $options = [])
     {
         $this->setFeedFieldsToDataJson($entity);
 
-        if ($entity->get('type') == 'simple') {
-            if ($entity->isNew()) {
-                if (empty($entity->get('fileType'))) {
-                    $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
-                    $first = array_shift($types);
-                    if (!empty($first)) {
-                        $entity->set('fileType', $first);
-                    }
-                }
-
-                $data = [
-                    'entity'                    => empty($this->getMetadata()->get(['scopes', 'Product'])) ? 'User' : 'Product',
-                    'allFields'                 => true,
-                    'delimiter'                 => '_',
-                    'decimalMark'               => ',',
-                    'thousandSeparator'         => '',
-                    'markForNotLinkedAttribute' => '--',
-                    'fieldDelimiterForRelation' => \Export\DataConvertor\Base::DELIMITER,
-                    'configuration'             => []
-                ];
-
-                $entity->set('data', $data);
-
-            } else {
-                if (empty($entity->get('data')) || empty($entity->get('data')->configuration) || !$this->isDelimiterValid($entity)) {
-                    throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
-                }
-            }
+        if (empty($options['skipAll'])) {
+            $this->isDelimiterValid($entity);
         }
 
         parent::beforeSave($entity, $options);
     }
 
-    /**
-     * @param string $exportEntity
-     *
-     * @return array
-     */
     public function getIdsByExportEntity(string $exportEntity): array
     {
-        return $this
-            ->getEntityManager()
-            ->nativeQuery('SELECT id FROM `export_feed` WHERE deleted=0 AND `export_feed`.data LIKE "%\"entity\":\"' . $exportEntity . '\"%"')
-            ->fetchAll(\PDO::FETCH_COLUMN);
+        $feeds = $this
+            ->select(['id'])
+            ->where(['data*' => '%\"entity\":\"' . $exportEntity . '\"%'])
+            ->find();
+
+        return array_column($feeds->toArray(), 'id');
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function init()
     {
         parent::init();
@@ -115,48 +74,25 @@ class ExportFeed extends Base
         $entity->set('data', Json::decode(Json::encode($data)));
     }
 
-    /**
-     * @param Entity $entity
-     *
-     * @return bool
-     * @throws BadRequest
-     */
-    protected function isDelimiterValid(Entity $entity): bool
+    protected function isDelimiterValid(Entity $entity): void
     {
-        $data = $entity->get('data');
-
-        $requiredMessage = $this->getInjection('language')->translate('fieldIsRequired', 'messages');
-        if (empty($data->delimiter)) {
-            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('delimiter', 'fields', 'ExportFeed'), $requiredMessage));
-        }
-
-        if (empty($data->decimalMark)) {
-            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('decimalMark', 'fields', 'ExportFeed'), $requiredMessage));
-        }
-
-        if (empty($data->fieldDelimiterForRelation)) {
-            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('fieldDelimiterForRelation', 'fields', 'ExportFeed'), $requiredMessage));
-        }
-
         $delimiters = [
-            (string)$data->delimiter,
-            (string)$data->decimalMark,
-            (string)$data->thousandSeparator,
-            (string)$data->fieldDelimiterForRelation,
+            (string)$entity->getFeedField('delimiter'),
+            (string)$entity->getFeedField('decimalMark'),
+            (string)$entity->getFeedField('thousandSeparator'),
+            (string)$entity->getFeedField('fieldDelimiterForRelation'),
         ];
 
         if ($entity->getFeedField('fileType') == 'csv') {
-            $delimiters[] = $entity->getFeedField('csvFieldDelimiter');
+            $delimiters[] = (string)$entity->getFeedField('csvFieldDelimiter');
         }
 
-        if ($entity->get('data')->entity === 'Product') {
-            $delimiters[] = (string)$data->markForNotLinkedAttribute;
+        if ($entity->getFeedField('entity') === 'Product') {
+            $delimiters[] = (string)$entity->getFeedField('markForNotLinkedAttribute');
         }
 
         if (count(array_unique($delimiters)) !== count($delimiters)) {
             throw new BadRequest($this->getInjection('language')->translate('delimitersMustBeDifferent', 'messages', 'ExportFeed'));
         }
-
-        return true;
     }
 }

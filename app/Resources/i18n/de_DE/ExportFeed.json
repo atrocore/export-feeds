@@ -51,7 +51,7 @@
     "ignoreFilter": "Filter im Feed ignorieren",
     "Create ExportFeed": "Exportfeed erstellen",
     "Export Data Settings": "Datenexporteinstellungen",
-    "simpleTypeSettings": "Feed-Einstellungen",
+    "Feed Settings": "Feed-Einstellungen",
     "entityFilter": "Filter",
     "Configurator": "Konfigurator",
     "addEntityField": "Entitätsfeld hinzufügen",
@@ -78,7 +78,6 @@
     "noDataFound": "Feed hat nichts zu exportieren.",
     "wrongExportFeedType": "Falscher Exportfeed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
-    "configuratorSettingsIncorrect": "Konfiguratoreinstellungen sind falsch.",
     "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden.",
     "noFieldLabel": "Die Bezeichnung für das Feld '%s' für die Sprache '%s' ist nicht gesetzt.",
     "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt."

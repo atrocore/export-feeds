@@ -32,13 +32,23 @@ class V1Dot2Dot10 extends Base
         if (!empty($records)) {
             $em = (new \Treo\Core\Application())->getContainer()->get('entityManager');
             foreach ($records as $record) {
+                $data = !empty($record['data']) ? json_decode($record['data'], true) : [];
                 try {
                     $feed = $em->getEntity('ExportFeed', $record['id']);
                     $feed->setFeedField('fileType', $record['file_type']);
                     $feed->setFeedField('isFileHeaderRow', !empty($record['is_file_header_row']));
                     $feed->setFeedField('csvFieldDelimiter', $record['csv_field_delimiter']);
                     $feed->setFeedField('csvTextQualifier', $record['csv_text_qualifier']);
-                    $em->saveEntity($feed);
+                    $feed->setFeedField('entity', isset($data['entity']) ? $data['entity'] : '');
+                    $feed->setFeedField('delimiter', isset($data['delimiter']) ? $data['delimiter'] : '');
+                    $feed->setFeedField('emptyValue', isset($data['emptyValue']) ? $data['emptyValue'] : '');
+                    $feed->setFeedField('nullValue', isset($data['nullValue']) ? $data['nullValue'] : '');
+                    $feed->setFeedField('thousandSeparator', isset($data['thousandSeparator']) ? $data['thousandSeparator'] : '');
+                    $feed->setFeedField('decimalMark', isset($data['decimalMark']) ? $data['decimalMark'] : '');
+                    $feed->setFeedField('markForNotLinkedAttribute', isset($data['markForNotLinkedAttribute']) ? $data['markForNotLinkedAttribute'] : '');
+                    $feed->setFeedField('fieldDelimiterForRelation', isset($data['fieldDelimiterForRelation']) ? $data['fieldDelimiterForRelation'] : '');
+                    $feed->setFeedField('allFields', !empty($data['allFields']));
+                    $em->saveEntity($feed, ['skipAll' => true]);
                 } catch (\Throwable $e) {
                     // ignore
                 }
