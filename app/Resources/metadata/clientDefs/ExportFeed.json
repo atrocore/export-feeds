@@ -43,20 +43,6 @@
       "layout": "listInExportFeed"
     }
   },
-  "optionalBottomPanels": {
-    "simpleTypeSettings": [
-      {
-        "field": "type",
-        "value": "simple"
-      }
-    ],
-    "simpleTypeEntityFilter": [
-      {
-        "field": "type",
-        "value": "simple"
-      }
-    ]
-  },
   "customEntities": {
     "Product": {
       "productCategories": {
@@ -76,9 +62,25 @@
           ]
         }
       },
+      "fileType": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        }
+      },
       "csvFieldDelimiter": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
             {
               "type": "equals",
               "attribute": "fileType",
@@ -110,6 +112,11 @@
           "conditionGroup": [
             {
               "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
+            {
+              "type": "equals",
               "attribute": "fileType",
               "value": "csv"
             }
@@ -119,6 +126,11 @@
       "isFileHeaderRow": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
             {
               "type": "in",
               "attribute": "fileType",
