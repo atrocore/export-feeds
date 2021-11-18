@@ -2,7 +2,6 @@
   "fields": {
     "name": {
       "type": "varchar",
-      "prohibitedEmptyValue": true,
       "view": "export:views/export-configurator-item/fields/name"
     },
     "column": {
@@ -21,8 +20,9 @@
     },
     "type": {
       "type": "enum",
-      "required": true,
+      "required": false,
       "prohibitedEmptyValue": true,
+      "view": "export:views/export-configurator-item/fields/type",
       "options": [
         "Field",
         "Attribute"

@@ -2,5 +2,49 @@
   "controller": "controllers/record",
   "modalViews": {
     "edit": "export:views/export-configurator-item/modals/edit"
+  },
+  "dynamicLogic": {
+    "fields": {
+      "name": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Field"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Field"
+            }
+          ]
+        }
+      },
+      "attribute": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Attribute"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Attribute"
+            }
+          ]
+        }
+      }
+    }
   }
 }

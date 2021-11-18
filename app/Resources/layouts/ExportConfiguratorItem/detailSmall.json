@@ -20,6 +20,14 @@
           "name": "attribute"
         },
         false
+      ],
+      [
+        {
+          "name": "columnType"
+        },
+        {
+          "name": "column"
+        }
       ]
     ]
   }

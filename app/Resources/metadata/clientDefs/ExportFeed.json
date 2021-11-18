@@ -9,6 +9,9 @@
     "fullFormDisabled": true
   },
   "iconClass": "fas fa-cloud-upload-alt",
+  "views": {
+    "detail": "export:views/export-feed/detail"
+  },
   "recordViews": {
     "detail": "export:views/export-feed/record/detail",
     "list": "export:views/export-feed/record/list"
