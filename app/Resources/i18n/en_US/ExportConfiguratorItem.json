@@ -1,11 +1,18 @@
 {
   "fields": {
     "name": "Field",
+    "column": "Column Name",
+    "columnType": "Column Label",
     "exportFeed": "Export Feed",
     "attribute": "Attribute",
     "type": "Type"
   },
   "links": {
     "exportFeed": "Export Feed"
+  },
+  "columnType": {
+    "name": "Name",
+    "internal": "Name › Language",
+    "custom": "Custom Name"
   }
 }

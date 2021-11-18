@@ -5,6 +5,20 @@
       "prohibitedEmptyValue": true,
       "view": "export:views/export-configurator-item/fields/name"
     },
+    "column": {
+      "type": "varchar"
+    },
+    "columnType": {
+      "type": "enum",
+      "required": true,
+      "prohibitedEmptyValue": true,
+      "options": [
+        "name",
+        "internal",
+        "custom"
+      ],
+      "default": "name"
+    },
     "type": {
       "type": "enum",
       "required": true,

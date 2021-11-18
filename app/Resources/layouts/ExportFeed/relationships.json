@@ -6,6 +6,9 @@
     "name": "simpleTypeEntityFilter"
   },
   {
+    "name": "configuratorItems"
+  },
+  {
     "name": "exportJobs"
   }
 ]

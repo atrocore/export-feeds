@@ -1,6 +1,6 @@
 <?php
 /*
- * Import Feeds
+ * Export Feeds
  * Free Extension
  * Copyright (c) AtroCore UG (haftungsbeschränkt).
  *

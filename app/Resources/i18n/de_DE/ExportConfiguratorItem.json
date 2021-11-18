@@ -1,11 +1,18 @@
 {
   "fields": {
     "name": "Gebiet",
+    "column": "Spaltenname",
+    "columnType": "Spaltenbezeichnung",
     "exportFeed": "Exportfeed",
     "attribute": "Attribut",
     "type": "Typ"
   },
   "links": {
     "exportFeed": "Exportfeed"
+  },
+  "columnType": {
+    "name": "Name",
+    "internal": "Name › Sprache",
+    "custom": "Benutzerdefinierter Name"
   }
 }

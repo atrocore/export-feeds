@@ -1,4 +1,3 @@
-<?php
 /*
  * Export Feeds
  * Free Extension
@@ -18,11 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+Espo.define('export:views/export-configurator-item/modals/edit', 'views/modals/edit',
+    Dep => {
+        return Dep.extend({
 
-namespace Export\Entities;
+            fullFormDisabled: true
 
-class ExportConfiguratorItem extends \Espo\Core\Templates\Entities\Base
-{
-    protected $entityType = "ExportConfiguratorItem";
-}
+        });
+
+    });

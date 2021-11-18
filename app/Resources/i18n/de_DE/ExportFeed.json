@@ -9,8 +9,6 @@
     "csvFieldDelimiter": "Feld-Trennzeichen",
     "csvTextQualifier": "Text-Qualifier",
     "field": "Feld",
-    "columnType": "Spaltenbezeichnung",
-    "column": "Spaltenname",
     "exportBy": "Verwandte Entitätsfelder",
     "remove": "Löschen",
     "isAttribute": "Ist Attribut",
@@ -34,11 +32,6 @@
     "configuratorItems": "Konfigurator",
     "channels": "Kanäle",
     "exportJobs": "Exportaufträge"
-  },
-  "columnType": {
-    "name": "Name",
-    "internal": "Name › Sprache",
-    "custom": "Benutzerdefinierter Name"
   },
   "labels": {
     "mainLocale": "Hauptsprache",

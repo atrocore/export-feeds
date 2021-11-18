@@ -24,6 +24,10 @@
     ]
   },
   "relationshipPanels": {
+    "configuratorItems": {
+      "select": false,
+      "rowActionsView": "views/record/row-actions/edit-and-remove"
+    },
     "exportJobs": {
       "create": false,
       "select": false,

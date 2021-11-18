@@ -1,3 +1,6 @@
 {
-  "controller": "controllers/record"
+  "controller": "controllers/record",
+  "modalViews": {
+    "edit": "export:views/export-configurator-item/modals/edit"
+  }
 }

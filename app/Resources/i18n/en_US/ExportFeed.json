@@ -9,15 +9,13 @@
     "csvFieldDelimiter": "Field Delimiter",
     "csvTextQualifier": "Text Qualifier",
     "field": "Field",
-    "columnType": "Column Label",
-    "column": "Column Name",
     "exportBy": "Related Entity Fields",
     "remove": "Remove",
     "isAttribute": "Is Attribute",
     "attribute": "Attribute",
     "fieldOrAttribute": "Field/Attribute",
     "delimiter": "List Value Separator",
-    "exportByOrChannel":"Export By/Channel",
+    "exportByOrChannel": "Export By/Channel",
     "exportJobs": "Export Jobs",
     "exportIntoSeparateColumns": "Separate columns",
     "allFields": "All Fields",
@@ -33,11 +31,6 @@
     "configuratorItems": "Configurator",
     "channels": "Channels",
     "exportJobs": "Export Jobs"
-  },
-  "columnType": {
-    "name": "Name",
-    "internal": "Name › Language",
-    "custom": "Custom Name"
   },
   "labels": {
     "mainLocale": "Main Language",

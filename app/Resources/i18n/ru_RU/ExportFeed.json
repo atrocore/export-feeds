@@ -9,8 +9,6 @@
     "csvFieldDelimiter": "Разделитель полей",
     "csvTextQualifier": "Классификатор текста",
     "field": "Поле",
-    "columnType": "Метка колонки",
-    "column": "Название колонки",
     "exportBy": "Поля связанных сущностей",
     "remove": "Удалить",
     "isAttribute": "Является атрибутом",
@@ -33,11 +31,6 @@
     "channels": "Каналы",
     "exportJobs": "Задания экспорта",
     "configuratorItems": "Конфигуратор"
-  },
-  "columnType": {
-    "name": "Название",
-    "internal": "Название › Язык",
-    "custom": "Пользовательское название"
   },
   "labels": {
     "mainLocale": "Осн. язык",
