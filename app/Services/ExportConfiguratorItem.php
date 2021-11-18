@@ -23,7 +23,20 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\Templates\Services\Base;
+use Espo\ORM\Entity;
 
 class ExportConfiguratorItem extends Base
 {
+    protected $mandatorySelectAttributeList = ['exportFeedId', 'entity', 'type'];
+
+    public function prepareEntityForOutput(Entity $entity)
+    {
+        parent::prepareEntityForOutput($entity);
+
+        if (empty($feed = $entity->get('exportFeed'))) {
+            return;
+        }
+
+        $entity->set('entity', $feed->getFeedField('entity'));
+    }
 }

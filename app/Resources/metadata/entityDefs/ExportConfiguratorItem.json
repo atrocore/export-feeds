@@ -32,6 +32,10 @@
     "attribute": {
       "type": "link"
     },
+    "entity": {
+      "type": "varchar",
+      "notStorable": true
+    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
