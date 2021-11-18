@@ -1,10 +1,12 @@
 {
   "scopeNames": {
     "ExportFeed": "Exportfeed",
+    "ExportConfiguratorItem": "Konfigurator",
     "ExportJob": "Exportauftrag"
   },
   "scopeNamesPlural": {
     "ExportFeed": "Exportfeeds",
+    "ExportConfiguratorItem": "Konfigurator",
     "ExportJob": "Exportaufträge"
   },
   "labels": {

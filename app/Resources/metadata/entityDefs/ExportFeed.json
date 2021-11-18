@@ -168,6 +168,12 @@
       "layoutMassUpdateDisabled": true,
       "layoutFiltersDisabled": true
     },
+    "configuratorItems": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutMassUpdateDisabled": true,
+      "noLoad": true
+    },
     "exportJobs": {
       "type": "linkMultiple",
       "layoutDetailDisabled": true,
@@ -203,6 +209,12 @@
       "type": "hasMany",
       "foreign": "exportFeeds",
       "entity": "Channel"
+    },
+    "configuratorItems": {
+      "type": "hasMany",
+      "foreign": "exportFeed",
+      "entity": "ExportConfiguratorItem",
+      "audited": false
     },
     "exportJobs": {
       "type": "hasMany",

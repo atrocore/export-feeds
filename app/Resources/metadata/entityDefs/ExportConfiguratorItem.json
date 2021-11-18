@@ -1,0 +1,54 @@
+{
+  "fields": {
+    "name": {
+      "type": "varchar",
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-configurator-item/fields/name"
+    },
+    "type": {
+      "type": "enum",
+      "required": true,
+      "prohibitedEmptyValue": true,
+      "options": [
+        "Field",
+        "Attribute"
+      ],
+      "default": "Field"
+    },
+    "attribute": {
+      "type": "link"
+    },
+    "createdAt": {
+      "type": "datetime",
+      "readOnly": true
+    },
+    "exportFeed": {
+      "type": "link"
+    }
+  },
+  "links": {
+    "exportFeed": {
+      "type": "belongsTo",
+      "foreign": "configuratorItems",
+      "entity": "ExportFeed",
+      "audited": false
+    },
+    "attribute": {
+      "type": "belongsTo",
+      "entity": "Attribute",
+      "audited": false
+    }
+  },
+  "collection": {
+    "sortBy": "createdAt",
+    "asc": true
+  },
+  "indexes": {
+    "name": {
+      "columns": [
+        "name",
+        "deleted"
+      ]
+    }
+  }
+}

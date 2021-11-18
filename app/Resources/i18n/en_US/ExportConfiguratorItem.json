@@ -1,0 +1,11 @@
+{
+  "fields": {
+    "name": "Field",
+    "exportFeed": "Export Feed",
+    "attribute": "Attribute",
+    "type": "Type"
+  },
+  "links": {
+    "exportFeed": "Export Feed"
+  }
+}

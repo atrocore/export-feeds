@@ -1,0 +1,11 @@
+{
+  "fields": {
+    "name": "Поле",
+    "exportFeed": "Экспорт. фид",
+    "attribute": "Атрибут",
+    "type": "Тип"
+  },
+  "links": {
+    "exportFeed": "Экспорт. фид"
+  }
+}

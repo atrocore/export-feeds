@@ -26,9 +26,11 @@
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
-    "fieldDelimiterForRelation": "Field Delimiter for Relation"
+    "fieldDelimiterForRelation": "Field Delimiter for Relation",
+    "configuratorItems": "Configurator"
   },
   "links": {
+    "configuratorItems": "Configurator",
     "channels": "Channels",
     "exportJobs": "Export Jobs"
   },

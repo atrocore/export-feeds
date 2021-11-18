@@ -1,0 +1,11 @@
+{
+  "fields": {
+    "name": "Gebiet",
+    "exportFeed": "Exportfeed",
+    "attribute": "Attribut",
+    "type": "Typ"
+  },
+  "links": {
+    "exportFeed": "Exportfeed"
+  }
+}

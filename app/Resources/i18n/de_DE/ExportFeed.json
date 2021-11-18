@@ -17,7 +17,7 @@
     "attribute": "Attribut",
     "fieldOrAttribute": "Feld/Attribut",
     "delimiter": "Listenwerttrennzeichen",
-    "exportByOrChannel":"Export von/Kanal",
+    "exportByOrChannel": "Export von/Kanal",
     "data": "Daten",
     "exportJobs": "Exportaufträge",
     "exportIntoSeparateColumns": "Separate Spalten",
@@ -27,9 +27,11 @@
     "thousandSeparator": "Tausendertrennzeichen",
     "decimalMark": "Dezimaltrennzeichen",
     "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut",
-    "fieldDelimiterForRelation": "Feldtrennzeichen für Relation"
+    "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
+    "configuratorItems": "Konfigurator"
   },
   "links": {
+    "configuratorItems": "Konfigurator",
     "channels": "Kanäle",
     "exportJobs": "Exportaufträge"
   },

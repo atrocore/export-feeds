@@ -26,11 +26,13 @@
     "thousandSeparator": "Тысячный разделитель",
     "decimalMark": "Десятичный разделитель",
     "markForNotLinkedAttribute": "Пометка непривязанного атрибута",
-    "fieldDelimiterForRelation": "Разделитель полей для связи"
+    "fieldDelimiterForRelation": "Разделитель полей для связи",
+    "configuratorItems": "Конфигуратор"
   },
   "links": {
     "channels": "Каналы",
-    "exportJobs": "Задания экспорта"
+    "exportJobs": "Задания экспорта",
+    "configuratorItems": "Конфигуратор"
   },
   "columnType": {
     "name": "Название",
