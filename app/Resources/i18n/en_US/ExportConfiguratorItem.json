@@ -5,6 +5,7 @@
     "columnType": "Column Label",
     "exportFeed": "Export Feed",
     "attribute": "Attribute",
+    "exportBy": "Related Entity Fields",
     "type": "Type"
   },
   "links": {

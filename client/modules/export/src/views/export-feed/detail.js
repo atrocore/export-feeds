@@ -27,7 +27,8 @@ Espo.define('export:views/export-feed/detail', 'views/detail',
 
                 this.relatedAttributeFunctions['configuratorItems'] = () => {
                     return {
-                        "entity": this.model.get('entity')
+                        "entity": this.model.get('entity'),
+                        "type": "Field"
                     }
                 };
 

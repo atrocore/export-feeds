@@ -5,6 +5,7 @@
     "columnType": "Метка колонки",
     "exportFeed": "Экспорт. фид",
     "attribute": "Атрибут",
+    "exportBy": "Поля связанных сущностей",
     "type": "Тип"
   },
   "links": {

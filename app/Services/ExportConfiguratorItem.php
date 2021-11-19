@@ -23,11 +23,14 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\Templates\Services\Base;
+use Espo\Core\Utils\Language;
 use Espo\ORM\Entity;
 
 class ExportConfiguratorItem extends Base
 {
-    protected $mandatorySelectAttributeList = ['exportFeedId', 'entity', 'type'];
+    protected $mandatorySelectAttributeList = ['exportFeedId', 'entity', 'type', 'columnType'];
+
+    protected array $languages = [];
 
     public function prepareEntityForOutput(Entity $entity)
     {
@@ -38,5 +41,41 @@ class ExportConfiguratorItem extends Base
         }
 
         $entity->set('entity', $feed->getFeedField('entity'));
+        $entity->set('column', $this->prepareColumnName($entity));
+    }
+
+    protected function prepareColumnName(Entity $entity): string
+    {
+        $column = (string)$entity->get('column');
+
+        if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
+            $fieldData = $this->getMetadata()->get(['entityDefs', $entity->get('entity'), 'fields', $entity->get('name')]);
+            if (!empty($fieldData['multilangLocale'])) {
+                $column = $this->getLanguage($fieldData['multilangLocale'])->translate($fieldData['multilangField'], 'fields', $entity->get('entity'));
+            } else {
+                $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+            }
+        } elseif ($entity->get('columnType') === 'internal') {
+            $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+        }
+
+        return $column;
+    }
+
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('language');
+        $this->addDependency('container');
+    }
+
+    protected function getLanguage(string $locale): Language
+    {
+        if (!isset($this->languages[$locale])) {
+            $this->languages[$locale] = new Language($this->getInjection('container'), $locale);
+        }
+
+        return $this->languages[$locale];
     }
 }

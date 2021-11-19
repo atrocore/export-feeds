@@ -36,6 +36,11 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 this.translatedOptions[field] = this.translate(field, 'fields', entity);
             });
 
+            // select first
+            if (!this.model.get('name') && this.params.options[0]) {
+                this.model.set('name', this.params.options[0]);
+            }
+
             Dep.prototype.setup.call(this);
         },
 

@@ -5,6 +5,7 @@
     "columnType": "Spaltenbezeichnung",
     "exportFeed": "Exportfeed",
     "attribute": "Attribut",
+    "exportBy": "Verwandte Entitätsfelder",
     "type": "Typ"
   },
   "links": {

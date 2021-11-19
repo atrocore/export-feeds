@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/column-type', 'views/fields/enum',
+Espo.define('export:views/export-configurator-item/fields/column-type', 'views/fields/enum',
     Dep => {
 
         return Dep.extend({
@@ -27,11 +27,7 @@ Espo.define('export:views/export-feed/fields/column-type', 'views/fields/enum',
             init: function () {
                 Dep.prototype.init.call(this);
 
-                if (!this.model.get('columnType')) {
-                    this.model.set('columnType', 'name', {silent: true});
-                }
-
-                this.listenTo(this.model, 'change:field', () => {
+                this.listenTo(this.model, 'change:name', () => {
                     this.reRender();
                 });
             },
@@ -39,20 +35,16 @@ Espo.define('export:views/export-feed/fields/column-type', 'views/fields/enum',
             setupOptions() {
                 this.params.options = ['name', 'internal', 'custom'];
                 this.translatedOptions = {
-                    name: this.translate('name', 'columnType', 'ExportFeed'),
-                    internal: this.translate('internal', 'columnType', 'ExportFeed'),
-                    custom: this.translate('custom', 'columnType', 'ExportFeed'),
+                    name: this.translate('name', 'columnType', 'ExportConfiguratorItem'),
+                    internal: this.translate('internal', 'columnType', 'ExportConfiguratorItem'),
+                    custom: this.translate('custom', 'columnType', 'ExportConfiguratorItem'),
                 };
-            },
-
-            isRequired() {
-                return true;
             },
 
             afterRender() {
                 Dep.prototype.afterRender.call(this);
 
-                if (this.mode === 'edit' || this.mode === 'detail') {
+                if (this.mode !== 'list') {
                     this.checkFieldVisibility();
                 }
             },
