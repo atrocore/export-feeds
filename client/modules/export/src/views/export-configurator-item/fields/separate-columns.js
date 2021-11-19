@@ -17,13 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/separate-columns', 'views/fields/bool',
+Espo.define('export:views/export-configurator-item/fields/separate-columns', 'views/fields/bool',
     Dep => Dep.extend({
 
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:field', () => {
+            this.listenTo(this.model, 'change:name', () => {
                 this.reRender();
             });
         },
@@ -31,14 +31,14 @@ Espo.define('export:views/export-feed/fields/separate-columns', 'views/fields/bo
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            if (this.mode === 'edit' || this.mode === 'detail') {
+            if (this.mode !== 'list') {
                 this.checkFieldVisibility();
                 this.checkFieldDisability();
             }
         },
 
         checkFieldDisability() {
-            if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues') {
+            if (this.model.get('entity') === 'Product' && this.model.get('name') === 'productAttributeValues') {
                 this.$el.find('input').attr('disabled', 'disabled');
                 this.model.set('exportIntoSeparateColumns', true);
             } else {
@@ -47,7 +47,7 @@ Espo.define('export:views/export-feed/fields/separate-columns', 'views/fields/bo
         },
 
         checkFieldVisibility() {
-            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('field'), 'type']) === 'linkMultiple') {
+            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple') {
                 this.show();
             } else {
                 this.hide();

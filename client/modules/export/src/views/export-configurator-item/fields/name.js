@@ -79,7 +79,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             if (exportByTranslation) {
                 extraInfo += `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
                 if (this.model.get('exportIntoSeparateColumns')) {
-                    extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportFeed')}`;
+                    extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportConfiguratorItem')}`;
                 }
             }
 

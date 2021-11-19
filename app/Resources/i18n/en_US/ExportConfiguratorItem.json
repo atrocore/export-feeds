@@ -7,6 +7,7 @@
     "attribute": "Attribute",
     "exportBy": "Related Entity Fields",
     "remove": "Remove",
+    "exportIntoSeparateColumns": "Separate columns",
     "type": "Type"
   },
   "links": {

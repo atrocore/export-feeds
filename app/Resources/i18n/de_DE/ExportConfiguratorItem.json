@@ -7,6 +7,7 @@
     "attribute": "Attribut",
     "remove": "Löschen",
     "exportBy": "Verwandte Entitätsfelder",
+    "exportIntoSeparateColumns": "Separate Spalten",
     "type": "Typ"
   },
   "links": {

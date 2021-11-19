@@ -7,6 +7,7 @@
     "attribute": "Атрибут",
     "remove": "Удалить",
     "exportBy": "Поля связанных сущностей",
+    "exportIntoSeparateColumns": "Отдельные колонки",
     "type": "Тип"
   },
   "links": {

@@ -20,6 +20,10 @@
       ],
       "default": "name"
     },
+    "exportIntoSeparateColumns": {
+      "type": "bool",
+      "view": "export:views/export-configurator-item/fields/separate-columns"
+    },
     "exportBy": {
       "type": "array",
       "view": "export:views/export-configurator-item/fields/export-by"
