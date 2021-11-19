@@ -65,41 +65,51 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 name = this.translate(name, 'fields', this.model.get('entity'));
             }
 
-            // if (this.model.get('type') === 'Attribute' && this.model.get('attributeIsMultilang') && this.model.get('locale') !== 'main') {
-            //     name += ' › ' + this.model.get('locale');
-            // }
+            if (this.model.get('type') === 'Attribute' && this.model.get('attributeIsMultilang') && this.model.get('locale') !== 'main') {
+                name += ' › ' + this.model.get('locale');
+            }
 
             return name;
         },
 
         getExtraInfo() {
-            let extraInfo = null;
+            let extraInfo = '';
 
-            // let exportByTranslation = this.getExportByTranslation();
-            // if (this.model.get('exportBy') && exportByTranslation) {
-            //     extraInfo = `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
-            //     if (this.model.get('exportIntoSeparateColumns')) {
-            //         extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportFeed')}`;
-            //
-            //         if (this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues') {
-            //             if (this.model.get('attributeColumn') === 'attributeName') {
-            //                 extraInfo += `<br>${this.translate('useAttributeNameAsColumnName', 'labels', 'ExportFeed')}`;
-            //             }
-            //             if (this.model.get('attributeColumn') === 'internalAttributeName') {
-            //                 extraInfo += `<br>${this.translate('useInternalAttributeNameAsColumnName', 'labels', 'ExportFeed')}`;
-            //             }
-            //             if (this.model.get('attributeColumn') === 'attributeCode') {
-            //                 extraInfo += `<br>${this.translate('useAttributeCodeAsColumnName', 'labels', 'ExportFeed')}`;
-            //             }
-            //         }
-            //     }
-            // }
-            //
-            // if (this.model.get('attributeId')) {
-            //     extraInfo = `${this.translate('Attribute', 'scopeNames', 'Global')}`;
-            // }
+            let exportByTranslation = this.getExportByTranslation();
+            if (exportByTranslation) {
+                extraInfo += `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
+                if (this.model.get('exportIntoSeparateColumns')) {
+                    extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportFeed')}`;
+                }
+            }
+
+            if (this.model.get('attributeId')) {
+                extraInfo += `${this.translate('Attribute', 'scopeNames', 'Global')}`;
+            }
 
             return extraInfo;
+        },
+
+        getExportByTranslation() {
+            let translations = [];
+            (this.model.get('exportBy') || []).forEach(field => {
+                if (field === 'id') {
+                    translations.push(this.translate('id', 'fields', 'Global'));
+                } else {
+                    let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+                    if (entity) {
+                        if (field.substring(field.length - 2) === 'Id') {
+                            translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity) + ' ' + this.translate('id', 'fields', 'Global'));
+                        } else if (field.substring(field.length - 4) === 'Name') {
+                            translations.push(this.translate(field.substring(0, field.length - 4), 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global'));
+                        } else {
+                            translations.push(this.translate(field, 'fields', entity));
+                        }
+                    }
+                }
+            });
+
+            return translations.join(', ');
         },
 
         getEntityFields(entity) {
