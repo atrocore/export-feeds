@@ -17,18 +17,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/remove', 'view', function (Dep) {
+Espo.define('export:views/export-configurator-item/fields/remove', 'view', function (Dep) {
 
     return Dep.extend({
 
-        template: 'export:export-feed/fields/remove/list',
+        template: 'export:export-configurator-item/fields/remove/list',
 
         buttonDisabled: false,
 
         events: {
             'click button[data-action="actionRemove"]': function () {
                 if (!this.buttonDisabled) {
-                    this.model.collection.trigger('actionRemove', this.model);
+                    if (!this.getAcl().checkModel(this.model, 'delete')) {
+                        this.notify('Access denied', 'error');
+                        return false;
+                    }
+
+                    this.notify('Removing...');
+                    this.model.destroy({
+                        wait: true,
+                        success: function () {
+                            this.notify('Removed', 'success');
+                            $('.action[data-action=refresh][data-panel=configuratorItems]').click();
+                        }.bind(this)
+                    });
                 }
             }
         },

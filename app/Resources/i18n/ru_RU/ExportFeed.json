@@ -9,7 +9,6 @@
     "csvFieldDelimiter": "Разделитель полей",
     "csvTextQualifier": "Классификатор текста",
     "field": "Поле",
-    "remove": "Удалить",
     "isAttribute": "Является атрибутом",
     "attribute": "Атрибут",
     "fieldOrAttribute": "Поле/Атрибут",

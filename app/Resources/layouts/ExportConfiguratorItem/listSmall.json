@@ -4,5 +4,9 @@
   },
   {
     "name": "column"
+  },
+  {
+    "name": "remove",
+    "notSortable": true
   }
 ]

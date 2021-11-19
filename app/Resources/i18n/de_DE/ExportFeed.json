@@ -9,7 +9,6 @@
     "csvFieldDelimiter": "Feld-Trennzeichen",
     "csvTextQualifier": "Text-Qualifier",
     "field": "Feld",
-    "remove": "Löschen",
     "isAttribute": "Ist Attribut",
     "attribute": "Attribut",
     "fieldOrAttribute": "Feld/Attribut",
