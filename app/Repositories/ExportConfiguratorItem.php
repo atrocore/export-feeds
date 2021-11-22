@@ -23,7 +23,17 @@ declare(strict_types=1);
 namespace Export\Repositories;
 
 use Espo\Core\Templates\Repositories\Base;
+use Espo\ORM\Entity;
 
 class ExportConfiguratorItem extends Base
 {
+    protected function beforeSave(Entity $entity, array $options = [])
+    {
+        if ($entity->isNew()) {
+            $count = $this->where(['exportFeedId' => $entity->get('exportFeedId')])->count();
+            $entity->set('sortOrder', $count * 10 + 10);
+        }
+
+        parent::beforeSave($entity, $options);
+    }
 }

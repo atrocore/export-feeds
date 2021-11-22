@@ -44,6 +44,30 @@ class ExportConfiguratorItem extends Base
         $entity->set('column', $this->prepareColumnName($entity));
     }
 
+    public function updateEntity($id, $data)
+    {
+        if (property_exists($data, '_sortedIds')) {
+            foreach ($data->_sortedIds as $k => $id) {
+                if (!empty($item = $this->getRepository()->get($id))) {
+                    $item->set('sortOrder', $k * 10);
+                    $this->getEntityManager()->saveEntity($item);
+                }
+            }
+            return $this->readEntity($id);
+        }
+
+        return parent::updateEntity($id, $data);
+    }
+
+    protected function isEntityUpdated(Entity $entity, \stdClass $data): bool
+    {
+        if (property_exists($data, 'sortOrder')) {
+            return true;
+        }
+
+        return parent::isEntityUpdated($entity, $data);
+    }
+
     protected function prepareColumnName(Entity $entity): string
     {
         $column = (string)$entity->get('column');
