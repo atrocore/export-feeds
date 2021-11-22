@@ -33,6 +33,7 @@ class V1Dot3Dot0 extends Base
         $this->execute("ALTER TABLE `export_configurator_item` ADD column_type VARCHAR(255) DEFAULT 'name' COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_configurator_item` ADD export_by MEDIUMTEXT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_configurator_item` ADD export_into_separate_columns TINYINT(1) DEFAULT '0' NOT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("ALTER TABLE `export_configurator_item` ADD sort_order INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
 
         $records = $this->getPDO()->query("SELECT * FROM `export_feed` WHERE `type`='simple'")->fetchAll(\PDO::FETCH_ASSOC);
         if (!empty($records)) {

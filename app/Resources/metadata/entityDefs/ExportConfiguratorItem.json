@@ -8,6 +8,9 @@
       "type": "varchar",
       "view": "export:views/export-configurator-item/fields/column"
     },
+    "sortOrder": {
+      "type": "int"
+    },
     "columnType": {
       "type": "enum",
       "required": true,

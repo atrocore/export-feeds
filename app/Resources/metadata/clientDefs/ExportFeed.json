@@ -29,6 +29,12 @@
   "relationshipPanels": {
     "configuratorItems": {
       "select": false,
+      "dragDrop": {
+        "isActive": true,
+        "sortField": "sortOrder"
+      },
+      "sortBy": "sortOrder",
+      "asc": true,
       "rowActionsView": "views/record/row-actions/edit-and-remove"
     },
     "exportJobs": {
