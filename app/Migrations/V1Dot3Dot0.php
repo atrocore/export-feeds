@@ -36,36 +36,12 @@ class V1Dot3Dot0 extends Base
         $this->execute("ALTER TABLE `export_configurator_item` ADD sort_order INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_configurator_item` ADD locale VARCHAR(255) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
 
-        $records = $this->getPDO()->query("SELECT * FROM `export_feed` WHERE `type`='simple'")->fetchAll(\PDO::FETCH_ASSOC);
-        if (!empty($records)) {
-            $em = (new \Treo\Core\Application())->getContainer()->get('entityManager');
-            foreach ($records as $record) {
-                $data = !empty($record['data']) ? json_decode($record['data'], true) : [];
-                try {
-                    $feed = $em->getEntity('ExportFeed', $record['id']);
-                    $feed->setFeedField('fileType', $record['file_type']);
-                    $feed->setFeedField('isFileHeaderRow', !empty($record['is_file_header_row']));
-                    $feed->setFeedField('csvFieldDelimiter', $record['csv_field_delimiter']);
-                    $feed->setFeedField('csvTextQualifier', $record['csv_text_qualifier']);
-                    $feed->setFeedField('entity', isset($data['entity']) ? $data['entity'] : '');
-                    $feed->setFeedField('delimiter', isset($data['delimiter']) ? $data['delimiter'] : '');
-                    $feed->setFeedField('emptyValue', isset($data['emptyValue']) ? $data['emptyValue'] : '');
-                    $feed->setFeedField('nullValue', isset($data['nullValue']) ? $data['nullValue'] : '');
-                    $feed->setFeedField('thousandSeparator', isset($data['thousandSeparator']) ? $data['thousandSeparator'] : '');
-                    $feed->setFeedField('decimalMark', isset($data['decimalMark']) ? $data['decimalMark'] : '');
-                    $feed->setFeedField('markForNotLinkedAttribute', isset($data['markForNotLinkedAttribute']) ? $data['markForNotLinkedAttribute'] : '');
-                    $feed->setFeedField('fieldDelimiterForRelation', isset($data['fieldDelimiterForRelation']) ? $data['fieldDelimiterForRelation'] : '');
-                    $feed->setFeedField('allFields', !empty($data['allFields']));
-                    $em->saveEntity($feed, ['skipAll' => true]);
-                } catch (\Throwable $e) {
-                    // ignore
-                }
-            }
-        }
+        $this->execute("UPDATE `export_feed` SET deleted=1 WHERE 1");
     }
 
     public function down(): void
     {
+        $this->execute("UPDATE `export_feed` SET deleted=1 WHERE 1");
     }
 
     protected function execute(string $sql)

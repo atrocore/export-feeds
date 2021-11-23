@@ -82,12 +82,6 @@
         {
           "name": "markForNotLinkedAttribute"
         }
-      ],
-      [
-        {
-          "name": "allFields"
-        },
-        false
       ]
     ]
   }

@@ -149,12 +149,6 @@
       "dataField": true,
       "required": false
     },
-    "allFields": {
-      "type": "bool",
-      "notStorable": true,
-      "dataField": true,
-      "required": false
-    },
     "channels": {
       "type": "linkMultiple",
       "tooltip": true,
