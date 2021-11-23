@@ -30,8 +30,6 @@
     "configuratorItems": "Конфигуратор"
   },
   "labels": {
-    "mainLocale": "Осн. язык",
-    "Language": "Язык",
     "attributeName": "Название атрибута",
     "internalAttributeName": "Название атрибута › Язык",
     "attributeCode": "Код атрибута",

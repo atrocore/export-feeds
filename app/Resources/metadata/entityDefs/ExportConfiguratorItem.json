@@ -45,6 +45,14 @@
     "attribute": {
       "type": "link"
     },
+    "isAttributeMultiLang": {
+      "type": "bool",
+      "notStorable": true
+    },
+    "locale": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/locale"
+    },
     "entity": {
       "type": "varchar",
       "notStorable": true

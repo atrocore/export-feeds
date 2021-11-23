@@ -31,8 +31,6 @@
     "exportJobs": "Exportaufträge"
   },
   "labels": {
-    "mainLocale": "Hauptsprache",
-    "Language": "Sprache",
     "attributeName": "Attributname",
     "internalAttributeName": "Attributname › Sprache",
     "attributeCode": "Attributcode",

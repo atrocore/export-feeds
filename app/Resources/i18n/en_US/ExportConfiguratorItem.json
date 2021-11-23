@@ -8,7 +8,8 @@
     "exportBy": "Related Entity Fields",
     "remove": "Remove",
     "exportIntoSeparateColumns": "Separate columns",
-    "type": "Type"
+    "type": "Type",
+    "locale": "Language"
   },
   "links": {
     "exportFeed": "Export Feed"
@@ -17,5 +18,8 @@
     "name": "Name",
     "internal": "Name › Language",
     "custom": "Custom Name"
+  },
+  "labels": {
+    "mainLocale": "Main Language"
   }
 }

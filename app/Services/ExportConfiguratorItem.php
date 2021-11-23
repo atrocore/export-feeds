@@ -42,6 +42,11 @@ class ExportConfiguratorItem extends Base
 
         $entity->set('entity', $feed->getFeedField('entity'));
         $entity->set('column', $this->prepareColumnName($entity));
+        $entity->set('isAttributeMultiLang', false);
+
+        if ($entity->get('type') === 'Attribute' && !empty($attribute = $entity->get('attribute'))) {
+            $entity->set('isAttributeMultiLang', !empty($attribute->get('isMultilang')));
+        }
     }
 
     public function updateEntity($id, $data)

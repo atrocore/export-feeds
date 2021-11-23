@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/locale', 'views/fields/enum',
+Espo.define('export:views/export-configurator-item/fields/locale', 'views/fields/enum',
     Dep => {
 
         return Dep.extend({
@@ -27,11 +27,7 @@ Espo.define('export:views/export-feed/fields/locale', 'views/fields/enum',
             isAttributeMultiLang: false,
 
             init: function () {
-                if (this.model.get('attributeId')) {
-                    this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, {}, {async: false}).then(attribute => {
-                        this.isAttributeMultiLang = attribute.isMultilang;
-                    });
-                }
+                this.isAttributeMultiLang = this.model.get('isAttributeMultiLang');
 
                 Dep.prototype.init.call(this);
 
@@ -50,7 +46,7 @@ Espo.define('export:views/export-feed/fields/locale', 'views/fields/enum',
 
             setupOptions() {
                 this.params.options = ['mainLocale'];
-                this.translatedOptions = {mainLocale: this.translate('mainLocale', 'labels', 'ExportFeed')};
+                this.translatedOptions = {mainLocale: this.translate('mainLocale', 'labels', 'ExportConfiguratorItem')};
 
                 (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
                     this.params.options.push(locale);
@@ -61,16 +57,16 @@ Espo.define('export:views/export-feed/fields/locale', 'views/fields/enum',
             afterRender() {
                 Dep.prototype.afterRender.call(this);
 
-                if (this.mode === 'edit' || this.mode === 'detail') {
+                if (this.mode !== 'list') {
                     this.checkFieldVisibility();
                 }
             },
 
             checkFieldVisibility() {
                 if (this.isAttributeMultiLang && (this.getConfig().get('inputLanguageList') || []).length > 0) {
-                    this.$el.parent().show();
+                    this.show();
                 } else {
-                    this.$el.parent().hide();
+                    this.hide();
                 }
             },
 

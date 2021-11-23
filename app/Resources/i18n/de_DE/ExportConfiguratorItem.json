@@ -8,7 +8,8 @@
     "remove": "Löschen",
     "exportBy": "Verwandte Entitätsfelder",
     "exportIntoSeparateColumns": "Separate Spalten",
-    "type": "Typ"
+    "type": "Typ",
+    "locale": "Sprache"
   },
   "links": {
     "exportFeed": "Exportfeed"
@@ -17,5 +18,8 @@
     "name": "Name",
     "internal": "Name › Sprache",
     "custom": "Benutzerdefinierter Name"
+  },
+  "labels": {
+    "mainLocale": "Hauptsprache"
   }
 }

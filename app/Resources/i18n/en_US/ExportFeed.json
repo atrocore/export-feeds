@@ -30,8 +30,6 @@
     "exportJobs": "Export Jobs"
   },
   "labels": {
-    "mainLocale": "Main Language",
-    "Language": "Language",
     "attributeName": "Attribute Name",
     "internalAttributeName": "Attribute Name › Language",
     "attributeCode": "Attribute Code",

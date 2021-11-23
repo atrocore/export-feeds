@@ -19,7 +19,9 @@
         {
           "name": "attribute"
         },
-        false
+        {
+          "name": "locale"
+        }
       ],
       [
         {

@@ -8,7 +8,8 @@
     "remove": "Удалить",
     "exportBy": "Поля связанных сущностей",
     "exportIntoSeparateColumns": "Отдельные колонки",
-    "type": "Тип"
+    "type": "Тип",
+    "locale": "Язык"
   },
   "links": {
     "exportFeed": "Экспорт. фид"
@@ -17,5 +18,8 @@
     "name": "Название",
     "internal": "Название › Язык",
     "custom": "Пользовательское название"
+  },
+  "labels": {
+    "mainLocale": "Осн. язык"
   }
 }
