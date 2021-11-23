@@ -28,7 +28,7 @@ use Espo\ORM\Entity;
 
 class ExportConfiguratorItem extends Base
 {
-    protected $mandatorySelectAttributeList = ['exportFeedId', 'entity', 'type', 'columnType', 'exportBy', 'exportIntoSeparateColumns', 'sortOrder'];
+    protected $mandatorySelectAttributeList = ['exportFeedId', 'entity', 'type', 'columnType', 'exportBy', 'exportIntoSeparateColumns', 'sortOrder', 'attributeId', 'locale'];
 
     protected array $languages = [];
 
@@ -45,6 +45,7 @@ class ExportConfiguratorItem extends Base
         $entity->set('isAttributeMultiLang', false);
 
         if ($entity->get('type') === 'Attribute' && !empty($attribute = $entity->get('attribute'))) {
+            $entity->set('attributeName', $attribute->get('name'));
             $entity->set('isAttributeMultiLang', !empty($attribute->get('isMultilang')));
         }
     }

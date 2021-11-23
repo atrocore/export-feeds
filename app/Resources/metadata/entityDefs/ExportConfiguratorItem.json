@@ -45,6 +45,10 @@
     "attribute": {
       "type": "link"
     },
+    "attributeName": {
+      "type": "varchar",
+      "notStorable": true
+    },
     "isAttributeMultiLang": {
       "type": "bool",
       "notStorable": true
