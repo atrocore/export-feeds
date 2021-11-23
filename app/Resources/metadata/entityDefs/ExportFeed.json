@@ -56,13 +56,17 @@
     "fileType": {
       "type": "enum",
       "required": false,
+      "notStorable": true,
+      "dataField": true,
       "options": [],
       "view": "export:views/export-feed/fields/file-type",
-      "prohibitedEmptyValue": true
+      "prohibitedEmptyValue": false
     },
     "isFileHeaderRow": {
       "type": "bool",
-      "default": "1"
+      "notStorable": true,
+      "dataField": true,
+      "default": true
     },
     "csvFieldDelimiter": {
       "type": "enum",
@@ -72,6 +76,8 @@
         "\\t"
       ],
       "default": ";",
+      "notStorable": true,
+      "dataField": true,
       "view": "export:views/export-feed/fields/field-delimiter",
       "prohibitedEmptyValue": true
     },
@@ -82,7 +88,66 @@
         "singleQuote"
       ],
       "default": "doubleQuote",
+      "notStorable": true,
+      "dataField": true,
       "prohibitedEmptyValue": true
+    },
+    "entity": {
+      "type": "enum",
+      "options": [],
+      "required": true,
+      "notStorable": true,
+      "dataField": true,
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-feed/fields/entity"
+    },
+    "delimiter": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": true,
+      "default": "_"
+    },
+    "fieldDelimiterForRelation": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": true,
+      "default": "|"
+    },
+    "emptyValue": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false,
+      "default": ""
+    },
+    "nullValue": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false,
+      "default": "Null"
+    },
+    "markForNotLinkedAttribute": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false,
+      "default": "--"
+    },
+    "decimalMark": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": true,
+      "default": ","
+    },
+    "thousandSeparator": {
+      "type": "varchar",
+      "notStorable": true,
+      "dataField": true,
+      "required": false
     },
     "channels": {
       "type": "linkMultiple",
@@ -96,6 +161,12 @@
       "layoutListDisabled": true,
       "layoutMassUpdateDisabled": true,
       "layoutFiltersDisabled": true
+    },
+    "configuratorItems": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutMassUpdateDisabled": true,
+      "noLoad": true
     },
     "exportJobs": {
       "type": "linkMultiple",
@@ -132,6 +203,12 @@
       "type": "hasMany",
       "foreign": "exportFeeds",
       "entity": "Channel"
+    },
+    "configuratorItems": {
+      "type": "hasMany",
+      "foreign": "exportFeed",
+      "entity": "ExportConfiguratorItem",
+      "audited": false
     },
     "exportJobs": {
       "type": "hasMany",

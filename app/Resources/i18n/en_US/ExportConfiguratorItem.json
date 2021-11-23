@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "name": "Field",
+    "column": "Column Name",
+    "columnType": "Column Label",
+    "exportFeed": "Export Feed",
+    "attribute": "Attribute",
+    "exportBy": "Related Entity Fields",
+    "remove": "Remove",
+    "exportIntoSeparateColumns": "Separate columns",
+    "type": "Type",
+    "locale": "Language"
+  },
+  "links": {
+    "exportFeed": "Export Feed"
+  },
+  "columnType": {
+    "name": "Name",
+    "internal": "Name › Language",
+    "custom": "Custom Name"
+  },
+  "labels": {
+    "mainLocale": "Main Language"
+  }
+}

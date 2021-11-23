@@ -3,7 +3,6 @@
   "boolFilterList": [
     "onlyMy"
   ],
-  "quickCreate": true,
   "navigateToEntityAfterQuickCreate": true,
   "disabledSelectList": true,
   "quickCreateOptions": {
@@ -11,12 +10,10 @@
   },
   "iconClass": "fas fa-cloud-upload-alt",
   "views": {
-    "list": "export:views/list",
-    "detail": "export:views/detail"
+    "detail": "export:views/export-feed/detail"
   },
   "recordViews": {
-    "detail": "export:views/export-feed/record/detail",
-    "list": "export:views/export-feed/record/list"
+    "detail": "export:views/export-feed/record/detail"
   },
   "bottomPanels": {
     "detail": [
@@ -25,16 +22,21 @@
         "label": "entityFilter",
         "view": "export:views/export-feed/simple-type-components/record/panels/simple-type-entity-filter",
         "notRefreshable": true
-      },
-      {
-        "name": "simpleTypeSettings",
-        "label": "simpleTypeSettings",
-        "view": "export:views/export-feed/record/panels/simple-type-settings",
-        "notRefreshable": true
       }
     ]
   },
   "relationshipPanels": {
+    "configuratorItems": {
+      "select": false,
+      "dragDrop": {
+        "isActive": true,
+        "sortField": "sortOrder"
+      },
+      "sortBy": "sortOrder",
+      "asc": true,
+      "view": "export:views/export-feed/record/panels/configurator-items",
+      "rowActionsView": "views/record/row-actions/edit-and-remove"
+    },
     "exportJobs": {
       "create": false,
       "select": false,
@@ -42,20 +44,6 @@
       "view": "export:views/export-feed/record/panels/export-jobs",
       "layout": "listInExportFeed"
     }
-  },
-  "optionalBottomPanels": {
-    "simpleTypeSettings": [
-      {
-        "field": "type",
-        "value": "simple"
-      }
-    ],
-    "simpleTypeEntityFilter": [
-      {
-        "field": "type",
-        "value": "simple"
-      }
-    ]
   },
   "customEntities": {
     "Product": {
@@ -76,31 +64,52 @@
           ]
         }
       },
+      "fileType": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        }
+      },
       "csvFieldDelimiter": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
             {
               "type": "equals",
               "attribute": "fileType",
               "value": "csv"
             }
           ]
-        }
-      },
-      "valueDelimiter": {
-        "visible": {
+        },
+        "required": {
           "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
             {
               "type": "equals",
               "attribute": "fileType",
               "value": "csv"
-            },
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
             }
           ]
         }
@@ -108,6 +117,25 @@
       "csvTextQualifier": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
+            {
+              "type": "equals",
+              "attribute": "fileType",
+              "value": "csv"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
             {
               "type": "equals",
               "attribute": "fileType",
@@ -120,12 +148,28 @@
         "visible": {
           "conditionGroup": [
             {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
+            {
               "type": "in",
               "attribute": "fileType",
               "value": [
                 "xlsx",
                 "csv"
               ]
+            }
+          ]
+        }
+      },
+      "markForNotLinkedAttribute": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "entity",
+              "value": "Product"
             }
           ]
         }

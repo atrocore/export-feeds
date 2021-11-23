@@ -24,71 +24,54 @@ namespace Export\Repositories;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
+use Espo\Core\Utils\Json;
 use Espo\ORM\Entity;
-use Export\DataConvertor\Base as BaseConvertor;
+use Export\Entities\ExportFeed as ExportFeedEntity;
 
-/**
- * ExportFeed Repository
- */
 class ExportFeed extends Base
 {
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     *
-     * @throws BadRequest
-     */
+    public function getIdsByExportEntity(string $exportEntity): array
+    {
+        $feeds = $this
+            ->select(['id'])
+            ->where(['data*' => '%\"entity\":\"' . $exportEntity . '\"%'])
+            ->find();
+
+        return array_column($feeds->toArray(), 'id');
+    }
+
+    public function removeConfiguratorItems(string $exportFeedId): void
+    {
+        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $exportFeedId])->removeCollection();
+    }
+
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if ($entity->get('type') == 'simple') {
-            if ($entity->isNew()) {
-                if (empty($entity->get('fileType'))) {
-                    $types = $this->getMetadata()->get(['app', 'export', 'fileTypes', $entity->get('type')], []);
-                    $first = array_shift($types);
-                    if (!empty($first)) {
-                        $entity->set('fileType', $first);
-                    }
-                }
+        $fetchedEntity = $entity->getFeedField('entity');
 
-                $data = [
-                    'entity'                    => empty($this->getMetadata()->get(['scopes', 'Product'])) ? 'User' : 'Product',
-                    'allFields'                 => true,
-                    'delimiter'                 => '_',
-                    'decimalMark'               => ',',
-                    'thousandSeparator'         => '',
-                    'markForNotLinkedAttribute' => '--',
-                    'fieldDelimiterForRelation' => \Export\DataConvertor\Base::DELIMITER,
-                    'configuration'             => []
-                ];
+        $this->setFeedFieldsToDataJson($entity);
 
-                $entity->set('data', $data);
-
-            } else {
-                if (empty($entity->get('data')) || empty($entity->get('data')->configuration) || !$this->isDelimiterValid($entity)) {
-                    throw new BadRequest($this->getInjection('language')->translate('configuratorSettingsIncorrect', 'exceptions', 'ExportFeed'));
-                }
-            }
+        if (empty($options['skipAll'])) {
+            $this->isDelimiterValid($entity);
         }
 
         parent::beforeSave($entity, $options);
+
+        if ($entity->get('type') === 'simple') {
+            // remove configurator items on Entity change
+            if (!$entity->isNew() && $entity->has('entity') && $fetchedEntity !== $entity->get('entity')) {
+                $this->removeConfiguratorItems($entity->get('id'));
+            }
+        }
     }
 
-    /**
-     * @param string $exportEntity
-     *
-     * @return array
-     */
-    public function getIdsByExportEntity(string $exportEntity): array
+    protected function beforeRemove(Entity $entity, array $options = [])
     {
-        return $this
-            ->getEntityManager()
-            ->nativeQuery('SELECT id FROM `export_feed` WHERE deleted=0 AND `export_feed`.data LIKE "%\"entity\":\"' . $exportEntity . '\"%"')
-            ->fetchAll(\PDO::FETCH_COLUMN);
+        parent::beforeRemove($entity, $options);
+
+        $this->removeConfiguratorItems($entity->get('id'));
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function init()
     {
         parent::init();
@@ -96,48 +79,41 @@ class ExportFeed extends Base
         $this->addDependency('language');
     }
 
-    /**
-     * @param Entity $entity
-     *
-     * @return bool
-     * @throws BadRequest
-     */
-    protected function isDelimiterValid(Entity $entity): bool
+    protected function setFeedFieldsToDataJson(Entity $entity): void
     {
-        $data = $entity->get('data');
+        $data = !empty($data = $entity->get('data')) ? Json::decode(Json::encode($data), true) : [];
 
-        $requiredMessage = $this->getInjection('language')->translate('fieldIsRequired', 'messages');
-        if (empty($data->delimiter)) {
-            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('delimiter', 'fields', 'ExportFeed'), $requiredMessage));
+        foreach ($this->getMetadata()->get(['entityDefs', 'ExportFeed', 'fields'], []) as $field => $row) {
+            if (empty($row['notStorable']) || empty($row['dataField'])) {
+                continue 1;
+            }
+            if ($entity->has($field)) {
+                $data[ExportFeedEntity::DATA_FIELD][$field] = $entity->get($field);
+            }
         }
 
-        if (empty($data->decimalMark)) {
-            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('decimalMark', 'fields', 'ExportFeed'), $requiredMessage));
-        }
+        $entity->set('data', Json::decode(Json::encode($data)));
+    }
 
-        if (empty($data->fieldDelimiterForRelation)) {
-            throw new BadRequest(str_replace('{field}', $this->getInjection('language')->translate('fieldDelimiterForRelation', 'fields', 'ExportFeed'), $requiredMessage));
-        }
-
+    protected function isDelimiterValid(Entity $entity): void
+    {
         $delimiters = [
-            (string)$data->delimiter,
-            (string)$data->decimalMark,
-            (string)$data->thousandSeparator,
-            (string)$data->fieldDelimiterForRelation,
+            (string)$entity->getFeedField('delimiter'),
+            (string)$entity->getFeedField('decimalMark'),
+            (string)$entity->getFeedField('thousandSeparator'),
+            (string)$entity->getFeedField('fieldDelimiterForRelation'),
         ];
 
-        if ($entity->get('fileType') == 'csv') {
-            $delimiters[] = $entity->get('csvFieldDelimiter');
+        if ($entity->getFeedField('fileType') == 'csv') {
+            $delimiters[] = (string)$entity->getFeedField('csvFieldDelimiter');
         }
 
-        if ($entity->get('data')->entity === 'Product') {
-            $delimiters[] = (string)$data->markForNotLinkedAttribute;
+        if ($entity->getFeedField('entity') === 'Product') {
+            $delimiters[] = (string)$entity->getFeedField('markForNotLinkedAttribute');
         }
 
         if (count(array_unique($delimiters)) !== count($delimiters)) {
             throw new BadRequest($this->getInjection('language')->translate('delimitersMustBeDifferent', 'messages', 'ExportFeed'));
         }
-
-        return true;
     }
 }

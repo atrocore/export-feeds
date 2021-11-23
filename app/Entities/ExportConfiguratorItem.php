@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,21 +18,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/field-value-delimiter', 'views/fields/varchar',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        setup() {
-            Dep.prototype.setup.call(this);
+namespace Export\Entities;
 
-            this.validations = Espo.Utils.clone(this.validations);
-            if (!this.validations.includes('delimiters')) {
-                this.validations.push('delimiters');
-            }
-        },
-
-        validateDelimiters() {
-            return false;
-        }
-
-    })
-);
+class ExportConfiguratorItem extends \Espo\Core\Templates\Entities\Base
+{
+    protected $entityType = "ExportConfiguratorItem";
+}

@@ -1,11 +1,13 @@
 {
   "scopeNames": {
     "ExportFeed": "Экспортный фид",
-    "ExportJob": "Задание экспорта"
+    "ExportJob": "Задание экспорта",
+    "ExportConfiguratorItem": "Конфигуратор"
   },
   "scopeNamesPlural": {
     "ExportFeed": "Экспортные фиды",
-    "ExportJob": "Задания экспорта"
+    "ExportJob": "Задания экспорта",
+    "ExportConfiguratorItem": "Конфигуратор"
   },
   "labels": {
     "Generate": "Сгенерировать"

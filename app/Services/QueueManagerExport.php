@@ -58,7 +58,7 @@ class QueueManagerExport extends QueueManagerBase
 
             $attachment = (new $feedTypeClass($this->getContainer(), $data))->export();
             $exportJob->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
-            $exportJob->set('state', 'Done');
+            $exportJob->set('state', 'Success');
             $exportJob->set('fileId', $attachment->get('id'));
             $this->getEntityManager()->saveEntity($exportJob);
         } catch (\Throwable $e) {

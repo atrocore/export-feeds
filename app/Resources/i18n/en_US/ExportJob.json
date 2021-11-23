@@ -15,8 +15,8 @@
   "labels": {
     "Create ExportJob": "Create Export Job",
     "Pending": "Pending",
+    "Success": "Success",
     "Running": "Running",
-    "Done": "Done",
     "Failed": "Failed",
     "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
   },

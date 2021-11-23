@@ -1,0 +1,44 @@
+[
+  {
+    "label": "Overview",
+    "style": "default",
+    "rows": [
+      [
+        {
+          "name": "type"
+        },
+        false
+      ],
+      [
+        {
+          "name": "name"
+        },
+        false
+      ],
+      [
+        {
+          "name": "attribute"
+        },
+        {
+          "name": "locale"
+        }
+      ],
+      [
+        {
+          "name": "columnType"
+        },
+        {
+          "name": "column"
+        }
+      ],
+      [
+        {
+          "name": "exportBy"
+        },
+        {
+          "name": "exportIntoSeparateColumns"
+        }
+      ]
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "name": "name"
+  },
+  {
+    "name": "column"
+  },
+  {
+    "name": "remove",
+    "notSortable": true
+  }
+]

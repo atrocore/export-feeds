@@ -29,8 +29,12 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'configuration-entity-changed', function (entity) {
-                this.scope = entity;
+            this.scope = this.model.get('entity');
+
+            this.setupSearchPanel();
+
+            this.listenTo(this.model, 'change:entity', function () {
+                this.scope = this.model.get('entity');
 
                 let data = _.extend({}, this.model.get('data'));
                 if (typeof data.whereScope === 'undefined' || data.whereScope !== this.scope) {

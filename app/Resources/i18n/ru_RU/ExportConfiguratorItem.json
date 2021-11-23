@@ -1,0 +1,25 @@
+{
+  "fields": {
+    "name": "Поле",
+    "column": "Название колонки",
+    "columnType": "Метка колонки",
+    "exportFeed": "Экспорт. фид",
+    "attribute": "Атрибут",
+    "remove": "Удалить",
+    "exportBy": "Поля связанных сущностей",
+    "exportIntoSeparateColumns": "Отдельные колонки",
+    "type": "Тип",
+    "locale": "Язык"
+  },
+  "links": {
+    "exportFeed": "Экспорт. фид"
+  },
+  "columnType": {
+    "name": "Название",
+    "internal": "Название › Язык",
+    "custom": "Пользовательское название"
+  },
+  "labels": {
+    "mainLocale": "Осн. язык"
+  }
+}

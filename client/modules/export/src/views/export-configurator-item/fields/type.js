@@ -17,21 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/field-value-delimiter', 'views/fields/varchar',
+Espo.define('export:views/export-configurator-item/fields/type', 'views/fields/enum',
     Dep => Dep.extend({
 
-        setup() {
-            Dep.prototype.setup.call(this);
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
 
-            this.validations = Espo.Utils.clone(this.validations);
-            if (!this.validations.includes('delimiters')) {
-                this.validations.push('delimiters');
+            if (this.model.get('entity') === 'Product') {
+                this.show();
+            } else {
+                this.hide();
             }
         },
-
-        validateDelimiters() {
-            return false;
-        }
 
     })
 );

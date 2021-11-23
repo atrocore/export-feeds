@@ -24,6 +24,7 @@ namespace Export\Services;
 
 use Espo\Core\Exceptions;
 use Espo\Core\Templates\Services\Base;
+use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
@@ -52,7 +53,7 @@ class ExportFeed extends Base
 
         $data = [
             'id'   => Util::generateId(),
-            'feed' => $exportFeed->toArray()
+            'feed' => $this->prepareFeedData($exportFeed)
         ];
 
         if (!empty($requestData->ignoreFilter)) {
@@ -122,14 +123,103 @@ class ExportFeed extends Base
         return $result;
     }
 
-    /**
-     * @param string $scope
-     *
-     * @return array
-     */
-    public function getAllFieldsConfigurator(string $scope): array
+    public function addMissingFields(string $feedId): bool
     {
-        return Simple::getAllFieldsConfiguration($scope, $this->getMetadata(), $this->getInjection('language'));
+        $feed = $this->readEntity($feedId);
+
+        $addedFields = array_column($feed->get('configuratorItems')->toArray(), 'name');
+
+        $allFields = Simple::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
+
+        foreach ($allFields as $row) {
+            if (in_array($row['field'], $addedFields)) {
+                continue;
+            }
+
+            $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
+            $item->set('type', 'Field');
+            $item->set('name', $row['field']);
+            $item->set('exportFeedId', $feedId);
+            if (isset($row['exportBy'])) {
+                $item->set('exportBy', $row['exportBy']);
+            }
+            if (isset($row['exportIntoSeparateColumns'])) {
+                $item->set('exportIntoSeparateColumns', !empty($row['exportIntoSeparateColumns']));
+            }
+
+            $this->getEntityManager()->saveEntity($item);
+        }
+
+        return true;
+    }
+
+    public function addAttributes(\stdClass $data): bool
+    {
+        $feed = $this->readEntity($data->exportFeedId);
+
+        $addedAttributes = [];
+        if (!empty($items = $feed->get('configuratorItems')) && count($items) > 0) {
+            foreach ($items as $item) {
+                if (!empty($item->get('attributeId')) && $item->get('locale') === 'mainLocale') {
+                    $addedAttributes[] = $item->get('attributeId');
+                }
+            }
+        }
+
+        if (property_exists($data, 'ids')) {
+            $params['where'] = [
+                [
+                    'type'      => 'equals',
+                    'attribute' => 'id',
+                    'value'     => $data->ids,
+                ]
+            ];
+        }
+
+        if (property_exists($data, 'where')) {
+            $params['where'] = Json::decode(Json::encode($data->where), true);
+        }
+
+        if (!isset($params['where'])) {
+            return false;
+        }
+
+        $attributes = $this
+            ->getEntityManager()
+            ->getRepository('Attribute')
+            ->find($this->getSelectManager('Attribute')->getSelectParams($params, true, true));
+
+        foreach ($attributes as $attribute) {
+            if (in_array($attribute->get('id'), $addedAttributes)) {
+                continue;
+            }
+
+            $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
+            $item->set('type', 'Attribute');
+            $item->set('name', $attribute->get('name'));
+            $item->set('locale', 'mainLocale');
+            $item->set('exportFeedId', $feed->get('id'));
+            $item->set('attributeId', $attribute->get('id'));
+            $this->getEntityManager()->saveEntity($item);
+        }
+
+        return true;
+    }
+
+    public function removeAllItems(string $feedId): bool
+    {
+        $this->getRepository()->removeConfiguratorItems($feedId);
+
+        return true;
+    }
+
+    public function prepareEntityForOutput(Entity $entity)
+    {
+        parent::prepareEntityForOutput($entity);
+
+        foreach ($entity->getFeedFields() as $name => $value) {
+            $entity->set($name, $value);
+        }
     }
 
     /**
@@ -140,22 +230,74 @@ class ExportFeed extends Base
         parent::init();
 
         $this->addDependency('queueManager');
+        $this->addDependency('serviceFactory');
         $this->addDependency('language');
         $this->addDependency('user');
     }
 
-
-    /**
-     * Translate field
-     *
-     * @param string $key
-     * @param string $tab
-     *
-     * @return string
-     */
-    protected function translate(string $key, string $tab = 'additionalTranslates'): string
+    protected function beforeUpdateEntity(Entity $entity, $data)
     {
-        return $this->getInjection('language')->translate($key, $tab, 'ExportFeed');
+        parent::beforeUpdateEntity($entity, $data);
+
+        foreach ($entity->getFeedFields() as $name => $value) {
+            if (!$entity->has($name)) {
+                $entity->set($name, $value);
+            }
+        }
+    }
+
+    protected function prepareFeedData(Entity $feed): array
+    {
+        $result = $feed->toArray();
+
+        foreach ($feed->getFeedFields() as $name => $value) {
+            $result[$name] = $value;
+            $result['data']->$name = $value;
+        }
+
+        $configuration = [];
+        $items = $this->findLinkedEntities($feed->get('id'), 'configuratorItems', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
+        if (!empty($items['total'])) {
+            /** @var \Export\Services\ExportConfiguratorItem $eciService */
+            $eciService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
+
+            foreach ($items['collection'] as $item) {
+                $row = [
+                    'columnType'                => $item->get('columnType'),
+                    'locale'                    => $item->get('locale'),
+                    'column'                    => $eciService->prepareColumnName($item),
+                    'entity'                    => $feed->getFeedField('entity'),
+                    'emptyValue'                => $feed->getFeedField('emptyValue'),
+                    'nullValue'                 => $feed->getFeedField('nullValue'),
+                    'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
+                    'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
+                    'decimalMark'               => $feed->getFeedField('decimalMark'),
+                    'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
+                ];
+
+                if ($item->get('type') === 'Field') {
+                    if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {
+                        throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchField', 'exceptions', 'ExportFeed'), $item->get('name')));
+                    }
+                    $row['field'] = $item->get('name');
+                }
+
+                if ($item->get('type') === 'Attribute') {
+                    $attribute = $this->getEntityManager()->getEntity('Attribute', $item->get('attributeId'));
+                    if (empty($attribute)) {
+                        throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportFeed'), $item->get('name')));
+                    }
+                    $row['attributeId'] = $attribute->get('id');
+                    $row['attributeName'] = $attribute->get('name');
+                }
+
+                $configuration[] = $row;
+            }
+        }
+
+        $result['data']->configuration = Json::decode(Json::encode($configuration));
+
+        return $result;
     }
 
     /**
@@ -183,8 +325,7 @@ class ExportFeed extends Base
 
         $data['exportJobId'] = $exportJob->get('id');
 
-        // prepare name
-        $name = sprintf($this->translate('exportName'), $data['feed']['name']);
+        $name = sprintf($this->getInjection('language')->translate('exportName', 'additionalTranslates', 'ExportFeed'), $data['feed']['name']);
 
         return $this
             ->getInjection('queueManager')

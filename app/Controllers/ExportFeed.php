@@ -31,14 +31,51 @@ use Slim\Http\Request;
  */
 class ExportFeed extends Base
 {
-    public function actionExportFile($params, $data, Request $request): bool
+    public function actionAddMissingFields($params, $data, Request $request): bool
     {
-        // checking request
-        if (!$request->isPost() || empty($data->id)) {
+        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
             throw new Exceptions\BadRequest();
         }
 
-        // checking rules
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $this->getRecordService()->addMissingFields((string)$data->exportFeedId);
+    }
+
+    public function actionAddAttributes($params, $data, Request $request): bool
+    {
+        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $this->getRecordService()->addAttributes($data);
+    }
+
+    public function actionRemoveAllItems($params, $data, Request $request): bool
+    {
+        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $this->getRecordService()->removeAllItems((string)$data->exportFeedId);
+    }
+
+    public function actionExportFile($params, $data, Request $request): bool
+    {
+        if (!$request->isPost() || !property_exists($data, 'id')) {
+            throw new Exceptions\BadRequest();
+        }
+
         if (!$this->getAcl()->check($this->name, 'read')) {
             throw new Exceptions\Forbidden();
         }
@@ -48,41 +85,15 @@ class ExportFeed extends Base
 
     public function actionExportChannel($params, $data, Request $request): bool
     {
-        // checking request
-        if (!$request->isPost() || empty($data->id)) {
+        if (!$request->isPost() || !property_exists($data, 'id')) {
             throw new Exceptions\BadRequest();
         }
 
-        // checking rules
         if (!$this->getAcl()->check($this->name, 'read') || !$this->getAcl()->check('Channel', 'read')) {
             throw new Exceptions\Forbidden();
         }
 
         return $this->getRecordService()->exportChannel($data->id);
-    }
-
-    /**
-     * @param array     $params
-     * @param \stdClass $data
-     * @param Request   $request
-     *
-     * @return array
-     * @throws Exceptions\BadRequest
-     * @throws Exceptions\Forbidden
-     */
-    public function actionGetAllFieldsConfigurator($params, $data, Request $request): array
-    {
-        // checking request
-        if (!$request->isGet() || empty($request->get('scope'))) {
-            throw new Exceptions\BadRequest();
-        }
-
-        // checking rules
-        if (!$this->getAcl()->check($this->name, 'read')) {
-            throw new Exceptions\Forbidden();
-        }
-
-        return $this->getRecordService()->getAllFieldsConfigurator((string)$request->get('scope'));
     }
 
     /**

@@ -66,22 +66,17 @@ class QueueItemEntity extends AbstractListener
     protected function updateExportJob(Entity $entity): bool
     {
         $exportJob = $this->getEntityManager()->getEntity('ExportJob', $entity->get('data')->exportJobId);
-
         if (empty($exportJob)) {
             return false;
         }
 
-        if ($entity->get('status') == 'Failed' && $exportJob->get('state') != 'Failed') {
-            $exportJob->set('state', 'Failed');
-            $this->getEntityManager()->saveEntity($exportJob);
-            return true;
-        }
-
-        if ($entity->get('status') == 'Canceled') {
+        if ($entity->get('status') === 'Canceled') {
             $this->getEntityManager()->removeEntity($exportJob);
             return true;
         }
 
+        $exportJob->set('state', $entity->get('status'));
+        $this->getEntityManager()->saveEntity($exportJob);
         return true;
     }
 

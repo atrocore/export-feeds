@@ -40,31 +40,23 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
             this.$el.find('.search[data-action="search"]').remove();
 
             this.setFilterMode();
-
-            this.listenTo(this.options.feedModel, 'after:set-feed-mode', function (mode) {
+            this.listenTo(this.options.feedModel, 'change:export-feed-mode', () => {
                 this.setFilterMode();
             });
 
-            this.listenTo(this.options.feedModel, 'before:save', (attrs) => {
-                if (attrs.data) {
-                    this.search();
-                    let data = _.extend({}, this.model.get('data'), {
-                        where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
-                        whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
-                        whereScope: this.scope,
-                    });
-
-                    this.options.feedModel.set('data', data);
-
-                    attrs.data.where = data.where;
-                    attrs.data.whereData = data.whereData;
-                    attrs.data.whereScope = data.whereScope;
-                }
+            this.listenTo(this.options.feedModel, 'save:export-feed', () => {
+                let filterData = this.getFilterData() || {};
+                this.options.feedModel.set('data', _.extend({}, this.options.feedModel.get('data'), filterData));
             });
+        },
 
-            this.listenTo(this.options.feedModel, 'after:save', () => {
-                this.setFilterMode();
-            });
+        getFilterData() {
+            this.search();
+            return {
+                where: Espo.Utils.cloneDeep(this.searchManager.getWhere()),
+                whereData: Espo.Utils.cloneDeep(this.searchManager.get()),
+                whereScope: this.scope,
+            }
         },
 
         isLeftDropdown() {

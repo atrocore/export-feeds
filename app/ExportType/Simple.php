@@ -212,11 +212,7 @@ class Simple extends AbstractType
         // prepare export feed data
         $data = $this->getFeedData();
 
-        if (empty($data['allFields'])) {
-            $configuration = $data['configuration'];
-        } else {
-            $configuration = self::getAllFieldsConfiguration($data['entity'], $this->getMetadata(), $this->container->get('language'));
-        }
+        $configuration = $data['configuration'];
 
         if (!empty($this->data['exportByChannelId'])) {
             $channel = $this->getEntityManager()->getEntity('Channel', $this->data['exportByChannelId']);

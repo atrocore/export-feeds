@@ -1,12 +1,12 @@
 [
   {
-    "name": "channels"
-  },
-  {
     "name": "simpleTypeEntityFilter"
   },
   {
-    "name": "simpleTypeSettings"
+    "name": "channels"
+  },
+  {
+    "name": "configuratorItems"
   },
   {
     "name": "exportJobs"

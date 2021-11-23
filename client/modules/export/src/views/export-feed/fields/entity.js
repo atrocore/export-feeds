@@ -17,21 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/field-value-delimiter', 'views/fields/varchar',
-    Dep => Dep.extend({
+Espo.define('export:views/export-feed/fields/entity', 'views/fields/enum', function (Dep) {
+
+    return Dep.extend({
 
         setup() {
-            Dep.prototype.setup.call(this);
+            const options = this.getEntitiesList();
 
-            this.validations = Espo.Utils.clone(this.validations);
-            if (!this.validations.includes('delimiters')) {
-                this.validations.push('delimiters');
-            }
+            this.params.options = options;
+            this.translatedOptions = {};
+            options.forEach(option => {
+                this.translatedOptions[option] = this.translate(option, 'scopeNames');
+            });
+
+            Dep.prototype.setup.call(this);
         },
 
-        validateDelimiters() {
-            return false;
-        }
+        getEntitiesList() {
+            let scopes = this.getMetadata().get('scopes') || {};
+            return Object.keys(scopes).filter(scope => scopes[scope].entity).sort((v1, v2) => this.translate(v1, 'scopeNamesPlural').localeCompare(this.translate(v2, 'scopeNamesPlural')));
+        },
 
     })
-);
+});

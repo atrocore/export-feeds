@@ -1,0 +1,102 @@
+{
+  "fields": {
+    "name": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/name"
+    },
+    "column": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/column"
+    },
+    "sortOrder": {
+      "type": "int"
+    },
+    "columnType": {
+      "type": "enum",
+      "required": true,
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-configurator-item/fields/column-type",
+      "options": [
+        "name",
+        "internal",
+        "custom"
+      ],
+      "default": "name"
+    },
+    "exportIntoSeparateColumns": {
+      "type": "bool",
+      "view": "export:views/export-configurator-item/fields/separate-columns"
+    },
+    "exportBy": {
+      "type": "array",
+      "view": "export:views/export-configurator-item/fields/export-by"
+    },
+    "type": {
+      "type": "enum",
+      "required": false,
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-configurator-item/fields/type",
+      "options": [
+        "Field",
+        "Attribute"
+      ],
+      "default": "Field"
+    },
+    "attribute": {
+      "type": "link"
+    },
+    "attributeNameValue": {
+      "type": "varchar",
+      "notStorable": true
+    },
+    "isAttributeMultiLang": {
+      "type": "bool",
+      "notStorable": true
+    },
+    "locale": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/locale"
+    },
+    "entity": {
+      "type": "varchar",
+      "notStorable": true
+    },
+    "remove": {
+      "type": "varchar",
+      "notStorable": true,
+      "view": "export:views/export-configurator-item/fields/remove"
+    },
+    "createdAt": {
+      "type": "datetime",
+      "readOnly": true
+    },
+    "exportFeed": {
+      "type": "link"
+    }
+  },
+  "links": {
+    "exportFeed": {
+      "type": "belongsTo",
+      "foreign": "configuratorItems",
+      "entity": "ExportFeed",
+      "audited": false
+    },
+    "attribute": {
+      "type": "belongsTo",
+      "entity": "Attribute",
+      "audited": false
+    }
+  },
+  "collection": {
+    "sortBy": "createdAt",
+    "asc": true
+  },
+  "indexes": {
+    "name": {
+      "columns": [
+        "name",
+        "deleted"
+      ]
+    }
+  }
+}
