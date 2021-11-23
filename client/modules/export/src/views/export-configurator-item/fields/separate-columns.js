@@ -23,7 +23,7 @@ Espo.define('export:views/export-configurator-item/fields/separate-columns', 'vi
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:name', () => {
+            this.listenTo(this.model, 'change:name change:type', () => {
                 this.reRender();
             });
         },
@@ -47,7 +47,7 @@ Espo.define('export:views/export-configurator-item/fields/separate-columns', 'vi
         },
 
         checkFieldVisibility() {
-            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple') {
+            if (this.model.get('type') === 'Field' && this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple') {
                 this.show();
             } else {
                 this.hide();

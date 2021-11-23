@@ -28,6 +28,10 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         init: function () {
             Dep.prototype.init.call(this);
 
+            if (!this.model.get('id')) {
+                this.prepareValue();
+            }
+
             this.listenTo(this.model, 'change:attributeId change:locale change:columnType', () => {
                 if (this.model.get('columnType') !== 'custom') {
                     if (this.model.get('attributeId')) {

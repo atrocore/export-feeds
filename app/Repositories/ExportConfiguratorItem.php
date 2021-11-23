@@ -34,6 +34,12 @@ class ExportConfiguratorItem extends Base
             $entity->set('sortOrder', $count * 10 + 10);
         }
 
+        if ($entity->isAttributeChanged('attributeId')) {
+            if (!empty($attribute = $entity->get('attribute'))) {
+                $entity->set('name', $attribute->get('name'));
+            }
+        }
+
         parent::beforeSave($entity, $options);
     }
 }

@@ -44,10 +44,13 @@ class ExportConfiguratorItem extends Base
         $entity->set('entity', $feed->getFeedField('entity'));
         $entity->set('column', $this->prepareColumnName($entity));
         $entity->set('isAttributeMultiLang', false);
+        $entity->set('attributeNameValue', $entity->get('name'));
 
-        if ($entity->get('type') === 'Attribute' && !empty($attribute = $entity->get('attribute'))) {
-            $entity->set('attributeNameValue', $attribute->get('name'));
-            $entity->set('isAttributeMultiLang', !empty($attribute->get('isMultilang')));
+        if ($entity->get('type') === 'Attribute') {
+            if (!empty($attribute = $entity->get('attribute'))) {
+                $entity->set('attributeNameValue', $attribute->get('name'));
+                $entity->set('isAttributeMultiLang', !empty($attribute->get('isMultilang')));
+            }
         }
     }
 
@@ -86,7 +89,7 @@ class ExportConfiguratorItem extends Base
 
     protected function prepareFieldColumnName(Entity $entity): string
     {
-        $column = (string)$entity->get('column');
+        $column = '-';
 
         if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
             $fieldData = $this->getMetadata()->get(['entityDefs', $entity->get('entity'), 'fields', $entity->get('name')]);
@@ -97,6 +100,8 @@ class ExportConfiguratorItem extends Base
             }
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+        } elseif ($entity->get('columnType') === 'custom') {
+            $column = (string)$entity->get('column');
         }
 
         return $column;
@@ -105,7 +110,7 @@ class ExportConfiguratorItem extends Base
     protected function prepareAttributeColumnName(Entity $entity): string
     {
         if (empty($attribute = $entity->get('attribute'))) {
-            return '';
+            return '-';
         }
 
         $locale = $entity->get('locale');

@@ -23,7 +23,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:name', () => {
+            this.listenTo(this.model, 'change:name change:type', () => {
                 this.setupOptions();
                 this.reRender();
                 this.model.set('exportBy', null);
@@ -83,7 +83,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         isRequired() {
             let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name')]);
 
-            return fieldDefs && ['asset', 'link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length;
+            return this.model.get('type') === 'Field' && fieldDefs && ['asset', 'link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length;
         },
 
     })
