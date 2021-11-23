@@ -47,6 +47,8 @@ class ExportFeed extends Base
 
     protected function beforeSave(Entity $entity, array $options = [])
     {
+        $fetchedEntity = $entity->getFeedField('entity');
+
         $this->setFeedFieldsToDataJson($entity);
 
         if (empty($options['skipAll'])) {
@@ -54,6 +56,13 @@ class ExportFeed extends Base
         }
 
         parent::beforeSave($entity, $options);
+
+        if ($entity->get('type') === 'simple') {
+            // remove configurator items on Entity change
+            if (!$entity->isNew() && $entity->has('entity') && $fetchedEntity !== $entity->get('entity')) {
+                $this->removeConfiguratorItems($entity->get('id'));
+            }
+        }
     }
 
     protected function beforeRemove(Entity $entity, array $options = [])

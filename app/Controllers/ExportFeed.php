@@ -44,6 +44,19 @@ class ExportFeed extends Base
         return $this->getRecordService()->addMissingFields((string)$data->exportFeedId);
     }
 
+    public function actionAddAttributes($params, $data, Request $request): bool
+    {
+        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $this->getRecordService()->addAttributes($data);
+    }
+
     public function actionRemoveAllItems($params, $data, Request $request): bool
     {
         if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {

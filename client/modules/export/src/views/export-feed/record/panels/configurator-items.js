@@ -23,20 +23,40 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.actionList.push({
-                label: 'addMissingFields',
-                action: 'addMissingFields'
-            });
+            this.actionList = [
+                {
+                    label: 'addMissingFields',
+                    action: 'addMissingFields'
+                },
+                {
+                    label: 'selectAttributes',
+                    action: 'selectAttributes'
+                },
+                {
+                    label: 'removeAllItems',
+                    action: 'removeAllItems'
+                }
+            ];
 
-            this.actionList.push({
-                label: 'selectAttributes',
-                action: 'selectAttributes'
+            this.listenTo(this.model, 'change:entity', () => {
+                this.prepareActionsVisibility();
             });
+        },
 
-            this.actionList.push({
-                label: 'removeAllItems',
-                action: 'removeAllItems'
-            });
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            this.prepareActionsVisibility();
+        },
+
+        prepareActionsVisibility() {
+            const $selectAttributes = $('.action[data-action=selectAttributes][data-panel=configuratorItems]');
+
+            if (this.model.get('entity') === 'Product') {
+                $selectAttributes.show();
+            } else {
+                $selectAttributes.hide();
+            }
         },
 
         actionAddMissingFields() {
@@ -70,58 +90,39 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
         },
 
         actionSelectAttributes() {
-            alert('2');
-            // const scope = 'AttributeGroup';
-            // const viewName = this.getMetadata().get(['clientDefs', scope, 'modalViews', 'select']) || 'views/modals/select-records';
-            //
-            // this.notify('Loading...');
-            // this.createView('dialog', viewName, {
-            //     scope: scope,
-            //     multiple: true,
-            //     createButton: false,
-            //     massRelateEnabled: false,
-            //     boolFilterList: ['withNotLinkedAttributesToProduct', 'fromAttributesTab'],
-            //     boolFilterData: {withNotLinkedAttributesToProduct: this.model.id, fromAttributesTab: {tabId: this.defs.tabId}},
-            //     whereAdditional: [
-            //         {
-            //             type: 'isLinked',
-            //             attribute: 'attributes'
-            //         }
-            //     ]
-            // }, dialog => {
-            //     dialog.render();
-            //     this.notify(false);
-            //     dialog.once('select', selectObj => {
-            //         this.notify('Loading...');
-            //         if (!Array.isArray(selectObj)) {
-            //             return;
-            //         }
-            //         let boolFilterList = this.getSelectBoolFilterList() || [];
-            //         this.getFullEntityList('Attribute', {
-            //             where: [
-            //                 {
-            //                     type: 'bool',
-            //                     value: boolFilterList,
-            //                     data: this.getSelectBoolFilterData(boolFilterList)
-            //                 },
-            //                 {
-            //                     attribute: 'attributeGroupId',
-            //                     type: 'in',
-            //                     value: selectObj.map(model => model.id)
-            //                 }
-            //             ]
-            //         }, list => {
-            //             let models = [];
-            //             list.forEach(attributes => {
-            //                 this.getModelFactory().create('Attribute', model => {
-            //                     model.set(attributes);
-            //                     models.push(model);
-            //                 });
-            //             });
-            //             this.createProductAttributeValue(models);
-            //         });
-            //     });
-            // });
+            const scope = 'Attribute';
+            const viewName = this.getMetadata().get(['clientDefs', scope, 'modalViews', 'select']) || 'views/modals/select-records';
+
+            this.notify('Loading...');
+            this.createView('dialog', viewName, {
+                scope: scope,
+                multiple: true,
+                createButton: false,
+                massRelateEnabled: true
+            }, dialog => {
+                dialog.render();
+                this.notify(false);
+                dialog.once('select', selectObj => {
+                    this.notify('Saving...');
+
+                    let postData = {
+                        exportFeedId: this.model.get('id')
+                    };
+                    if (!selectObj.massRelate) {
+                        postData.ids = [];
+                        selectObj.forEach(model => {
+                            postData.ids.push(model.get('id'));
+                        });
+                    } else {
+                        postData.where = selectObj.where;
+                    }
+
+                    this.ajaxPostRequest(`ExportFeed/action/addAttributes`, postData).then(response => {
+                        this.notify('Saved', 'success');
+                        $('.action[data-action=refresh][data-panel=configuratorItems]').click();
+                    });
+                });
+            });
         },
 
     })
