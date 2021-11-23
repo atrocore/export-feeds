@@ -30,8 +30,8 @@ class ExportConfiguratorItem extends Base
     protected function beforeSave(Entity $entity, array $options = [])
     {
         if ($entity->isNew()) {
-            $count = $this->where(['exportFeedId' => $entity->get('exportFeedId')])->count();
-            $entity->set('sortOrder', $count * 10 + 10);
+            $last = $this->select(['sortOrder'])->where(['exportFeedId' => $entity->get('exportFeedId')])->order('sortOrder', 'DESC')->findOne();
+            $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
 
         if ($entity->isAttributeChanged('attributeId')) {
