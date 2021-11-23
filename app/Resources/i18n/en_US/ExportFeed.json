@@ -68,6 +68,8 @@
     "channelWithoutExportFeeds": "No Export Feeds linked with current Channel"
   },
   "exceptions": {
+    "noSuchField": "Field '%s' does not exist.",
+    "noSuchAttribute": "Attribute '%s' does not exist.",
     "noDataFound": "Feed has nothing to export.",
     "wrongExportFeedType": "Wrong Export Feed type.",
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",

@@ -53,7 +53,7 @@ class ExportFeed extends Base
 
         $data = [
             'id'   => Util::generateId(),
-            'feed' => $exportFeed->toArray()
+            'feed' => $this->prepareFeedData($exportFeed)
         ];
 
         if (!empty($requestData->ignoreFilter)) {
@@ -230,6 +230,7 @@ class ExportFeed extends Base
         parent::init();
 
         $this->addDependency('queueManager');
+        $this->addDependency('serviceFactory');
         $this->addDependency('language');
         $this->addDependency('user');
     }
@@ -245,9 +246,58 @@ class ExportFeed extends Base
         }
     }
 
-    protected function translate(string $key, string $tab = 'additionalTranslates'): string
+    protected function prepareFeedData(Entity $feed): array
     {
-        return $this->getInjection('language')->translate($key, $tab, 'ExportFeed');
+        $result = $feed->toArray();
+
+        foreach ($feed->getFeedFields() as $name => $value) {
+            $result[$name] = $value;
+            $result['data']->$name = $value;
+        }
+
+        $configuration = [];
+        $items = $this->findLinkedEntities($feed->get('id'), 'configuratorItems', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
+        if (!empty($items['total'])) {
+            /** @var \Export\Services\ExportConfiguratorItem $eciService */
+            $eciService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
+
+            foreach ($items['collection'] as $item) {
+                $row = [
+                    'columnType'                => $item->get('columnType'),
+                    'locale'                    => $item->get('locale'),
+                    'column'                    => $eciService->prepareColumnName($item),
+                    'entity'                    => $feed->getFeedField('entity'),
+                    'emptyValue'                => $feed->getFeedField('emptyValue'),
+                    'nullValue'                 => $feed->getFeedField('nullValue'),
+                    'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
+                    'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
+                    'decimalMark'               => $feed->getFeedField('decimalMark'),
+                    'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
+                ];
+
+                if ($item->get('type') === 'Field') {
+                    if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {
+                        throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchField', 'exceptions', 'ExportFeed'), $item->get('name')));
+                    }
+                    $row['field'] = $item->get('name');
+                }
+
+                if ($item->get('type') === 'Attribute') {
+                    $attribute = $this->getEntityManager()->getEntity('Attribute', $item->get('attributeId'));
+                    if (empty($attribute)) {
+                        throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportFeed'), $item->get('name')));
+                    }
+                    $row['attributeId'] = $attribute->get('id');
+                    $row['attributeName'] = $attribute->get('name');
+                }
+
+                $configuration[] = $row;
+            }
+        }
+
+        $result['data']->configuration = Json::decode(Json::encode($configuration));
+
+        return $result;
     }
 
     /**
@@ -275,8 +325,7 @@ class ExportFeed extends Base
 
         $data['exportJobId'] = $exportJob->get('id');
 
-        // prepare name
-        $name = sprintf($this->translate('exportName'), $data['feed']['name']);
+        $name = sprintf($this->getInjection('language')->translate('exportName', 'additionalTranslates', 'ExportFeed'), $data['feed']['name']);
 
         return $this
             ->getInjection('queueManager')

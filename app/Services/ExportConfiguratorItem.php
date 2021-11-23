@@ -78,7 +78,7 @@ class ExportConfiguratorItem extends Base
         return parent::isEntityUpdated($entity, $data);
     }
 
-    protected function prepareColumnName(Entity $entity): string
+    public function prepareColumnName(Entity $entity): string
     {
         if ($entity->get('type') === 'Attribute') {
             return $this->prepareAttributeColumnName($entity);
