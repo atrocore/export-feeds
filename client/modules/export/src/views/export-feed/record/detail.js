@@ -31,17 +31,17 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             ];
 
             this.listenTo(this.model, 'after:save', () => {
-                this.handleExportButtonVisibility();
+                this.handleExportButtonDisability();
             });
         },
 
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            this.handleExportButtonVisibility();
+            this.handleExportButtonDisability();
         },
 
-        handleExportButtonVisibility() {
+        handleExportButtonDisability() {
             const $buttons = $('.additional-button');
             if (this.model.get('isActive')) {
                 $buttons.removeClass('disabled');
