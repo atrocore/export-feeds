@@ -13,8 +13,7 @@
     "detail": "export:views/export-feed/detail"
   },
   "recordViews": {
-    "detail": "export:views/export-feed/record/detail",
-    "list": "export:views/export-feed/record/list"
+    "detail": "export:views/export-feed/record/detail"
   },
   "bottomPanels": {
     "detail": [

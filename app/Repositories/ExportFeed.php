@@ -30,6 +30,16 @@ use Export\Entities\ExportFeed as ExportFeedEntity;
 
 class ExportFeed extends Base
 {
+    public function getIdsByExportEntity(string $exportEntity): array
+    {
+        $feeds = $this
+            ->select(['id'])
+            ->where(['data*' => '%\"entity\":\"' . $exportEntity . '\"%'])
+            ->find();
+
+        return array_column($feeds->toArray(), 'id');
+    }
+
     protected function beforeSave(Entity $entity, array $options = [])
     {
         $this->setFeedFieldsToDataJson($entity);
@@ -41,14 +51,11 @@ class ExportFeed extends Base
         parent::beforeSave($entity, $options);
     }
 
-    public function getIdsByExportEntity(string $exportEntity): array
+    protected function beforeRemove(Entity $entity, array $options = [])
     {
-        $feeds = $this
-            ->select(['id'])
-            ->where(['data*' => '%\"entity\":\"' . $exportEntity . '\"%'])
-            ->find();
+        parent::beforeRemove($entity, $options);
 
-        return array_column($feeds->toArray(), 'id');
+        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $entity->get('id')])->removeCollection();
     }
 
     protected function init()
