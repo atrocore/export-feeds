@@ -28,13 +28,29 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         init: function () {
             Dep.prototype.init.call(this);
 
-            this.prepareValue();
+            this.listenTo(this.model, 'change:attributeId change:locale change:columnType', () => {
+                if (this.model.get('attributeId')) {
+                    this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
+                        let name = 'name';
+                        if (this.model.get('columnType') === 'name') {
+                            let locale = this.model.get('locale');
+                            if (locale === 'mainLocale') {
+                                locale = '';
+                            }
 
-            this.listenTo(this.model, 'change:name change:columnType', () => {
-                this.prepareValue();
+                            if (locale && attribute.isMultilang) {
+                                name = name + locale.charAt(0).toUpperCase() + locale.charAt(1) + locale.charAt(3) + locale.charAt(4).toLowerCase();
+                            }
+                        }
+                        this.model.set('attributeNameValue', attribute[name]);
+                    });
+                } else {
+                    this.model.set('attributeNameValue', null);
+                }
             });
 
-            this.listenTo(this.model, 'change:name change:columnType change:attributeId change:locale change:exportIntoSeparateColumns', () => {
+            this.listenTo(this.model, 'change:name change:attributeNameValue change:exportIntoSeparateColumns', () => {
+                this.prepareValue();
                 this.reRender();
             });
         },
@@ -79,6 +95,16 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         },
 
         prepareValue() {
+            if (this.model.get('type') === 'Field') {
+                this.prepareFieldValue();
+            }
+
+            if (this.model.get('type') === 'Attribute') {
+                this.prepareAttributeValue();
+            }
+        },
+
+        prepareFieldValue() {
             if (this.model.get('columnType') === 'name') {
                 let locale = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('name')}.multilangLocale`);
                 if (locale) {
@@ -99,6 +125,27 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
 
             if (this.model.get('columnType') === 'internal') {
                 this.model.set('column', this.translate(this.model.get('name'), 'fields', this.model.get('entity')));
+            }
+        },
+
+        prepareAttributeValue() {
+            let locale = this.model.get('locale');
+
+            if (locale === 'mainLocale') {
+                locale = '';
+            }
+
+            if (this.model.get('columnType') === 'name') {
+                this.model.set('column', this.model.get('attributeNameValue'));
+            }
+
+            if (this.model.get('columnType') === 'internal') {
+                let name = this.model.get('attributeNameValue');
+                if (locale) {
+                    name = name + ' › ' + locale;
+                }
+
+                this.model.set('column', name);
             }
         },
 

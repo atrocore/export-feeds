@@ -66,7 +66,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             }
 
             if (this.model.get('type') === 'Attribute') {
-                name = this.model.get('attributeName');
+                name = this.model.get('attributeNameValue');
 
                 if (this.model.get('isAttributeMultiLang') && this.model.get('locale') !== 'mainLocale') {
                     name += ' › ' + this.model.get('locale');

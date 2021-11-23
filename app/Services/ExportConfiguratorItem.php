@@ -24,6 +24,7 @@ namespace Export\Services;
 
 use Espo\Core\Templates\Services\Base;
 use Espo\Core\Utils\Language;
+use Espo\Core\Utils\Util;
 use Espo\ORM\Entity;
 
 class ExportConfiguratorItem extends Base
@@ -45,7 +46,7 @@ class ExportConfiguratorItem extends Base
         $entity->set('isAttributeMultiLang', false);
 
         if ($entity->get('type') === 'Attribute' && !empty($attribute = $entity->get('attribute'))) {
-            $entity->set('attributeName', $attribute->get('name'));
+            $entity->set('attributeNameValue', $attribute->get('name'));
             $entity->set('isAttributeMultiLang', !empty($attribute->get('isMultilang')));
         }
     }
@@ -76,6 +77,15 @@ class ExportConfiguratorItem extends Base
 
     protected function prepareColumnName(Entity $entity): string
     {
+        if ($entity->get('type') === 'Attribute') {
+            return $this->prepareAttributeColumnName($entity);
+        }
+
+        return $this->prepareFieldColumnName($entity);
+    }
+
+    protected function prepareFieldColumnName(Entity $entity): string
+    {
         $column = (string)$entity->get('column');
 
         if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
@@ -87,6 +97,37 @@ class ExportConfiguratorItem extends Base
             }
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+        }
+
+        return $column;
+    }
+
+    protected function prepareAttributeColumnName(Entity $entity): string
+    {
+        if (empty($attribute = $entity->get('attribute'))) {
+            return '';
+        }
+
+        $locale = $entity->get('locale');
+
+        if ($locale === 'mainLocale') {
+            $locale = '';
+        }
+
+        $column = (string)$entity->get('column');
+
+        if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
+            $name = 'name';
+            if (!empty($locale) && !empty($attribute->get('isMultilang'))) {
+                $name .= ucfirst(Util::toCamelCase(strtolower($locale)));
+            }
+
+            $column = $attribute->get($name);
+        } elseif ($entity->get('columnType') === 'internal') {
+            $column = $attribute->get('name');
+            if (!empty($locale)) {
+                $column .= ' › ' . $locale;
+            }
         }
 
         return $column;
@@ -107,5 +148,10 @@ class ExportConfiguratorItem extends Base
         }
 
         return $this->languages[$locale];
+    }
+
+    protected function getFieldsThatConflict(Entity $entity, \stdClass $data): array
+    {
+        return [];
     }
 }

@@ -45,7 +45,7 @@
     "attribute": {
       "type": "link"
     },
-    "attributeName": {
+    "attributeNameValue": {
       "type": "varchar",
       "notStorable": true
     },
