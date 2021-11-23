@@ -57,5 +57,23 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             });
         },
 
+        setDetailMode() {
+            Dep.prototype.setDetailMode.call(this);
+
+            this.model.trigger('change:export-feed-mode');
+        },
+
+        setEditMode() {
+            Dep.prototype.setEditMode.call(this);
+
+            this.model.trigger('change:export-feed-mode');
+        },
+
+        save(callback, skipExit) {
+            this.model.trigger('save:export-feed');
+
+            Dep.prototype.save.call(this, callback, skipExit);
+        },
+
     })
 );
