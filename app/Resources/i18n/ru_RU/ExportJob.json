@@ -14,9 +14,9 @@
   },
   "labels": {
     "Create ExportJob": "Создать задание экспорта",
-    "Pending": "В очереди",
+    "Pending": "В ожидании",
+    "Success": "Успешно",
     "Running": "Выполняется",
-    "Done": "Создано",
     "Failed": "Не выполнено",
     "exportDownloadNotification": "Вы можете <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> файл."
   },

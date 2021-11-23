@@ -50,14 +50,14 @@
       "options": [
         "Pending",
         "Running",
-        "Done",
+        "Success",
         "Failed"
       ],
       "optionColors": [
         "00AFFF",
         "FFE208",
         "1DFF08",
-        "EC0000"
+        "FF0000"
       ],
       "default": "Pending",
       "readOnly": true,
