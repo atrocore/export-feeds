@@ -40,6 +40,11 @@ class ExportFeed extends Base
         return array_column($feeds->toArray(), 'id');
     }
 
+    public function removeConfiguratorItems(string $exportFeedId): void
+    {
+        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $exportFeedId])->removeCollection();
+    }
+
     protected function beforeSave(Entity $entity, array $options = [])
     {
         $this->setFeedFieldsToDataJson($entity);
@@ -55,7 +60,7 @@ class ExportFeed extends Base
     {
         parent::beforeRemove($entity, $options);
 
-        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $entity->get('id')])->removeCollection();
+        $this->removeConfiguratorItems($entity->get('id'));
     }
 
     protected function init()

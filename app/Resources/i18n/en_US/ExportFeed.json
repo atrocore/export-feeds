@@ -29,6 +29,11 @@
     "exportJobs": "Export Jobs"
   },
   "labels": {
+    "addMissingFields": "Add all missing fields",
+    "selectAttributes": "Select attribute(s)",
+    "removeAllItems": "Remove all",
+    "addMissingFieldsConfirmation": "Are you sure you want to add all missing fields?",
+    "removeAllItemsConfirmation": "Are you sure you want to remove all configurator rules?",
     "attributeName": "Attribute Name",
     "internalAttributeName": "Attribute Name › Language",
     "attributeCode": "Attribute Code",

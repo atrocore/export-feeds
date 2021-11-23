@@ -30,6 +30,11 @@
     "exportJobs": "Exportaufträge"
   },
   "labels": {
+    "addMissingFields": "Alle fehlenden Felder hinzufügen",
+    "selectAttributes": "Attribut(e) auswählen",
+    "removeAllItems": "Alle Regel entfernen",
+    "addMissingFieldsConfirmation": " Möchten Sie wirklich alle fehlenden Felder hinzufügen?",
+    "removeAllItemsConfirmation": "Möchten Sie wirklich alle Konfigurator-Regel entfernen?",
     "attributeName": "Attributname",
     "internalAttributeName": "Attributname › Sprache",
     "attributeCode": "Attributcode",

@@ -122,14 +122,40 @@ class ExportFeed extends Base
         return $result;
     }
 
-    /**
-     * @param string $scope
-     *
-     * @return array
-     */
-    public function getAllFieldsConfigurator(string $scope): array
+    public function addMissingFields(string $feedId): bool
     {
-        return Simple::getAllFieldsConfiguration($scope, $this->getMetadata(), $this->getInjection('language'));
+        $feed = $this->readEntity($feedId);
+
+        $addedFields = array_column($feed->get('configuratorItems')->toArray(), 'name');
+
+        $allFields = Simple::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
+
+        foreach ($allFields as $row) {
+            if (in_array($row['field'], $addedFields)) {
+                continue;
+            }
+
+            $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
+            $item->set('name', $row['field']);
+            $item->set('exportFeedId', $feedId);
+            if (isset($row['exportBy'])) {
+                $item->set('exportBy', $row['exportBy']);
+            }
+            if (isset($row['exportIntoSeparateColumns'])) {
+                $item->set('exportIntoSeparateColumns', !empty($row['exportIntoSeparateColumns']));
+            }
+
+            $this->getEntityManager()->saveEntity($item);
+        }
+
+        return true;
+    }
+
+    public function removeAllItems(string $feedId): bool
+    {
+        $this->getRepository()->removeConfiguratorItems($feedId);
+
+        return true;
     }
 
     public function prepareEntityForOutput(Entity $entity)
