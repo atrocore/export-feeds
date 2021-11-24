@@ -29,7 +29,6 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
-use Export\ExportType\AbstractType;
 use Export\ExportType\Simple;
 
 /**
