@@ -56,7 +56,7 @@ class QueueManagerExport extends QueueManagerBase
                 throw new Error($this->getContainer()->get('language')->translate('wrongExportFeedType', 'exceptions', 'ExportFeed'));
             }
 
-            $attachment = (new $feedTypeClass($this->getContainer(), $data))->export();
+            $attachment = (new $feedTypeClass($this->getContainer(), $data))->export($exportJob);
             $exportJob->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
             $exportJob->set('state', 'Success');
             $exportJob->set('fileId', $attachment->get('id'));

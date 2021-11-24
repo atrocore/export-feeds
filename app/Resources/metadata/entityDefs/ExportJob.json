@@ -73,6 +73,9 @@
     "end": {
       "type": "datetime",
       "readOnly": true
+    },
+    "data": {
+      "type": "jsonObject"
     }
   },
   "links": {

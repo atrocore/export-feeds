@@ -28,6 +28,7 @@ use Espo\Entities\Attachment;
 use Espo\ORM\EntityManager;
 use Espo\Core\Container;
 use Espo\Services\Record;
+use Export\Entities\ExportJob;
 
 /**
  * Class AbstractType
@@ -61,10 +62,7 @@ abstract class AbstractType
         $this->data = $data;
     }
 
-    /**
-     * @return Attachment
-     */
-    abstract public function export(): Attachment;
+    abstract public function export(ExportJob $exportJob): Attachment;
 
     /**
      * @return EntityManager

@@ -32,6 +32,7 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
 use Espo\ORM\Entity;
 use Export\DataConvertor\Base;
+use Export\Entities\ExportJob;
 use Treo\Core\FilePathBuilder;
 
 /**
@@ -117,11 +118,7 @@ class Simple extends AbstractType
         return array_values($configuration);
     }
 
-    /**
-     * @return Attachment
-     * @throws Error
-     */
-    public function export(): Attachment
+    public function export(ExportJob $exportJob): Attachment
     {
         if (empty($this->data['feed']['fileType'])) {
             $this->data['feed']['fileType'] = 'xlsx';
@@ -132,14 +129,11 @@ class Simple extends AbstractType
             throw new Error('Unsupported file type.');
         }
 
-        return $this->$attachmentCreatorName($this->getData());
+        $this->createCacheFile($exportJob);
+
+        return $this->$attachmentCreatorName($exportJob->getData());
     }
 
-    /**
-     * @param array $data
-     *
-     * @return Attachment
-     */
     protected function exportCsv(array $data): Attachment
     {
         $repository = $this->getEntityManager()->getRepository('Attachment');
@@ -151,7 +145,7 @@ class Simple extends AbstractType
         $attachment->set('relatedType', 'ExportJob');
         $attachment->set('relatedId', $this->data['id']);
         $attachment->set('storage', 'UploadDir');
-        $attachment->set('storageFilePath', $this->container->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD));
+        $attachment->set('storageFilePath', $this->createPath());
 
         $this->storeCsvFile($data, $repository->getFilePath($attachment));
 
@@ -163,11 +157,6 @@ class Simple extends AbstractType
         return $attachment;
     }
 
-    /**
-     * @param array $data
-     *
-     * @return Attachment
-     */
     protected function exportXlsx(array $data): Attachment
     {
         $repository = $this->getEntityManager()->getRepository('Attachment');
@@ -179,7 +168,7 @@ class Simple extends AbstractType
         $attachment->set('relatedType', 'ExportJob');
         $attachment->set('relatedId', $this->data['id']);
         $attachment->set('storage', 'UploadDir');
-        $attachment->set('storageFilePath', $this->container->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD));
+        $attachment->set('storageFilePath', $this->createPath());
 
         $this->storeXlsxFile($data, $repository->getFilePath($attachment));
 
@@ -201,13 +190,7 @@ class Simple extends AbstractType
         return str_replace(' ', '_', strtolower($this->data['feed']['name'])) . '_' . date('YmdHis') . '.' . $extension;
     }
 
-    /**
-     * @return array
-     * @throws BadRequest
-     * @throws Error
-     * @throws NotFound
-     */
-    protected function getData(): array
+    protected function createCacheFile(ExportJob $exportJob): string
     {
         // prepare export feed data
         $data = $this->getFeedData();
@@ -222,42 +205,61 @@ class Simple extends AbstractType
             $this->data['channelLocales'] = $channel->get('locales');
         }
 
-        $resultData = [];
-        foreach ($this->getRecords() as $record) {
-            $resultData[$record['id']] = [];
-            foreach ($configuration as $k => $row) {
+        if (empty($records = $this->getRecords())) {
+            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
+        }
+
+        $convertor = $this->getDataConvertor($data['entity']);
+
+        // prepare full file name
+        $fileName = "{$this->data['exportJobId']}.txt";
+        $filePath = $this->createPath();
+        $fullFilePath = $this->getConfig()->get('filesPath', 'upload/files/') . $filePath;
+        Util::createDir($fullFilePath);
+
+        $fullFileName = $fullFilePath . '/' . $fileName;
+
+        // clearing file if it needs
+        file_put_contents($fullFileName, '');
+
+        $file = fopen($fullFileName, 'a');
+
+        $columns = [];
+        foreach ($records as $k => $record) {
+            $pushRow = [];
+            foreach ($configuration as $rowNumber => $row) {
                 $row = $this->prepareRow($row);
 
                 if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                     continue 1;
                 }
 
-                $resultData[$record['id']][$k] = $this->getDataConvertor($data['entity'])->convert($record, $row);
-            }
-        }
+                $converted = $convertor->convert($record, $row);
 
-        if (empty($resultData)) {
-            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
-        }
-
-        // prepare columns
-        $columns = [];
-        foreach ($resultData as $rows) {
-            foreach ($rows as $rowNumber => $rowData) {
                 $n = 0;
-                foreach ($rowData as $colName => $value) {
+                foreach ($converted as $colName => $value) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
                         'pos'    => $rowNumber * 1000 + $n,
                         'name'   => $colName,
-                        'label'  => $this->getDataConvertor($data['entity'])->getColumnLabel($colName, $this->data, $rowNumber)
+                        'label'  => $convertor->getColumnLabel($colName, $this->data, $rowNumber)
                     ];
                     $n++;
                 }
-            }
-        }
 
-        // sorting
+                $pushRow[] = $converted;
+            }
+
+            $pushContent = Json::encode($pushRow);
+            if (isset($records[$k + 1])) {
+                $pushContent .= PHP_EOL;
+            }
+
+            fwrite($file, $pushContent);
+        }
+        fclose($file);
+
+        // sorting columns
         $sortedColumns = [];
         $number = 0;
         while (count($columns) > 0) {
@@ -270,20 +272,9 @@ class Simple extends AbstractType
             $number++;
         }
 
-        $result = ['columns' => $sortedColumns, 'data' => []];
-        foreach ($resultData as $rowData) {
-            $resultRow = [];
-            foreach ($sortedColumns as $pos => $columnData) {
-                if (isset($rowData[$columnData['number']][$columnData['name']])) {
-                    $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
-                } else {
-                    $resultRow[$pos] = isset($data['configuration'][0]['markForNotLinkedAttribute']) ? $data['configuration'][0]['markForNotLinkedAttribute'] : '--';
-                }
-            }
-            $result['data'][] = $resultRow;
-        }
+        $exportJob->set('data', array_merge($exportJob->getData(), ['columns' => $sortedColumns, 'fileName' => $fileName, 'fullFileName' => $fullFileName]));
 
-        return $result;
+        return $fullFileName;
     }
 
     /**
@@ -450,20 +441,6 @@ class Simple extends AbstractType
         $delimiter = $this->data['feed']['csvFieldDelimiter'];
         $enclosure = ($this->data['feed']['csvTextQualifier'] == 'doubleQuote') ? '"' : "'";
 
-        /**
-         * Prepare data
-         */
-        $rows = [];
-        foreach ($data['data'] as $row) {
-            foreach ($row as $key => $field) {
-                if (is_array($field)) {
-                    $row[$key] = '[' . implode(",", $field) . ']';
-                }
-            }
-            $rows[] = array_values($row);
-        }
-
-        // open file
         $fp = fopen($fileName, "w");
 
         // prepare header
@@ -471,15 +448,28 @@ class Simple extends AbstractType
             fputcsv($fp, array_column($data['columns'], 'label'), $delimiter, $enclosure, '~~~~~');
         }
 
-        // prepare rows
-        foreach ($rows as $item) {
-            fputcsv($fp, $item, $delimiter, $enclosure, '~~~~~');
+        $cacheFile = fopen($data['fullFileName'], "r");
+        while (($json = fgets($cacheFile)) !== false) {
+            if (empty($json)){
+                continue;
+            }
+
+            $rowData = Json::decode($json, true);
+
+            $resultRow = [];
+            foreach ($data['columns'] as $pos => $columnData) {
+                $value = $rowData[$columnData['number']][$columnData['name']];
+                if (is_array($value)) {
+                    $value = '[' . implode(",", $value) . ']';
+                }
+                $resultRow[$pos] = $value;
+            }
+
+            fputcsv($fp, $resultRow, $delimiter, $enclosure, '~~~~~');
         }
+        fclose($cacheFile);
 
-        // rewind
         rewind($fp);
-
-        // close file
         fclose($fp);
     }
 
@@ -586,5 +576,10 @@ class Simple extends AbstractType
         }
 
         return $this->foundAttrs[$id];
+    }
+
+    protected function createPath(): string
+    {
+        return $this->container->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD);
     }
 }
