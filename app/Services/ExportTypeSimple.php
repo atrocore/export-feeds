@@ -96,14 +96,17 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
-    /**
-     * @param string $extension
-     *
-     * @return string
-     */
     protected function getExportFileName(string $extension): string
     {
-        return str_replace(' ', '_', strtolower($this->data['feed']['name'])) . '_' . date('YmdHis') . '.' . $extension;
+        $fileName = str_replace(' ', '_', strtolower($this->data['feed']['name']));
+
+        if (!empty($this->data['iteration'])) {
+            $fileName .= '_' . $this->data['iteration'];
+        }
+
+        $fileName .= '_' . date('YmdHis') . '.' . $extension;
+
+        return $fileName;
     }
 
     /**

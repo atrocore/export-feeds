@@ -342,6 +342,7 @@ class ExportFeed extends Base
 
             $data['exportJobId'] = $exportJob->get('id');
 
+            $data['iteration'] = $i;
             $data['offset'] = $offset;
             $data['limit'] = $limit;
 
