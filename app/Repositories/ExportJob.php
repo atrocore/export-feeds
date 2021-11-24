@@ -54,12 +54,6 @@ class ExportJob extends Base
             throw new BadRequest('Export Feed is required.');
         }
 
-        if ($entity->isNew()) {
-            if (empty($entity->get('name'))) {
-                $entity->set('name', $feed->get('name'));
-            }
-        }
-
         $jobs = $this->where(['exportFeedId' => $feed->get('id')])->order('createdAt')->find();
         $jobsCount = count($jobs);
         foreach ($jobs as $job) {

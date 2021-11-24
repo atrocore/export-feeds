@@ -20,23 +20,17 @@
 
 declare(strict_types=1);
 
-namespace Export\ExportType;
+namespace Export\Services;
 
-use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Json;
-use Espo\Core\Utils\Language;
-use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
 use Espo\ORM\Entity;
 use Export\Entities\ExportJob;
 
-/**
- * Type Simple
- */
-class Simple extends AbstractType
+class ExportTypeSimple extends AbstractExportType
 {
     private array $foundAttrs = [];
 
@@ -112,68 +106,6 @@ class Simple extends AbstractType
         return str_replace(' ', '_', strtolower($this->data['feed']['name'])) . '_' . date('YmdHis') . '.' . $extension;
     }
 
-    protected function getRecords(): array
-    {
-        $maxSize = 200;
-
-        $data = $this->getFeedData();
-
-        $params = [
-            'sortBy'  => 'id',
-            'asc'     => true,
-            'offset'  => 0,
-            'maxSize' => $maxSize,
-            'where'   => !empty($data['where']) ? $data['where'] : []
-        ];
-
-        if (!empty($this->data['exportByChannelId'])) {
-            if ($this->data['feed']['data']['entity'] == 'Product') {
-                $params['where'][] = [
-                    'type'  => 'bool',
-                    'value' => ['activeForChannel'],
-                    'data'  => ['activeForChannel' => $this->data['exportByChannelId']]
-                ];
-            } else {
-                $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
-                foreach ($links as $link => $linkData) {
-                    if ($linkData['entity'] == 'Channel') {
-                        if ($linkData['type'] == 'hasMany') {
-                            $params['where'][] = [
-                                'type'      => 'linkedWith',
-                                'attribute' => $link,
-                                'value'     => [$this->data['exportByChannelId']]
-                            ];
-                        }
-                        if ($linkData['type'] == 'belongsTo') {
-                            $params['where'][] = [
-                                'type'      => 'equals',
-                                'attribute' => $link . 'Id',
-                                'value'     => [$this->data['exportByChannelId']]
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-
-        $records = [];
-        while (true) {
-            $result = $this->getService($data['entity'])->findEntities($params);
-
-            $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
-
-            if (count($list) == 0) {
-                break;
-            }
-
-            $records = array_merge($records, $list);
-
-            $params['offset'] = $params['offset'] + $maxSize;
-        }
-
-        return $records;
-    }
-
     /**
      * @param array $row
      *
@@ -211,14 +143,6 @@ class Simple extends AbstractType
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         return $row;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getFeedData(): array
-    {
-        return Json::decode(Json::encode($this->data['feed']['data']), true);
     }
 
     /**

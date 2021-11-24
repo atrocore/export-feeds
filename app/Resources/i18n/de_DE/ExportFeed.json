@@ -23,7 +23,7 @@
     "decimalMark": "Dezimaltrennzeichen",
     "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut",
     "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
-    "limit": "Grenze",
+    "limit": "Maximale Datensatzanzahl",
     "configuratorItems": "Konfigurator"
   },
   "links": {
@@ -74,7 +74,6 @@
     "noSuchField": "Feld '%s' existiert nicht.",
     "noSuchAttribute": "Attribut '%s' existiert nicht.",
     "noDataFound": "Feed hat nichts zu exportieren.",
-    "wrongExportFeedType": "Falscher Exportfeed-Typ.",
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
     "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden.",
     "noFieldLabel": "Die Bezeichnung für das Feld '%s' für die Sprache '%s' ist nicht gesetzt.",

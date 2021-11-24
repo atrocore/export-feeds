@@ -20,7 +20,7 @@
 
 declare(strict_types=1);
 
-namespace Export\ExportType;
+namespace Export\Services;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
@@ -37,10 +37,8 @@ use Export\DataConvertor\Base;
 use Export\Entities\ExportJob;
 use Treo\Core\FilePathBuilder;
 
-abstract class AbstractType
+abstract class AbstractExportType extends \Espo\Core\Services\Base
 {
-    protected Container $container;
-
     protected array $data;
 
     private array $services = [];
@@ -48,12 +46,6 @@ abstract class AbstractType
     private array $languages = [];
 
     private array $convertors = [];
-
-    public function __construct(Container $container, array $data)
-    {
-        $this->container = $container;
-        $this->data = $data;
-    }
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -113,6 +105,32 @@ abstract class AbstractType
 
     abstract public function export(ExportJob $exportJob): Attachment;
 
+    public function getCount(): int
+    {
+        $result = $this->getService($this->getFeedData()['entity'])->findEntities($this->getSelectParams());
+
+        return $result['total'];
+    }
+
+    public function setData(array $data): AbstractExportType
+    {
+        $this->data = $data;
+
+        return $this;
+    }
+
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency('container');
+    }
+
+    protected function getContainer(): Container
+    {
+        return $this->getInjection('container');
+    }
+
     protected function getDataConvertor(string $scope): Base
     {
         if (!isset($this->convertors[$scope])) {
@@ -126,10 +144,71 @@ abstract class AbstractType
                 throw new Error($className . ' should be instance of ' . Base::class);
             }
 
-            $this->convertors[$scope] = new $className($this->container);
+            $this->convertors[$scope] = new $className($this->getContainer());
         }
 
         return $this->convertors[$scope];
+    }
+
+    protected function getFeedData(): array
+    {
+        return Json::decode(Json::encode($this->data['feed']['data']), true);
+    }
+
+    protected function getSelectParams(): array
+    {
+        $data = $this->getFeedData();
+
+        $params = [
+            'sortBy'  => 'id',
+            'asc'     => true,
+            'offset'  => 0,
+            'maxSize' => 1,
+            'where'   => !empty($data['where']) ? $data['where'] : []
+        ];
+
+        if (!empty($this->data['exportByChannelId'])) {
+            if ($this->data['feed']['data']['entity'] == 'Product') {
+                $params['where'][] = [
+                    'type'  => 'bool',
+                    'value' => ['activeForChannel'],
+                    'data'  => ['activeForChannel' => $this->data['exportByChannelId']]
+                ];
+            } else {
+                $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
+                foreach ($links as $link => $linkData) {
+                    if ($linkData['entity'] == 'Channel') {
+                        if ($linkData['type'] == 'hasMany') {
+                            $params['where'][] = [
+                                'type'      => 'linkedWith',
+                                'attribute' => $link,
+                                'value'     => [$this->data['exportByChannelId']]
+                            ];
+                        }
+                        if ($linkData['type'] == 'belongsTo') {
+                            $params['where'][] = [
+                                'type'      => 'equals',
+                                'attribute' => $link . 'Id',
+                                'value'     => [$this->data['exportByChannelId']]
+                            ];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $params;
+    }
+
+    protected function getRecords(): array
+    {
+        $params = $this->getSelectParams();
+        $params['offset'] = $this->data['offset'];
+        $params['maxSize'] = $this->data['limit'];
+
+        $result = $this->getService($this->data['feed']['entity'])->findEntities($params);
+
+        return isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
     }
 
     protected function createCacheFile(ExportJob $exportJob): string
@@ -221,13 +300,13 @@ abstract class AbstractType
 
     protected function getEntityManager(): EntityManager
     {
-        return $this->container->get('entityManager');
+        return $this->getContainer()->get('entityManager');
     }
 
     protected function getService(string $serviceName): Record
     {
         if (!isset($this->services[$serviceName])) {
-            $this->services[$serviceName] = $this->container->get('serviceFactory')->create($serviceName);
+            $this->services[$serviceName] = $this->getContainer()->get('serviceFactory')->create($serviceName);
         }
 
         return $this->services[$serviceName];
@@ -235,28 +314,28 @@ abstract class AbstractType
 
     protected function getConfig(): Config
     {
-        return $this->container->get('config');
+        return $this->getContainer()->get('config');
     }
 
     protected function getMetadata(): Metadata
     {
-        return $this->container->get('metadata');
+        return $this->getContainer()->get('metadata');
     }
 
     protected function translate(string $key, string $tab, string $scope = 'Global'): string
     {
-        return $this->container->get('language')->translate($key, $tab, $scope);
+        return $this->getContainer()->get('language')->translate($key, $tab, $scope);
     }
 
     protected function getSelectManager(string $name): \Espo\Core\SelectManagers\Base
     {
-        return $this->container->get('selectManagerFactory')->create($name);
+        return $this->getContainer()->get('selectManagerFactory')->create($name);
     }
 
     protected function getLanguage(string $locale): Language
     {
         if (!isset($this->languages[$locale])) {
-            $this->languages[$locale] = new Language($this->container, $locale);
+            $this->languages[$locale] = new Language($this->getContainer(), $locale);
         }
 
         return $this->languages[$locale];
@@ -264,6 +343,6 @@ abstract class AbstractType
 
     protected function createPath(): string
     {
-        return $this->container->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD);
+        return $this->getContainer()->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD);
     }
 }

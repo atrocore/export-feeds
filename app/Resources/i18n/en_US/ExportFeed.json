@@ -22,7 +22,7 @@
     "jobsMax": "Amount of Export Jobs to be stored",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
-    "limit": "Limit",
+    "limit": "Maximum Number of Records",
     "configuratorItems": "Configurator"
   },
   "links": {
@@ -73,7 +73,6 @@
     "noSuchField": "Field '%s' does not exist.",
     "noSuchAttribute": "Attribute '%s' does not exist.",
     "noDataFound": "Feed has nothing to export.",
-    "wrongExportFeedType": "Wrong Export Feed type.",
     "exportValidationFailed": "You can not export such file. Please, check the form and try again.",
     "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
     "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
