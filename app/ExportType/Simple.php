@@ -198,7 +198,7 @@ class Simple extends AbstractType
      */
     protected function getExportFileName(string $extension): string
     {
-        return $this->data['feed']['name'] . '_' . time() . '.' . $extension;
+        return str_replace(' ', '_', strtolower($this->data['feed']['name'])) . '_' . date('YmdHis') . '.' . $extension;
     }
 
     /**

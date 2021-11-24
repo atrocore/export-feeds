@@ -179,7 +179,7 @@ class Base
 
                     if (!empty($configuration['exportIntoSeparateColumns'])) {
                         foreach ($links as $k => $link) {
-                            $columnName = $column . ' ' . ($k + 1);
+                            $columnName = $column . '_' . ($k + 1);
                             $result[$columnName] = self::escapeValue($link, $delimiter);
                         }
                     } else {
