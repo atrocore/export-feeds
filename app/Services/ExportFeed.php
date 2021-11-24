@@ -222,9 +222,9 @@ class ExportFeed extends Base
         }
     }
 
-    public function getExportTypeService(string $type, array $data): AbstractExportType
+    public function getExportTypeService(string $type): ExportTypeSimple
     {
-        return $this->getInjection('serviceFactory')->create('ExportType' . ucfirst($type))->setData($data);
+        return $this->getInjection('serviceFactory')->create('ExportType' . ucfirst($type));
     }
 
     protected function init()
@@ -316,7 +316,7 @@ class ExportFeed extends Base
         $limit = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
 
         $offset = 0;
-        $count = $this->getExportTypeService($data['feed']['type'], $data)->getCount();
+        $count = $this->getExportTypeService($data['feed']['type'])->getCount($data);
 
         $i = 0;
 
