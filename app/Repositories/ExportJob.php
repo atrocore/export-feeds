@@ -49,12 +49,26 @@ class ExportJob extends Base
      */
     protected function beforeSave(Entity $entity, array $options = [])
     {
+        $feed = $entity->get('exportFeed');
+        if (empty($feed)) {
+            throw new BadRequest('Export Feed is required.');
+        }
+
         if ($entity->isNew() && empty($entity->get('name'))) {
             $name = (new \DateTime())->format('Y-m-d H:i:s');
             if (!empty($count = $this->where(['name*' => "$name%"])->count())) {
                 $name .= " ($count)";
             }
             $entity->set('name', $name);
+        }
+
+        $jobs = $this->where(['exportFeedId' => $feed->get('id')])->order('createdAt')->find();
+        $jobsCount = count($jobs);
+        foreach ($jobs as $job) {
+            if ($jobsCount > $feed->get('jobsMax')) {
+                $this->getEntityManager()->removeEntity($job);
+                $jobsCount--;
+            }
         }
 
         parent::beforeSave($entity, $options);

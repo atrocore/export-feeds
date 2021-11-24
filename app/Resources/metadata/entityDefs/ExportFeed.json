@@ -8,6 +8,12 @@
     "description": {
       "type": "text"
     },
+    "jobsMax": {
+      "type": "int",
+      "required": true,
+      "min": 1,
+      "default": 10
+    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
