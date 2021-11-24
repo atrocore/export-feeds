@@ -23,6 +23,7 @@
     "decimalMark": "Dezimaltrennzeichen",
     "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut",
     "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
+    "limit": "Grenze",
     "configuratorItems": "Konfigurator"
   },
   "links": {

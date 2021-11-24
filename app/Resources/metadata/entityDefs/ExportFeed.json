@@ -8,6 +8,11 @@
     "description": {
       "type": "text"
     },
+    "limit": {
+      "type": "int",
+      "required": false,
+      "default": null
+    },
     "jobsMax": {
       "type": "int",
       "required": true,

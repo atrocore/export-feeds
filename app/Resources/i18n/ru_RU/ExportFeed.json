@@ -22,6 +22,7 @@
     "markForNotLinkedAttribute": "Пометка непривязанного атрибута",
     "jobsMax": "Максимальное количество заданий экспорта",
     "fieldDelimiterForRelation": "Разделитель полей для связи",
+    "limit": "Лимит",
     "configuratorItems": "Конфигуратор"
   },
   "links": {
