@@ -99,6 +99,11 @@ class ExportJob extends Base
             $this->getEntityManager()->removeEntity($file);
         }
 
+        $data = $entity->getData();
+        if (isset($data['fullFileName']) && file_exists($data['fullFileName'])) {
+            unlink($data['fullFileName']);
+        }
+
         $this->deleteQueueItem((string)$entity->get('id'));
 
         parent::afterRemove($entity, $options);
