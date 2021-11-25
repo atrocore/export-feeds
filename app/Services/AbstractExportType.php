@@ -49,8 +49,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     private array $languages = [];
 
-    private array $convertors = [];
-
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
         $configuration = [['field' => 'id', 'column' => 'ID']];
@@ -110,7 +108,14 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     public function getCount(array $data): int
     {
         $this->setData($data);
-        return $this->getEntityService()->findEntities($this->getSelectParams())['total'];
+
+        $result = $this->getEntityService()->findEntities($this->getSelectParams());
+
+        if (empty($result['total'])) {
+            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
+        }
+
+        return $result['total'];
     }
 
     public function export(array $data, ExportJob $exportJob): Attachment
@@ -173,21 +178,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         return $row;
-    }
-
-    /**
-     * @param string $fileName
-     */
-    protected function createDir(string $fileName): void
-    {
-        $parts = explode('/', $fileName);
-        array_pop($parts);
-        $dir = implode('/', $parts);
-
-        if (!file_exists($dir)) {
-            mkdir($dir, 0777, true);
-            sleep(1);
-        }
     }
 
     protected function getColumnName(array $row, string $entity): string
@@ -262,21 +252,17 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getDataConvertor(string $scope): Base
     {
-        if (!isset($this->convertors[$scope])) {
-            $className = "Export\\DataConvertor\\" . $scope;
+        $className = "Export\\DataConvertor\\" . $scope;
 
-            if (!class_exists($className)) {
-                $className = Base::class;
-            }
-
-            if (!is_a($className, Base::class, true)) {
-                throw new Error($className . ' should be instance of ' . Base::class);
-            }
-
-            $this->convertors[$scope] = new $className($this->getContainer());
+        if (!class_exists($className)) {
+            $className = Base::class;
         }
 
-        return $this->convertors[$scope];
+        if (!is_a($className, Base::class, true)) {
+            throw new Error($className . ' should be instance of ' . Base::class);
+        }
+
+        return new $className($this->getContainer());
     }
 
     protected function getSelectParams(): array

@@ -151,4 +151,16 @@ class ExportTypeSimple extends AbstractExportType
         // delete csv file
         unlink($csvFileName);
     }
+
+    protected function createDir(string $fileName): void
+    {
+        $parts = explode('/', $fileName);
+        array_pop($parts);
+        $dir = implode('/', $parts);
+
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+            sleep(1);
+        }
+    }
 }
