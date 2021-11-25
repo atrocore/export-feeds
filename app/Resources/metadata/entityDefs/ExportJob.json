@@ -73,6 +73,12 @@
     "end": {
       "type": "datetime",
       "readOnly": true
+    },
+    "sortOrder": {
+      "type": "int"
+    },
+    "data": {
+      "type": "jsonObject"
     }
   },
   "links": {
@@ -111,7 +117,7 @@
     }
   },
   "collection": {
-    "sortBy": "createdAt",
+    "sortBy": "sortOrder",
     "asc": false
   },
   "indexes": {

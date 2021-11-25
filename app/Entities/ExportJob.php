@@ -23,11 +23,14 @@ declare(strict_types=1);
 namespace Export\Entities;
 
 use Espo\Core\Templates\Entities\Base;
+use Espo\Core\Utils\Json;
 
 class ExportJob extends Base
 {
-    /**
-     * @var string
-     */
     protected $entityType = "ExportJob";
+
+    public function getData(): array
+    {
+        return empty($this->get('data')) ? [] : Json::decode(Json::encode($this->get('data')), true);
+    }
 }

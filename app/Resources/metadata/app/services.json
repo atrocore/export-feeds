@@ -1,3 +1,4 @@
 {
-  "QueueManagerExport": "\\Export\\Services\\QueueManagerExport"
+  "QueueManagerExport": "\\Export\\Services\\QueueManagerExport",
+  "ExportTypeSimple": "\\Export\\Services\\ExportTypeSimple"
 }

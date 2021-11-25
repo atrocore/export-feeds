@@ -35,15 +35,13 @@ class Base
 {
     public const DELIMITER = '|';
 
-    /**
-     * @var Container
-     */
-    protected $container;
+    protected Container $container;
 
-    /**
-     * @var array
-     */
-    private $services = [];
+    private array $services = [];
+
+    private array $entityItem = [];
+
+    private array $linkedEntities = [];
 
     /**
      * Base constructor.
@@ -105,7 +103,7 @@ class Base
                         $foreignEntity = $this->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
                         if (!empty($foreignEntity)) {
                             try {
-                                $foreign = $this->getService((string)$foreignEntity)->getEntity($linkId);
+                                $foreign = $this->getEntity((string)$foreignEntity, $linkId);
                             } catch (\Throwable $e) {
                                 $GLOBALS['log']->error('Export. Can not get foreign entity: ' . $e->getMessage());
                             }
@@ -147,7 +145,7 @@ class Base
                 }
 
                 try {
-                    $foreignResult = $this->getService($entity)->findLinkedEntities($record['id'], $field, $params);
+                    $foreignResult = $this->findLinkedEntities($entity, $record['id'], $field, $params);
                 } catch (\Throwable $e) {
                     $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
                 }
@@ -272,7 +270,7 @@ class Base
                     if (empty($record[$field])) {
                         $result = $record[$field] === null ? $nullValue : $emptyValue;
                     } else {
-                        if (!empty($attachment = $this->getService('Attachment')->getEntity($record[$field]))) {
+                        if (!empty($attachment = $this->getEntity('Attachment', $record[$field]))) {
                             $result = $attachment->get('url');
                         } else {
                             $result = $emptyValue;
@@ -385,5 +383,25 @@ class Base
         }
 
         return str_replace($delimiter, '\\' . $delimiter, str_replace('\\' . $delimiter, $delimiter, $value));
+    }
+
+    protected function getEntity(string $scope, string $id)
+    {
+        if (!isset($this->entityItem[$scope][$id])) {
+            $this->entityItem[$scope][$id] = $this->getService($scope)->getEntity($id);
+        }
+
+        return $this->entityItem[$scope][$id];
+    }
+
+    protected function findLinkedEntities(string $scope, string $id, string $field, array $params)
+    {
+        $key = "{$id}_{$field}_" . implode('-', $params);
+
+        if (!isset($this->linkedEntities[$key])) {
+            $this->linkedEntities[$key] = $this->getService($scope)->findLinkedEntities($id, $field, $params);
+        }
+
+        return $this->linkedEntities[$key];
     }
 }

@@ -8,6 +8,11 @@
     "description": {
       "type": "text"
     },
+    "limit": {
+      "type": "int",
+      "required": false,
+      "default": null
+    },
     "jobsMax": {
       "type": "int",
       "required": true,
@@ -64,8 +69,10 @@
       "required": false,
       "notStorable": true,
       "dataField": true,
-      "options": [],
-      "view": "export:views/export-feed/fields/file-type",
+      "options": [
+        "csv",
+        "xlsx"
+      ],
       "prohibitedEmptyValue": false
     },
     "isFileHeaderRow": {
