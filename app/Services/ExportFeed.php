@@ -276,6 +276,7 @@ class ExportFeed extends Base
                     'decimalMark'               => $feed->getFeedField('decimalMark'),
                     'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
                     'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
+                    'exportBy'                  => $item->get('exportBy'),
                 ];
 
                 if ($item->get('type') === 'Field') {
