@@ -7,9 +7,7 @@
         {
           "name": "isActive"
         },
-        {
-          "name": "limit"
-        }
+        false
       ],
       [
         {
@@ -25,6 +23,14 @@
         },
         {
           "name": "jobsMax"
+        }
+      ],
+      [
+        {
+          "name": "limit"
+        },
+        {
+          "name": "separateJob"
         }
       ]
     ]

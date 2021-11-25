@@ -23,7 +23,8 @@
     "decimalMark": "Dezimaltrennzeichen",
     "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut",
     "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
-    "limit": "Maximale Datensatzanzahl",
+    "limit": "Maximale Datensatzanzahl pro Iteration",
+    "separateJob": "Separater Auftrag pro Iteration",
     "configuratorItems": "Konfigurator"
   },
   "links": {

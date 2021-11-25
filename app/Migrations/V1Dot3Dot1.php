@@ -31,7 +31,9 @@ class V1Dot3Dot1 extends Base
         $this->execute("ALTER TABLE `export_feed` ADD jobs_max INT DEFAULT '10' COLLATE utf8mb4_unicode_ci");
         $this->execute("UPDATE `export_feed` SET jobs_max=10 WHERE deleted=0");
         $this->execute("ALTER TABLE `export_job` ADD data MEDIUMTEXT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
-        $this->execute("ALTER TABLE `export_feed` ADD `limit` INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("ALTER TABLE `export_feed` ADD `limit` INT DEFAULT '2000' COLLATE utf8mb4_unicode_ci");
+        $this->execute("UPDATE `export_feed` SET limit=2000 WHERE deleted=0");
+        $this->execute("ALTER TABLE `export_feed` ADD separate_job TINYINT(1) DEFAULT '0' NOT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_job` ADD sort_order INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
 
         try {

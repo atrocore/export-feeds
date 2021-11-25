@@ -51,6 +51,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     private array $pavs = [];
 
+    private int $iteration = 0;
+
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
         $configuration = [['field' => 'id', 'column' => 'ID']];
@@ -312,6 +314,10 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getRecords(): array
     {
+        if (!empty($this->data['feed']['separateJob']) && !empty($this->iteration)) {
+            return [];
+        }
+
         $params = $this->getSelectParams();
         $params['offset'] = $this->data['offset'];
         $params['maxSize'] = $this->data['limit'];
@@ -324,6 +330,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         if ($this->data['feed']['entity'] === 'Product') {
             $this->loadPavs(array_column($list, 'id'));
         }
+
+        $this->data['offset'] = $this->data['offset'] + $this->data['limit'];
+        $this->iteration++;
 
         return $list;
     }
@@ -403,10 +412,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $this->data['channelLocales'] = $channel->get('locales');
         }
 
-        if (empty($records = $this->getRecords())) {
-            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
-        }
-
         $convertor = $this->getDataConvertor($data['entity']);
 
         // prepare full file name
@@ -423,41 +428,41 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $file = fopen($fullFileName, 'a');
 
         $columns = [];
-        foreach ($records as $k => $record) {
-            $pushRow = [];
-            foreach ($configuration as $rowNumber => $row) {
-                $row = $this->prepareRow($row);
-                if ($row['entity'] === 'Product') {
-                    $row['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
+
+        while (!empty($records = $this->getRecords())) {
+            foreach ($records as $record) {
+                $pushRow = [];
+                foreach ($configuration as $rowNumber => $row) {
+                    $row = $this->prepareRow($row);
+                    if ($row['entity'] === 'Product') {
+                        $row['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
+                    }
+
+                    if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
+                        continue 1;
+                    }
+
+                    $converted = $convertor->convert($record, $row);
+
+                    $n = 0;
+                    foreach ($converted as $colName => $value) {
+                        $columns[$rowNumber . '_' . $colName] = [
+                            'number' => $rowNumber,
+                            'pos'    => $rowNumber * 1000 + $n,
+                            'name'   => $colName,
+                            'label'  => $convertor->getColumnLabel($colName, $this->data, $rowNumber)
+                        ];
+                        $n++;
+                    }
+
+                    $pushRow[] = $converted;
                 }
 
-                if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
-                    continue 1;
-                }
-
-                $converted = $convertor->convert($record, $row);
-
-                $n = 0;
-                foreach ($converted as $colName => $value) {
-                    $columns[$rowNumber . '_' . $colName] = [
-                        'number' => $rowNumber,
-                        'pos'    => $rowNumber * 1000 + $n,
-                        'name'   => $colName,
-                        'label'  => $convertor->getColumnLabel($colName, $this->data, $rowNumber)
-                    ];
-                    $n++;
-                }
-
-                $pushRow[] = $converted;
+                $pushContent = Json::encode($pushRow) . PHP_EOL;
+                fwrite($file, $pushContent);
             }
-
-            $pushContent = Json::encode($pushRow);
-            if (isset($records[$k + 1])) {
-                $pushContent .= PHP_EOL;
-            }
-
-            fwrite($file, $pushContent);
         }
+
         fclose($file);
 
         // sorting columns

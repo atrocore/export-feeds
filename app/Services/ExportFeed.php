@@ -311,51 +311,54 @@ class ExportFeed extends Base
      */
     protected function pushExport(array $data): bool
     {
-        /** @var User $user */
-        $user = $this->getInjection('user');
+        $data['offset'] = 0;
+        $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
 
-        $limit = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
-
-        $offset = 0;
         $count = $this->getExportTypeService($data['feed']['type'])->getCount($data);
 
-        $i = 0;
-
-        while ($offset < $count) {
-            $jobName = $data['feed']['name'];
-            if ($i > 0) {
-                $jobName .= " ($i)";
+        if (!empty($data['feed']['separateJob'])) {
+            $i = 1;
+            while ($data['offset'] < $count) {
+                $jobName = $data['feed']['name'];
+                if ($count > $data['limit']) {
+                    $jobName .= " ($i)";
+                }
+                $data['iteration'] = $i;
+                $this->pushExportJob($jobName, $data);
+                $data['offset'] = $data['offset'] + $data['limit'];
+                $i++;
             }
-
-            $exportJob = $this->getEntityManager()->getEntity('ExportJob');
-            $exportJob->set('name', $jobName);
-            $exportJob->set('exportFeedId', $data['feed']['id']);
-            $exportJob->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
-            $exportJob->set('ownerUserId', $user->get('id'));
-            $exportJob->set('assignedUserId', $user->get('id'));
-            $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
-
-            if (!empty($data['exportByChannelId'])) {
-                $exportJob->set('channelId', $data['exportByChannelId']);
-            }
-
-            $this->getEntityManager()->saveEntity($exportJob);
-
-            $data['exportJobId'] = $exportJob->get('id');
-
-            $data['iteration'] = $i;
-            $data['offset'] = $offset;
-            $data['limit'] = $limit;
-
-            $qmJobName = sprintf($this->getInjection('language')->translate('exportName', 'additionalTranslates', 'ExportFeed'), $jobName);
-
-            $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data);
-
-            $offset = $offset + $limit;
-            $i++;
+        } else {
+            $this->pushExportJob($data['feed']['name'], $data);
         }
 
         return true;
+    }
+
+    protected function pushExportJob(string $jobName, array $data): void
+    {
+        /** @var User $user */
+        $user = $this->getInjection('user');
+
+        $exportJob = $this->getEntityManager()->getEntity('ExportJob');
+        $exportJob->set('name', $jobName);
+        $exportJob->set('exportFeedId', $data['feed']['id']);
+        $exportJob->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
+        $exportJob->set('ownerUserId', $user->get('id'));
+        $exportJob->set('assignedUserId', $user->get('id'));
+        $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
+
+        if (!empty($data['exportByChannelId'])) {
+            $exportJob->set('channelId', $data['exportByChannelId']);
+        }
+
+        $this->getEntityManager()->saveEntity($exportJob);
+
+        $data['exportJobId'] = $exportJob->get('id');
+
+        $qmJobName = sprintf($this->getInjection('language')->translate('exportName', 'additionalTranslates', 'ExportFeed'), $jobName);
+
+        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data);
     }
 
     /**

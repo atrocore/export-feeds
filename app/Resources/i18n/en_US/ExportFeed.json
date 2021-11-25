@@ -22,7 +22,8 @@
     "jobsMax": "Amount of Export Jobs to be stored",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
-    "limit": "Maximum Number of Records",
+    "limit": "Maximum Number of Records per Iteration",
+    "separateJob": "Separate Job per Iteration",
     "configuratorItems": "Configurator"
   },
   "links": {
