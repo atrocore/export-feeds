@@ -24,7 +24,6 @@ namespace Export\DataConvertor;
 
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Utils\Util;
-use Espo\ORM\EntityManager;
 use Pim\Services\ProductAttributeValue;
 
 /**
@@ -32,19 +31,8 @@ use Pim\Services\ProductAttributeValue;
  */
 class Product extends Base
 {
-    /**
-     * @var array
-     */
-    private $productAttributes = [];
+    private array $columnData = [];
 
-    /**
-     * @var array
-     */
-    private $columnData = [];
-
-    /**
-     * @inheritDoc
-     */
     public function convert(array $record, array $configuration): array
     {
         if (isset($configuration['attributeId'])) {
@@ -58,7 +46,7 @@ class Product extends Base
     {
         if (isset($this->columnData[$colName])) {
             if (!isset($this->columnData[$colName]['attributeLabel'])) {
-                $attribute = $this->getEntityManager()->getEntity('Attribute', $this->columnData[$colName]['attributeId']);
+                $attribute = $this->getEntity('Attribute', $this->columnData[$colName]['attributeId']);
                 throw new BadRequest(sprintf($this->translate('noAttributeLabel', 'exceptions', 'ExportFeed'), $attribute->get('name'), $this->columnData[$colName]['locale']));
             }
 
@@ -79,57 +67,46 @@ class Product extends Base
         return parent::getColumnLabel($colName, $configuration, $num);
     }
 
-    /**
-     * @param array $record
-     * @param array $configuration
-     *
-     * @return array
-     */
     protected function convertAttributeValue(array $record, array $configuration): array
     {
-        $result[$configuration['column']] = null;
+        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
 
-        $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale' ? $configuration['locale'] : null;
+        if (!empty($configuration['pavs'])) {
+            $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale' ? $configuration['locale'] : null;
 
-        foreach ($this->getProductAttributes($record['id']) as $v) {
-            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && $v['locale'] == $locale) {
-                $productAttribute = $v;
-                break 1;
-            }
-        }
-
-        if (!empty($configuration['channelId'])) {
-            foreach ($this->getProductAttributes($record['id']) as $v) {
-                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $v['locale'] == $locale && $configuration['channelId'] == $v['channelId']) {
-                    $productAttribute = $v;
-                    break 1;
+            if (empty($configuration['channelId'])) {
+                foreach ($configuration['pavs'] as $v) {
+                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && $v['locale'] == $locale) {
+                        $productAttribute = $v;
+                        break 1;
+                    }
+                }
+            } else {
+                foreach ($configuration['pavs'] as $v) {
+                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $v['locale'] == $locale
+                        && $configuration['channelId'] == $v['channelId']) {
+                        $productAttribute = $v;
+                        break 1;
+                    }
                 }
             }
-        }
 
-        if (!empty($productAttribute)) {
-            $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration);
-        } else {
-            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+            if (!empty($productAttribute)) {
+                $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration);
+            }
         }
 
         return $result;
     }
 
-    /**
-     * @param array $record
-     * @param array $configuration
-     *
-     * @return array
-     */
     protected function convertProductAttributeValues(array $record, array $configuration): array
     {
         $result = [];
 
-        if (!empty($productAttributes = $this->getProductAttributes($record['id']))) {
+        if (!empty($configuration['pavs'])) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
             $fieldDelimiterForRelation = $configuration['fieldDelimiterForRelation'];
-            foreach ($productAttributes as $productAttribute) {
+            foreach ($configuration['pavs'] as $productAttribute) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
                     $fieldResult[] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $v, $configuration);
@@ -144,7 +121,7 @@ class Product extends Base
                 if (empty($configuration['attributeColumn']) || $configuration['attributeColumn'] == 'attributeName') {
                     $attributeLabel = $productAttribute['attributeName'];
                     if (!empty($productAttribute['attributeIsMultilang']) && !empty($locale)) {
-                        $attribute = $this->getEntityManager()->getEntity('Attribute', $productAttribute['attributeId']);
+                        $attribute = $this->getEntity('Attribute', $productAttribute['attributeId']);
                         $attributeLabel = $attribute->get(Util::toCamelCase(strtolower('name_' . $locale)));
                     }
                 }
@@ -208,58 +185,13 @@ class Product extends Base
         return $result;
     }
 
-    /**
-     * @param string $productId
-     *
-     * @return array
-     */
-    protected function getProductAttributes(string $productId): array
-    {
-        if (!isset($this->productAttributes[$productId])) {
-            $this->productAttributes[$productId] = [];
-
-            try {
-                $foreignResult = $this->getService('Product')->findLinkedEntities($productId, 'productAttributeValues', []);
-            } catch (\Throwable $e) {
-                $GLOBALS['log']->error('Export. Can not get product attributes: ' . $e->getMessage());
-            }
-
-            if (!empty($foreignResult)) {
-                if (isset($foreignResult['collection'])) {
-                    $this->productAttributes[$productId] = $foreignResult['collection']->toArray();
-                } else {
-                    $this->productAttributes[$productId] = $foreignResult['list'];
-                }
-            }
-        }
-
-        return $this->productAttributes[$productId];
-    }
-
-    /**
-     * @param string $attributeId
-     * @param string $locale
-     * @param string $channelId
-     *
-     * @return string
-     */
     private static function createColumnName(string $attributeId, string $locale, string $channelId): string
     {
         return implode('_', ['attr', $attributeId, $locale, $channelId]);
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return bool
-     */
     private static function isEmpty($value): bool
     {
         return empty($value) && $value !== 0 && $value !== '0';
-    }
-
-    private function getEntityManager(): EntityManager
-    {
-        return $this->container->get('entityManager');
     }
 }

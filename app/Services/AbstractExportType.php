@@ -49,6 +49,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     private array $languages = [];
 
+    private array $pavs = [];
+
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
         $configuration = [['field' => 'id', 'column' => 'ID']];
@@ -316,7 +318,33 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         $result = $this->getEntityService()->findEntities($params);
 
-        return isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
+        $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
+
+        // caching ProductAttributeValues if Product
+        if ($this->data['feed']['entity'] === 'Product') {
+            $pavParams = [
+                'sortBy'  => 'id',
+                'offset'  => 0,
+                'maxSize' => \PHP_INT_MAX,
+                'where'   => [
+                    [
+                        'type'      => 'equals',
+                        'attribute' => 'productId',
+                        'value'     => array_column($list, 'id')
+                    ]
+                ]
+            ];
+
+            $pavResult = $this->getService('ProductAttributeValue')->findEntities($pavParams);
+            if (!empty($pavResult['total'])) {
+                $pavList = isset($pavResult['collection']) ? $pavResult['collection']->toArray() : $pavResult['list'];
+                foreach ($pavList as $pav) {
+                    $this->pavs[$pav['productId']][] = $pav;
+                }
+            }
+        }
+
+        return $list;
     }
 
     protected function createCacheFile(ExportJob $exportJob): string
@@ -358,6 +386,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $pushRow = [];
             foreach ($configuration as $rowNumber => $row) {
                 $row = $this->prepareRow($row);
+                if ($row['entity'] === 'Product') {
+                    $row['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
+                }
 
                 if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                     continue 1;
