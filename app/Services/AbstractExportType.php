@@ -41,8 +41,6 @@ use Treo\Core\FilePathBuilder;
 
 abstract class AbstractExportType extends \Espo\Core\Services\Base
 {
-    private array $foundAttrs = [];
-
     protected array $data;
 
     private array $services = [];
@@ -52,6 +50,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     private array $pavs = [];
 
     private int $iteration = 0;
+
+    private Base $convertor;
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -125,6 +125,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     public function export(array $data, ExportJob $exportJob): Attachment
     {
         $this->setData($data);
+        $this->convertor = $this->getDataConvertor();
         $this->createCacheFile($exportJob);
 
         return $this->runExport($exportJob->getData());
@@ -173,7 +174,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                     $row['locale'] = 'mainLocale';
                 }
             } else {
-                $attribute = $this->getAttributeById($row['attributeId']);
+                $attribute = $this->convertor->getEntity('Attribute', $row['attributeId']);
                 if (empty($attribute->get('isMultilang'))) {
                     $row['locale'] = null;
                 }
@@ -188,7 +189,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         // for attributes
         if (!empty($row['attributeId'])) {
-            $attribute = $this->getAttributeById($row['attributeId']);
+            $attribute = $this->convertor->getEntity('Attribute', $row['attributeId']);
 
             $locale = $row['locale'];
             if ($locale === 'mainLocale') {
@@ -236,27 +237,14 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $row['column'];
     }
 
-    protected function getAttributeById(string $id): Entity
-    {
-        if (!isset($this->foundAttrs[$id])) {
-            $attribute = $this->getEntityManager()->getEntity('Attribute', $id);
-            if (empty($attribute)) {
-                throw new NotFound("Can't find provided attribute.");
-            }
-            $this->foundAttrs[$id] = $attribute;
-        }
-
-        return $this->foundAttrs[$id];
-    }
-
     protected function getContainer(): Container
     {
         return $this->getInjection('container');
     }
 
-    protected function getDataConvertor(string $scope): Base
+    protected function getDataConvertor(): Base
     {
-        $className = "Export\\DataConvertor\\" . $scope;
+        $className = "Export\\DataConvertor\\" . $this->data['feed']['data']['entity'];
 
         if (!class_exists($className)) {
             $className = Base::class;
@@ -339,6 +327,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function loadPavs(array $productsIds): void
     {
+        $this->pavs = [];
+
         $pavParams = [
             'sortBy'  => 'id',
             'offset'  => 0,
@@ -412,8 +402,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $this->data['channelLocales'] = $channel->get('locales');
         }
 
-        $convertor = $this->getDataConvertor($data['entity']);
-
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
         $filePath = $this->createPath();
@@ -442,7 +430,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                         continue 1;
                     }
 
-                    $converted = $convertor->convert($record, $row);
+                    $converted = $this->convertor->convert($record, $row);
 
                     $n = 0;
                     foreach ($converted as $colName => $value) {
@@ -450,7 +438,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                             'number' => $rowNumber,
                             'pos'    => $rowNumber * 1000 + $n,
                             'name'   => $colName,
-                            'label'  => $convertor->getColumnLabel($colName, $this->data, $rowNumber)
+                            'label'  => $this->convertor->getColumnLabel($colName, $this->data, $rowNumber)
                         ];
                         $n++;
                     }

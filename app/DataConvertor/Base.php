@@ -210,6 +210,26 @@ class Base
         return $colName;
     }
 
+    public function getEntity(string $scope, string $id)
+    {
+        if (!isset($this->entityItem[$scope][$id])) {
+            $this->entityItem[$scope][$id] = $this->getService($scope)->getEntity($id);
+        }
+
+        return $this->entityItem[$scope][$id];
+    }
+
+    public function findLinkedEntities(string $scope, string $id, string $field, array $params)
+    {
+        $key = "{$id}_{$field}_" . implode('-', $params);
+
+        if (!isset($this->linkedEntities[$key])) {
+            $this->linkedEntities[$key] = $this->getService($scope)->findLinkedEntities($id, $field, $params);
+        }
+
+        return $this->linkedEntities[$key];
+    }
+
     /**
      * @param string $type
      * @param array  $record
@@ -383,25 +403,5 @@ class Base
         }
 
         return str_replace($delimiter, '\\' . $delimiter, str_replace('\\' . $delimiter, $delimiter, $value));
-    }
-
-    protected function getEntity(string $scope, string $id)
-    {
-        if (!isset($this->entityItem[$scope][$id])) {
-            $this->entityItem[$scope][$id] = $this->getService($scope)->getEntity($id);
-        }
-
-        return $this->entityItem[$scope][$id];
-    }
-
-    protected function findLinkedEntities(string $scope, string $id, string $field, array $params)
-    {
-        $key = "{$id}_{$field}_" . implode('-', $params);
-
-        if (!isset($this->linkedEntities[$key])) {
-            $this->linkedEntities[$key] = $this->getService($scope)->findLinkedEntities($id, $field, $params);
-        }
-
-        return $this->linkedEntities[$key];
     }
 }
