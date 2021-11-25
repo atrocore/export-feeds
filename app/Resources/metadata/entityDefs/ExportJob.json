@@ -74,6 +74,9 @@
       "type": "datetime",
       "readOnly": true
     },
+    "sortOrder": {
+      "type": "int"
+    },
     "data": {
       "type": "jsonObject"
     }
@@ -114,7 +117,7 @@
     }
   },
   "collection": {
-    "sortBy": "createdAt",
+    "sortBy": "sortOrder",
     "asc": false
   },
   "indexes": {

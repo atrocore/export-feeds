@@ -33,9 +33,6 @@ class ExportJob extends Base
         return $this->getEntityManager()->getRepository('QueueItem')->where(['data*' => '%"exportJobId":"' . $exportJobId . '"%'])->findOne();
     }
 
-    /**
-     * @inheritDoc
-     */
     protected function init()
     {
         parent::init();
@@ -43,17 +40,20 @@ class ExportJob extends Base
         $this->addDependency('language');
     }
 
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     */
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        $feed = $entity->get('exportFeed');
-        if (empty($feed)) {
+        // set sort order
+        if ($entity->isNew()) {
+            $last = $this->select(['sortOrder'])->where(['exportFeedId' => $entity->get('exportFeedId')])->order('sortOrder', 'DESC')->findOne();
+            $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
+        }
+
+        // export feed is required
+        if (empty($feed = $entity->get('exportFeed'))) {
             throw new BadRequest('Export Feed is required.');
         }
 
+        // remove old jobs
         $jobs = $this->where(['exportFeedId' => $feed->get('id')])->order('createdAt')->find();
         $jobsCount = count($jobs);
         foreach ($jobs as $job) {
@@ -66,12 +66,6 @@ class ExportJob extends Base
         parent::beforeSave($entity, $options);
     }
 
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     *
-     * @throws BadRequest
-     */
     protected function beforeRemove(Entity $entity, array $options = [])
     {
         if (!empty($job = $this->getExportJob($entity->get('id')))) {

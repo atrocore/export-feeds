@@ -32,6 +32,15 @@ class V1Dot3Dot1 extends Base
         $this->execute("UPDATE `export_feed` SET jobs_max=10 WHERE deleted=0");
         $this->execute("ALTER TABLE `export_job` ADD data MEDIUMTEXT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_feed` ADD `limit` INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("ALTER TABLE `export_job` ADD sort_order INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+
+        try {
+            /** @var \Espo\ORM\EntityManager $em */
+            $em = (new \Treo\Core\Application())->getContainer()->get('entityManager');
+            $em->getRepository('ExportJob')->removeCollection();
+        } catch (\Throwable $e) {
+            // ignore
+        }
     }
 
     public function down(): void
