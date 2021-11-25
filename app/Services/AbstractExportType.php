@@ -322,29 +322,70 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         // caching ProductAttributeValues if Product
         if ($this->data['feed']['entity'] === 'Product') {
-            $pavParams = [
-                'sortBy'  => 'id',
-                'offset'  => 0,
-                'maxSize' => \PHP_INT_MAX,
-                'where'   => [
-                    [
-                        'type'      => 'equals',
-                        'attribute' => 'productId',
-                        'value'     => array_column($list, 'id')
-                    ]
-                ]
-            ];
-
-            $pavResult = $this->getService('ProductAttributeValue')->findEntities($pavParams);
-            if (!empty($pavResult['total'])) {
-                $pavList = isset($pavResult['collection']) ? $pavResult['collection']->toArray() : $pavResult['list'];
-                foreach ($pavList as $pav) {
-                    $this->pavs[$pav['productId']][] = $pav;
-                }
-            }
+            $this->loadPavs(array_column($list, 'id'));
         }
 
         return $list;
+    }
+
+    protected function loadPavs(array $productsIds): void
+    {
+        $pavParams = [
+            'sortBy'  => 'id',
+            'offset'  => 0,
+            'maxSize' => \PHP_INT_MAX,
+            'where'   => [
+                [
+                    'type'      => 'equals',
+                    'attribute' => 'productId',
+                    'value'     => $productsIds
+                ]
+            ]
+        ];
+
+        $selectParams = $this->getSelectManager('ProductAttributeValue')->getSelectParams($pavParams, true, true);
+        foreach (['customJoin', 'additionalSelectColumns', 'customWhere'] as $key) {
+            if (isset($selectParams[$key])) {
+                unset($selectParams[$key]);
+            }
+        }
+
+        $selectFields = ['id', 'productId', 'attributeId', 'scope', 'channelId', 'value', 'data'];
+        if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
+            foreach ($locales as $locale) {
+                $selectFields[] = Util::toCamelCase('value_' . strtolower($locale));
+            }
+        }
+
+        $pavs = $this
+            ->getEntityManager()
+            ->getRepository('ProductAttributeValue')
+            ->select($selectFields)
+            ->find($selectParams)
+            ->toArray();
+
+        if (!empty($pavs)) {
+            $attrs = $this
+                ->getEntityManager()
+                ->getRepository('Attribute')
+                ->select(['id', 'name', 'code', 'type'])
+                ->where(['id' => array_column($pavs, 'attributeId')])
+                ->find()
+                ->toArray();
+            $preparedAttrs = [];
+            foreach ($attrs as $attr) {
+                $preparedAttrs[$attr['id']] = $attr;
+            }
+
+            foreach ($pavs as $pav) {
+                $row = $pav;
+                $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
+                $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
+                $row['attributeType'] = $preparedAttrs[$pav['attributeId']]['type'];
+
+                $this->pavs[$pav['productId']][] = $row;
+            }
+        }
     }
 
     protected function createCacheFile(ExportJob $exportJob): string
