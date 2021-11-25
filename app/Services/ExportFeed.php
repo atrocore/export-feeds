@@ -222,7 +222,7 @@ class ExportFeed extends Base
         }
     }
 
-    public function getExportTypeService(string $type): ExportTypeSimple
+    public function getExportTypeService(string $type): AbstractExportType
     {
         return $this->getInjection('serviceFactory')->create('ExportType' . ucfirst($type));
     }
