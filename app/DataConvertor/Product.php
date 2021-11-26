@@ -69,7 +69,7 @@ class Product extends Convertor
 
     protected function convertAttributeValue(array $record, array $configuration): array
     {
-        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        $result = [];
 
         if (!empty($configuration['pavs'])) {
             $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale' ? $configuration['locale'] : null;
@@ -92,7 +92,7 @@ class Product extends Convertor
             }
 
             if (!empty($productAttribute)) {
-                $result[$configuration['column']] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, 'value', $configuration);
+                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']));
             }
         }
 
@@ -105,11 +105,11 @@ class Product extends Convertor
 
         if (!empty($configuration['pavs'])) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
-            $fieldDelimiterForRelation = $configuration['fieldDelimiterForRelation'];
             foreach ($configuration['pavs'] as $productAttribute) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
-                    $fieldResult[] = $this->prepareSimpleType($productAttribute['attributeType'], $productAttribute, $v, $configuration);
+                    $row = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $v]));
+                    $fieldResult[] = $row[$configuration['column']];
                 }
 
                 $locale = '';
@@ -154,7 +154,7 @@ class Product extends Convertor
                     'channelLabel'   => $channelLabel
                 ];
 
-                $result[$columnName] = implode($fieldDelimiterForRelation, self::escapeValues($fieldResult, $fieldDelimiterForRelation));
+                $result[$columnName] = $fieldResult;
             }
 
             /**
