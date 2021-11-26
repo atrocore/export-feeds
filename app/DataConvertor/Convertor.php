@@ -54,9 +54,7 @@ class Convertor
 
         $type = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field'], 'type'], 'varchar');
 
-        $result = $this->convertType($type, $record, $configuration);
-
-        return $result;
+        return $this->convertType($type, $record, $configuration);
     }
 
     public function convertType(string $type, array $record, array $configuration): array

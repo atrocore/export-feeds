@@ -26,61 +26,61 @@ class LinkMultipleType extends AbstractType
 {
     public function convert(array &$result, array $record, array $configuration): void
     {
-        echo '<pre>';
-        print_r('123');
-        die();
-//        $field = $configuration['field'] . 'Id';
-//        $column = $configuration['column'];
-//
-//        $result[$column] = null;
-//        if (isset($record[$field]) && $record[$field] !== null) {
-//            $result[$column] = (string)$record[$field];
-//        }
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+        $entity = $configuration['entity'];
 
-//        $params = [];
-//        if (!empty($configuration['channelId'])) {
-//            $params['exportByChannelId'] = $configuration['channelId'];
-//        }
-//
-//        try {
-//            $foreignResult = $this->findLinkedEntities($entity, $record['id'], $field, $params);
-//        } catch (\Throwable $e) {
-//            $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
-//        }
-//
-//        if (empty($configuration['exportIntoSeparateColumns'])) {
-//            $result[$column] = $nullValue;
-//        }
-//
-//        if (!empty($foreignResult['total'])) {
-//            $foreignEntity = $this->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
-//
-//            if (isset($foreignResult['collection'])) {
-//                $foreignList = $foreignResult['collection']->toArray();
-//            } else {
-//                $foreignList = $foreignResult['list'];
-//            }
-//
-//            $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
-//
-//            $links = [];
-//            foreach ($foreignList as $foreignData) {
-//                $fieldResult = [];
-//                foreach ($exportBy as $v) {
-//                    $foreignType = (string)$this->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-//                    $fieldResult[] = $this->prepareSimpleType($foreignType, $foreignData, $v, $configuration);
-//                }
-//                $links[] = implode($fieldDelimiterForRelation, self::escapeValues($fieldResult, $fieldDelimiterForRelation));
-//            }
-//
-//            if (!empty($configuration['exportIntoSeparateColumns'])) {
-//                foreach ($links as $k => $link) {
-//                    $columnName = $column . '_' . ($k + 1);
-//                    $result[$columnName] = self::escapeValue($link, $delimiter);
-//                }
-//            } else {
-//                $result[$column] = implode($delimiter, self::escapeValues($links, $delimiter));
-//            }
-//        }
+        $params = [];
+        if (!empty($configuration['channelId'])) {
+            $params['exportByChannelId'] = $configuration['channelId'];
+        }
+
+        try {
+            $foreignResult = $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
+        } catch (\Throwable $e) {
+            $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
+        }
+
+        if (empty($configuration['exportIntoSeparateColumns'])) {
+            $result[$column] = null;
+        }
+
+        if (!empty($foreignResult['total'])) {
+            $foreignEntity = $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
+
+            if (isset($foreignResult['collection'])) {
+                $foreignList = $foreignResult['collection']->toArray();
+            } else {
+                $foreignList = $foreignResult['list'];
+            }
+
+            $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
+
+            $links = [];
+            foreach ($foreignList as $foreignData) {
+                $fieldResult = [];
+                foreach ($exportBy as $v) {
+                    $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+                    $foreignConfiguration = array_merge($configuration, ['field' => $v]);
+                    if ($foreignType === 'link') {
+                        $fieldResult[$v] = empty($record[$v]) ? null : $record[$v];
+                    } elseif ($foreignType === 'linkMultiple') {
+                        $fieldResult[$v] = null;
+                    } else {
+                        $fieldResult[$v] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
+                    }
+                }
+                $links[] = $fieldResult;
+            }
+
+            if (!empty($configuration['exportIntoSeparateColumns'])) {
+                foreach ($links as $k => $link) {
+                    $columnName = $column . '_' . ($k + 1);
+                    $result[$columnName] = $link;
+                }
+            } else {
+                $result[$column] = $links;
+            }
+        }
     }
 }
