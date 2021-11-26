@@ -6,7 +6,15 @@
           "name": "name"
         },
         {
+          "name": "file"
+        }
+      ],
+      [
+        {
           "name": "state"
+        },
+        {
+          "name": "stateMessage"
         }
       ],
       [
@@ -24,12 +32,6 @@
         {
           "name": "channels"
         }
-      ],
-      [
-        {
-          "name": "file"
-        },
-        false
       ]
     ],
     "style": "default",

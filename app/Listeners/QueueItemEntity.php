@@ -75,8 +75,11 @@ class QueueItemEntity extends AbstractListener
             return true;
         }
 
-        $exportJob->set('state', $entity->get('status'));
-        $this->getEntityManager()->saveEntity($exportJob);
+        if ($entity->get('status') !== 'Success') {
+            $exportJob->set('state', $entity->get('status'));
+            $this->getEntityManager()->saveEntity($exportJob);
+        }
+
         return true;
     }
 

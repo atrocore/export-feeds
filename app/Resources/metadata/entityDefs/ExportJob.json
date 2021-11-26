@@ -64,7 +64,8 @@
       "view": "export:views/export-job/fields/state"
     },
     "stateMessage": {
-      "type": "text"
+      "type": "text",
+      "readOnly": true
     },
     "start": {
       "type": "datetime",
