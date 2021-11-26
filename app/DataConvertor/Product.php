@@ -29,7 +29,7 @@ use Pim\Services\ProductAttributeValue;
 /**
  * Class Product
  */
-class Product extends Base
+class Product extends Convertor
 {
     private array $columnData = [];
 
@@ -53,7 +53,7 @@ class Product extends Base
             $label = $this->columnData[$colName]['attributeLabel'];
 
             if (empty($configuration['exportByChannelId'])) {
-                $fieldDelimiterForRelation = \Export\DataConvertor\Base::DELIMITER;
+                $fieldDelimiterForRelation = \Export\DataConvertor\Convertor::DELIMITER;
                 if (!empty($configuration['feed']['data']['fieldDelimiterForRelation'])) {
                     $fieldDelimiterForRelation = $configuration['feed']['data']['fieldDelimiterForRelation'];
                 }

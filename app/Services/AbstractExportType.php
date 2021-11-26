@@ -25,17 +25,15 @@ namespace Export\Services;
 use Espo\Core\Container;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
 use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
-use Espo\ORM\Entity;
 use Espo\ORM\EntityManager;
 use Espo\Services\Record;
-use Export\DataConvertor\Base;
+use Export\DataConvertor\Convertor;
 use Export\Entities\ExportJob;
 use Treo\Core\FilePathBuilder;
 
@@ -51,7 +49,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     private int $iteration = 0;
 
-    private Base $convertor;
+    private Convertor $convertor;
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -162,7 +160,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $row['markForNotLinkedAttribute'] = !empty($feedData['markForNotLinkedAttribute']) ? $feedData['markForNotLinkedAttribute'] : '--';
         $row['decimalMark'] = !empty($feedData['decimalMark']) ? $feedData['decimalMark'] : ',';
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
-        $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : \Export\DataConvertor\Base::DELIMITER;
+        $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : \Export\DataConvertor\Convertor::DELIMITER;
         $row['entity'] = $feedData['entity'];
 
         if (!empty($this->data['channelLocales'])) {
@@ -242,16 +240,16 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $this->getInjection('container');
     }
 
-    protected function getDataConvertor(): Base
+    protected function getDataConvertor(): Convertor
     {
         $className = "Export\\DataConvertor\\" . $this->data['feed']['data']['entity'];
 
         if (!class_exists($className)) {
-            $className = Base::class;
+            $className = Convertor::class;
         }
 
-        if (!is_a($className, Base::class, true)) {
-            throw new Error($className . ' should be instance of ' . Base::class);
+        if (!is_a($className, Convertor::class, true)) {
+            throw new Error($className . ' should be instance of ' . Convertor::class);
         }
 
         return new $className($this->getContainer());
