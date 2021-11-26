@@ -54,7 +54,7 @@ class ExportJob extends Base
         }
 
         // remove old jobs
-        $jobs = $this->where(['exportFeedId' => $feed->get('id')])->order('createdAt')->find();
+        $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
         $jobsCount = count($jobs);
         foreach ($jobs as $job) {
             if ($jobsCount > $feed->get('jobsMax')) {

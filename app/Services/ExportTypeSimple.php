@@ -107,6 +107,10 @@ class ExportTypeSimple extends AbstractExportType
 
             $rowData = Json::decode($json, true);
 
+            echo '<pre>';
+            print_r($rowData);
+            die();
+
             $resultRow = [];
             foreach ($data['columns'] as $pos => $columnData) {
                 $value = $rowData[$columnData['number']][$columnData['name']];

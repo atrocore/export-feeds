@@ -30,6 +30,7 @@ use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 use Export\ExportType\Simple;
+use Treo\Core\EventManager\Event;
 
 /**
  * ExportFeed service
@@ -300,7 +301,10 @@ class ExportFeed extends Base
 
         $result['data']->configuration = Json::decode(Json::encode($configuration));
 
-        return $result;
+        return $this
+            ->getInjection('eventManager')
+            ->dispatch('ExportFeedService', 'prepareFeedData', new Event(['feed' => $feed, 'result' => $result]))
+            ->getArgument('result');
     }
 
     /**
