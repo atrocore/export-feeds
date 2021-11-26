@@ -65,9 +65,7 @@
         {
           "name": "entity"
         },
-        {
-          "name": "delimiter"
-        }
+        false
       ],
       [
         {
@@ -87,11 +85,17 @@
       ],
       [
         {
-          "name": "fieldDelimiterForRelation"
+          "name": "delimiter"
         },
         {
-          "name": "markForNotLinkedAttribute"
+          "name": "fieldDelimiterForRelation"
         }
+      ],
+      [
+        {
+          "name": "markForNotLinkedAttribute"
+        },
+        false
       ]
     ]
   }
