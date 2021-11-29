@@ -71,18 +71,18 @@ class Product extends Convertor
     {
         $result = [];
 
-        if (!empty($configuration['pavs'])) {
+        if (!empty($record['pavs'])) {
             $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale' ? $configuration['locale'] : null;
 
             if (empty($configuration['channelId'])) {
-                foreach ($configuration['pavs'] as $v) {
+                foreach ($record['pavs'] as $v) {
                     if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && $v['locale'] == $locale) {
                         $productAttribute = $v;
                         break 1;
                     }
                 }
             } else {
-                foreach ($configuration['pavs'] as $v) {
+                foreach ($record['pavs'] as $v) {
                     if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $v['locale'] == $locale
                         && $configuration['channelId'] == $v['channelId']) {
                         $productAttribute = $v;
@@ -103,9 +103,11 @@ class Product extends Convertor
     {
         $result = [];
 
-        if (!empty($configuration['pavs'])) {
+        return [];
+
+        if (!empty($record['pavs'])) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
-            foreach ($configuration['pavs'] as $productAttribute) {
+            foreach ($record['pavs'] as $productAttribute) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
                     $row = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $v]));

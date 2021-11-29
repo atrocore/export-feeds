@@ -31,7 +31,8 @@ class UnitType extends AbstractType
 
         $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
-            $result[$column] = (float)$record[$field] . ' ' . $record[$field . 'Unit'];
+            $unit = $this->isPav($record) ? $record['data']['unit'] : $record[$field . 'Unit'];
+            $result[$column] = (float)$record[$field] . ' ' . $unit;
         }
     }
 }

@@ -34,4 +34,9 @@ abstract class AbstractType
     }
 
     abstract public function convert(array &$result, array $record, array $configuration): void;
+
+    protected function isPav(array $record): bool
+    {
+        return !empty($record['attributeCode']);
+    }
 }

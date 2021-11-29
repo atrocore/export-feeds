@@ -109,11 +109,6 @@ class Convertor
         return $this->linkedEntities[$key];
     }
 
-    protected function floatToNumber(float $value, $decimalMark, $thousandSeparator): string
-    {
-        return rtrim(rtrim(number_format($value, 3, $decimalMark, $thousandSeparator), '0'), $decimalMark);
-    }
-
     public function getMetadata(): Metadata
     {
         return $this->container->get('metadata');
@@ -131,29 +126,5 @@ class Convertor
     public function translate(string $key, string $tab, string $scope): string
     {
         return $this->container->get('language')->translate($key, $tab, $scope);
-    }
-
-    protected static function escapeValues(array $values, string $delimiter): array
-    {
-        foreach ($values as $k => $value) {
-            $values[$k] = self::escapeValue($value, $delimiter);
-        }
-
-        return $values;
-    }
-
-    /**
-     * @param mixed  $value
-     * @param string $delimiter
-     *
-     * @return mixed
-     */
-    protected static function escapeValue($value, string $delimiter)
-    {
-        if (!is_string($value)) {
-            return $value;
-        }
-
-        return str_replace($delimiter, '\\' . $delimiter, str_replace('\\' . $delimiter, $delimiter, $value));
     }
 }

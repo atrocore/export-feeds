@@ -31,7 +31,8 @@ class CurrencyType extends AbstractType
 
         $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
-            $result[$column] = (float)$record[$field] . ' ' . $record[$field . 'Currency'];
+            $currency = $this->isPav($record) ? $record['data']['currency'] : $record[$field . 'Currency'];
+            $result[$column] = (float)$record[$field] . ' ' . $currency;
         }
     }
 }
