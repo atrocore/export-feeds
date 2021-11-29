@@ -19,6 +19,12 @@
       ],
       [
         {
+          "name": "count"
+        },
+        false
+      ],
+      [
+        {
           "name": "start"
         },
         {

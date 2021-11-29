@@ -78,6 +78,11 @@
     "sortOrder": {
       "type": "int"
     },
+    "count": {
+      "type": "int",
+      "default": 0,
+      "readOnly": true
+    },
     "data": {
       "type": "jsonObject"
     }
