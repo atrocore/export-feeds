@@ -414,6 +414,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $file = fopen($fullFileName, 'a');
 
         $columns = [];
+        $count = 0;
 
         while (!empty($records = $this->getRecords())) {
             foreach ($records as $record) {
@@ -446,6 +447,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
                 $pushContent = Json::encode($pushRow) . PHP_EOL;
                 fwrite($file, $pushContent);
+                $count++;
             }
         }
 
@@ -464,6 +466,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $number++;
         }
 
+        $exportJob->set('count', $count);
         $exportJob->set('data', array_merge($exportJob->getData(), ['columns' => $sortedColumns, 'fullFileName' => $fullFileName]));
 
         return $fullFileName;
