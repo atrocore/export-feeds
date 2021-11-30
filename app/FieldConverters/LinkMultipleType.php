@@ -24,6 +24,8 @@ namespace Export\FieldConverters;
 
 class LinkMultipleType extends AbstractType
 {
+    protected bool $needStringResult = false;
+
     public function convert(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
@@ -42,7 +44,7 @@ class LinkMultipleType extends AbstractType
         }
 
         if (empty($configuration['exportIntoSeparateColumns'])) {
-            $result[$column] = null;
+            $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
         }
 
         if (!empty($foreignResult['total'])) {
@@ -70,7 +72,12 @@ class LinkMultipleType extends AbstractType
                         $fieldResult[$v] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
                     }
                 }
-                $links[] = $fieldResult;
+
+                if ($this->needStringResult) {
+                    $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
+                } else {
+                    $links[] = $fieldResult;
+                }
             }
 
             if (!empty($configuration['exportIntoSeparateColumns'])) {
@@ -79,13 +86,21 @@ class LinkMultipleType extends AbstractType
                     $result[$columnName] = $link;
                 }
             } else {
-                $result[$column] = $links;
+                if ($this->needStringResult) {
+                    $result[$column] = implode($configuration['delimiter'], $links);
+                } else {
+                    $result[$column] = $links;
+                }
             }
         }
+
+        $this->needStringResult = false;
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
+        $this->needStringResult = true;
+
         $this->convert($result, $record, $configuration);
     }
 }

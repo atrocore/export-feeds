@@ -26,16 +26,16 @@ use Espo\Core\Utils\Util;
 
 class ProductConvertor extends Convertor
 {
-    public function convert(array $record, array $configuration): array
+    public function convert(array $record, array $configuration, bool $toString = false): array
     {
         if (isset($configuration['attributeId'])) {
-            return $this->convertAttributeValue($record, $configuration);
+            return $this->convertAttributeValue($record, $configuration, $toString);
         }
 
-        return parent::convert($record, $configuration);
+        return parent::convert($record, $configuration, $toString);
     }
 
-    protected function convertAttributeValue(array $record, array $configuration): array
+    protected function convertAttributeValue(array $record, array $configuration, bool $toString = false): array
     {
         $result = [];
 
@@ -62,7 +62,7 @@ class ProductConvertor extends Convertor
                     $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
                 }
 
-                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $valueField]));
+                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $valueField]), $toString);
             }
         }
 
