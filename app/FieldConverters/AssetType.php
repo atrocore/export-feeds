@@ -22,23 +22,6 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
-class AssetType extends AbstractType
+class AssetType extends LinkType
 {
-    public function convert(array &$result, array $record, array $configuration): void
-    {
-        $field = $configuration['field'];
-        $column = $configuration['column'];
-
-        $result[$column] = null;
-        if (isset($record[$field]) && $record[$field] !== null) {
-            if (!empty($attachment = $this->convertor->getEntity('Attachment', $record[$field]))) {
-                $result[$column] = $attachment->get('url');
-            }
-        }
-    }
-
-    public function convertToString(array &$result, array $record, array $configuration): void
-    {
-        $this->convert($result, $record, $configuration);
-    }
 }

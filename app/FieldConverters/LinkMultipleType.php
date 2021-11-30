@@ -22,10 +22,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
-class LinkMultipleType extends AbstractType
+class LinkMultipleType extends LinkType
 {
-    protected bool $needStringResult = false;
-
     public function convert(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
@@ -64,13 +62,7 @@ class LinkMultipleType extends AbstractType
                 foreach ($exportBy as $v) {
                     $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                     $foreignConfiguration = array_merge($configuration, ['field' => $v]);
-                    if ($foreignType === 'link') {
-                        $fieldResult[$v] = empty($record[$v]) ? null : $record[$v];
-                    } elseif ($foreignType === 'linkMultiple') {
-                        $fieldResult[$v] = null;
-                    } else {
-                        $fieldResult[$v] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
-                    }
+                    $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
                 }
 
                 if ($this->needStringResult) {
@@ -94,11 +86,5 @@ class LinkMultipleType extends AbstractType
             }
         }
         $this->needStringResult = false;
-    }
-
-    public function convertToString(array &$result, array $record, array $configuration): void
-    {
-        $this->needStringResult = true;
-        $this->convert($result, $record, $configuration);
     }
 }
