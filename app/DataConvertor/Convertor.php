@@ -30,8 +30,6 @@ use Espo\Services\Record;
 
 class Convertor
 {
-    public const DELIMITER = '|';
-
     protected Container $container;
 
     private array $services = [];
