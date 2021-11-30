@@ -24,13 +24,16 @@ namespace Export\FieldConverters;
 
 class LinkType extends AbstractType
 {
+    protected bool $needStringResult = false;
+
     public function convert(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
         $entity = $configuration['entity'];
 
-        $result[$column] = null;
+        $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
+
         $linkId = $record[$field . 'Id'];
 
         if (!empty($linkId)) {
@@ -57,36 +60,58 @@ class LinkType extends AbstractType
                 if (!empty($foreign)) {
                     $foreignData = $foreign->toArray();
 
-                    $result[$column] = [];
+                    $fieldResult = [];
                     foreach ($exportBy as $v) {
                         $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                         $foreignConfiguration = array_merge($configuration, ['field' => $v]);
 
-                        if ($foreignType === 'link') {
-                            $result[$column][$v] = empty($record[$v]) ? null : $record[$v];
+                        if ($foreignType === 'link' && !empty($record[$v])) {
+                            $fieldResult[$v] = $record[$v];
                         } elseif ($foreignType === 'linkMultiple') {
-                            $result[$column][$v] = null;
+                            // ignore
                         } else {
-                            $result[$column][$v] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
+                            $fieldResult[$v] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
+                        }
+                    }
+
+                    if (!empty($fieldResult)) {
+                        if ($this->needStringResult) {
+                            $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
+                        } else {
+                            $result[$column] = $fieldResult;
                         }
                     }
                 } else {
-                    $result[$column] = null;
+                    if ($this->needStringResult) {
+                        $result[$column] = $configuration['emptyValue'];
+                    } else {
+                        $result[$column] = null;
+                    }
                 }
             } else {
-                $result[$column] = [];
+                $fieldResult = [];
                 foreach ($exportBy as $v) {
                     $key = $field . ucfirst($v);
                     if (isset($record[$key])) {
-                        $result[$column][$v] = $record[$key];
+                        $fieldResult[] = $record[$key];
+                    }
+                }
+
+                if (!empty($fieldResult)) {
+                    if ($this->needStringResult) {
+                        $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
+                    } else {
+                        $result[$column] = $fieldResult;
                     }
                 }
             }
         }
+        $this->needStringResult = false;
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
+        $this->needStringResult = true;
         $this->convert($result, $record, $configuration);
     }
 }

@@ -93,14 +93,12 @@ class LinkMultipleType extends AbstractType
                 }
             }
         }
-
         $this->needStringResult = false;
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
         $this->needStringResult = true;
-
         $this->convert($result, $record, $configuration);
     }
 }
