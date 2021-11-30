@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
-class CurrencyType extends AbstractType
+class CurrencyType extends FloatType
 {
     public function convert(array &$result, array $record, array $configuration): void
     {
@@ -38,6 +38,21 @@ class CurrencyType extends AbstractType
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
-        $this->convert($result, $record, $configuration);
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+        $emptyValue = $configuration['emptyValue'];
+        $nullValue = $configuration['nullValue'];
+        $decimalMark = $configuration['decimalMark'];
+        $thousandSeparator = $configuration['thousandSeparator'];
+
+        $result[$column] = $nullValue;
+        if (isset($record[$field])) {
+            if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
+            } else {
+                $currency = $this->isPav($record) ? $record['data']['currency'] : $record[$field . 'Currency'];
+                $result[$column] = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator) . ' ' . $currency;
+            }
+        }
     }
 }

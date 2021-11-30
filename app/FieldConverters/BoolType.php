@@ -34,6 +34,9 @@ class BoolType extends AbstractType
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
-        $this->convert($result, $record, $configuration);
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+
+        $result[$column] = !empty($record[$field]) ? 'TRUE' : 'FALSE';
     }
 }

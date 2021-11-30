@@ -37,6 +37,16 @@ class VarcharType extends AbstractType
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
-        $this->convert($result, $record, $configuration);
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+
+        $result[$column] = $configuration['nullValue'];
+        if (isset($record[$field])) {
+            if (empty($record[$field])) {
+                $result[$column] = $record[$field] === null ? $configuration['nullValue'] : $configuration['emptyValue'];
+            } else {
+                $result[$column] = $record[$field];
+            }
+        }
     }
 }

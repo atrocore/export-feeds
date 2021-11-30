@@ -37,6 +37,20 @@ class IntType extends AbstractType
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
-        $this->convert($result, $record, $configuration);
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+        $emptyValue = $configuration['emptyValue'];
+        $nullValue = $configuration['nullValue'];
+        $decimalMark = $configuration['decimalMark'];
+        $thousandSeparator = $configuration['thousandSeparator'];
+
+        $result[$column] = $nullValue;
+        if (isset($record[$field])) {
+            if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
+            } else {
+                $result[$column] = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
+            }
+        }
     }
 }

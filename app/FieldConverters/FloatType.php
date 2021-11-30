@@ -37,6 +37,25 @@ class FloatType extends AbstractType
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
-        $this->convert($result, $record, $configuration);
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+        $emptyValue = $configuration['emptyValue'];
+        $nullValue = $configuration['nullValue'];
+        $decimalMark = $configuration['decimalMark'];
+        $thousandSeparator = $configuration['thousandSeparator'];
+
+        $result[$column] = $nullValue;
+        if (isset($record[$field])) {
+            if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
+                $result = $record[$field] === null ? $nullValue : $emptyValue;
+            } else {
+                $result = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
+            }
+        }
+    }
+
+    protected function floatToNumber(float $value, $decimalMark, $thousandSeparator): string
+    {
+        return rtrim(rtrim(number_format($value, 3, $decimalMark, $thousandSeparator), '0'), $decimalMark);
     }
 }

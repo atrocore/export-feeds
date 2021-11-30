@@ -37,6 +37,21 @@ class ArrayType extends AbstractType
 
     public function convertToString(array &$result, array $record, array $configuration): void
     {
-        $this->convert($result, $record, $configuration);
+        $field = $configuration['field'];
+        $column = $configuration['column'];
+        $emptyValue = $configuration['emptyValue'];
+        $nullValue = $configuration['nullValue'];
+        $delimiter = $configuration['delimiter'];
+
+        $result[$column] = $nullValue;
+        if (isset($record[$field])) {
+            if (empty($record[$field])) {
+                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
+            } else {
+                if (is_array($record[$field])) {
+                    $result[$column] = implode($delimiter, $record[$field]);
+                }
+            }
+        }
     }
 }
