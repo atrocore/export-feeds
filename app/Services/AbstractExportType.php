@@ -42,6 +42,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 {
     protected array $data;
 
+    protected Convertor $convertor;
+
     private array $services = [];
 
     private array $languages = [];
@@ -124,6 +126,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     public function export(array $data, ExportJob $exportJob): Attachment
     {
         $this->setData($data);
+        $this->convertor = $this->getDataConvertor();
         $this->createCacheFile($exportJob);
 
         return $this->runExport($exportJob->getData());
@@ -242,7 +245,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getDataConvertor(): Convertor
     {
-        $className = "Export\\DataConvertor\\" . $this->data['feed']['data']['entity'];
+        $className = "Export\\DataConvertor\\{$this->data['feed']['data']['entity']}Convertor";
 
         if (!class_exists($className)) {
             $className = Convertor::class;
