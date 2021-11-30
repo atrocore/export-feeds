@@ -22,6 +22,8 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Espo\Core\Utils\Util;
+
 class ProductConvertor extends Convertor
 {
     public function convert(array $record, array $configuration): array
@@ -38,23 +40,16 @@ class ProductConvertor extends Convertor
         $result = [];
 
         if (!empty($record['pavs'])) {
-            $locale = !empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale' ? $configuration['locale'] : null;
-
             if (empty($configuration['channelId'])) {
                 foreach ($record['pavs'] as $v) {
-                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global' && $v['locale'] == $locale) {
+                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
                         $productAttribute = $v;
                         break 1;
                     }
                 }
             } else {
                 foreach ($record['pavs'] as $v) {
-                    if (
-                        $v['attributeId'] == $configuration['attributeId']
-                        && $v['scope'] == 'Channel'
-                        && $v['locale'] == $locale
-                        && $configuration['channelId'] == $v['channelId']
-                    ) {
+                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
                         $productAttribute = $v;
                         break 1;
                     }
@@ -62,7 +57,12 @@ class ProductConvertor extends Convertor
             }
 
             if (!empty($productAttribute)) {
-                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']));
+                $valueField = 'value';
+                if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
+                    $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
+                }
+
+                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $valueField]));
             }
         }
 

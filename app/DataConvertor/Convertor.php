@@ -71,24 +71,6 @@ class Convertor
         return $result;
     }
 
-    public function getColumnLabel(string $colName, array $configuration, int $num): string
-    {
-        if (empty($colName)) {
-            $entity = $configuration['feed']['data']['entity'];
-            $field = $configuration['feed']['data']['configuration'][$num]['field'];
-
-            $fieldData = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $field]);
-
-            if (empty($fieldData['multilangLocale'])) {
-                throw new Error('Locale field expected.');
-            }
-
-            throw new BadRequest(sprintf($this->translate('noFieldLabel', 'exceptions', 'ExportFeed'), $fieldData['multilangField'], $fieldData['multilangLocale']));
-        }
-
-        return $colName;
-    }
-
     public function getEntity(string $scope, string $id)
     {
         if (!isset($this->entityItem[$scope][$id])) {
