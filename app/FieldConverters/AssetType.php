@@ -36,4 +36,9 @@ class AssetType extends AbstractType
             }
         }
     }
+
+    public function convertToString(array &$result, array $record, array $configuration): void
+    {
+        $this->convert($result, $record, $configuration);
+    }
 }

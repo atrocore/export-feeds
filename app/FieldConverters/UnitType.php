@@ -35,4 +35,9 @@ class UnitType extends AbstractType
             $result[$column] = (float)$record[$field] . ' ' . $unit;
         }
     }
+
+    public function convertToString(array &$result, array $record, array $configuration): void
+    {
+        $this->convert($result, $record, $configuration);
+    }
 }

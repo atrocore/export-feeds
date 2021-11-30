@@ -34,4 +34,9 @@ class IntType extends AbstractType
             $result[$column] = (int)$record[$field];
         }
     }
+
+    public function convertToString(array &$result, array $record, array $configuration): void
+    {
+        $this->convert($result, $record, $configuration);
+    }
 }

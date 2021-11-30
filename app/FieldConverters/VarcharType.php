@@ -34,4 +34,9 @@ class VarcharType extends AbstractType
             $result[$column] = (string)$record[$field];
         }
     }
+
+    public function convertToString(array &$result, array $record, array $configuration): void
+    {
+        $this->convert($result, $record, $configuration);
+    }
 }

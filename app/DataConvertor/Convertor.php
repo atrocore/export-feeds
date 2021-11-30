@@ -45,7 +45,7 @@ class Convertor
         $this->container = $container;
     }
 
-    public function convert(array $record, array $configuration): array
+    public function convert(array $record, array $configuration, bool $toString = false): array
     {
         $method = 'convert' . ucfirst($configuration['field']);
         if (method_exists($this, $method)) {
@@ -54,10 +54,10 @@ class Convertor
 
         $type = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field'], 'type'], 'varchar');
 
-        return $this->convertType($type, $record, $configuration);
+        return $this->convertType($type, $record, $configuration, $toString);
     }
 
-    public function convertType(string $type, array $record, array $configuration): array
+    public function convertType(string $type, array $record, array $configuration, bool $toString = false): array
     {
         $result = [];
 
@@ -66,7 +66,13 @@ class Convertor
             $fieldConverterClass = '\Export\FieldConverters\VarcharType';
         }
 
-        (new $fieldConverterClass($this))->convert($result, $record, $configuration);
+        $fieldConverter = new $fieldConverterClass($this);
+
+        if ($toString) {
+            $fieldConverter->convertToString($result, $record, $configuration);
+        } else {
+            $fieldConverter->convert($result, $record, $configuration);
+        }
 
         return $result;
     }
