@@ -84,8 +84,53 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
+    protected function prepareColumns(array $data): array
+    {
+        $columns = [];
+
+        $cacheFile = fopen($data['fullFileName'], "r");
+        while (($json = fgets($cacheFile)) !== false) {
+            if (empty($json)) {
+                continue;
+            }
+
+            foreach ($data['configuration'] as $rowNumber => $row) {
+                $converted = $this->convertor->convert(Json::decode($json, true), $row);
+                $n = 0;
+                foreach ($converted as $colName => $value) {
+                    $columns[$rowNumber . '_' . $colName] = [
+                        'number' => $rowNumber,
+                        'pos'    => $rowNumber * 1000 + $n,
+                        'name'   => $colName
+                    ];
+                    $n++;
+                }
+            }
+        }
+        fclose($cacheFile);
+
+        $result = [];
+
+        // sorting columns
+        $number = 0;
+        while (count($columns) > 0) {
+            foreach ($columns as $k => $row) {
+                if ($row['number'] == $number) {
+                    $result[] = $row;
+                    unset($columns[$k]);
+                }
+            }
+            $number++;
+        }
+
+        return $result;
+    }
+
+
     protected function storeCsvFile(array $data, string $fileName): void
     {
+        $columns = $this->prepareColumns($data);
+
         $this->createDir($fileName);
 
         // prepare settings
@@ -96,7 +141,7 @@ class ExportTypeSimple extends AbstractExportType
 
         // prepare header
         if ($this->data['feed']['isFileHeaderRow']) {
-            fputcsv($fp, array_column($data['columns'], 'label'), $delimiter, $enclosure, '~~~~~');
+            fputcsv($fp, array_column($columns, 'name'), $delimiter, $enclosure, '~~~~~');
         }
 
         $cacheFile = fopen($data['fullFileName'], "r");
@@ -105,15 +150,14 @@ class ExportTypeSimple extends AbstractExportType
                 continue;
             }
 
-            $rowData = Json::decode($json, true);
+            $rowData = [];
+            foreach ($data['configuration'] as $row) {
+                $rowData[] = $this->convertor->convert(Json::decode($json, true), $row, true);
+            }
 
             $resultRow = [];
-            foreach ($data['columns'] as $pos => $columnData) {
-                $value = $rowData[$columnData['number']][$columnData['name']];
-                if (is_array($value)) {
-                    $value = '[' . implode(",", $value) . ']';
-                }
-                $resultRow[$pos] = $value;
+            foreach ($columns as $pos => $columnData) {
+                $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
             }
 
             fputcsv($fp, $resultRow, $delimiter, $enclosure, '~~~~~');

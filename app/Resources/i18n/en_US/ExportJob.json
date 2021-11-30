@@ -6,7 +6,8 @@
     "state": "State",
     "stateMessage": "Message",
     "start": "Start",
-    "end": "End"
+    "end": "End",
+    "count": "Count"
   },
   "links": {
     "channel": "Channel",

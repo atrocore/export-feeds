@@ -19,7 +19,7 @@
     "nullValue": "Null Value",
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
-    "jobsMax": "Amount of Export Jobs to be stored",
+    "jobsMax": "Amount of \"Success\" Export Jobs to be stored",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
     "limit": "Maximum Number of Records per Iteration",

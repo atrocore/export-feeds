@@ -6,6 +6,7 @@
     "exportFeed": "Export Feed",
     "attribute": "Attribute",
     "exportBy": "Related Entity Fields",
+    "addAllLocales": "Add for all languages",
     "remove": "Remove",
     "exportIntoSeparateColumns": "Separate columns",
     "type": "Type",

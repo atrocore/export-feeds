@@ -15,7 +15,7 @@
     "delimiter": "Listenwerttrennzeichen",
     "exportByOrChannel": "Export von/Kanal",
     "data": "Daten",
-    "jobsMax": "Anzahl der zu speichernden Exportaufträge",
+    "jobsMax": "Anzahl der zu speichernden \"Erfolg\" Exportaufträge",
     "exportJobs": "Exportaufträge",
     "emptyValue": "Leerer Wert",
     "nullValue": "Nullwert",

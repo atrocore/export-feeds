@@ -261,6 +261,11 @@
           "conditionGroup": [
             {
               "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            },
+            {
+              "type": "equals",
               "attribute": "entity",
               "value": "Product"
             }

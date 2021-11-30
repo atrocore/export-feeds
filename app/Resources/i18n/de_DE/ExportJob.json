@@ -6,7 +6,8 @@
     "state": "Status",
     "stateMessage": "Statusmeldung",
     "start": "Start",
-    "end": "End"
+    "end": "End",
+    "count": "Anzahl"
   },
   "links": {
     "channel": "Kanal",

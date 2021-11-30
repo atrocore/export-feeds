@@ -49,10 +49,11 @@ class QueueManagerExport extends QueueManagerBase
         $this->getEntityManager()->saveEntity($exportJob);
 
         try {
-            $attachment = $this->getContainer()->get('serviceFactory')->create('ExportFeed')->getExportTypeService($data['feed']['type'])->export($data, $exportJob);
+            /** @var AbstractExportType $typeService */
+            $typeService = $this->getContainer()->get('serviceFactory')->create('ExportFeed')->getExportTypeService($data['feed']['type']);
             $exportJob->set('end', (new \DateTime())->format('Y-m-d H:i:s'));
             $exportJob->set('state', 'Success');
-            $exportJob->set('fileId', $attachment->get('id'));
+            $exportJob->set('fileId', $typeService->export($data, $exportJob)->get('id'));
             $this->getEntityManager()->saveEntity($exportJob);
         } catch (\Throwable $e) {
             $exportJob->set('end', (new \DateTime())->format('Y-m-d H:i:s'));

@@ -25,7 +25,6 @@ namespace Export\Services;
 use Espo\Core\Container;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
@@ -35,13 +34,15 @@ use Espo\Entities\Attachment;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityManager;
 use Espo\Services\Record;
-use Export\DataConvertor\Base;
+use Export\DataConvertor\Convertor;
 use Export\Entities\ExportJob;
 use Treo\Core\FilePathBuilder;
 
 abstract class AbstractExportType extends \Espo\Core\Services\Base
 {
     protected array $data;
+
+    protected Convertor $convertor;
 
     private array $services = [];
 
@@ -51,7 +52,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     private int $iteration = 0;
 
-    private Base $convertor;
+    private array $attributes = [];
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -162,7 +163,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $row['markForNotLinkedAttribute'] = !empty($feedData['markForNotLinkedAttribute']) ? $feedData['markForNotLinkedAttribute'] : '--';
         $row['decimalMark'] = !empty($feedData['decimalMark']) ? $feedData['decimalMark'] : ',';
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
-        $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : \Export\DataConvertor\Base::DELIMITER;
+        $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : '|';
         $row['entity'] = $feedData['entity'];
 
         if (!empty($this->data['channelLocales'])) {
@@ -174,7 +175,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                     $row['locale'] = 'mainLocale';
                 }
             } else {
-                $attribute = $this->convertor->getEntity('Attribute', $row['attributeId']);
+                $attribute = $this->getAttribute($row['attributeId']);
                 if (empty($attribute->get('isMultilang'))) {
                     $row['locale'] = null;
                 }
@@ -189,7 +190,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         // for attributes
         if (!empty($row['attributeId'])) {
-            $attribute = $this->convertor->getEntity('Attribute', $row['attributeId']);
+            $attribute = $this->getAttribute($row['attributeId']);
 
             $locale = $row['locale'];
             if ($locale === 'mainLocale') {
@@ -242,16 +243,16 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $this->getInjection('container');
     }
 
-    protected function getDataConvertor(): Base
+    protected function getDataConvertor(): Convertor
     {
-        $className = "Export\\DataConvertor\\" . $this->data['feed']['data']['entity'];
+        $className = "Export\\DataConvertor\\{$this->data['feed']['data']['entity']}Convertor";
 
         if (!class_exists($className)) {
-            $className = Base::class;
+            $className = Convertor::class;
         }
 
-        if (!is_a($className, Base::class, true)) {
-            throw new Error($className . ' should be instance of ' . Base::class);
+        if (!is_a($className, Convertor::class, true)) {
+            throw new Error($className . ' should be instance of ' . Convertor::class);
         }
 
         return new $className($this->getContainer());
@@ -408,67 +409,51 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $fullFilePath = $this->getConfig()->get('filesPath', 'upload/files/') . $filePath;
         Util::createDir($fullFilePath);
 
-        $fullFileName = $fullFilePath . '/' . $fileName;
+        $jobMetadata = [
+            'configuration' => [],
+            'fullFileName'  => $fullFilePath . '/' . $fileName
+        ];
+
+        foreach ($configuration as $rowNumber => $row) {
+            $row = $this->prepareRow($row);
+            if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
+                continue 1;
+            }
+            $jobMetadata['configuration'][$rowNumber] = $row;
+        }
 
         // clearing file if it needs
-        file_put_contents($fullFileName, '');
+        file_put_contents($jobMetadata['fullFileName'], '');
 
-        $file = fopen($fullFileName, 'a');
+        $file = fopen($jobMetadata['fullFileName'], 'a');
 
-        $columns = [];
-
+        $count = 0;
         while (!empty($records = $this->getRecords())) {
             foreach ($records as $record) {
-                $pushRow = [];
-                foreach ($configuration as $rowNumber => $row) {
-                    $row = $this->prepareRow($row);
-                    if ($row['entity'] === 'Product') {
-                        $row['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
-                    }
-
-                    if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
-                        continue 1;
-                    }
-
-                    $converted = $this->convertor->convert($record, $row);
-
-                    $n = 0;
-                    foreach ($converted as $colName => $value) {
-                        $columns[$rowNumber . '_' . $colName] = [
-                            'number' => $rowNumber,
-                            'pos'    => $rowNumber * 1000 + $n,
-                            'name'   => $colName,
-                            'label'  => $this->convertor->getColumnLabel($colName, $this->data, $rowNumber)
-                        ];
-                        $n++;
-                    }
-
-                    $pushRow[] = $converted;
+                if ($this->data['feed']['entity'] === 'Product') {
+                    $record['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
                 }
 
-                $pushContent = Json::encode($pushRow) . PHP_EOL;
-                fwrite($file, $pushContent);
+                fwrite($file, Json::encode($record) . PHP_EOL);
+                $count++;
             }
         }
 
         fclose($file);
 
-        // sorting columns
-        $sortedColumns = [];
-        $number = 0;
-        while (count($columns) > 0) {
-            foreach ($columns as $k => $row) {
-                if ($row['number'] == $number) {
-                    $sortedColumns[] = $row;
-                    unset($columns[$k]);
-                }
-            }
-            $number++;
+        $exportJob->set('count', $count);
+        $exportJob->set('data', array_merge($exportJob->getData(), $jobMetadata));
+
+        return $jobMetadata['fullFileName'];
+    }
+
+    protected function getAttribute(string $id): Entity
+    {
+        if (!isset($this->attributes[$id])) {
+            $this->attributes[$id] = $this->getEntityManager()->getEntity('Attribute', $id);
         }
 
-        $exportJob->set('data', array_merge($exportJob->getData(), ['columns' => $sortedColumns, 'fullFileName' => $fullFileName]));
-
-        return $fullFileName;
+        return $this->attributes[$id];
     }
 
     protected function getEntityManager(): EntityManager

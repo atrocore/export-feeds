@@ -64,7 +64,8 @@
       "view": "export:views/export-job/fields/state"
     },
     "stateMessage": {
-      "type": "text"
+      "type": "text",
+      "readOnly": true
     },
     "start": {
       "type": "datetime",
@@ -76,6 +77,11 @@
     },
     "sortOrder": {
       "type": "int"
+    },
+    "count": {
+      "type": "int",
+      "default": 0,
+      "readOnly": true
     },
     "data": {
       "type": "jsonObject"

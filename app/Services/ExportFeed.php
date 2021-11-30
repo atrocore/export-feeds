@@ -29,8 +29,8 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
-use Export\ExportType\AbstractType;
 use Export\ExportType\Simple;
+use Treo\Core\EventManager\Event;
 
 /**
  * ExportFeed service
@@ -184,6 +184,8 @@ class ExportFeed extends Base
             return false;
         }
 
+        $exportConfiguratorItemService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
+
         $attributes = $this
             ->getEntityManager()
             ->getRepository('Attribute')
@@ -194,13 +196,17 @@ class ExportFeed extends Base
                 continue;
             }
 
-            $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
-            $item->set('type', 'Attribute');
-            $item->set('name', $attribute->get('name'));
-            $item->set('locale', 'mainLocale');
-            $item->set('exportFeedId', $feed->get('id'));
-            $item->set('attributeId', $attribute->get('id'));
-            $this->getEntityManager()->saveEntity($item);
+            $post = new \stdClass();
+            $post->type = 'Attribute';
+            $post->name = $attribute->get('name');
+            $post->locale = 'mainLocale';
+            $post->exportFeedId = $feed->get('id');
+            $post->exportFeedName = $feed->get('name');
+            $post->attributeId = $attribute->get('id');
+            $post->attributeName = $attribute->get('name');
+            $post->addAllLocales = true;
+
+            $exportConfiguratorItemService->createEntity($post);
         }
 
         return true;
@@ -301,7 +307,10 @@ class ExportFeed extends Base
 
         $result['data']->configuration = Json::decode(Json::encode($configuration));
 
-        return $result;
+        return $this
+            ->getInjection('eventManager')
+            ->dispatch('ExportFeedService', 'prepareFeedData', new Event(['feed' => $feed, 'result' => $result]))
+            ->getArgument('result');
     }
 
     /**
