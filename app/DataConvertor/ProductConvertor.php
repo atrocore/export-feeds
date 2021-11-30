@@ -39,6 +39,10 @@ class ProductConvertor extends Convertor
     {
         $result = [];
 
+        if ($toString) {
+            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        }
+
         if (!empty($record['pavs'])) {
             if (empty($configuration['channelId'])) {
                 foreach ($record['pavs'] as $v) {

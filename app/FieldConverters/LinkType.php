@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
-use Espo\ORM\Entity;
-
 class LinkType extends AbstractType
 {
     protected bool $needStringResult = false;

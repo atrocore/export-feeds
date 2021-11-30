@@ -97,17 +97,7 @@ class ExportConfiguratorItem extends Base
                 $localeAttachment = clone $attachment;
                 $localeAttachment->name = Util::toCamelCase($attachment->name . '_' . strtolower($locale));
                 $localeAttachment->addAllLocales = false;
-
-                $exist = $this
-                    ->getEntityManager()
-                    ->getRepository('ExportConfiguratorItem')
-                    ->select(['id'])
-                    ->where(['type' => $attachment->type, 'name' => $localeAttachment->name])
-                    ->findOne();
-
-                if (empty($exist)) {
-                    parent::createEntity($localeAttachment);
-                }
+                parent::createEntity($localeAttachment);
             }
         } elseif ($attachment->type === 'Attribute') {
             $attribute = $this->getEntityManager()->getEntity('Attribute', $attachment->attributeId);
@@ -119,17 +109,7 @@ class ExportConfiguratorItem extends Base
                 $localeAttachment = clone $attachment;
                 $localeAttachment->locale = $locale;
                 $localeAttachment->addAllLocales = false;
-
-                $exist = $this
-                    ->getEntityManager()
-                    ->getRepository('ExportConfiguratorItem')
-                    ->select(['id'])
-                    ->where(['type' => $attachment->type, 'attributeId' => $attachment->attributeId, 'locale' => $locale])
-                    ->findOne();
-
-                if (empty($exist)) {
-                    parent::createEntity($localeAttachment);
-                }
+                parent::createEntity($localeAttachment);
             }
         }
     }

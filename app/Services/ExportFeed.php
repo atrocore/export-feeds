@@ -184,6 +184,8 @@ class ExportFeed extends Base
             return false;
         }
 
+        $exportConfiguratorItemService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
+
         $attributes = $this
             ->getEntityManager()
             ->getRepository('Attribute')
@@ -194,13 +196,17 @@ class ExportFeed extends Base
                 continue;
             }
 
-            $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
-            $item->set('type', 'Attribute');
-            $item->set('name', $attribute->get('name'));
-            $item->set('locale', 'mainLocale');
-            $item->set('exportFeedId', $feed->get('id'));
-            $item->set('attributeId', $attribute->get('id'));
-            $this->getEntityManager()->saveEntity($item);
+            $post = new \stdClass();
+            $post->type = 'Attribute';
+            $post->name = $attribute->get('name');
+            $post->locale = 'mainLocale';
+            $post->exportFeedId = $feed->get('id');
+            $post->exportFeedName = $feed->get('name');
+            $post->attributeId = $attribute->get('id');
+            $post->attributeName = $attribute->get('name');
+            $post->addAllLocales = true;
+
+            $exportConfiguratorItemService->createEntity($post);
         }
 
         return true;
