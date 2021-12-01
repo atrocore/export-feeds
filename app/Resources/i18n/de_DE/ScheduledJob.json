@@ -1,0 +1,13 @@
+{
+  "fields": {
+    "exportFeed": "Exportfeed"
+  },
+  "links": {
+    "exportFeed": "Exportfeed"
+  },
+  "options": {
+    "job": {
+      "ExportFeed": "Exportfeed"
+    }
+  }
+}

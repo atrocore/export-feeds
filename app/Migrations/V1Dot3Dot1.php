@@ -37,6 +37,9 @@ class V1Dot3Dot1 extends Base
         $this->execute("ALTER TABLE `export_job` ADD sort_order INT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_job` ADD count INT DEFAULT '0' COLLATE utf8mb4_unicode_ci");
 
+        $this->execute("ALTER TABLE `scheduled_job` ADD export_feed_id VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("CREATE INDEX IDX_EXPORT_FEED_ID ON `scheduled_job` (export_feed_id)");
+
         try {
             /** @var \Espo\ORM\EntityManager $em */
             $em = (new \Treo\Core\Application())->getContainer()->get('entityManager');

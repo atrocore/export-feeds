@@ -26,24 +26,46 @@ use Espo\Core\Utils\Json;
 use Treo\Core\EventManager\Event;
 use Treo\Listeners\AbstractListener;
 
-/**
- * Class LayoutController
- */
 class LayoutController extends AbstractListener
 {
-    /**
-     * @param Event $event
-     */
-    public function afterActionRead(Event $event)
+    public function afterActionRead(Event $event): void
     {
-        if (in_array($event->getArgument('params')['scope'], ['Channel']) && $event->getArgument('params')['name'] == 'relationships') {
-            $result = Json::decode($event->getArgument('result'), true);
+        $scope = $event->getArgument('params')['scope'];
 
-            if (!in_array('exportJobs', array_column($result, 'name'))) {
-                $result[] = ["name" => "exportJobs"];
-            }
+        $name = $event->getArgument('params')['name'];
 
-            $event->setArgument('result', Json::encode($result));
+        $method = 'modify' . $scope . ucfirst($name);
+
+        if (method_exists($this, $method)) {
+            $this->{$method}($event);
         }
+    }
+
+    public function modifyChannelRelationships(Event $event): void
+    {
+        $result = Json::decode($event->getArgument('result'), true);
+
+        if (!in_array('exportJobs', array_column($result, 'name'))) {
+            $result[] = ["name" => "exportJobs"];
+        }
+
+        $event->setArgument('result', Json::encode($result));
+    }
+
+    protected function modifyScheduledJobDetail(Event $event): void
+    {
+        $result = Json::decode($event->getArgument('result'), true);
+
+        $newRows = [];
+        foreach ($result[0]['rows'] as $row) {
+            $newRows[] = $row;
+            if ($row[0]['name'] === 'job') {
+                $newRows[] = [['name' => 'exportFeed'], false];
+            }
+        }
+
+        $result[0]['rows'] = $newRows;
+
+        $event->setArgument('result', Json::encode($result));
     }
 }
