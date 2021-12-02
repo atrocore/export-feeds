@@ -29,7 +29,7 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
-use Export\ExportType\Simple;
+use Export\Services\AbstractExportType;
 use Treo\Core\EventManager\Event;
 
 /**
@@ -129,7 +129,7 @@ class ExportFeed extends Base
 
         $addedFields = array_column($feed->get('configuratorItems')->toArray(), 'name');
 
-        $allFields = Simple::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
+        $allFields = AbstractExportType::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
 
         foreach ($allFields as $row) {
             if (in_array($row['field'], $addedFields)) {
