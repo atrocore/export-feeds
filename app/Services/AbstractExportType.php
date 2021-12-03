@@ -129,10 +129,10 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $this->convertor = $this->getDataConvertor();
         $this->createCacheFile($exportJob);
 
-        return $this->runExport($exportJob->getData());
+        return $this->runExport($exportJob);
     }
 
-    abstract public function runExport(array $jobMetadata): Attachment;
+    abstract public function runExport(ExportJob $exportJob): Attachment;
 
     protected function setData(array $data): void
     {

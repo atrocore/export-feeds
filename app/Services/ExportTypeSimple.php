@@ -25,17 +25,18 @@ namespace Export\Services;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
+use Export\Entities\ExportJob;
 
 class ExportTypeSimple extends AbstractExportType
 {
-    public function runExport(array $jobMetadata): Attachment
+    public function runExport(ExportJob $exportJob): Attachment
     {
         $attachmentCreatorName = 'export' . ucfirst($this->data['feed']['fileType']);
         if (!method_exists($this, $attachmentCreatorName)) {
             throw new Error('Unsupported file type.');
         }
 
-        return $this->$attachmentCreatorName($jobMetadata);
+        return $this->$attachmentCreatorName($exportJob->getData());
     }
 
     protected function exportCsv(array $data): Attachment
