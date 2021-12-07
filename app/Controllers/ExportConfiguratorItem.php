@@ -23,10 +23,24 @@ declare(strict_types=1);
 namespace Export\Controllers;
 
 use Espo\Core\Exceptions\Forbidden;
+use Espo\Core\Exceptions\NotFound;
 use Espo\Core\Templates\Controllers\Base;
 
 class ExportConfiguratorItem extends Base
 {
+    public function actionDelete($params, $data, $request)
+    {
+        try {
+            parent::actionDelete($params, $data, $request);
+        } catch (NotFound $e) {
+            if (empty($request->get('skip404')) == '1') {
+                throw $e;
+            }
+        }
+
+        return true;
+    }
+
     public function actionList($params, $data, $request)
     {
         throw new Forbidden();

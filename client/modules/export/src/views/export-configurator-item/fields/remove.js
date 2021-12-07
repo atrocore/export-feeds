@@ -36,15 +36,10 @@ Espo.define('export:views/export-configurator-item/fields/remove', 'view', funct
                     this.buttonDisabled = true;
 
                     this.notify('Removing...');
-                    this.model.destroy({
-                        wait: true,
-                        error: function () {
-                            this.buttonDisabled = false;
-                        }.bind(this),
-                        success: function () {
-                            this.notify('Removed', 'success');
-                            $('.action[data-action=refresh][data-panel=configuratorItems]').click();
-                        }.bind(this)
+
+                    this.ajaxRequest(`ExportConfiguratorItem/${this.model.get('id')}?skip404=1`, 'DELETE').then(response => {
+                        this.notify('Removed', 'success');
+                        $('.action[data-action=refresh][data-panel=configuratorItems]').click();
                     });
                 }
             }
