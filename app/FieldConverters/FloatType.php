@@ -47,9 +47,9 @@ class FloatType extends AbstractType
         $result[$column] = $nullValue;
         if (isset($record[$field])) {
             if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
-                $result = $record[$field] === null ? $nullValue : $emptyValue;
+                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
-                $result = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
+                $result[$column] = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
             }
         }
     }
