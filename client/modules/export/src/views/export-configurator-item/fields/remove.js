@@ -33,9 +33,14 @@ Espo.define('export:views/export-configurator-item/fields/remove', 'view', funct
                         return false;
                     }
 
+                    this.buttonDisabled = true;
+
                     this.notify('Removing...');
                     this.model.destroy({
                         wait: true,
+                        error: function () {
+                            this.buttonDisabled = false;
+                        }.bind(this),
                         success: function () {
                             this.notify('Removed', 'success');
                             $('.action[data-action=refresh][data-panel=configuratorItems]').click();
@@ -55,20 +60,6 @@ Espo.define('export:views/export-configurator-item/fields/remove', 'view', funct
             Dep.prototype.setup.call(this);
 
             this.buttonDisabled = !this.getAcl().check('ExportFeed', 'edit');
-
-            if (this.model.get('allFields')) {
-                this.buttonDisabled = true;
-            }
-
-            this.listenTo(this.model.collection, 'model-removing', () => {
-                this.buttonDisabled = true;
-                this.$el.find('button').prop('disabled', true);
-            });
-
-            this.listenTo(this.model.collection, 'after:model-removing', () => {
-                this.buttonDisabled = false;
-                this.$el.find('button').prop('disabled', false);
-            });
         }
     })
 });
