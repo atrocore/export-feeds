@@ -45,11 +45,6 @@ class Convertor
 
     public function convert(array $record, array $configuration, bool $toString = false): array
     {
-        $method = 'convert' . ucfirst($configuration['field']);
-        if (method_exists($this, $method)) {
-            return $this->$method($record, $configuration);
-        }
-
         $type = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field'], 'type'], 'varchar');
 
         return $this->convertType($type, $record, $configuration, $toString);
