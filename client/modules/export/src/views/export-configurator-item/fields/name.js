@@ -117,7 +117,11 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
         },
 
         getEntityFields(entity) {
-            let result = {};
+            let result = {
+                id: {
+                    type: "varchar"
+                }
+            };
 
             let notExportedType = [
                 'linkParent',
