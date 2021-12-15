@@ -5,7 +5,7 @@
       "layoutDetailDisabled": true,
       "layoutListDisabled": true,
       "layoutMassUpdateDisabled": true,
-      "layoutFiltersDisabled": true,
+      "filterDisabled": true,
       "noLoad": true,
       "importDisabled": true
     },
