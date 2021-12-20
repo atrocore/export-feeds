@@ -124,7 +124,7 @@
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": "_"
+      "default": "~"
     },
     "fieldDelimiterForRelation": {
       "type": "varchar",
