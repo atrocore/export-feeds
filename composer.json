@@ -3,7 +3,7 @@
   "description": "",
   "require": {
     "atrocore/core": "~1.4.0",
-    "atrocore/export-feeds-common": "~1.2.0",
+    "atrocore/export-feeds-common": "~1.3.0",
     "phpoffice/phpspreadsheet": "~1.16.0"
   },
   "autoload": {

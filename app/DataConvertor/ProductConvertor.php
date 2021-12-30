@@ -43,17 +43,20 @@ class ProductConvertor extends Convertor
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
+        $language = $configuration['locale'] === 'mainLocale' ? 'main' : $configuration['locale'];
+
         if (!empty($record['pavs'])) {
             if (empty($configuration['channelId'])) {
                 foreach ($record['pavs'] as $v) {
-                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
+                    if ($v['language'] === $language && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
                         $productAttribute = $v;
                         break 1;
                     }
                 }
             } else {
                 foreach ($record['pavs'] as $v) {
-                    if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
+                    if ($v['language'] === $language && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel'
+                        && $configuration['channelId'] == $v['channelId']) {
                         $productAttribute = $v;
                         break 1;
                     }
@@ -61,12 +64,16 @@ class ProductConvertor extends Convertor
             }
 
             if (!empty($productAttribute)) {
-                $valueField = 'value';
-                if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
-                    $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
-                }
+                $repository = $this->container->get('entityManager')->getRepository('ProductAttributeValue');
 
-                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $valueField]), $toString);
+                // convert value
+                $pav = $repository->get();
+                $pav->set($productAttribute);
+                $repository->convertValue($pav);
+
+                $productAttribute = array_merge($productAttribute, $pav->toArray());
+
+                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
             }
         }
 

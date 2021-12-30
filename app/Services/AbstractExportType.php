@@ -350,12 +350,23 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             }
         }
 
-        $selectFields = ['id', 'productId', 'attributeId', 'scope', 'channelId', 'value', 'data'];
-        if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
-            foreach ($locales as $locale) {
-                $selectFields[] = Util::toCamelCase('value_' . strtolower($locale));
-            }
-        }
+        $selectFields = [
+            'id',
+            'productId',
+            'attributeId',
+            'scope',
+            'channelId',
+            'language',
+            'boolValue',
+            'dateValue',
+            'datetimeValue',
+            'intValue',
+            'floatValue',
+            'varcharValue',
+            'textValue',
+            'attributeType',
+            'data'
+        ];
 
         $pavs = $this
             ->getEntityManager()
@@ -381,8 +392,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 $row = $pav;
                 $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
                 $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
-                $row['attributeType'] = $preparedAttrs[$pav['attributeId']]['type'];
-
                 $this->pavs[$pav['productId']][] = $row;
             }
         }
