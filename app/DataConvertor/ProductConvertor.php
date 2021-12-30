@@ -64,15 +64,6 @@ class ProductConvertor extends Convertor
             }
 
             if (!empty($productAttribute)) {
-                $repository = $this->container->get('entityManager')->getRepository('ProductAttributeValue');
-
-                // convert value
-                $pav = $repository->get();
-                $pav->set($productAttribute);
-                $repository->convertValue($pav);
-
-                $productAttribute = array_merge($productAttribute, $pav->toArray());
-
                 $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
             }
         }
