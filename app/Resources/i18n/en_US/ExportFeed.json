@@ -2,7 +2,6 @@
   "fields": {
     "entity": "Entity",
     "type": "Type",
-    "channels": "Channels",
     "isActive": "Active",
     "fileType": "Format",
     "isFileHeaderRow": "Header Row",
@@ -13,7 +12,6 @@
     "attribute": "Attribute",
     "fieldOrAttribute": "Field/Attribute",
     "delimiter": "List Value Separator",
-    "exportByOrChannel": "Export By/Channel",
     "exportJobs": "Export Jobs",
     "emptyValue": "Empty Value",
     "nullValue": "Null Value",
@@ -28,7 +26,6 @@
   },
   "links": {
     "configuratorItems": "Configurator",
-    "channels": "Channels",
     "exportJobs": "Export Jobs"
   },
   "labels": {
@@ -67,8 +64,7 @@
   "additionalTranslates": {
     "exportName": "Export: %s",
     "jobCreated": "Export job created successfully",
-    "jobNotCreated": "Export job created failed",
-    "channelWithoutExportFeeds": "No Export Feeds linked with current Channel"
+    "jobNotCreated": "Export job created failed"
   },
   "exceptions": {
     "noSuchField": "Field '%s' does not exist.",
@@ -78,8 +74,5 @@
     "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
     "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
     "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set."
-  },
-  "tooltips": {
-    "channels": "Export Feed to will be linked to these channels."
   }
 }

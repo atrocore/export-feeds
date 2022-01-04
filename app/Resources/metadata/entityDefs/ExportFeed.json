@@ -167,12 +167,6 @@
       "dataField": true,
       "required": false
     },
-    "channels": {
-      "type": "linkMultiple",
-      "tooltip": true,
-      "noLoad": true,
-      "importDisabled": true
-    },
     "data": {
       "type": "jsonObject",
       "layoutDetailDisabled": true,
@@ -216,11 +210,6 @@
       "entity": "Team",
       "relationName": "EntityTeam",
       "layoutRelationshipsDisabled": true
-    },
-    "channels": {
-      "type": "hasMany",
-      "foreign": "exportFeeds",
-      "entity": "Channel"
     },
     "configuratorItems": {
       "type": "hasMany",

@@ -41,17 +41,6 @@ class LayoutController extends AbstractListener
         }
     }
 
-    public function modifyChannelRelationships(Event $event): void
-    {
-        $result = Json::decode($event->getArgument('result'), true);
-
-        if (!in_array('exportJobs', array_column($result, 'name'))) {
-            $result[] = ["name" => "exportJobs"];
-        }
-
-        $event->setArgument('result', Json::encode($result));
-    }
-
     protected function modifyScheduledJobDetail(Event $event): void
     {
         $result = Json::decode($event->getArgument('result'), true);

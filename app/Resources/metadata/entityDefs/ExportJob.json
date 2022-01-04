@@ -32,10 +32,6 @@
       "type": "linkMultiple",
       "view": "views/fields/teams"
     },
-    "channel": {
-      "type": "link",
-      "readOnly": true
-    },
     "exportFeed": {
       "type": "link",
       "readOnly": true
@@ -105,11 +101,6 @@
       "entity": "Team",
       "relationName": "EntityTeam",
       "layoutRelationshipsDisabled": true
-    },
-    "channel": {
-      "type": "belongsTo",
-      "foreign": "exportJobs",
-      "entity": "Channel"
     },
     "exportFeed": {
       "type": "belongsTo",

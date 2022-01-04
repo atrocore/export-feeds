@@ -2,7 +2,6 @@
   "fields": {
     "entity": "Сущность",
     "type": "Тип",
-    "channels": "Каналы",
     "isActive": "Активный",
     "fileType": "Формат",
     "isFileHeaderRow": "Строка заголовка",
@@ -13,7 +12,6 @@
     "attribute": "Атрибут",
     "fieldOrAttribute": "Поле/Атрибут",
     "delimiter": "Разделитель значений списка",
-    "exportByOrChannel": "Экспортировать по/каналу",
     "exportJobs": "Задания экспорта",
     "emptyValue": "Пустое значение",
     "nullValue": "Нулевое значение",
@@ -27,7 +25,6 @@
     "configuratorItems": "Конфигуратор"
   },
   "links": {
-    "channels": "Каналы",
     "exportJobs": "Задания экспорта",
     "configuratorItems": "Конфигуратор"
   },
@@ -67,8 +64,7 @@
   "additionalTranslates": {
     "exportName": "Экспорт: %s",
     "jobCreated": "Задание на экспорт успешно создано",
-    "jobNotCreated": "Не удалось создать задание экспорта",
-    "channelWithoutExportFeeds": "Нет экспорт. фидов, связанных с текущим каналом"
+    "jobNotCreated": "Не удалось создать задание экспорта"
   },
   "exceptions": {
     "noSuchField": "Поле '%s' не существует.",
@@ -78,8 +74,5 @@
     "lastRecordIsRequired": "Последнюю запись в конфигураторе удалить нельзя.",
     "noFieldLabel": "Метка для поля '%s' для языка'%s' не назначена.",
     "noAttributeLabel": "Метка для атрибута '%s' для языка '%s' не назначена."
-  },
-  "tooltips": {
-    "channels": "Экспорт. фид будет связан с этими каналами."
   }
 }
