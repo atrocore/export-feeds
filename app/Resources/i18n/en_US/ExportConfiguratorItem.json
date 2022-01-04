@@ -9,10 +9,13 @@
     "remove": "Remove",
     "exportIntoSeparateColumns": "Separate columns",
     "type": "Type",
-    "locale": "Language"
+    "locale": "Language",
+    "scope": "Scope",
+    "channel": "Channel"
   },
   "links": {
-    "exportFeed": "Export Feed"
+    "exportFeed": "Export Feed",
+    "channel": "Channel"
   },
   "columnType": {
     "name": "Name",

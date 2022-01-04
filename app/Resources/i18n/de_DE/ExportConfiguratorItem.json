@@ -9,10 +9,13 @@
     "exportBy": "Verwandte Entitätsfelder",
     "exportIntoSeparateColumns": "Separate Spalten",
     "type": "Typ",
-    "locale": "Sprache"
+    "locale": "Sprache",
+    "scope": "Scope",
+    "channel": "Kanal"
   },
   "links": {
-    "exportFeed": "Exportfeed"
+    "exportFeed": "Exportfeed",
+    "channel": "Kanal"
   },
   "columnType": {
     "name": "Name",

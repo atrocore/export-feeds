@@ -9,10 +9,13 @@
     "exportBy": "Поля связанных сущностей",
     "exportIntoSeparateColumns": "Отдельные колонки",
     "type": "Тип",
-    "locale": "Язык"
+    "locale": "Язык",
+    "scope": "Область действия",
+    "channel": "Канал"
   },
   "links": {
-    "exportFeed": "Экспорт. фид"
+    "exportFeed": "Экспорт. фид",
+    "channel": "Канал"
   },
   "columnType": {
     "name": "Название",
