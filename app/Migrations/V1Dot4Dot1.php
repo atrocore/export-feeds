@@ -35,6 +35,9 @@ class V1Dot4Dot1 extends Base
 
     public function down(): void
     {
+        $this->execute("CREATE TABLE `channel_export_feed` (`id` INT AUTO_INCREMENT NOT NULL UNIQUE COLLATE utf8mb4_unicode_ci, `channel_id` VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci, `export_feed_id` VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci, `deleted` TINYINT(1) DEFAULT '0' COLLATE utf8mb4_unicode_ci, INDEX `IDX_1C2B8D6172F5A1AA` (channel_id), INDEX `IDX_1C2B8D61C168910B` (export_feed_id), UNIQUE INDEX `UNIQ_1C2B8D6172F5A1AAC168910B` (channel_id, export_feed_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
+        $this->execute("ALTER TABLE `export_job` ADD channel_id VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("CREATE INDEX IDX_CHANNEL_ID ON `export_job` (channel_id)");
     }
 
     protected function execute(string $sql)
