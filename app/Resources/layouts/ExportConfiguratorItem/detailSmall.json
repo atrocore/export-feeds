@@ -38,12 +38,6 @@
         {
           "name": "exportIntoSeparateColumns"
         }
-      ],
-      [
-        {
-          "name": "addAllLocales"
-        },
-        false
       ]
     ]
   }

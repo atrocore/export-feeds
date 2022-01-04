@@ -61,12 +61,6 @@
       "type": "varchar",
       "notStorable": true
     },
-    "addAllLocales": {
-      "type": "bool",
-      "notStorable": true,
-      "default": true,
-      "view": "export:views/export-configurator-item/fields/add-all-locales"
-    },
     "remove": {
       "type": "varchar",
       "notStorable": true,

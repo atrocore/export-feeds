@@ -54,15 +54,6 @@ class ExportConfiguratorItem extends Base
         }
     }
 
-    public function createEntity($attachment)
-    {
-        $entity = parent::createEntity($attachment);
-
-        $this->createForAllLocales($attachment);
-
-        return $entity;
-    }
-
     public function updateEntity($id, $data)
     {
         if (property_exists($data, '_sortedIds')) {
@@ -76,42 +67,6 @@ class ExportConfiguratorItem extends Base
         }
 
         return parent::updateEntity($id, $data);
-    }
-
-    protected function createForAllLocales(\stdClass $attachment): void
-    {
-        if (!property_exists($attachment, 'addAllLocales') || empty($attachment->addAllLocales)) {
-            return;
-        }
-
-        if (!$this->getConfig()->get('isMultilangActive', false) || empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
-            return;
-        }
-
-        if ($attachment->type === 'Field') {
-            if (!$this->getMetadata()->get(['entityDefs', $attachment->entity, 'fields', $attachment->name, 'isMultilang'], false)) {
-                return;
-            }
-
-            foreach ($locales as $locale) {
-                $localeAttachment = clone $attachment;
-                $localeAttachment->name = Util::toCamelCase($attachment->name . '_' . strtolower($locale));
-                $localeAttachment->addAllLocales = false;
-                parent::createEntity($localeAttachment);
-            }
-        } elseif ($attachment->type === 'Attribute') {
-            $attribute = $this->getEntityManager()->getEntity('Attribute', $attachment->attributeId);
-            if (empty($attribute) || empty($attribute->get('isMultilang'))) {
-                return;
-            }
-
-            foreach ($locales as $locale) {
-                $localeAttachment = clone $attachment;
-                $localeAttachment->locale = $locale;
-                $localeAttachment->addAllLocales = false;
-                parent::createEntity($localeAttachment);
-            }
-        }
     }
 
     protected function isEntityUpdated(Entity $entity, \stdClass $data): bool

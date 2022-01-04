@@ -156,7 +156,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $feedData = $this->data['feed']['data'];
 
-        $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
+        $row['channelId'] = ''; // @todo add channel from configurator item
+
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
         $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
@@ -268,36 +269,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             'where'   => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : []
         ];
 
-        if (!empty($this->data['exportByChannelId'])) {
-            if ($this->data['feed']['data']['entity'] == 'Product') {
-                $params['where'][] = [
-                    'type'  => 'bool',
-                    'value' => ['activeForChannel'],
-                    'data'  => ['activeForChannel' => $this->data['exportByChannelId']]
-                ];
-            } else {
-                $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
-                foreach ($links as $link => $linkData) {
-                    if ($linkData['entity'] == 'Channel') {
-                        if ($linkData['type'] == 'hasMany') {
-                            $params['where'][] = [
-                                'type'      => 'linkedWith',
-                                'attribute' => $link,
-                                'value'     => [$this->data['exportByChannelId']]
-                            ];
-                        }
-                        if ($linkData['type'] == 'belongsTo') {
-                            $params['where'][] = [
-                                'type'      => 'equals',
-                                'attribute' => $link . 'Id',
-                                'value'     => [$this->data['exportByChannelId']]
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-
         return $params;
     }
 
@@ -404,14 +375,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         $configuration = $data['configuration'];
 
-        if (!empty($this->data['exportByChannelId'])) {
-            $channel = $this->getEntityManager()->getEntity('Channel', $this->data['exportByChannelId']);
-            if (empty($channel)) {
-                throw new BadRequest('No such channel found.');
-            }
-            $this->data['channelLocales'] = $channel->get('locales');
-        }
-
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
         $filePath = $this->createPath();
@@ -425,9 +388,12 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         foreach ($configuration as $rowNumber => $row) {
             $row = $this->prepareRow($row);
+
+            //@todo get channel languages
             if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                 continue 1;
             }
+
             $jobMetadata['configuration'][$rowNumber] = $row;
         }
 

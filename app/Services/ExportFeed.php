@@ -69,57 +69,11 @@ class ExportFeed extends Base
                     'value'     => $requestData->entityFilterData->ids
                 ];
             }
-
-            $this->pushExport($data);
-            return true;
         }
 
-        if (!empty($requestData->exportByChannelId)) {
-            $data['exportByChannelId'] = $requestData->exportByChannelId;
-            $this->pushExport($data);
-        } else {
-            $channelsIds = array_column($exportFeed->get('channels')->toArray(), 'id');
-            if (empty($channelsIds)) {
-                $this->pushExport($data);
-            } else {
-                foreach ($channelsIds as $channelId) {
-                    $data['exportByChannelId'] = $channelId;
-                    $this->pushExport($data);
-                }
-            }
-        }
+        $this->pushExport($data);
 
         return true;
-    }
-
-    /**
-     * Export all channel feeds
-     *
-     * @param string $channelId
-     *
-     * @return bool
-     */
-    public function exportChannel(string $channelId): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($channel = $this->getChannel($channelId)) && !empty($feeds = $this->getChannelFeeds($channel))) {
-            foreach ($feeds as $feed) {
-                $requestData = new \stdClass();
-                $requestData->id = $feed->get('id');
-                $requestData->exportByChannelId = $channelId;
-
-                try {
-                    $this->exportFile($requestData);
-                } catch (\Throwable $e) {
-                    $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
-                }
-            }
-            $result = true;
-        }
-
-        return $result;
     }
 
     public function addMissingFields(string $feedId): bool
@@ -203,7 +157,6 @@ class ExportFeed extends Base
             $post->exportFeedName = $feed->get('name');
             $post->attributeId = $attribute->get('id');
             $post->attributeName = $attribute->get('name');
-            $post->addAllLocales = true;
 
             $exportConfiguratorItemService->createEntity($post);
         }
@@ -355,10 +308,6 @@ class ExportFeed extends Base
         $exportJob->set('ownerUserId', $user->get('id'));
         $exportJob->set('assignedUserId', $user->get('id'));
         $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
-
-        if (!empty($data['exportByChannelId'])) {
-            $exportJob->set('channelId', $data['exportByChannelId']);
-        }
 
         $this->getEntityManager()->saveEntity($exportJob);
 
