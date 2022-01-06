@@ -50,6 +50,9 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
+        $this->prepareFeedViaLanguage();
+        $this->prepareFeedViaChannel();
+
         $data = [
             'id'   => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
@@ -175,6 +178,39 @@ class ExportFeed extends Base
         $this->getRepository()->removeConfiguratorItems($feedId);
 
         return true;
+    }
+
+    public function readEntity($id)
+    {
+        $this->prepareFeedViaLanguage();
+        $this->prepareFeedViaChannel();
+
+        return parent::readEntity($id);
+    }
+
+    public function findLinkedEntities($id, $link, $params)
+    {
+        if ($link === 'configuratorItems') {
+            $this->prepareFeedViaLanguage();
+            $this->prepareFeedViaChannel();
+        }
+
+        return parent::findLinkedEntities($id, $link, $params);
+    }
+
+    public function prepareFeedViaLanguage(): void
+    {
+        $languages = $this->getConfig()->get('inputLanguageList', []);
+        $languages[] = 'mainLocale';
+
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET language='mainLocale' WHERE language NOT IN ('" . implode("','", $languages) . "')");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE locale NOT IN ('" . implode("','", $languages) . "')");
+    }
+
+    public function prepareFeedViaChannel(): void
+    {
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET channel_id=null WHERE channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)");
     }
 
     public function prepareEntityForOutput(Entity $entity)
