@@ -16,5 +16,6 @@
   "object": true,
   "hasOwner": true,
   "hasAssignedUser": true,
-  "hasTeam": true
+  "hasTeam": true,
+  "hasAccount": true
 }

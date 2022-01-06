@@ -35,6 +35,9 @@ class V1Dot4Dot1 extends Base
         $this->execute("ALTER TABLE `export_configurator_item` ADD scope VARCHAR(255) DEFAULT 'Global' COLLATE utf8mb4_unicode_ci");
         $this->execute("ALTER TABLE `export_configurator_item` ADD channel_id VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("CREATE INDEX IDX_CHANNEL ON `export_configurator_item` (channel_id)");
+
+        $this->execute("CREATE TABLE `export_feed_assigned_account` (`id` INT AUTO_INCREMENT NOT NULL UNIQUE COLLATE utf8mb4_unicode_ci, `account_id` VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci, `export_feed_id` VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci, `deleted` TINYINT(1) DEFAULT '0' COLLATE utf8mb4_unicode_ci, INDEX `IDX_AE6CF7839B6B5FBA` (account_id), INDEX `IDX_AE6CF783C168910B` (export_feed_id), UNIQUE INDEX `UNIQ_AE6CF7839B6B5FBAC168910B` (account_id, export_feed_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
+        $this->execute("DROP INDEX id ON `export_feed_assigned_account`");
     }
 
     public function down(): void
@@ -46,6 +49,8 @@ class V1Dot4Dot1 extends Base
         $this->execute("DROP INDEX IDX_CHANNEL_ID ON `export_configurator_item`");
         $this->execute("ALTER TABLE `export_configurator_item` DROP scope");
         $this->execute("ALTER TABLE `export_configurator_item` DROP channel_id");
+
+        $this->execute("DROP TABLE export_feed_assigned_account");
     }
 
     protected function execute(string $sql)
