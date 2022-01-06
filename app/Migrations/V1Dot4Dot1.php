@@ -38,6 +38,9 @@ class V1Dot4Dot1 extends Base
 
         $this->execute("CREATE TABLE `export_feed_assigned_account` (`id` INT AUTO_INCREMENT NOT NULL UNIQUE COLLATE utf8mb4_unicode_ci, `account_id` VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci, `export_feed_id` VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci, `deleted` TINYINT(1) DEFAULT '0' COLLATE utf8mb4_unicode_ci, INDEX `IDX_AE6CF7839B6B5FBA` (account_id), INDEX `IDX_AE6CF783C168910B` (export_feed_id), UNIQUE INDEX `UNIQ_AE6CF7839B6B5FBAC168910B` (account_id, export_feed_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB");
         $this->execute("DROP INDEX id ON `export_feed_assigned_account`");
+
+        $this->execute("ALTER TABLE `export_feed` ADD language VARCHAR(255) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("UPDATE `export_feed` SET language='mainLocale' WHERE 1");
     }
 
     public function down(): void
@@ -51,6 +54,8 @@ class V1Dot4Dot1 extends Base
         $this->execute("ALTER TABLE `export_configurator_item` DROP channel_id");
 
         $this->execute("DROP TABLE export_feed_assigned_account");
+
+        $this->execute("ALTER TABLE `export_feed` DROP language");
     }
 
     protected function execute(string $sql)

@@ -1,5 +1,6 @@
 {
   "fields": {
+    "language": "Язык",
     "entity": "Сущность",
     "type": "Тип",
     "isActive": "Активный",

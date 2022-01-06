@@ -152,7 +152,7 @@ class ExportFeed extends Base
             $post = new \stdClass();
             $post->type = 'Attribute';
             $post->name = $attribute->get('name');
-            $post->locale = 'mainLocale';
+            $post->locale = $feed->get('language');
             $post->exportFeedId = $feed->get('id');
             $post->exportFeedName = $feed->get('name');
             $post->attributeId = $attribute->get('id');

@@ -65,6 +65,10 @@
       "default": "simple",
       "prohibitedEmptyValue": true
     },
+    "language": {
+      "type": "varchar",
+      "view": "export:views/export-feed/fields/language"
+    },
     "isActive": {
       "notNull": true,
       "type": "bool"

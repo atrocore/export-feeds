@@ -17,27 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/detail', 'views/detail',
+Espo.define('export:views/export-feed/fields/language', 'views/fields/enum',
     Dep => {
 
         return Dep.extend({
 
-            setup() {
-                Dep.prototype.setup.call(this);
+            prohibitedEmptyValue: true,
 
-                this.relatedAttributeFunctions['configuratorItems'] = () => {
-                    return {
-                        "locale": this.model.get('language'),
-                        "entity": this.model.get('entity'),
-                        "type": "Field"
-                    }
-                };
+            setupOptions() {
+                this.params.options = ['mainLocale'];
+                this.translatedOptions = {mainLocale: this.translate('mainLocale', 'labels', 'ExportConfiguratorItem')};
 
-                this.listenTo(this.model, 'after:save', () => {
-                    $('.action[data-action=refresh][data-panel=configuratorItems]').click();
+                (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
+                    this.params.options.push(locale);
+                    this.translatedOptions[locale] = locale;
                 });
-
             },
 
-        });
+        })
     });

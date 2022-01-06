@@ -1,5 +1,6 @@
 {
   "fields": {
+    "language": "Language",
     "entity": "Entity",
     "type": "Type",
     "isActive": "Active",
