@@ -200,11 +200,14 @@ class ExportFeed extends Base
 
     public function prepareFeedViaLanguage(): void
     {
-        $languages = $this->getConfig()->get('inputLanguageList', []);
-        $languages[] = 'mainLocale';
+        $languages = ['mainLocale'];
+        if ($this->getConfig()->get('isMultilangActive', false)) {
+            $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
+        }
+        $languages = implode("','", $languages);
 
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET language='mainLocale' WHERE language NOT IN ('" . implode("','", $languages) . "')");
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE locale NOT IN ('" . implode("','", $languages) . "')");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET language='mainLocale' WHERE language NOT IN ('$languages')");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE locale NOT IN ('$languages')");
     }
 
     public function prepareFeedViaChannel(): void
