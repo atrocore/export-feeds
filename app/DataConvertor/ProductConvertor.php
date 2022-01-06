@@ -37,35 +37,43 @@ class ProductConvertor extends Convertor
 
     protected function convertAttributeValue(array $record, array $configuration, bool $toString = false): array
     {
+        if (empty($record['pavs'])) {
+            return [];
+        }
+
         $result = [];
 
         if ($toString) {
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
-        $language = $configuration['locale'] === 'mainLocale' ? 'main' : $configuration['locale'];
+        foreach ($record['pavs'] as $v) {
+            if (
+                $v['language'] === $configuration['locale']
+                && $v['attributeId'] == $configuration['attributeId']
+                && $v['scope'] == 'Global'
+            ) {
+                $productAttribute = $v;
+                break 1;
+            }
+        }
 
-        if (!empty($record['pavs'])) {
-            if (empty($configuration['channelId'])) {
-                foreach ($record['pavs'] as $v) {
-                    if ($v['language'] === $language && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
-                        $productAttribute = $v;
-                        break 1;
-                    }
-                }
-            } else {
-                foreach ($record['pavs'] as $v) {
-                    if ($v['language'] === $language && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel'
-                        && $configuration['channelId'] == $v['channelId']) {
-                        $productAttribute = $v;
-                        break 1;
-                    }
+        if (!empty($configuration['channelId'])) {
+            foreach ($record['pavs'] as $v) {
+                if (
+                    $v['language'] === $configuration['locale']
+                    && $v['attributeId'] == $configuration['attributeId']
+                    && $v['scope'] == 'Channel'
+                    && $configuration['channelId'] == $v['channelId']
+                ) {
+                    $productAttribute = $v;
+                    break 1;
                 }
             }
+        }
 
-            if (!empty($productAttribute)) {
-                $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
-            }
+        if (!empty($productAttribute)) {
+            $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
         }
 
         return $result;

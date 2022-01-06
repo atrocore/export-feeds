@@ -156,7 +156,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $feedData = $this->data['feed']['data'];
 
-        $row['channelId'] = ''; // @todo add channel from configurator item
+        if (empty($row['scope']) || $row['scope'] !== 'Channel') {
+            $row['channelId'] = '';
+        }
 
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
@@ -166,23 +168,11 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
         $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : '|';
         $row['entity'] = $feedData['entity'];
-
-        if (!empty($this->data['channelLocales'])) {
-            $row['channelLocales'] = $this->data['channelLocales'];
-
-            if (empty($row['attributeId'])) {
-                $row['locale'] = $this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'multilangLocale']);
-                if ($this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'isMultilang'])) {
-                    $row['locale'] = 'mainLocale';
-                }
-            } else {
-                $attribute = $this->getAttribute($row['attributeId']);
-                if (empty($attribute->get('isMultilang'))) {
-                    $row['locale'] = null;
-                }
-            }
-        }
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
+
+        if ($row['locale'] === 'mainLocale') {
+            $row['locale'] = 'main';
+        }
 
         return $row;
     }
@@ -388,8 +378,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         foreach ($configuration as $rowNumber => $row) {
             $row = $this->prepareRow($row);
-
-            //@todo get channel languages
             if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                 continue 1;
             }
