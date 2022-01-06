@@ -271,6 +271,17 @@
             }
           ]
         }
+      },
+      "channel": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "entity",
+              "value": "Product"
+            }
+          ]
+        }
       }
     }
   }

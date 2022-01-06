@@ -41,6 +41,9 @@ class V1Dot4Dot1 extends Base
 
         $this->execute("ALTER TABLE `export_feed` ADD language VARCHAR(255) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("UPDATE `export_feed` SET language='mainLocale' WHERE 1");
+
+        $this->execute("ALTER TABLE `export_feed` ADD channel_id VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+        $this->execute("CREATE INDEX IDX_CHANNEL_ID ON `export_feed` (channel_id)");
     }
 
     public function down(): void
@@ -56,6 +59,9 @@ class V1Dot4Dot1 extends Base
         $this->execute("DROP TABLE export_feed_assigned_account");
 
         $this->execute("ALTER TABLE `export_feed` DROP language");
+
+        $this->execute("DROP INDEX IDX_CHANNEL_ID ON `export_feed`");
+        $this->execute("ALTER TABLE `export_feed` DROP channel_id");
     }
 
     protected function execute(string $sql)

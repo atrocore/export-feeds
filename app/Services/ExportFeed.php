@@ -158,6 +158,12 @@ class ExportFeed extends Base
             $post->attributeId = $attribute->get('id');
             $post->attributeName = $attribute->get('name');
 
+            if (!empty($feed->get('channelId'))) {
+                $post->scope = 'Channel';
+                $post->channelId = $feed->get('channelId');
+                $post->channelName = $feed->get('channelName');
+            }
+
             $exportConfiguratorItemService->createEntity($post);
         }
 

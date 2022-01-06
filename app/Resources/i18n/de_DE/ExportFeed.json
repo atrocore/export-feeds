@@ -1,6 +1,7 @@
 {
   "fields": {
     "language": "Sprache",
+    "channel": "Kanal",
     "entity": "Entität",
     "type": "Typ",
     "isActive": "Aktiv",
