@@ -93,6 +93,9 @@
     },
     "exportFeed": {
       "type": "link"
+    },
+    "mask": {
+      "type": "varchar"
     }
   },
   "links": {

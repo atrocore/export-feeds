@@ -44,6 +44,8 @@ class V1Dot4Dot1 extends Base
 
         $this->execute("ALTER TABLE `export_feed` ADD channel_id VARCHAR(24) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
         $this->execute("CREATE INDEX IDX_CHANNEL_ID ON `export_feed` (channel_id)");
+
+        $this->execute("ALTER TABLE `export_configurator_item` ADD mask VARCHAR(255) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
     }
 
     public function down(): void
@@ -62,6 +64,8 @@ class V1Dot4Dot1 extends Base
 
         $this->execute("DROP INDEX IDX_CHANNEL_ID ON `export_feed`");
         $this->execute("ALTER TABLE `export_feed` DROP channel_id");
+
+        $this->execute("ALTER TABLE `export_feed` DROP mask");
     }
 
     protected function execute(string $sql)

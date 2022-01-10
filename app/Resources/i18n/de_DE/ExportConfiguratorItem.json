@@ -11,7 +11,8 @@
     "type": "Typ",
     "locale": "Sprache",
     "scope": "Scope",
-    "channel": "Kanal"
+    "channel": "Kanal",
+    "mask": "Maske"
   },
   "links": {
     "exportFeed": "Exportfeed",
