@@ -167,10 +167,13 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "type",
+              "type": "or",
               "value": [
-                "simple"
+                {
+                  "type": "equals",
+                  "attribute": "type",
+                  "value": "simple"
+                }
               ]
             }
           ]
@@ -178,10 +181,13 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "type",
+              "type": "or",
               "value": [
-                "simple"
+                {
+                  "type": "equals",
+                  "attribute": "type",
+                  "value": "simple"
+                }
               ]
             }
           ]
@@ -191,10 +197,13 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "type",
+              "type": "or",
               "value": [
-                "simple"
+                {
+                  "type": "equals",
+                  "attribute": "type",
+                  "value": "simple"
+                }
               ]
             }
           ]
@@ -202,10 +211,13 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "type",
+              "type": "or",
               "value": [
-                "simple"
+                {
+                  "type": "equals",
+                  "attribute": "type",
+                  "value": "simple"
+                }
               ]
             }
           ]
