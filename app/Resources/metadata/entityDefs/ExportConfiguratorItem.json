@@ -95,7 +95,8 @@
       "type": "link"
     },
     "mask": {
-      "type": "varchar"
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/mask"
     }
   },
   "links": {

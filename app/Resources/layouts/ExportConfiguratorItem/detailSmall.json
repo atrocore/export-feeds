@@ -46,6 +46,12 @@
         {
           "name": "channel"
         }
+      ],
+      [
+        {
+          "name": "mask"
+        },
+        false
       ]
     ]
   }
