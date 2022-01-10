@@ -167,18 +167,22 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -187,18 +191,22 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
