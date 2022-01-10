@@ -280,6 +280,7 @@ class ExportFeed extends Base
                     'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
                     'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
                     'exportBy'                  => $item->get('exportBy'),
+                    'mask'                      => $item->get('mask'),
                 ];
 
                 if ($item->get('type') === 'Field') {

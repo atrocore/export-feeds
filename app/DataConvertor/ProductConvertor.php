@@ -22,8 +22,6 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
-use Espo\Core\Utils\Util;
-
 class ProductConvertor extends Convertor
 {
     public function convert(array $record, array $configuration, bool $toString = false): array
@@ -48,32 +46,13 @@ class ProductConvertor extends Convertor
         }
 
         foreach ($record['pavs'] as $v) {
-            if (
-                $v['language'] === $configuration['locale']
-                && $v['attributeId'] == $configuration['attributeId']
-                && $v['scope'] == 'Global'
-            ) {
-                $productAttribute = $v;
-                break 1;
-            }
-        }
+            $language = !$v['isAttributeMultiLang'] ? 'main' : $configuration['locale'];
+            $checkScope = empty($configuration['channelId']) ? $v['scope'] == 'Global' : $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId'];
 
-        if (!empty($configuration['channelId'])) {
-            foreach ($record['pavs'] as $v) {
-                if (
-                    $v['language'] === $configuration['locale']
-                    && $v['attributeId'] == $configuration['attributeId']
-                    && $v['scope'] == 'Channel'
-                    && $configuration['channelId'] == $v['channelId']
-                ) {
-                    $productAttribute = $v;
-                    break 1;
-                }
+            if ($v['language'] === $language && $v['attributeId'] == $configuration['attributeId'] && $checkScope) {
+                $result = $this->convertType($v['attributeType'], $v, array_merge($configuration, ['field' => 'value']), $toString);
+                break;
             }
-        }
-
-        if (!empty($productAttribute)) {
-            $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
         }
 
         return $result;

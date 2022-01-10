@@ -340,7 +340,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $attrs = $this
                 ->getEntityManager()
                 ->getRepository('Attribute')
-                ->select(['id', 'name', 'code', 'type'])
+                ->select(['id', 'name', 'code', 'type', 'isMultilang'])
                 ->where(['id' => array_column($pavs, 'attributeId')])
                 ->find()
                 ->toArray();
@@ -353,6 +353,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 $row = $pav;
                 $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
                 $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
+                $row['isAttributeMultiLang'] = !empty($preparedAttrs[$pav['attributeId']]['isMultilang']);
                 $this->pavs[$pav['productId']][] = $row;
             }
         }
