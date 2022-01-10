@@ -24,7 +24,9 @@
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
     "limit": "Maximum Number of Records per Iteration",
     "separateJob": "Separate Job per Iteration",
-    "configuratorItems": "Configurator"
+    "configuratorItems": "Configurator",
+    "convertCollectionToString": "Convert collection to string",
+    "convertRelationsToString": "Convert relations to string"
   },
   "links": {
     "configuratorItems": "Configurator",
@@ -76,5 +78,9 @@
     "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
     "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
     "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set."
+  },
+  "tooltips": {
+    "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",
+    "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation."
   }
 }

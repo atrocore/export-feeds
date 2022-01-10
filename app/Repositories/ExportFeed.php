@@ -58,6 +58,9 @@ class ExportFeed extends Base
         parent::beforeSave($entity, $options);
 
         if ($entity->get('type') === 'simple') {
+            $entity->set('convertCollectionToString', true);
+            $entity->set('convertRelationsToString', true);
+
             // remove configurator items on Entity change
             if (!$entity->isNew() && $entity->has('entity') && $fetchedEntity !== $entity->get('entity')) {
                 $this->removeConfiguratorItems($entity->get('id'));

@@ -123,12 +123,26 @@
       "prohibitedEmptyValue": true,
       "view": "export:views/export-feed/fields/entity"
     },
+    "convertCollectionToString": {
+      "type": "bool",
+      "notStorable": true,
+      "default": true,
+      "dataField": true,
+      "tooltip": true
+    },
     "delimiter": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
       "default": "~"
+    },
+    "convertRelationsToString": {
+      "type": "bool",
+      "notStorable": true,
+      "default": true,
+      "dataField": true,
+      "tooltip": true
     },
     "fieldDelimiterForRelation": {
       "type": "varchar",

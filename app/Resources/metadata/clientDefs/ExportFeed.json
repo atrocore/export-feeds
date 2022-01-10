@@ -64,6 +64,28 @@
           ]
         }
       },
+      "convertCollectionToString": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        }
+      },
+      "convertRelationsToString": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        }
+      },
       "fileType": {
         "visible": {
           "conditionGroup": [
@@ -167,28 +189,16 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "or",
-              "value": [
-                {
-                  "type": "equals",
-                  "attribute": "type",
-                  "value": "simple"
-                }
-              ]
+              "type": "isTrue",
+              "attribute": "convertRelationsToString"
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "or",
-              "value": [
-                {
-                  "type": "equals",
-                  "attribute": "type",
-                  "value": "simple"
-                }
-              ]
+              "type": "isTrue",
+              "attribute": "convertRelationsToString"
             }
           ]
         }
@@ -197,28 +207,16 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "or",
-              "value": [
-                {
-                  "type": "equals",
-                  "attribute": "type",
-                  "value": "simple"
-                }
-              ]
+              "type": "isTrue",
+              "attribute": "convertCollectionToString"
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "or",
-              "value": [
-                {
-                  "type": "equals",
-                  "attribute": "type",
-                  "value": "simple"
-                }
-              ]
+              "type": "isTrue",
+              "attribute": "convertCollectionToString"
             }
           ]
         }

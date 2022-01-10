@@ -220,6 +220,11 @@ class ExportFeed extends Base
     {
         parent::prepareEntityForOutput($entity);
 
+        if ($entity->get('type') === 'simple') {
+            $entity->set('convertCollectionToString', true);
+            $entity->set('convertRelationsToString', true);
+        }
+
         foreach ($entity->getFeedFields() as $name => $value) {
             $entity->set($name, $value);
         }
@@ -278,10 +283,17 @@ class ExportFeed extends Base
                     'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
                     'decimalMark'               => $feed->getFeedField('decimalMark'),
                     'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
+                    'convertCollectionToString' => !empty($feed->getFeedField('convertCollectionToString')),
+                    'convertRelationsToString'  => !empty($feed->getFeedField('convertRelationsToString')),
                     'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
                     'exportBy'                  => $item->get('exportBy'),
                     'mask'                      => $item->get('mask'),
                 ];
+
+                if ($feed->get('type') === 'simple') {
+                    $row['convertCollectionToString'] = true;
+                    $row['convertRelationsToString'] = true;
+                }
 
                 if ($item->get('type') === 'Field') {
                     if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {

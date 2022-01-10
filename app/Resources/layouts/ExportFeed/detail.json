@@ -93,7 +93,15 @@
       ],
       [
         {
+          "name": "convertCollectionToString"
+        },
+        {
           "name": "delimiter"
+        }
+      ],
+      [
+        {
+          "name": "convertRelationsToString"
         },
         {
           "name": "fieldDelimiterForRelation"
