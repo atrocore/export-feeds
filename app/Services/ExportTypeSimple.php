@@ -96,6 +96,9 @@ class ExportTypeSimple extends AbstractExportType
             }
 
             foreach ($data['configuration'] as $rowNumber => $row) {
+                $row['convertCollectionToString'] = false;
+                $row['convertRelationsToString'] = false;
+
                 $converted = $this->convertor->convert(Json::decode($json, true), $row);
                 $n = 0;
                 foreach ($converted as $colName => $value) {
