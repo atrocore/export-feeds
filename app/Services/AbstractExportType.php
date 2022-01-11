@@ -329,6 +329,18 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             'data'
         ];
 
+        /**
+         * @deprecated This method will be removed soon
+         */
+        if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
+            $selectFields = ['id', 'productId', 'attributeId', 'scope', 'channelId', 'value', 'data'];
+            if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
+                foreach ($locales as $locale) {
+                    $selectFields[] = Util::toCamelCase('value_' . strtolower($locale));
+                }
+            }
+        }
+
         $pavs = $this
             ->getEntityManager()
             ->getRepository('ProductAttributeValue')

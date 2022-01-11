@@ -22,11 +22,16 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Espo\Core\Utils\Util;
+
 class ProductConvertor extends Convertor
 {
     public function convert(array $record, array $configuration, bool $toString = false): array
     {
         if (isset($configuration['attributeId'])) {
+            if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
+                return $this->convertAttributeValueForPim1Dot3DotX($record, $configuration, $toString);
+            }
             return $this->convertAttributeValue($record, $configuration, $toString);
         }
 
@@ -53,6 +58,49 @@ class ProductConvertor extends Convertor
                 $result = $this->convertType($v['attributeType'], $v, array_merge($configuration, ['field' => 'value']), $toString);
                 break;
             }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @deprecated This method will be removed soon
+     */
+    protected function convertAttributeValueForPim1Dot3DotX(array $record, array $configuration, bool $toString = false): array
+    {
+        if (empty($record['pavs'])) {
+            return [];
+        }
+
+        $result = [];
+
+        if ($toString) {
+            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        }
+
+        if (empty($configuration['channelId'])) {
+            foreach ($record['pavs'] as $v) {
+                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
+                    $productAttribute = $v;
+                    break 1;
+                }
+            }
+        } else {
+            foreach ($record['pavs'] as $v) {
+                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
+                    $productAttribute = $v;
+                    break 1;
+                }
+            }
+        }
+
+        if (!empty($productAttribute)) {
+            $valueField = 'value';
+            if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
+                $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
+            }
+
+            $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $valueField]), $toString);
         }
 
         return $result;
