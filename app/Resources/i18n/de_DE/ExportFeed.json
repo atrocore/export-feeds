@@ -25,7 +25,9 @@
     "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
     "limit": "Maximale Datensatzanzahl pro Iteration",
     "separateJob": "Separater Auftrag pro Iteration",
-    "configuratorItems": "Konfigurator"
+    "configuratorItems": "Konfigurator",
+    "convertCollectionToString": "Sammlung in String umwandeln",
+    "convertRelationsToString": "Relationen in String umwandeln"
   },
   "links": {
     "configuratorItems": "Konfigurator",
@@ -77,5 +79,9 @@
     "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden.",
     "noFieldLabel": "Die Bezeichnung für das Feld '%s' für die Sprache '%s' ist nicht gesetzt.",
     "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt."
+  },
+  "tooltips": {
+    "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
+    "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt."
   }
 }
