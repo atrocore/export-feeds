@@ -26,6 +26,11 @@ class ArrayType extends AbstractType
 {
     public function convert(array &$result, array $record, array $configuration): void
     {
+        if (!empty($configuration['convertCollectionToString'])) {
+            $this->convertToString($result, $record, $configuration);
+            return;
+        }
+
         $field = $configuration['field'];
         $column = $configuration['column'];
 

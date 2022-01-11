@@ -1,8 +1,9 @@
 {
   "fields": {
+    "language": "Язык",
+    "channel": "Канал",
     "entity": "Сущность",
     "type": "Тип",
-    "channels": "Каналы",
     "isActive": "Активный",
     "fileType": "Формат",
     "isFileHeaderRow": "Строка заголовка",
@@ -13,7 +14,6 @@
     "attribute": "Атрибут",
     "fieldOrAttribute": "Поле/Атрибут",
     "delimiter": "Разделитель значений списка",
-    "exportByOrChannel": "Экспортировать по/каналу",
     "exportJobs": "Задания экспорта",
     "emptyValue": "Пустое значение",
     "nullValue": "Нулевое значение",
@@ -24,10 +24,11 @@
     "fieldDelimiterForRelation": "Разделитель полей для связи",
     "limit": "Максимальное число записей для итерации",
     "separateJob": "Отдельное задание для итерации",
-    "configuratorItems": "Конфигуратор"
+    "configuratorItems": "Конфигуратор",
+    "convertCollectionToString": "Конвертировать список в строку",
+    "convertRelationsToString": "Конвертировать поля связи в строку"
   },
   "links": {
-    "channels": "Каналы",
     "exportJobs": "Задания экспорта",
     "configuratorItems": "Конфигуратор"
   },
@@ -67,8 +68,7 @@
   "additionalTranslates": {
     "exportName": "Экспорт: %s",
     "jobCreated": "Задание на экспорт успешно создано",
-    "jobNotCreated": "Не удалось создать задание экспорта",
-    "channelWithoutExportFeeds": "Нет экспорт. фидов, связанных с текущим каналом"
+    "jobNotCreated": "Не удалось создать задание экспорта"
   },
   "exceptions": {
     "noSuchField": "Поле '%s' не существует.",
@@ -80,6 +80,7 @@
     "noAttributeLabel": "Метка для атрибута '%s' для языка '%s' не назначена."
   },
   "tooltips": {
-    "channels": "Экспорт. фид будет связан с этими каналами."
+    "convertCollectionToString": "Поля и атрибуты типов: multi-enum, array, one-to-many relation.",
+    "convertRelationsToString": "Поля связи будут разделены \"Разделителем полей для связи\"."
   }
 }

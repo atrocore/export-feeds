@@ -32,7 +32,13 @@ class UnitType extends FloatType
         $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
             $unit = $this->isPav($record) ? $record['data']['unit'] : $record[$field . 'Unit'];
-            $result[$column] = (float)$record[$field] . ' ' . $unit;
+            $value = (float)$record[$field];
+
+            if ($configuration['mask'] === '{{value}}' || $configuration['mask'] === '{{Value}}') {
+                $result[$column] = $value;
+            } else {
+                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{unit}}', '{{Unit}}'], [$value, $value, $unit, $unit], $configuration['mask']);
+            }
         }
     }
 
@@ -51,7 +57,8 @@ class UnitType extends FloatType
                 $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
                 $unit = $this->isPav($record) ? $record['data']['unit'] : $record[$field . 'Unit'];
-                $result[$column] = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator) . ' ' . $unit;
+                $value = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
+                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{unit}}', '{{Unit}}'], [$value, $value, $unit, $unit], $configuration['mask']);
             }
         }
     }

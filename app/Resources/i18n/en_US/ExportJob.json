@@ -1,6 +1,5 @@
 {
   "fields": {
-    "channel": "Channel",
     "exportFeed": "Export Feed",
     "file": "Exported File",
     "state": "State",
@@ -10,7 +9,6 @@
     "count": "Count"
   },
   "links": {
-    "channel": "Channel",
     "exportFeed": "Export Feed"
   },
   "labels": {

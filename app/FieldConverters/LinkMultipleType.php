@@ -65,7 +65,7 @@ class LinkMultipleType extends LinkType
                     $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
                 }
 
-                if ($this->needStringResult) {
+                if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
                     $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
                 } else {
                     $links[] = $fieldResult;
@@ -78,8 +78,12 @@ class LinkMultipleType extends LinkType
                     $result[$columnName] = $link;
                 }
             } else {
-                if ($this->needStringResult) {
-                    $result[$column] = implode($configuration['delimiter'], $links);
+                if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
+                    $preparedLinks = [];
+                    foreach ($links as $link) {
+                        $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
+                    }
+                    $result[$column] = implode($configuration['delimiter'], $preparedLinks);
                 } else {
                     $result[$column] = $links;
                 }

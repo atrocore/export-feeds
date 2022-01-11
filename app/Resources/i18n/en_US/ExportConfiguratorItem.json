@@ -6,14 +6,17 @@
     "exportFeed": "Export Feed",
     "attribute": "Attribute",
     "exportBy": "Related Entity Fields",
-    "addAllLocales": "Add for all languages",
     "remove": "Remove",
     "exportIntoSeparateColumns": "Separate columns",
     "type": "Type",
-    "locale": "Language"
+    "locale": "Language",
+    "scope": "Scope",
+    "channel": "Channel",
+    "mask": "Mask"
   },
   "links": {
-    "exportFeed": "Export Feed"
+    "exportFeed": "Export Feed",
+    "channel": "Channel"
   },
   "columnType": {
     "name": "Name",

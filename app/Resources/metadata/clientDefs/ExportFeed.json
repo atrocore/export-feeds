@@ -64,6 +64,28 @@
           ]
         }
       },
+      "convertCollectionToString": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        }
+      },
+      "convertRelationsToString": {
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "simple"
+            }
+          ]
+        }
+      },
       "fileType": {
         "visible": {
           "conditionGroup": [
@@ -167,18 +189,16 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
-              "attribute": "type",
-              "value": "simple"
+              "type": "isTrue",
+              "attribute": "convertRelationsToString"
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
-              "attribute": "type",
-              "value": "simple"
+              "type": "isTrue",
+              "attribute": "convertRelationsToString"
             }
           ]
         }
@@ -187,18 +207,16 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
-              "attribute": "type",
-              "value": "simple"
+              "type": "isTrue",
+              "attribute": "convertCollectionToString"
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
-              "attribute": "type",
-              "value": "simple"
+              "type": "isTrue",
+              "attribute": "convertCollectionToString"
             }
           ]
         }
@@ -264,6 +282,17 @@
               "attribute": "type",
               "value": "simple"
             },
+            {
+              "type": "equals",
+              "attribute": "entity",
+              "value": "Product"
+            }
+          ]
+        }
+      },
+      "channel": {
+        "visible": {
+          "conditionGroup": [
             {
               "type": "equals",
               "attribute": "entity",

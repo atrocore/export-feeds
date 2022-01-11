@@ -5,15 +5,18 @@
     "columnType": "Метка колонки",
     "exportFeed": "Экспорт. фид",
     "attribute": "Атрибут",
-    "addAllLocales": "Добавить для всех языков",
     "remove": "Удалить",
     "exportBy": "Поля связанных сущностей",
     "exportIntoSeparateColumns": "Отдельные колонки",
     "type": "Тип",
-    "locale": "Язык"
+    "locale": "Язык",
+    "scope": "Область действия",
+    "channel": "Канал",
+    "mask": "Маска"
   },
   "links": {
-    "exportFeed": "Экспорт. фид"
+    "exportFeed": "Экспорт. фид",
+    "channel": "Канал"
   },
   "columnType": {
     "name": "Название",

@@ -156,7 +156,10 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $feedData = $this->data['feed']['data'];
 
-        $row['channelId'] = isset($this->data['exportByChannelId']) ? $this->data['exportByChannelId'] : '';
+        if (empty($row['scope']) || $row['scope'] !== 'Channel') {
+            $row['channelId'] = '';
+        }
+
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
         $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
@@ -165,23 +168,11 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
         $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : '|';
         $row['entity'] = $feedData['entity'];
-
-        if (!empty($this->data['channelLocales'])) {
-            $row['channelLocales'] = $this->data['channelLocales'];
-
-            if (empty($row['attributeId'])) {
-                $row['locale'] = $this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'multilangLocale']);
-                if ($this->getMetadata()->get(['entityDefs', $feedData['entity'], 'fields', $row['field'], 'isMultilang'])) {
-                    $row['locale'] = 'mainLocale';
-                }
-            } else {
-                $attribute = $this->getAttribute($row['attributeId']);
-                if (empty($attribute->get('isMultilang'))) {
-                    $row['locale'] = null;
-                }
-            }
-        }
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
+
+        if ($row['locale'] === 'mainLocale') {
+            $row['locale'] = 'main';
+        }
 
         return $row;
     }
@@ -268,36 +259,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             'where'   => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : []
         ];
 
-        if (!empty($this->data['exportByChannelId'])) {
-            if ($this->data['feed']['data']['entity'] == 'Product') {
-                $params['where'][] = [
-                    'type'  => 'bool',
-                    'value' => ['activeForChannel'],
-                    'data'  => ['activeForChannel' => $this->data['exportByChannelId']]
-                ];
-            } else {
-                $links = $this->getMetadata()->get(['entityDefs', $this->data['feed']['data']['entity'], 'links'], []);
-                foreach ($links as $link => $linkData) {
-                    if ($linkData['entity'] == 'Channel') {
-                        if ($linkData['type'] == 'hasMany') {
-                            $params['where'][] = [
-                                'type'      => 'linkedWith',
-                                'attribute' => $link,
-                                'value'     => [$this->data['exportByChannelId']]
-                            ];
-                        }
-                        if ($linkData['type'] == 'belongsTo') {
-                            $params['where'][] = [
-                                'type'      => 'equals',
-                                'attribute' => $link . 'Id',
-                                'value'     => [$this->data['exportByChannelId']]
-                            ];
-                        }
-                    }
-                }
-            }
-        }
-
         return $params;
     }
 
@@ -379,7 +340,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $attrs = $this
                 ->getEntityManager()
                 ->getRepository('Attribute')
-                ->select(['id', 'name', 'code', 'type'])
+                ->select(['id', 'name', 'code', 'type', 'isMultilang'])
                 ->where(['id' => array_column($pavs, 'attributeId')])
                 ->find()
                 ->toArray();
@@ -392,6 +353,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 $row = $pav;
                 $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
                 $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
+                $row['isAttributeMultiLang'] = !empty($preparedAttrs[$pav['attributeId']]['isMultilang']);
                 $this->pavs[$pav['productId']][] = $row;
             }
         }
@@ -403,14 +365,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $data = $this->data['feed']['data'];
 
         $configuration = $data['configuration'];
-
-        if (!empty($this->data['exportByChannelId'])) {
-            $channel = $this->getEntityManager()->getEntity('Channel', $this->data['exportByChannelId']);
-            if (empty($channel)) {
-                throw new BadRequest('No such channel found.');
-            }
-            $this->data['channelLocales'] = $channel->get('locales');
-        }
 
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
@@ -428,6 +382,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
                 continue 1;
             }
+
             $jobMetadata['configuration'][$rowNumber] = $row;
         }
 

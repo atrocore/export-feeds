@@ -22,39 +22,21 @@ declare(strict_types=1);
 
 namespace Export\Listeners;
 
-use Espo\Core\Utils\Json;
 use Treo\Core\EventManager\Event;
 use Treo\Listeners\AbstractListener;
 
-class LayoutController extends AbstractListener
+class Metadata extends AbstractListener
 {
-    public function afterActionRead(Event $event): void
+    public function modify(Event $event): void
     {
-        $scope = $event->getArgument('params')['scope'];
+        $data = $event->getArgument('data');
 
-        $name = $event->getArgument('params')['name'];
-
-        $method = 'modify' . $scope . ucfirst($name);
-
-        if (method_exists($this, $method)) {
-            $this->{$method}($event);
-        }
-    }
-
-    protected function modifyScheduledJobDetail(Event $event): void
-    {
-        $result = Json::decode($event->getArgument('result'), true);
-
-        $newRows = [];
-        foreach ($result[0]['rows'] as $row) {
-            $newRows[] = $row;
-            if ($row[0]['name'] === 'job') {
-                $newRows[] = [['name' => 'exportFeed'], false];
-            }
+        if (!empty($data['scopes']['Channel']['entity'])) {
+            $data['entityDefs']['ExportFeed']['fields']['channel']['type'] = 'link';
+            $data['entityDefs']['ExportFeed']['links']['channel']['type'] = 'belongsTo';
+            $data['entityDefs']['ExportFeed']['links']['channel']['entity'] = 'Channel';
         }
 
-        $result[0]['rows'] = $newRows;
-
-        $event->setArgument('result', Json::encode($result));
+        $event->setArgument('data', $data);
     }
 }

@@ -88,7 +88,14 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             }
 
             if (this.model.get('attributeId')) {
-                extraInfo += `${this.translate('Attribute', 'scopeNames', 'Global')}`;
+                extraInfo += `${this.translate('code', 'fields', 'Attribute')}: ${this.model.get('attributeCode')}`;
+                extraInfo += `<br>${this.translate('scope', 'fields', 'ExportConfiguratorItem')}: `;
+
+                if (this.model.get('scope') === 'Global') {
+                    extraInfo += 'Global';
+                } else {
+                    extraInfo += this.model.get('channelName');
+                }
             }
 
             return extraInfo;

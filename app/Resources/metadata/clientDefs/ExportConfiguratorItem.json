@@ -44,6 +44,56 @@
             }
           ]
         }
+      },
+      "scope": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Attribute"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Attribute"
+            }
+          ]
+        }
+      },
+      "channel": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Attribute"
+            },
+            {
+              "type": "equals",
+              "attribute": "scope",
+              "value": "Channel"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "Attribute"
+            },
+            {
+              "type": "equals",
+              "attribute": "scope",
+              "value": "Channel"
+            }
+          ]
+        }
       }
     }
   }

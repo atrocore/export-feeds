@@ -41,7 +41,15 @@
       ],
       [
         {
-          "name": "addAllLocales"
+          "name": "scope"
+        },
+        {
+          "name": "channel"
+        }
+      ],
+      [
+        {
+          "name": "mask"
         },
         false
       ]

@@ -32,7 +32,13 @@ class CurrencyType extends FloatType
         $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
             $currency = $this->isPav($record) ? $record['data']['currency'] : $record[$field . 'Currency'];
-            $result[$column] = (float)$record[$field] . ' ' . $currency;
+            $value = (float)$record[$field];
+
+            if ($configuration['mask'] === '{{value}}' || $configuration['mask'] === '{{Value}}') {
+                $result[$column] = $value;
+            } else {
+                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $configuration['mask']);
+            }
         }
     }
 
@@ -51,7 +57,8 @@ class CurrencyType extends FloatType
                 $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
                 $currency = $this->isPav($record) ? $record['data']['currency'] : $record[$field . 'Currency'];
-                $result[$column] = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator) . ' ' . $currency;
+                $value = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
+                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $configuration['mask']);
             }
         }
     }

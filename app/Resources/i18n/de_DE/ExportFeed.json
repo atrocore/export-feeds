@@ -1,8 +1,9 @@
 {
   "fields": {
+    "language": "Sprache",
+    "channel": "Kanal",
     "entity": "Entität",
     "type": "Typ",
-    "channels": "Kanäle",
     "isActive": "Aktiv",
     "fileType": "Format",
     "isFileHeaderRow": "Header-Zeile",
@@ -13,7 +14,6 @@
     "attribute": "Attribut",
     "fieldOrAttribute": "Feld/Attribut",
     "delimiter": "Listenwerttrennzeichen",
-    "exportByOrChannel": "Export von/Kanal",
     "data": "Daten",
     "jobsMax": "Anzahl der zu speichernden \"Erfolg\" Exportaufträge",
     "exportJobs": "Exportaufträge",
@@ -25,11 +25,12 @@
     "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
     "limit": "Maximale Datensatzanzahl pro Iteration",
     "separateJob": "Separater Auftrag pro Iteration",
-    "configuratorItems": "Konfigurator"
+    "configuratorItems": "Konfigurator",
+    "convertCollectionToString": "Sammlung in String umwandeln",
+    "convertRelationsToString": "Relationen in String umwandeln"
   },
   "links": {
     "configuratorItems": "Konfigurator",
-    "channels": "Kanäle",
     "exportJobs": "Exportaufträge"
   },
   "labels": {
@@ -69,7 +70,6 @@
     "exportName": "Datenexport im Feed %s",
     "jobCreated": "Exportjob erfolgreich erstellt",
     "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
-    "channelWithoutExportFeeds": "Keine Exportfeeds, die mit dem aktuellen Kanal verknüpft sind."
   },
   "exceptions": {
     "noSuchField": "Feld '%s' existiert nicht.",
@@ -81,6 +81,7 @@
     "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt."
   },
   "tooltips": {
-    "channels": "Mit diesen Kanälen wird der Feed verknüpft."
+    "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
+    "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt."
   }
 }

@@ -49,6 +49,10 @@
       "type": "varchar",
       "notStorable": true
     },
+    "attributeCode": {
+      "type": "varchar",
+      "notStorable": true
+    },
     "isAttributeMultiLang": {
       "type": "bool",
       "notStorable": true
@@ -61,16 +65,27 @@
       "type": "varchar",
       "notStorable": true
     },
-    "addAllLocales": {
-      "type": "bool",
-      "notStorable": true,
-      "default": true,
-      "view": "export:views/export-configurator-item/fields/add-all-locales"
-    },
     "remove": {
       "type": "varchar",
       "notStorable": true,
       "view": "export:views/export-configurator-item/fields/remove"
+    },
+    "scope": {
+      "type": "enum",
+      "required": false,
+      "prohibitedEmptyValue": true,
+      "options": [
+        "Global",
+        "Channel"
+      ],
+      "optionsIds": [
+        "Global",
+        "Channel"
+      ],
+      "default": "Global"
+    },
+    "channel": {
+      "type": "link"
     },
     "createdAt": {
       "type": "datetime",
@@ -78,6 +93,10 @@
     },
     "exportFeed": {
       "type": "link"
+    },
+    "mask": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/mask"
     }
   },
   "links": {
@@ -90,6 +109,11 @@
     "attribute": {
       "type": "belongsTo",
       "entity": "Attribute",
+      "audited": false
+    },
+    "channel": {
+      "type": "belongsTo",
+      "entity": "Channel",
       "audited": false
     }
   },

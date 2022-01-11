@@ -65,6 +65,10 @@
       "default": "simple",
       "prohibitedEmptyValue": true
     },
+    "language": {
+      "type": "varchar",
+      "view": "export:views/export-feed/fields/language"
+    },
     "isActive": {
       "notNull": true,
       "type": "bool"
@@ -119,12 +123,26 @@
       "prohibitedEmptyValue": true,
       "view": "export:views/export-feed/fields/entity"
     },
+    "convertCollectionToString": {
+      "type": "bool",
+      "notStorable": true,
+      "default": true,
+      "dataField": true,
+      "tooltip": true
+    },
     "delimiter": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
       "default": "~"
+    },
+    "convertRelationsToString": {
+      "type": "bool",
+      "notStorable": true,
+      "default": true,
+      "dataField": true,
+      "tooltip": true
     },
     "fieldDelimiterForRelation": {
       "type": "varchar",
@@ -166,12 +184,6 @@
       "notStorable": true,
       "dataField": true,
       "required": false
-    },
-    "channels": {
-      "type": "linkMultiple",
-      "tooltip": true,
-      "noLoad": true,
-      "importDisabled": true
     },
     "data": {
       "type": "jsonObject",
@@ -216,11 +228,6 @@
       "entity": "Team",
       "relationName": "EntityTeam",
       "layoutRelationshipsDisabled": true
-    },
-    "channels": {
-      "type": "hasMany",
-      "foreign": "exportFeeds",
-      "entity": "Channel"
     },
     "configuratorItems": {
       "type": "hasMany",

@@ -50,6 +50,9 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
+        $this->prepareFeedViaLanguage();
+        $this->prepareFeedViaChannel();
+
         $data = [
             'id'   => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
@@ -69,57 +72,11 @@ class ExportFeed extends Base
                     'value'     => $requestData->entityFilterData->ids
                 ];
             }
-
-            $this->pushExport($data);
-            return true;
         }
 
-        if (!empty($requestData->exportByChannelId)) {
-            $data['exportByChannelId'] = $requestData->exportByChannelId;
-            $this->pushExport($data);
-        } else {
-            $channelsIds = array_column($exportFeed->get('channels')->toArray(), 'id');
-            if (empty($channelsIds)) {
-                $this->pushExport($data);
-            } else {
-                foreach ($channelsIds as $channelId) {
-                    $data['exportByChannelId'] = $channelId;
-                    $this->pushExport($data);
-                }
-            }
-        }
+        $this->pushExport($data);
 
         return true;
-    }
-
-    /**
-     * Export all channel feeds
-     *
-     * @param string $channelId
-     *
-     * @return bool
-     */
-    public function exportChannel(string $channelId): bool
-    {
-        // prepare result
-        $result = false;
-
-        if (!empty($channel = $this->getChannel($channelId)) && !empty($feeds = $this->getChannelFeeds($channel))) {
-            foreach ($feeds as $feed) {
-                $requestData = new \stdClass();
-                $requestData->id = $feed->get('id');
-                $requestData->exportByChannelId = $channelId;
-
-                try {
-                    $this->exportFile($requestData);
-                } catch (\Throwable $e) {
-                    $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
-                }
-            }
-            $result = true;
-        }
-
-        return $result;
     }
 
     public function addMissingFields(string $feedId): bool
@@ -198,12 +155,17 @@ class ExportFeed extends Base
             $post = new \stdClass();
             $post->type = 'Attribute';
             $post->name = $attribute->get('name');
-            $post->locale = 'mainLocale';
+            $post->locale = $feed->get('language');
             $post->exportFeedId = $feed->get('id');
             $post->exportFeedName = $feed->get('name');
             $post->attributeId = $attribute->get('id');
             $post->attributeName = $attribute->get('name');
-            $post->addAllLocales = true;
+
+            if (!empty($feed->get('channelId'))) {
+                $post->scope = 'Channel';
+                $post->channelId = $feed->get('channelId');
+                $post->channelName = $feed->get('channelName');
+            }
 
             $exportConfiguratorItemService->createEntity($post);
         }
@@ -218,9 +180,50 @@ class ExportFeed extends Base
         return true;
     }
 
+    public function readEntity($id)
+    {
+        $this->prepareFeedViaLanguage();
+        $this->prepareFeedViaChannel();
+
+        return parent::readEntity($id);
+    }
+
+    public function findLinkedEntities($id, $link, $params)
+    {
+        if ($link === 'configuratorItems') {
+            $this->prepareFeedViaLanguage();
+            $this->prepareFeedViaChannel();
+        }
+
+        return parent::findLinkedEntities($id, $link, $params);
+    }
+
+    public function prepareFeedViaLanguage(): void
+    {
+        $languages = ['mainLocale'];
+        if ($this->getConfig()->get('isMultilangActive', false)) {
+            $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
+        }
+        $languages = implode("','", $languages);
+
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET language='mainLocale' WHERE language NOT IN ('$languages')");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE locale NOT IN ('$languages')");
+    }
+
+    public function prepareFeedViaChannel(): void
+    {
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET channel_id=null WHERE channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)");
+    }
+
     public function prepareEntityForOutput(Entity $entity)
     {
         parent::prepareEntityForOutput($entity);
+
+        if ($entity->get('type') === 'simple') {
+            $entity->set('convertCollectionToString', true);
+            $entity->set('convertRelationsToString', true);
+        }
 
         foreach ($entity->getFeedFields() as $name => $value) {
             $entity->set($name, $value);
@@ -280,9 +283,17 @@ class ExportFeed extends Base
                     'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
                     'decimalMark'               => $feed->getFeedField('decimalMark'),
                     'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
+                    'convertCollectionToString' => !empty($feed->getFeedField('convertCollectionToString')),
+                    'convertRelationsToString'  => !empty($feed->getFeedField('convertRelationsToString')),
                     'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
                     'exportBy'                  => $item->get('exportBy'),
+                    'mask'                      => $item->get('mask'),
                 ];
+
+                if ($feed->get('type') === 'simple') {
+                    $row['convertCollectionToString'] = true;
+                    $row['convertRelationsToString'] = true;
+                }
 
                 if ($item->get('type') === 'Field') {
                     if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {
@@ -298,6 +309,14 @@ class ExportFeed extends Base
                     }
                     $row['attributeId'] = $attribute->get('id');
                     $row['attributeName'] = $attribute->get('name');
+
+                    $row['scope'] = $item->get('scope');
+                    $row['channelId'] = $item->get('channelId');
+                    $row['channelLocales'] = [];
+
+                    if (!empty($channel = $item->get('channel'))) {
+                        $row['channelLocales'] = $channel->get('locales');
+                    }
                 }
 
                 $configuration[] = $row;
@@ -355,10 +374,6 @@ class ExportFeed extends Base
         $exportJob->set('ownerUserId', $user->get('id'));
         $exportJob->set('assignedUserId', $user->get('id'));
         $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
-
-        if (!empty($data['exportByChannelId'])) {
-            $exportJob->set('channelId', $data['exportByChannelId']);
-        }
 
         $this->getEntityManager()->saveEntity($exportJob);
 

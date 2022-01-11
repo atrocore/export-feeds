@@ -67,7 +67,7 @@ class LinkType extends AbstractType
                     }
 
                     if (!empty($fieldResult)) {
-                        if ($this->needStringResult) {
+                        if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
                             $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
                         } else {
                             $result[$column] = $fieldResult;
@@ -90,7 +90,7 @@ class LinkType extends AbstractType
                 }
 
                 if (!empty($fieldResult)) {
-                    if ($this->needStringResult) {
+                    if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
                         $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
                     } else {
                         $result[$column] = $fieldResult;
