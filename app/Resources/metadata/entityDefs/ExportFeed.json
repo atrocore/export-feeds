@@ -137,6 +137,13 @@
       "required": false,
       "default": "~"
     },
+    "replaceAttributeValues": {
+      "type": "bool",
+      "notStorable": true,
+      "default": true,
+      "dataField": true,
+      "tooltip": true
+    },
     "convertRelationsToString": {
       "type": "bool",
       "notStorable": true,

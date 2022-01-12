@@ -26,7 +26,8 @@
     "separateJob": "Separate Job per Iteration",
     "configuratorItems": "Configurator",
     "convertCollectionToString": "Convert collection to string",
-    "convertRelationsToString": "Convert relations to string"
+    "convertRelationsToString": "Convert relations to string",
+    "replaceAttributeValues": "Replace attribute values"
   },
   "links": {
     "configuratorItems": "Configurator",
@@ -81,6 +82,7 @@
   },
   "tooltips": {
     "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",
-    "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation."
+    "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation.",
+    "replaceAttributeValues": "Replace non-existing channel specific attribute values with global values."
   }
 }

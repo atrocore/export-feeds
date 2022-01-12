@@ -27,7 +27,8 @@
     "separateJob": "Separater Auftrag pro Iteration",
     "configuratorItems": "Konfigurator",
     "convertCollectionToString": "Sammlung in String umwandeln",
-    "convertRelationsToString": "Relationen in String umwandeln"
+    "convertRelationsToString": "Relationen in String umwandeln",
+    "replaceAttributeValues": "Attributwerte ersetzen"
   },
   "links": {
     "configuratorItems": "Konfigurator",
@@ -82,6 +83,7 @@
   },
   "tooltips": {
     "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
-    "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt."
+    "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt.",
+    "replaceAttributeValues": "Nicht existierende kanalspezifische Attributwerte mit globalen Werten ersetzen."
   }
 }

@@ -274,6 +274,17 @@
           ]
         }
       },
+      "replaceAttributeValues": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "entity",
+              "value": "Product"
+            }
+          ]
+        }
+      },
       "markForNotLinkedAttribute": {
         "visible": {
           "conditionGroup": [
