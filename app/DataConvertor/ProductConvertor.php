@@ -44,7 +44,11 @@ class ProductConvertor extends Convertor
             return [];
         }
 
-        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        $result = [];
+
+        if ($toString) {
+            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        }
 
         foreach ($record['pavs'] as $v) {
             if ($this->isLanguageEquals($v, $configuration) && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
@@ -87,7 +91,11 @@ class ProductConvertor extends Convertor
             return [];
         }
 
-        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        $result = [];
+
+        if ($toString) {
+            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        }
 
         foreach ($record['pavs'] as $v) {
             if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
