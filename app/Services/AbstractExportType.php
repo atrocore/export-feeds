@@ -373,6 +373,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 $row = $pav;
                 $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
                 $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
+                $row['attributeType'] = $preparedAttrs[$pav['attributeId']]['type'];
                 $row['isAttributeMultiLang'] = !empty($preparedAttrs[$pav['attributeId']]['isMultilang']);
                 $this->pavs[$pav['productId']][] = $row;
             }
