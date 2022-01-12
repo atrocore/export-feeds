@@ -70,7 +70,7 @@
   "additionalTranslates": {
     "exportName": "Datenexport im Feed %s",
     "jobCreated": "Exportjob erfolgreich erstellt",
-    "jobNotCreated": "Exportjoberstellung fehlgeschlagen",
+    "jobNotCreated": "Exportjoberstellung fehlgeschlagen"
   },
   "exceptions": {
     "noSuchField": "Feld '%s' existiert nicht.",
@@ -82,6 +82,8 @@
     "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt."
   },
   "tooltips": {
+    "language": "Dieser Wert wird bei der Erstellung einer Regel für ein sprachspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.\n\n",
+    "channel": "Dieser Wert wird bei der Erstellung einer Regel für ein kanalspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.",
     "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt.",
     "replaceAttributeValues": "Nicht existierende kanalspezifische Attributwerte mit globalen Werten ersetzen."

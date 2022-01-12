@@ -91,6 +91,14 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 }
             }
 
+            if ($data['type'] === 'currency') {
+                $row['mask'] = "{{value}} {{currency}}";
+            }
+
+            if ($data['type'] === 'unit') {
+                $row['mask'] = "{{value}} {{unit}}";
+            }
+
             $configuration[$row['column']] = $row;
 
             // push locales fields

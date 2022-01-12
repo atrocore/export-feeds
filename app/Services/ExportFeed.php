@@ -102,6 +102,9 @@ class ExportFeed extends Base
             if (isset($row['exportIntoSeparateColumns'])) {
                 $item->set('exportIntoSeparateColumns', !empty($row['exportIntoSeparateColumns']));
             }
+            if (isset($row['mask'])) {
+                $item->set('mask', $row['mask']);
+            }
 
             $this->getEntityManager()->saveEntity($item);
         }
@@ -165,6 +168,14 @@ class ExportFeed extends Base
                 $post->scope = 'Channel';
                 $post->channelId = $feed->get('channelId');
                 $post->channelName = $feed->get('channelName');
+            }
+
+            if ($attribute->get('type') === 'currency') {
+                $post->mask = "{{value}} {{currency}}";
+            }
+
+            if ($attribute->get('type') === 'unit') {
+                $post->mask = "{{value}} {{unit}}";
             }
 
             $exportConfiguratorItemService->createEntity($post);

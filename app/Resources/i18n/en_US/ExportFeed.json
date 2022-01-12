@@ -81,6 +81,8 @@
     "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set."
   },
   "tooltips": {
+    "language": "This value is inherited by creating a rule for some language specific attribute and has no impact on export itself.",
+    "channel": "This value is inherited by creating a rule for some channel specific attribute and has no impact on export itself.",
     "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation.",
     "replaceAttributeValues": "Replace non-existing channel specific attribute values with global values."

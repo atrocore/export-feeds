@@ -67,7 +67,8 @@
     },
     "language": {
       "type": "varchar",
-      "view": "export:views/export-feed/fields/language"
+      "view": "export:views/export-feed/fields/language",
+      "tooltip": true
     },
     "isActive": {
       "notNull": true,

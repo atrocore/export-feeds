@@ -33,6 +33,7 @@ class Metadata extends AbstractListener
 
         if (!empty($data['scopes']['Channel']['entity'])) {
             $data['entityDefs']['ExportFeed']['fields']['channel']['type'] = 'link';
+            $data['entityDefs']['ExportFeed']['fields']['channel']['tooltip'] = true;
             $data['entityDefs']['ExportFeed']['links']['channel']['type'] = 'belongsTo';
             $data['entityDefs']['ExportFeed']['links']['channel']['entity'] = 'Channel';
         }
