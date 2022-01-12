@@ -398,12 +398,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         ];
 
         foreach ($configuration as $rowNumber => $row) {
-            $row = $this->prepareRow($row);
-            if (!empty($row['channelLocales']) && !empty($row['locale']) && !in_array($row['locale'], $row['channelLocales'])) {
-                continue 1;
-            }
-
-            $jobMetadata['configuration'][$rowNumber] = $row;
+            $jobMetadata['configuration'][$rowNumber] = $this->prepareRow($row);
         }
 
         // clearing file if it needs

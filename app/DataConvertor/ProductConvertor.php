@@ -132,8 +132,14 @@ class ProductConvertor extends Convertor
 
     protected function isLanguageEquals(array $pav, array $configuration): bool
     {
-        $language = !$pav['isAttributeMultiLang'] ? 'main' : $configuration['locale'];
+        if (empty($pav['isAttributeMultiLang'])) {
+            return true;
+        }
 
-        return $pav['language'] === $language;
+        if ($configuration['locale'] === 'mainLocale') {
+            $configuration['locale'] = 'main';
+        }
+
+        return $pav['language'] === $configuration['locale'];
     }
 }

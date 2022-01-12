@@ -25,7 +25,6 @@ namespace Export\Services;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
-use Export\ExportType\AbstractType;
 use Espo\Services\QueueManagerBase;
 
 /**
