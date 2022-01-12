@@ -309,15 +309,20 @@ class ExportFeed extends Base
                     if (empty($attribute)) {
                         throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportFeed'), $item->get('name')));
                     }
+
+                    $row['replaceAttributeValues'] = !empty($feed->getFeedField('replaceAttributeValues'));
                     $row['attributeId'] = $attribute->get('id');
                     $row['attributeName'] = $attribute->get('name');
 
                     $row['scope'] = $item->get('scope');
-                    $row['channelId'] = $item->get('channelId');
+                    $row['channelId'] = null;
                     $row['channelLocales'] = [];
 
-                    if (!empty($channel = $item->get('channel'))) {
-                        $row['channelLocales'] = $channel->get('locales');
+                    if ($row['scope'] === 'Channel') {
+                        $row['channelId'] = $item->get('channelId');
+                        if (!empty($channel = $item->get('channel'))) {
+                            $row['channelLocales'] = $channel->get('locales');
+                        }
                     }
                 }
 

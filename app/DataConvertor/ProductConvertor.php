@@ -44,20 +44,35 @@ class ProductConvertor extends Convertor
             return [];
         }
 
-        $result = [];
-
-        if ($toString) {
-            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
-        }
+        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
 
         foreach ($record['pavs'] as $v) {
-            $language = !$v['isAttributeMultiLang'] ? 'main' : $configuration['locale'];
-            $checkScope = empty($configuration['channelId']) ? $v['scope'] == 'Global' : $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId'];
-
-            if ($v['language'] === $language && $v['attributeId'] == $configuration['attributeId'] && $checkScope) {
-                $result = $this->convertType($v['attributeType'], $v, array_merge($configuration, ['field' => 'value']), $toString);
-                break;
+            if ($this->isLanguageEquals($v, $configuration) && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
+                $productAttribute = $v;
+                break 1;
             }
+        }
+
+        if (!empty($configuration['channelId'])) {
+            foreach ($record['pavs'] as $v) {
+                if (
+                    $this->isLanguageEquals($v, $configuration)
+                    && $v['attributeId'] == $configuration['attributeId']
+                    && $v['scope'] == 'Channel'
+                    && $configuration['channelId'] == $v['channelId']
+                ) {
+                    $productAttribute = $v;
+                    break 1;
+                }
+            }
+        }
+
+        if (!empty($productAttribute)) {
+            // exit if replaceAttributeValues disabled
+            if (empty($configuration['replaceAttributeValues']) && $productAttribute['scope'] === 'Global' && !empty($configuration['channelId'])) {
+                return $result;
+            }
+            $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
         }
 
         return $result;
@@ -72,20 +87,16 @@ class ProductConvertor extends Convertor
             return [];
         }
 
-        $result = [];
+        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
 
-        if ($toString) {
-            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        foreach ($record['pavs'] as $v) {
+            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
+                $productAttribute = $v;
+                break 1;
+            }
         }
 
-        if (empty($configuration['channelId'])) {
-            foreach ($record['pavs'] as $v) {
-                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
-                    $productAttribute = $v;
-                    break 1;
-                }
-            }
-        } else {
+        if (!empty($configuration['channelId'])) {
             foreach ($record['pavs'] as $v) {
                 if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
                     $productAttribute = $v;
@@ -95,6 +106,11 @@ class ProductConvertor extends Convertor
         }
 
         if (!empty($productAttribute)) {
+            // exit if replaceAttributeValues disabled
+            if (empty($configuration['replaceAttributeValues']) && $productAttribute['scope'] === 'Global' && !empty($configuration['channelId'])) {
+                return $result;
+            }
+
             $valueField = 'value';
             if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
                 $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
@@ -104,5 +120,12 @@ class ProductConvertor extends Convertor
         }
 
         return $result;
+    }
+
+    protected function isLanguageEquals(array $pav, array $configuration): bool
+    {
+        $language = !$pav['isAttributeMultiLang'] ? 'main' : $configuration['locale'];
+
+        return $pav['language'] === $language;
     }
 }
