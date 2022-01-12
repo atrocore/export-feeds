@@ -220,14 +220,16 @@ class ExportFeed extends Base
     {
         parent::prepareEntityForOutput($entity);
 
+        foreach ($entity->getFeedFields() as $name => $value) {
+            $entity->set($name, $value);
+        }
+
         if ($entity->get('type') === 'simple') {
             $entity->set('convertCollectionToString', true);
             $entity->set('convertRelationsToString', true);
         }
 
-        foreach ($entity->getFeedFields() as $name => $value) {
-            $entity->set($name, $value);
-        }
+        $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
     }
 
     public function getExportTypeService(string $type): AbstractExportType
