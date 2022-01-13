@@ -86,7 +86,7 @@ class ProductConvertor extends Convertor
     }
 
     /**
-     * @deprecated This method will be removed soon
+     * @deprecated This only for pim < 1.4.0
      */
     protected function convertAttributeValueForPim1Dot3DotX(array $record, array $configuration, bool $toString = false): array
     {
@@ -123,7 +123,7 @@ class ProductConvertor extends Convertor
             }
 
             $valueField = 'value';
-            if (!empty($configuration['locale']) && $configuration['locale'] !== 'mainLocale') {
+            if (!empty($configuration['locale']) && $configuration['locale'] !== 'main') {
                 $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
             }
 
@@ -154,10 +154,6 @@ class ProductConvertor extends Convertor
     {
         if (empty($pav['isAttributeMultiLang'])) {
             return true;
-        }
-
-        if ($configuration['locale'] === 'mainLocale') {
-            $configuration['locale'] = 'main';
         }
 
         return $pav['language'] === $configuration['locale'];
