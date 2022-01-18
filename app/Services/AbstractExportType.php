@@ -299,6 +299,30 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $this->pavs = [];
 
+        /**
+         * @deprecated This only for pim < 1.4.0
+         */
+        if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
+            foreach ($productsIds as $productId) {
+                $params = ['select' => ['id', 'productId', 'attributeId', 'attributeName', 'scope', 'channelId', 'value', 'data', 'locale', 'isLocale']];
+                if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
+                    foreach ($locales as $locale) {
+                        $params['select'][] = Util::toCamelCase('value_' . strtolower($locale));
+                    }
+                }
+                $pavs = $this->getService('Product')->findLinkedEntities($productId, 'productAttributeValues', $params);
+                $this->pavs[$productId] = [];
+                if (!empty($pavs['total'])) {
+                    if (isset($pavs['list'])) {
+                        $this->pavs[$productId] = $pavs['list'];
+                    } elseif (isset($pavs['collection'])) {
+                        $this->pavs[$productId] = $pavs['collection']->toArray();
+                    }
+                }
+            }
+            return;
+        }
+
         $pavParams = [
             'sortBy'  => 'id',
             'offset'  => 0,
@@ -336,18 +360,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             'attributeType',
             'data'
         ];
-
-        /**
-         * @deprecated This method will be removed soon
-         */
-        if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
-            $selectFields = ['id', 'productId', 'attributeId', 'scope', 'channelId', 'value', 'data'];
-            if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
-                foreach ($locales as $locale) {
-                    $selectFields[] = Util::toCamelCase('value_' . strtolower($locale));
-                }
-            }
-        }
 
         $pavs = $this
             ->getEntityManager()
