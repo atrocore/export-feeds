@@ -26,19 +26,9 @@ class ExportConfiguratorItem extends Base
 {
     protected function accessOnlyOwn(&$result)
     {
-        if (isset($this->selectParameters['exportFeedId'])) {
-            $result['whereClause'][] = [
-                'exportFeedId' => $this->selectParameters['exportFeedId']
-            ];
-        }
     }
 
     protected function accessPortalOnlyOwn(&$result)
     {
-        if (isset($this->selectParameters['exportFeedId'])) {
-            $result['whereClause'][] = [
-                'exportFeedId' => $this->selectParameters['exportFeedId']
-            ];
-        }
     }
 }
