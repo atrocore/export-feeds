@@ -97,6 +97,10 @@
     "mask": {
       "type": "varchar",
       "view": "export:views/export-configurator-item/fields/mask"
+    },
+    "editable": {
+      "type": "bool",
+      "notStorable": true
     }
   },
   "links": {

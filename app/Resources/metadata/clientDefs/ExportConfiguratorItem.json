@@ -1,5 +1,7 @@
 {
   "controller": "controllers/record",
+  "acl": "export:acl/export-configurator-item",
+  "aclPortal": "export:acl-portal/export-configurator-item",
   "modalViews": {
     "edit": "export:views/export-configurator-item/modals/edit"
   },

@@ -1,4 +1,3 @@
-<?php
 /*
  * Export Feeds
  * Free Extension
@@ -18,25 +17,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-declare(strict_types=1);
+Espo.define('export:acl/export-configurator-item', 'acl', function (Dep) {
 
-namespace Export\Services;
+    return Dep.extend({
 
-use Espo\Core\Templates\Services\Base;
-use Espo\ORM\Entity;
+        checkModel: function (model, data, action, precise) {
+            return model.get('editable');
+        },
 
-class ExportJob extends Base
-{
-    protected $mandatorySelectAttributeList = ['exportFeedId', 'exportFeedName', 'state', 'stateMessage'];
-
-    public function prepareEntityForOutput(Entity $entity)
-    {
-        parent::prepareEntityForOutput($entity);
-
-        if (empty($feed = $entity->get('exportFeed'))) {
-            return;
-        }
-
-        $entity->set('editable', $this->getAcl()->check($feed, 'edit'));
-    }
-}
+    });
+});
