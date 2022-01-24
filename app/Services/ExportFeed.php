@@ -201,6 +201,8 @@ class ExportFeed extends Base
 
     public function findLinkedEntities($id, $link, $params)
     {
+        $params['exportFeedId'] = $id;
+
         if ($link === 'configuratorItems') {
             $this->prepareFeedViaLanguage();
             $this->prepareFeedViaChannel();

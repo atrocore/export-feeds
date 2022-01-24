@@ -1,0 +1,18 @@
+{
+  "mandatory": {
+    "scopeLevel": {
+      "ExportConfiguratorItem": {
+        "read": "own",
+        "edit": "own",
+        "delete": "own",
+        "create": "yes"
+      },
+      "ExportJob": {
+        "read": "own",
+        "edit": "own",
+        "delete": "own",
+        "create": "yes"
+      }
+    }
+  }
+}

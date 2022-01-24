@@ -23,20 +23,22 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.actionList = [
-                {
-                    label: 'addMissingFields',
-                    action: 'addMissingFields'
-                },
-                {
-                    label: 'selectAttributes',
-                    action: 'selectAttributes'
-                },
-                {
-                    label: 'removeAllItems',
-                    action: 'removeAllItems'
-                }
-            ];
+            if (this.getAcl().check('ExportFeed', 'edit')) {
+                this.actionList = [
+                    {
+                        label: 'addMissingFields',
+                        action: 'addMissingFields'
+                    },
+                    {
+                        label: 'selectAttributes',
+                        action: 'selectAttributes'
+                    },
+                    {
+                        label: 'removeAllItems',
+                        action: 'removeAllItems'
+                    }
+                ];
+            }
 
             this.listenTo(this.model, 'change:entity', () => {
                 this.prepareActionsVisibility();
