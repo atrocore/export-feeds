@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Acl;
 
-use Espo\Core\AclPortal\Base;
+use Espo\Core\Acl\Base;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 
@@ -30,11 +30,19 @@ class ExportConfiguratorItem extends Base
 {
     public function checkEntity(User $user, Entity $entity, $data, $action)
     {
+        if (empty($entity->get('exportFeedId'))) {
+            return false;
+        }
+
+        if (empty($exportFeed = $this->getEntityManager()->getEntity('ExportFeed', $entity->get('exportFeedId')))) {
+            return false;
+        }
+
         if (in_array($action, ['create', 'delete'])) {
             $action = 'edit';
         }
 
-        return $this->getAclManager()->checkEntity($user, $entity->get('exportFeed'), 'edit');
+        return $this->getAclManager()->checkEntity($user, $exportFeed, $action);
     }
 }
 
