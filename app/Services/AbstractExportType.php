@@ -122,7 +122,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $this->setData($data);
 
-        $result = $this->getEntityService()->findEntities($this->getSelectParams());
+        if ($this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+            $result = $this->getEntityService()->findEntities($this->getSelectParams());
+        }
 
         if (empty($result['total'])) {
             throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
@@ -273,6 +275,10 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     protected function getRecords(): array
     {
         if (!empty($this->data['feed']['separateJob']) && !empty($this->iteration)) {
+            return [];
+        }
+
+        if (!$this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
             return [];
         }
 

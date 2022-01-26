@@ -27,8 +27,4 @@ class ExportJob extends Base
     protected function accessOnlyOwn(&$result)
     {
     }
-
-    protected function accessPortalOnlyOwn(&$result)
-    {
-    }
 }
