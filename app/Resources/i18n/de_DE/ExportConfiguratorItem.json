@@ -1,6 +1,6 @@
 {
   "fields": {
-    "name": "Gebiet",
+    "name": "Feld",
     "column": "Spaltenname",
     "columnType": "Spaltenbezeichnung",
     "exportFeed": "Exportfeed",
