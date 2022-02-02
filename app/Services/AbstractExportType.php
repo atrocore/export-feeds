@@ -32,6 +32,7 @@ use Espo\Core\Utils\Metadata;
 use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
 use Espo\ORM\Entity;
+use Espo\ORM\EntityCollection;
 use Espo\ORM\EntityManager;
 use Espo\Services\Record;
 use Export\DataConvertor\Convertor;
@@ -430,6 +431,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             foreach ($records as $record) {
                 if ($this->data['feed']['entity'] === 'Product') {
                     $record['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
+                    if (!empty($record['pavs'])) {
+                        $record['pavs'] = $this->preparePavsForOutput($record['pavs']);
+                    }
                 }
 
                 fwrite($file, Json::encode($record) . PHP_EOL);
@@ -512,5 +516,22 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         parent::init();
 
         $this->addDependency('container');
+    }
+
+    protected function preparePavsForOutput(array $pavs): array
+    {
+        $productService = $this->getService('Product');
+        if (!method_exists($productService, 'preparePavsForOutput')) {
+            return $pavs;
+        }
+
+        $collection = new EntityCollection();
+        foreach ($pavs as $v) {
+            $pav = $this->getEntityManager()->getEntity('ProductAttributeValue');
+            $pav->set($v);
+            $collection->append($pav);
+        }
+
+        return $productService->preparePavsForOutput($collection)->toArray();
     }
 }

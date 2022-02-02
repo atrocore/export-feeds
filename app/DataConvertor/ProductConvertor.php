@@ -51,8 +51,6 @@ class ProductConvertor extends Convertor
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
-        $record['pavs'] = $this->preparePavsForOutput($record['pavs']);
-
         foreach ($record['pavs'] as $v) {
             if ($this->isLanguageEquals($v, $configuration) && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
                 $productAttribute = $v;
@@ -131,23 +129,6 @@ class ProductConvertor extends Convertor
         }
 
         return $result;
-    }
-
-    protected function preparePavsForOutput(array $pavs): array
-    {
-        $productService = $this->getService('Product');
-        if (!method_exists($productService, 'preparePavsForOutput')) {
-            return $pavs;
-        }
-
-        $collection = new EntityCollection();
-        foreach ($pavs as $v) {
-            $pav = $this->container->get('entityManager')->getEntity('ProductAttributeValue');
-            $pav->set($v);
-            $collection->append($pav);
-        }
-
-        return $productService->preparePavsForOutput($collection)->toArray();
     }
 
     protected function isLanguageEquals(array $pav, array $configuration): bool
