@@ -72,6 +72,7 @@
     "jobNotCreated": "Export job created failed"
   },
   "exceptions": {
+    "toManyAttributesSelected": "Maximum amount of selected attributes should be below 2000 records.",
     "noSuchField": "Field '%s' does not exist.",
     "noSuchAttribute": "Attribute '%s' does not exist.",
     "noDataFound": "Feed has nothing to export.",

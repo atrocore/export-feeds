@@ -145,12 +145,17 @@ class ExportFeed extends Base
 
         $exportConfiguratorItemService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
 
-        $attributes = $this
-            ->getEntityManager()
-            ->getRepository('Attribute')
-            ->find($this->getSelectManager('Attribute')->getSelectParams($params, true, true));
+        /** @var \Pim\Repositories\Attribute $attributeRepository */
+        $attributeRepository = $this->getEntityManager()->getRepository('Attribute');
 
-        foreach ($attributes as $attribute) {
+        /** @var array $selectParams */
+        $selectParams = $this->getSelectManager('Attribute')->getSelectParams($params, true, true);
+
+        if ($attributeRepository->count($selectParams) > 2000) {
+            throw new Exceptions\BadRequest($this->getInjection('language')->translate('toManyAttributesSelected', 'exceptions', 'ExportFeed'));
+        }
+
+        foreach ($attributeRepository->find($selectParams) as $attribute) {
             if (in_array($attribute->get('id'), $addedAttributes)) {
                 continue;
             }

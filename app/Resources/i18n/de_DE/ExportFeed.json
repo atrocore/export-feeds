@@ -73,6 +73,7 @@
     "jobNotCreated": "Exportjoberstellung fehlgeschlagen"
   },
   "exceptions": {
+    "toManyAttributesSelected": "Die maximale Anzahl ausgewählter Attribute sollte unter 2000 Datensätzen liegen.",
     "noSuchField": "Feld '%s' existiert nicht.",
     "noSuchAttribute": "Attribut '%s' existiert nicht.",
     "noDataFound": "Feed hat nichts zu exportieren.",
