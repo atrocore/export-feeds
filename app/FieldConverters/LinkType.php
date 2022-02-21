@@ -60,9 +60,9 @@ class LinkType extends AbstractType
                 if (!empty($foreign)) {
 
                     /**
-                     * For product/category main image
+                     * For main image
                      */
-                    if (in_array($entity, ['Category', 'Product']) && $field === 'image') {
+                    if ($field === 'mainImage' || in_array($entity, ['Category', 'Product']) && $field === 'image') {
                         $foreign = $foreign->getAsset();
                         $this->convertor->getService('Asset')->prepareEntityForOutput($foreign);
                     }

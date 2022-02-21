@@ -60,9 +60,9 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 if (entity) {
 
                     /**
-                     * For product/category main image
+                     * For main image
                      */
-                    if (['Category', 'Product'].includes(this.model.get('entity')) && this.model.get('name') === 'image') {
+                    if (this.model.get('name') === 'mainImage' || ['Category', 'Product'].includes(this.model.get('entity')) && this.model.get('name') === 'image') {
                         entity = 'Asset';
                     }
 
