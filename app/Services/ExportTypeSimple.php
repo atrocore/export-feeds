@@ -139,6 +139,10 @@ class ExportTypeSimple extends AbstractExportType
 
         // prepare settings
         $delimiter = $this->data['feed']['csvFieldDelimiter'];
+        if ($delimiter === '\t') {
+            $delimiter = "\t";
+        }
+
         $enclosure = ($this->data['feed']['csvTextQualifier'] == 'doubleQuote') ? '"' : "'";
 
         $fp = fopen($fileName, "w");
