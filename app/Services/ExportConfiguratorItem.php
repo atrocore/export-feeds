@@ -118,6 +118,10 @@ class ExportConfiguratorItem extends Base
             $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
         } elseif ($entity->get('columnType') === 'custom') {
             $column = (string)$entity->get('column');
+        } elseif ($entity->get('columnType') === 'relatedRecordName') {
+            $column = $this->getInjection('language')->translate('relatedRecordName', 'columnType', 'ExportConfiguratorItem');
+        } elseif ($entity->get('columnType') === 'relatedRecordCode') {
+            $column = $this->getInjection('language')->translate('relatedRecordCode', 'columnType', 'ExportConfiguratorItem');
         }
 
         return $column;
