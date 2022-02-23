@@ -25,5 +25,8 @@
   },
   "labels": {
     "mainLocale": "Hauptsprache"
+  },
+  "tooltips": {
+    "column": "Sie können verknüpfte Entitätsfelder im Spaltennamen verwenden. Verwenden Sie den Feldnamen in der Datenbank als Variable, zB {{name}}. Checkbox „Separate Columns“ sollte aktiviert sein."
   }
 }

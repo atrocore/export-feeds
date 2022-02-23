@@ -25,5 +25,8 @@
   },
   "labels": {
     "mainLocale": "Main Language"
+  },
+  "tooltips": {
+    "column": "You can use related entity fields in the column name. Use the field name in the database as a variable, eg {{name}}. Checkbox \"Separate Columns\" should be activated."
   }
 }

@@ -6,7 +6,8 @@
     },
     "column": {
       "type": "varchar",
-      "view": "export:views/export-configurator-item/fields/column"
+      "view": "export:views/export-configurator-item/fields/column",
+      "tooltip": true
     },
     "sortOrder": {
       "type": "int"
