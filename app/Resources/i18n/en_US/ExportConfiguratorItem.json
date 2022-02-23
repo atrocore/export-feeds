@@ -21,9 +21,7 @@
   "columnType": {
     "name": "Name",
     "internal": "Name › Language",
-    "custom": "Custom Name",
-    "relatedRecordName": "Related Record Name",
-    "relatedRecordCode": "Related Record Code"
+    "custom": "Custom Name"
   },
   "labels": {
     "mainLocale": "Main Language"

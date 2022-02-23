@@ -237,14 +237,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             return $this->translate($row['field'], 'fields', $entity);
         }
 
-        if ($row['columnType'] == 'relatedRecordName') {
-            return 'relatedRecordName';
-        }
-
-        if ($row['columnType'] == 'relatedRecordCode') {
-            return 'relatedRecordCode';
-        }
-
         return $row['column'];
     }
 

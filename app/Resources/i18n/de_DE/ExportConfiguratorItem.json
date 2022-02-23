@@ -21,9 +21,7 @@
   "columnType": {
     "name": "Name",
     "internal": "Name › Sprache",
-    "custom": "Benutzerdefinierter Name",
-    "relatedRecordName": "Verknüpfter Datensatzname",
-    "relatedRecordCode": "Verknüpfter Datensatzcode"
+    "custom": "Benutzerdefinierter Name"
   },
   "labels": {
     "mainLocale": "Hauptsprache"

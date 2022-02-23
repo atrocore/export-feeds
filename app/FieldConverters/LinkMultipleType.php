@@ -56,7 +56,7 @@ class LinkMultipleType extends LinkType
 
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
-            $links = $names = $codes = [];
+            $links = [];
             foreach ($foreignList as $foreignData) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
@@ -70,19 +70,19 @@ class LinkMultipleType extends LinkType
                 } else {
                     $links[] = $fieldResult;
                 }
-                $names[] = $foreignData['name'];
-                $codes[] = isset($foreignData['code']) ? $foreignData['code'] : $foreignData['name'];
             }
 
             if (!empty($configuration['exportIntoSeparateColumns'])) {
                 foreach ($links as $k => $link) {
-                    if ($column === 'relatedRecordCode') {
-                        $columnName = $codes[$k];
-                    } elseif ($column === 'relatedRecordName') {
-                        $columnName = $names[$k];
-                    } else {
+                    $columnName = $column;
+                    foreach ($foreignList[$k] as $relField => $relVal) {
+                        $columnName = str_replace('{{' . $relField . '}}', $relVal, $columnName);
+                    }
+
+                    if ($columnName === $column) {
                         $columnName = $column . '_' . ($k + 1);
                     }
+
                     $result[$columnName] = $link;
                 }
             } else {

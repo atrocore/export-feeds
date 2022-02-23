@@ -27,8 +27,7 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
             init: function () {
                 Dep.prototype.init.call(this);
 
-                this.listenTo(this.model, 'change:name change:exportIntoSeparateColumns', () => {
-                    this.setupOptions();
+                this.listenTo(this.model, 'change:name', () => {
                     this.reRender();
                 });
             },
@@ -40,16 +39,6 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
                     internal: this.translate('internal', 'columnType', 'ExportConfiguratorItem'),
                     custom: this.translate('custom', 'columnType', 'ExportConfiguratorItem'),
                 };
-
-                if (this.model.get('exportIntoSeparateColumns')) {
-                    this.params.options.push('relatedRecordName');
-                    this.translatedOptions['relatedRecordName'] = this.translate('relatedRecordName', 'columnType', 'ExportConfiguratorItem');
-                    let relatedEntity = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.links.${this.model.get('name')}.entity`);
-                    if (relatedEntity && this.getMetadata().get(`entityDefs.${relatedEntity}.fields.code`)) {
-                        this.params.options.push('relatedRecordCode');
-                        this.translatedOptions['relatedRecordCode'] = this.translate('relatedRecordCode', 'columnType', 'ExportConfiguratorItem');
-                    }
-                }
             },
 
             afterRender() {
