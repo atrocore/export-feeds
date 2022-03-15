@@ -15,6 +15,8 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:acl/export-configurator-item', 'acl', function (Dep) {
