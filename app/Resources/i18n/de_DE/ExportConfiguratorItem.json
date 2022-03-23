@@ -12,7 +12,9 @@
     "locale": "Sprache",
     "scope": "Scope",
     "channel": "Kanal",
-    "mask": "Maske"
+    "mask": "Maske",
+    "filterField": "Filterfeld",
+    "filterFieldValue": "Filterfeldwert"
   },
   "links": {
     "exportFeed": "Exportfeed",
@@ -27,6 +29,8 @@
     "mainLocale": "Hauptsprache"
   },
   "tooltips": {
+    "filterField": "Wählen Sie ein Filterfeld aus, wenn Sie einen Filter auf verknüpfte Datensätze anwenden möchten.",
+    "filterFieldValue": "Nur nach Filterfeldwert gefilterte Datensätze werden ausgewählt.",
     "column": "Sie können verknüpfte Entitätsfelder im Spaltennamen verwenden. Verwenden Sie den Feldnamen in der Datenbank als Variable, zB {{name}}. Checkbox „Separate Columns“ sollte aktiviert sein."
   }
 }

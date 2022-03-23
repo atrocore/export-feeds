@@ -12,7 +12,9 @@
     "locale": "Language",
     "scope": "Scope",
     "channel": "Channel",
-    "mask": "Mask"
+    "mask": "Mask",
+    "filterField": "Filter Field",
+    "filterFieldValue": "Filter Field Value"
   },
   "links": {
     "exportFeed": "Export Feed",
@@ -27,6 +29,8 @@
     "mainLocale": "Main Language"
   },
   "tooltips": {
+    "filterField": "Select a filter field if you want to apply a filter on related records.",
+    "filterFieldValue": "Only records filtered by filter field value will be selected.",
     "column": "You can use related entity fields in the column name. Use the field name in the database as a variable, eg {{name}}. Checkbox \"Separate Columns\" should be activated."
   }
 }
