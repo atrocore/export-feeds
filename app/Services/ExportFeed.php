@@ -308,6 +308,8 @@ class ExportFeed extends Base
                     'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
                     'exportBy'                  => $item->get('exportBy'),
                     'mask'                      => $item->get('mask'),
+                    'filterField'               => $item->get('filterField'),
+                    'filterFieldValue'          => $item->get('filterFieldValue'),
                 ];
 
                 if ($feed->get('type') === 'simple') {

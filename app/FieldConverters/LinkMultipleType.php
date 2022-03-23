@@ -37,6 +37,16 @@ class LinkMultipleType extends LinkType
             $params['exportByChannelId'] = $configuration['channelId'];
         }
 
+        if (!empty($configuration['filterField']) && !empty($configuration['filterFieldValue'])) {
+            $params['where'] = [
+                [
+                    'type'      => 'in',
+                    'attribute' => $configuration['filterField'],
+                    'value'     => $configuration['filterFieldValue'],
+                ]
+            ];
+        }
+
         try {
             $foreignResult = $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
         } catch (\Throwable $e) {
