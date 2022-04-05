@@ -154,7 +154,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getExportFileName(string $extension): string
     {
-        $fileName = str_replace(' ', '_', strtolower($this->data['feed']['name']));
+        $fileName = str_replace([' ', '"', "'"], ['_', '', ''], mb_strtolower($this->data['feed']['name']));
 
         if (!empty($this->data['iteration'])) {
             $fileName .= '_' . $this->data['iteration'];
