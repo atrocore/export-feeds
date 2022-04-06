@@ -36,8 +36,8 @@ Espo.define('export:views/export-configurator-item/fields/filter-field', 'views/
         },
 
         setupOptions() {
-            this.params.options = [];
-            this.translatedOptions = {};
+            this.params.options = [''];
+            this.translatedOptions = {"":""};
 
             if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) !== 'linkMultiple') {
                 return;
@@ -74,9 +74,6 @@ Espo.define('export:views/export-configurator-item/fields/filter-field', 'views/
 
         checkFieldVisibility() {
             if (this.model.get('type') === 'Field' && this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple') {
-                if (!this.model.get(this.name) && this.params.options[0]) {
-                    this.model.set(this.name, this.params.options[0]);
-                }
                 this.$el.parent().show();
             } else {
                 this.$el.parent().hide();
