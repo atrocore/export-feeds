@@ -65,8 +65,12 @@ Espo.define('export:views/export-configurator-item/fields/filter-field-value', '
             }
         },
 
+        isRequired() {
+            return this.model.get('type') === 'Field' && this.model.get('filterField');
+        },
+
         checkFieldVisibility() {
-            if (this.model.get('type') === 'Field' && this.model.get('filterField')) {
+            if (this.isRequired()) {
                 this.$el.parent().show();
             } else {
                 this.$el.parent().hide();
