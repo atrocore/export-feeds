@@ -51,9 +51,9 @@
       ],
       "optionColors": [
         "00AFFF",
-        "FFE208",
-        "1DFF08",
-        "FF0000"
+        "FFF677",
+        "BDFF92",
+        "FFCBC5"
       ],
       "default": "Pending",
       "readOnly": true,
