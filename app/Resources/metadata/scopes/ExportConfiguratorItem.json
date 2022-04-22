@@ -12,6 +12,7 @@
   "type": "Base",
   "module": "Export",
   "object": true,
+  "overviewFilters": false,
   "hasAssignedUser": false,
   "hasTeam": false,
   "hasOwner": false
