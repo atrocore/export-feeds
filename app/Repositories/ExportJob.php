@@ -50,22 +50,23 @@ class ExportJob extends Base
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
 
-        // export feed is required
-        if (empty($feed = $entity->get('exportFeed'))) {
-            throw new BadRequest('Export Feed is required.');
-        }
+        parent::beforeSave($entity, $options);
+    }
 
-        // remove old jobs
-        $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
-        $jobsCount = count($jobs);
-        foreach ($jobs as $job) {
-            if ($jobsCount > $feed->get('jobsMax')) {
-                $this->getEntityManager()->removeEntity($job);
-                $jobsCount--;
+    protected function afterSave(Entity $entity, array $options = [])
+    {
+        parent::afterSave($entity, $options);
+
+        if (!empty($feed = $entity->get('exportFeed'))) {
+            $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
+            $jobsCount = count($jobs);
+            foreach ($jobs as $job) {
+                if ($jobsCount > $feed->get('jobsMax')) {
+                    $this->getEntityManager()->removeEntity($job);
+                    $jobsCount--;
+                }
             }
         }
-
-        parent::beforeSave($entity, $options);
     }
 
     protected function beforeRemove(Entity $entity, array $options = [])
