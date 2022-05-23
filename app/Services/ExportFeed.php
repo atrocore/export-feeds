@@ -31,7 +31,7 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
-use Treo\Core\EventManager\Event;
+use Espo\Core\EventManager\Event;
 
 /**
  * ExportFeed service
