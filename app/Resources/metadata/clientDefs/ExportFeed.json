@@ -25,6 +25,14 @@
       }
     ]
   },
+  "optionalBottomPanels": {
+    "configuratorItems": [
+      {
+        "field": "hasConfigurator",
+        "value": true
+      }
+    ]
+  },
   "relationshipPanels": {
     "configuratorItems": {
       "select": false,
@@ -65,23 +73,43 @@
         }
       },
       "convertCollectionToString": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
+            }
+          ]
+        },
         "readOnly": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
       },
       "convertRelationsToString": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
+            }
+          ]
+        },
         "readOnly": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -90,18 +118,22 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -110,9 +142,11 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             },
             {
               "type": "equals",
@@ -124,9 +158,11 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             },
             {
               "type": "equals",
@@ -140,9 +176,11 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             },
             {
               "type": "equals",
@@ -154,9 +192,11 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             },
             {
               "type": "equals",
@@ -170,9 +210,11 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             },
             {
               "type": "in",
@@ -190,12 +232,20 @@
           "conditionGroup": [
             {
               "type": "isTrue",
+              "attribute": "hasConfigurator"
+            },
+            {
+              "type": "isTrue",
               "attribute": "convertRelationsToString"
             }
           ]
         },
         "required": {
           "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
+            },
             {
               "type": "isTrue",
               "attribute": "convertRelationsToString"
@@ -208,12 +258,20 @@
           "conditionGroup": [
             {
               "type": "isTrue",
+              "attribute": "hasConfigurator"
+            },
+            {
+              "type": "isTrue",
               "attribute": "convertCollectionToString"
             }
           ]
         },
         "required": {
           "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
+            },
             {
               "type": "isTrue",
               "attribute": "convertCollectionToString"
@@ -225,9 +283,11 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -236,9 +296,11 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -247,9 +309,11 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -258,18 +322,22 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
-              "type": "equals",
+              "type": "in",
               "attribute": "type",
-              "value": "simple"
+              "value": [
+                "simple"
+              ]
             }
           ]
         }
@@ -277,6 +345,10 @@
       "replaceAttributeValues": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
+            },
             {
               "type": "equals",
               "attribute": "entity",
@@ -289,9 +361,8 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "equals",
-              "attribute": "type",
-              "value": "simple"
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
             },
             {
               "type": "equals",
@@ -305,9 +376,23 @@
         "visible": {
           "conditionGroup": [
             {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
+            },
+            {
               "type": "equals",
               "attribute": "entity",
               "value": "Product"
+            }
+          ]
+        }
+      },
+      "language": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isTrue",
+              "attribute": "hasConfigurator"
             }
           ]
         }

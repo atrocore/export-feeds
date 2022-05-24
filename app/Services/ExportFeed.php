@@ -247,6 +247,7 @@ class ExportFeed extends Base
             $entity->set('convertRelationsToString', true);
         }
 
+        $entity->set('hasConfigurator', in_array($entity->get('type'), $this->getMetadata()->get('scopes.ExportFeed.typesWithConfigurator')));
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
     }
 

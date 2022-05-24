@@ -124,6 +124,11 @@
       "prohibitedEmptyValue": true,
       "view": "export:views/export-feed/fields/entity"
     },
+    "hasConfigurator": {
+      "type": "bool",
+      "notStorable": true,
+      "default": false
+    },
     "convertCollectionToString": {
       "type": "bool",
       "notStorable": true,
