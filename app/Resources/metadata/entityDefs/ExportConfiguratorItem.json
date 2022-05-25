@@ -26,7 +26,8 @@
     },
     "exportIntoSeparateColumns": {
       "type": "bool",
-      "view": "export:views/export-configurator-item/fields/separate-columns"
+      "view": "export:views/export-configurator-item/fields/separate-columns",
+      "tooltip": true
     },
     "exportBy": {
       "type": "array",

@@ -7,7 +7,7 @@
     "attribute": "Attribut",
     "remove": "Löschen",
     "exportBy": "Verwandte Entitätsfelder",
-    "exportIntoSeparateColumns": "Separate Spalten",
+    "exportIntoSeparateColumns": "Trennen",
     "type": "Typ",
     "locale": "Sprache",
     "scope": "Scope",
@@ -29,6 +29,7 @@
     "mainLocale": "Hauptsprache"
   },
   "tooltips": {
+    "exportIntoSeparateColumns": "Datensätze für verknüpfte Entität werden als separate Felder/Spalten exportiert, indem für den Namen das Suffix „_1“, „_2“ usw. verwendet wird.",
     "filterField": "Wählen Sie ein Filterfeld aus, wenn Sie einen Filter auf verknüpfte Datensätze anwenden möchten.",
     "filterFieldValue": "Nur nach Filterfeldwert gefilterte Datensätze werden ausgewählt.",
     "column": "Sie können verknüpfte Entitätsfelder im Spaltennamen verwenden. Verwenden Sie den Feldnamen in der Datenbank als Variable, zB {{name}}. Checkbox „Separate Columns“ sollte aktiviert sein."
