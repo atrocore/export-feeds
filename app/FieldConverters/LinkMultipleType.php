@@ -32,7 +32,15 @@ class LinkMultipleType extends LinkType
         $column = $configuration['column'];
         $entity = $configuration['entity'];
 
+        $sortBy = $this->convertor->getMetadata()->get(['clientDefs', $entity, 'relationshipPanels', $field, 'sortBy']);
+
         $params = [];
+        if (!empty($sortBy)) {
+            $asc = $this->convertor->getMetadata()->get(['clientDefs', $entity, 'relationshipPanels', $field, 'asc'], true);
+            $params['sortBy'] = $sortBy;
+            $params['asc'] = !empty($asc);
+        }
+
         if (!empty($configuration['channelId'])) {
             $params['exportByChannelId'] = $configuration['channelId'];
         }
