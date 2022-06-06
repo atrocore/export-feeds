@@ -3,8 +3,10 @@
   "description": "",
   "require": {
     "atrocore/core": "~1.4.43",
-    "atrocore/export-feeds-common": ">1.2.0 <1.4.0",
     "phpoffice/phpspreadsheet": "~1.16.0"
+  },
+  "conflict": {
+    "atrocore/pim": "<1.5.23 || >=1.6.0"
   },
   "autoload": {
     "psr-4": {
