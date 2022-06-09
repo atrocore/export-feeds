@@ -26,20 +26,23 @@ namespace Export\FieldConverters;
 
 class CurrencyType extends FloatType
 {
+    protected string $defaultMask = '{{value}} {{currency}}';
+
     public function convert(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
+        $mask = !empty($configuration['mask']) ? $configuration['mask'] : $this->defaultMask;
 
         $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
             $currency = $this->isPav($record) ? $record['data']['currency'] : $record[$field . 'Currency'];
             $value = (float)$record[$field];
 
-            if ($configuration['mask'] === '{{value}}' || $configuration['mask'] === '{{Value}}') {
+            if ($mask === '{{value}}' || $mask === '{{Value}}') {
                 $result[$column] = $value;
             } else {
-                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $configuration['mask']);
+                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $mask);
             }
         }
     }
