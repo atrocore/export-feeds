@@ -150,7 +150,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
             if (this.model.get('columnType') === 'internal') {
                 let name = this.model.get('attributeNameValue');
                 if (locale) {
-                    name = name + ' › ' + locale;
+                    name = name + ' / ' + locale;
                 }
 
                 this.model.set('column', name);

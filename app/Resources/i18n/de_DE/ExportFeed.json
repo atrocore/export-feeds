@@ -41,7 +41,7 @@
     "addMissingFieldsConfirmation": " Möchten Sie wirklich alle fehlenden Felder hinzufügen?",
     "removeAllItemsConfirmation": "Möchten Sie wirklich alle Konfigurator-Regel entfernen?",
     "attributeName": "Attributname",
-    "internalAttributeName": "Attributname › Sprache",
+    "internalAttributeName": "Attributname / Sprache",
     "attributeCode": "Attributcode",
     "useAttributeNameAsColumnName": "Attributnamen als Spaltennamen verwenden",
     "useInternalAttributeNameAsColumnName": "Internen Attributnamen als Spaltennamen verwenden",

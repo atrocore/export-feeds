@@ -40,7 +40,7 @@
     "addMissingFieldsConfirmation": " Вы уверены, что хотите довавить все недостающие поля?",
     "removeAllItemsConfirmation": "Вы уверены, что хотите удалить все правила конфигуратора?",
     "attributeName": "Название атрибута",
-    "internalAttributeName": "Название атрибута › Язык",
+    "internalAttributeName": "Название атрибута / Язык",
     "attributeCode": "Код атрибута",
     "useAttributeNameAsColumnName": "Использовать название атрибута в качестве названия колонки",
     "useInternalAttributeNameAsColumnName": "Использовать название внутр. атрибута в качестве названия колонки",

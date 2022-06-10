@@ -214,7 +214,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             if ($row['columnType'] == 'internal') {
                 $value = $attribute->get('name');
                 if (!empty($locale)) {
-                    $value .= ' › ' . $locale;
+                    $value .= ' / ' . $locale;
                 }
 
                 return $value;

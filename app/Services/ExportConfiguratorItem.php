@@ -149,7 +149,7 @@ class ExportConfiguratorItem extends Base
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $attribute->get('name');
             if (!empty($locale)) {
-                $column .= ' › ' . $locale;
+                $column .= ' / ' . $locale;
             }
         }
 

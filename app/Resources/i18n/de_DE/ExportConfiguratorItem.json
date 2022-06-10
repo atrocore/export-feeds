@@ -22,7 +22,7 @@
   },
   "columnType": {
     "name": "Name",
-    "internal": "Name › Sprache",
+    "internal": "Name / Sprache",
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {
