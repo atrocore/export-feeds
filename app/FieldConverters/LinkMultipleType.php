@@ -96,7 +96,10 @@ class LinkMultipleType extends LinkType
                 foreach ($links as $k => $link) {
                     $columnName = $column;
                     foreach ($foreignList[$k] as $relField => $relVal) {
-                        $columnName = str_replace('{{' . $relField . '}}', $relVal, $columnName);
+                        if (is_array($relVal) || is_object($relVal)) {
+                            continue 1;
+                        }
+                        $columnName = str_replace('{{' . $relField . '}}', (string)$relVal, $columnName);
                     }
 
                     if ($columnName === $column) {
