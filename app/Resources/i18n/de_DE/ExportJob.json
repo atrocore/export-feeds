@@ -18,8 +18,5 @@
     "Running": "In Arbeit",
     "Failed": "Fehlgeschlagen",
     "exportDownloadNotification": "Sie können die Datei <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">herunterladen</a>."
-  },
-  "exceptions": {
-    "exportIsRunning": "Das Exportergebnis für ein laufendes Warteschlangenelement kann nicht entfernt werden."
   }
 }

@@ -69,21 +69,6 @@ class ExportJob extends Base
         }
     }
 
-    protected function beforeRemove(Entity $entity, array $options = [])
-    {
-        if (!empty($job = $this->getExportJob($entity->get('id')))) {
-            if ($job->get('status') == 'Running') {
-                throw new BadRequest($this->getInjection('language')->translate('exportIsRunning', 'exceptions', 'ExportJob'));
-            }
-        }
-
-        parent::beforeRemove($entity, $options);
-    }
-
-    /**
-     * @param Entity $entity
-     * @param array  $options
-     */
     protected function afterRemove(Entity $entity, array $options = [])
     {
         if (!empty($file = $entity->get('file'))) {
@@ -95,19 +80,10 @@ class ExportJob extends Base
             unlink($data['fullFileName']);
         }
 
-        $this->deleteQueueItem((string)$entity->get('id'));
+        $qmJob = $this->getExportJob($entity->get('id'));
+        $qmJob->set('status', 'Canceled');
+        $this->getEntityManager()->saveEntity($qmJob);
 
         parent::afterRemove($entity, $options);
-    }
-
-    /**
-     * @param string $id
-     */
-    protected function deleteQueueItem(string $id): void
-    {
-        $this
-            ->getEntityManager()
-            ->getPDO()
-            ->exec("UPDATE queue_item SET deleted=1 WHERE data LIKE '%\"exportJobId\":\"$id\"%'");
     }
 }

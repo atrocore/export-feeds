@@ -18,8 +18,5 @@
     "Running": "Выполняется",
     "Failed": "Не выполнено",
     "exportDownloadNotification": "Вы можете <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> файл."
-  },
-  "exceptions": {
-    "exportIsRunning": "Результат экспорта для работающего элемента очереди не может быть удален."
   }
 }
