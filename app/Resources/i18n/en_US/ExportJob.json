@@ -17,6 +17,7 @@
     "Success": "Success",
     "Running": "Running",
     "Failed": "Failed",
+    "Canceled": "Canceled",
     "exportDownloadNotification": "You can <a href=\"?entryPoint=download&amp;id=%s\" target=\"_blank\">download</a> the file."
   }
 }

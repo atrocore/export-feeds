@@ -50,12 +50,23 @@ class ExportJob extends Base
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
 
+        if ($entity->isAttributeChanged('state') && $entity->get('state') === 'Canceled' && !in_array($entity->getFetched('state'), ['Pending', 'Running'])) {
+            throw new BadRequest('Unexpected job state.');
+        }
+
         parent::beforeSave($entity, $options);
     }
 
     protected function afterSave(Entity $entity, array $options = [])
     {
         parent::afterSave($entity, $options);
+
+        if ($entity->isAttributeChanged('state') && $entity->get('state') === 'Canceled') {
+            $qmJob = $this->getExportJob($entity->get('id'));
+            if (!empty($qmJob)) {
+                $this->cancelQmJob($qmJob);
+            }
+        }
 
         if (!empty($feed = $entity->get('exportFeed'))) {
             $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
@@ -82,10 +93,18 @@ class ExportJob extends Base
 
         $qmJob = $this->getExportJob($entity->get('id'));
         if (!empty($qmJob)) {
-            $qmJob->set('status', 'Canceled');
-            $this->getEntityManager()->saveEntity($qmJob);
+            $this->cancelQmJob($qmJob);
+            $this->getEntityManager()->removeEntity($qmJob);
         }
 
         parent::afterRemove($entity, $options);
+    }
+
+    protected function cancelQmJob(Entity $qmJob): void
+    {
+        if (in_array($qmJob->get('status'), ['Pending', 'Running'])) {
+            $qmJob->set('status', 'Canceled');
+            $this->getEntityManager()->saveEntity($qmJob);
+        }
     }
 }
