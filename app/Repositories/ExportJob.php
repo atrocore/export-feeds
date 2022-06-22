@@ -81,8 +81,10 @@ class ExportJob extends Base
         }
 
         $qmJob = $this->getExportJob($entity->get('id'));
-        $qmJob->set('status', 'Canceled');
-        $this->getEntityManager()->saveEntity($qmJob);
+        if (!empty($qmJob)) {
+            $qmJob->set('status', 'Canceled');
+            $this->getEntityManager()->saveEntity($qmJob);
+        }
 
         parent::afterRemove($entity, $options);
     }
