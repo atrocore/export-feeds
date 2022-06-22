@@ -25,8 +25,8 @@ declare(strict_types=1);
 namespace Export\Listeners;
 
 use Espo\ORM\Entity;
-use Treo\Listeners\AbstractListener;
-use Treo\Core\EventManager\Event;
+use Espo\Listeners\AbstractListener;
+use Espo\Core\EventManager\Event;
 
 /**
  * Class QueueItemEntity
@@ -72,12 +72,7 @@ class QueueItemEntity extends AbstractListener
             return false;
         }
 
-        if ($entity->get('status') === 'Canceled') {
-            $this->getEntityManager()->removeEntity($exportJob);
-            return true;
-        }
-
-        if ($entity->get('status') !== 'Success') {
+        if ($entity->get('status') !== 'Success' && $exportJob->get('state') !== $entity->get('status')) {
             $exportJob->set('state', $entity->get('status'));
             $this->getEntityManager()->saveEntity($exportJob);
         }
