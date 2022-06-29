@@ -22,20 +22,19 @@
 
 declare(strict_types=1);
 
-namespace Export\FieldConverters;
+namespace Export\DataConvertor;
 
-use Export\DataConvertor\Convertor;
-
-abstract class AbstractType
+class ProductAttributeValueConvertor extends Convertor
 {
-    protected Convertor $convertor;
-
-    public function __construct(Convertor $convertor)
+    /**
+     * @inheritDoc
+     */
+    public function convert(array $record, array $configuration, bool $toString = false): array
     {
-        $this->convertor = $convertor;
+        if ($configuration['field'] === 'value') {
+            return $this->convertType($record['attributeType'], $record, $configuration, $toString);
+        }
+
+        return parent::convert($record, $configuration, $toString);
     }
-
-    abstract public function convert(array &$result, array $record, array $configuration): void;
-
-    abstract public function convertToString(array &$result, array $record, array $configuration): void;
 }
