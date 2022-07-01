@@ -28,7 +28,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
             Dep.prototype.setup.call(this);
 
             this.presetFilterList = [];
-            this.boolFilterList = [];
+            // this.boolFilterList = [];
         },
 
         afterRender() {
