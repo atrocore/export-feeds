@@ -80,7 +80,8 @@
     "exportValidationFailed": "Diese Datei kann nicht exportiert werden. Prüfen Sie bitte die HTML-Form und versuchen es erneut.",
     "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden.",
     "noFieldLabel": "Die Bezeichnung für das Feld '%s' für die Sprache '%s' ist nicht gesetzt.",
-    "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt."
+    "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt.",
+    "noConfiguratorItems": "Bitte erstellen Sie mindestens eine Konfigurator-Regel, um diesen Feed ausführen zu können."
   },
   "tooltips": {
     "language": "Dieser Wert wird bei der Erstellung einer Regel für ein sprachspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.\n\n",

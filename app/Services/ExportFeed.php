@@ -52,6 +52,14 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
+        if (in_array($exportFeed->get('type'), $this->getMetadata()->get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []))) {
+            $configuratorItems = $exportFeed->get('configuratorItems');
+
+            if (empty($configuratorItems) || count($configuratorItems) == 0) {
+                throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
+            }
+        }
+
         $this->prepareFeedViaLanguage();
         $this->prepareFeedViaChannel();
 

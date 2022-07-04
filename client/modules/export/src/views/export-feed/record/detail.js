@@ -53,6 +53,11 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         actionExportNow() {
+            if (this.validateConfigurator()) {
+                this.notify(this.translate('noConfiguratorItems', 'exceptions', 'ExportFeed'), 'error');
+                return;
+            }
+
             this.ajaxPostRequest('ExportFeed/action/exportFile', {id: this.model.id}).then(response => {
                 this.notify(this.translate(response ? 'jobCreated' : 'jobNotCreated', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
                 $('.action[data-action="refresh"][data-panel="exportJobs"]').click();
@@ -77,5 +82,22 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             Dep.prototype.save.call(this, callback, skipExit);
         },
 
+        validateConfigurator() {
+            const type = this.model.get('type');
+            const configuratorTypes = this.getMetadata().get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []);
+
+            if (configuratorTypes.includes(type)) {
+                const configuratorItemsView = this.getView('bottom').getView('configuratorItems');
+                if (configuratorItemsView) {
+                    const collection = configuratorItemsView.collection;
+
+                    if (collection && collection.length === 0) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     })
 );
