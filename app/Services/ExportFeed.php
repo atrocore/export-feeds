@@ -52,6 +52,10 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
+        if (empty($exportFeed->get('configuratorItems')->count())) {
+            throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
+        }
+
         $this->prepareFeedViaLanguage();
         $this->prepareFeedViaChannel();
 
