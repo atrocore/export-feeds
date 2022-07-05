@@ -113,6 +113,16 @@
     "editable": {
       "type": "bool",
       "notStorable": true
+    },
+    "offsetRelation": {
+      "type": "int",
+      "default": 0,
+      "view": "export:views/export-configurator-item/fields/limit-relation"
+    },
+    "limitRelation": {
+      "type": "int",
+      "default": 20,
+      "view": "export:views/export-configurator-item/fields/limit-relation"
     }
   },
   "links": {

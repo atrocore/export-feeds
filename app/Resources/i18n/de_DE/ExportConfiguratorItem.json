@@ -14,7 +14,9 @@
     "channel": "Kanal",
     "mask": "Maske",
     "filterField": "Filterfeld",
-    "filterFieldValue": "Filterfeldwert"
+    "filterFieldValue": "Filterfeldwert",
+    "offsetRelation": "Versatz",
+    "limitRelation": "Grenze"
   },
   "links": {
     "exportFeed": "Exportfeed",

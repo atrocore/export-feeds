@@ -14,7 +14,9 @@
     "channel": "Канал",
     "mask": "Маска",
     "filterField": "Поле фильтра",
-    "filterFieldValue": "Значения поля фильтра"
+    "filterFieldValue": "Значения поля фильтра",
+    "offsetRelation": "Offset",
+    "limitRelation": "Limit"
   },
   "links": {
     "exportFeed": "Экспорт. фид",
