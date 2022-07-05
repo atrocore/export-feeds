@@ -43,10 +43,10 @@ class ExportFeed extends Base
      *
      * @param \stdClass $requestData
      *
-     * @return bool
+     * @return string
      * @throws Exceptions\NotFound
      */
-    public function exportFile(\stdClass $requestData): bool
+    public function exportFile(\stdClass $requestData): string
     {
         if (empty($exportFeed = $this->getEntityManager()->getEntity('ExportFeed', $requestData->id))) {
             throw new Exceptions\NotFound();
@@ -86,7 +86,7 @@ class ExportFeed extends Base
 
         $this->pushExport($data);
 
-        return true;
+        return $data['id'];
     }
 
     public function addMissingFields(string $feedId): bool
