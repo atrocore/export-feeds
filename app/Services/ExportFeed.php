@@ -238,8 +238,12 @@ class ExportFeed extends Base
 
     public function prepareFeedViaChannel(): void
     {
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)");
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE `type`='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)");
+        $this->getEntityManager()->getPDO()->exec(
+            "UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
+        );
+        $this->getEntityManager()->getPDO()->exec(
+            "UPDATE `export_configurator_item` SET deleted=1 WHERE `type`='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
+        );
     }
 
     public function prepareEntityForOutput(Entity $entity)
@@ -319,6 +323,8 @@ class ExportFeed extends Base
                     'mask'                      => $item->get('mask'),
                     'filterField'               => $item->get('filterField'),
                     'filterFieldValue'          => $item->get('filterFieldValue'),
+                    'offsetRelation'            => $item->get('offsetRelation'),
+                    'limitRelation'             => $item->get('limitRelation'),
                 ];
 
                 if ($feed->get('type') === 'simple') {

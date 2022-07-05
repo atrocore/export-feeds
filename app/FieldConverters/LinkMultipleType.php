@@ -41,6 +41,9 @@ class LinkMultipleType extends LinkType
             $params['asc'] = !empty($asc);
         }
 
+        $params['offset'] = empty($configuration['offsetRelation']) ? 0 : (int)$configuration['offsetRelation'];
+        $params['maxSize'] = empty($configuration['limitRelation']) ? 20 : (int)$configuration['limitRelation'];
+
         if (!empty($configuration['channelId'])) {
             $params['exportByChannelId'] = $configuration['channelId'];
         }
