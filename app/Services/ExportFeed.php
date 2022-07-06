@@ -84,9 +84,7 @@ class ExportFeed extends Base
             }
         }
 
-        $this->pushExport($data);
-
-        return $data['id'];
+        return $this->pushExport($data);
     }
 
     public function addMissingFields(string $feedId): bool
@@ -376,9 +374,9 @@ class ExportFeed extends Base
     /**
      * @param array $data
      *
-     * @return bool
+     * @return string
      */
-    protected function pushExport(array $data): bool
+    protected function pushExport(array $data): string
     {
         $data['offset'] = 0;
         $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
@@ -393,18 +391,18 @@ class ExportFeed extends Base
                     $jobName .= " ($i)";
                 }
                 $data['iteration'] = $i;
-                $this->pushExportJob($jobName, $data);
+                $jobId = $this->pushExportJob($jobName, $data);
                 $data['offset'] = $data['offset'] + $data['limit'];
                 $i++;
             }
         } else {
-            $this->pushExportJob($data['feed']['name'], $data);
+            $jobId = $this->pushExportJob($data['feed']['name'], $data);
         }
 
-        return true;
+        return $jobId;
     }
 
-    protected function pushExportJob(string $jobName, array $data): void
+    protected function pushExportJob(string $jobName, array $data): string
     {
         /** @var User $user */
         $user = $this->getInjection('user');
@@ -424,6 +422,8 @@ class ExportFeed extends Base
         $qmJobName = sprintf($this->getInjection('language')->translate('exportName', 'additionalTranslates', 'ExportFeed'), $jobName);
 
         $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data);
+
+        return $exportJob->get('id');
     }
 
     /**
