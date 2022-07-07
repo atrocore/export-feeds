@@ -16,7 +16,8 @@
     "filterField": "Filterfeld",
     "filterFieldValue": "Filterfeldwert",
     "offsetRelation": "Versatz",
-    "limitRelation": "Grenze"
+    "limitRelation": "Grenze",
+    "valueModifier": "Wertmodifikator"
   },
   "links": {
     "exportFeed": "Exportfeed",
@@ -35,5 +36,8 @@
     "filterField": "Wählen Sie ein Filterfeld aus, wenn Sie einen Filter auf verknüpfte Datensätze anwenden möchten.",
     "filterFieldValue": "Nur nach Filterfeldwert gefilterte Datensätze werden ausgewählt.",
     "column": "Sie können verknüpfte Entitätsfelder im Spaltennamen verwenden. Verwenden Sie den Feldnamen in der Datenbank als Variable, zB {{name}}. Checkbox „Separate Columns“ sollte aktiviert sein."
+  },
+  "exceptions": {
+    "unknownModifier": "Der Modifikator „%s“ ist unbekannt."
   }
 }

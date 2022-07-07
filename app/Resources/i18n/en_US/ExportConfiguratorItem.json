@@ -16,7 +16,8 @@
     "filterField": "Filter Field",
     "filterFieldValue": "Filter Field Value",
     "offsetRelation": "Offset",
-    "limitRelation": "Limit"
+    "limitRelation": "Limit",
+    "valueModifier": "Value Modifier"
   },
   "links": {
     "exportFeed": "Export Feed",
@@ -35,5 +36,8 @@
     "filterField": "Select a filter field if you want to apply a filter on related records.",
     "filterFieldValue": "Only records filtered by filter field value will be selected.",
     "column": "You can use related entity fields in the column name. Use the field name in the database as a variable, eg {{name}}. Checkbox \"Separate Columns\" should be activated."
+  },
+  "exceptions": {
+    "unknownModifier": "Modifier '%s' is unknown."
   }
 }

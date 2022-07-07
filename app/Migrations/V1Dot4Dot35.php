@@ -22,27 +22,27 @@
 
 declare(strict_types=1);
 
-namespace Export\FieldConverters;
+namespace Export\Migrations;
 
-use Export\DataConvertor\Convertor;
+use Treo\Core\Migration\Base;
 
-abstract class AbstractType
+class V1Dot4Dot35 extends Base
 {
-    protected Convertor $convertor;
-
-    public function __construct(Convertor $convertor)
+    public function up(): void
     {
-        $this->convertor = $convertor;
+        $this->execute("ALTER TABLE `export_configurator_item` ADD value_modifier MEDIUMTEXT DEFAULT NULL COLLATE utf8mb4_unicode_ci");
     }
 
-    abstract public function convert(array &$result, array $record, array $configuration): void;
-
-    abstract public function convertToString(array &$result, array $record, array $configuration): void;
-
-    public function applyValueModifiers(array $configuration, &$value): void
+    public function down(): void
     {
-        if (!empty($configuration['valueModifier'])) {
-            $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
+        $this->execute("ALTER TABLE `export_configurator_item` DROP value_modifier");
+    }
+
+    protected function execute(string $query): void
+    {
+        try {
+            $this->getPDO()->exec($query);
+        } catch (\Throwable $e) {
         }
     }
 }

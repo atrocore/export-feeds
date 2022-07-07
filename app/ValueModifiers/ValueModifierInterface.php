@@ -22,27 +22,22 @@
 
 declare(strict_types=1);
 
-namespace Export\FieldConverters;
+namespace Export\ValueModifiers;
 
-use Export\DataConvertor\Convertor;
-
-abstract class AbstractType
+interface ValueModifierInterface
 {
-    protected Convertor $convertor;
+    /**
+     * @param array $context
+     *
+     * @return void
+     */
+    public function validate(array $context = []): void;
 
-    public function __construct(Convertor $convertor)
-    {
-        $this->convertor = $convertor;
-    }
-
-    abstract public function convert(array &$result, array $record, array $configuration): void;
-
-    abstract public function convertToString(array &$result, array $record, array $configuration): void;
-
-    public function applyValueModifiers(array $configuration, &$value): void
-    {
-        if (!empty($configuration['valueModifier'])) {
-            $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
-        }
-    }
+    /**
+     * @param mixed $value
+     * @param array $context
+     *
+     * @return mixed
+     */
+    public function modify($value, array $context = []);
 }

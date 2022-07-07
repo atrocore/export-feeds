@@ -57,6 +57,10 @@
     "attribute": {
       "type": "link"
     },
+    "valueModifier": {
+      "type": "text",
+      "view": "export:views/export-configurator-item/fields/value-modifier"
+    },
     "attributeNameValue": {
       "type": "varchar",
       "notStorable": true
