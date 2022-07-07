@@ -57,6 +57,9 @@
     "attribute": {
       "type": "link"
     },
+    "valueModifier": {
+      "type": "text"
+    },
     "attributeNameValue": {
       "type": "varchar",
       "notStorable": true

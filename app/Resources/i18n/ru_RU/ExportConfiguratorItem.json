@@ -16,7 +16,8 @@
     "filterField": "Поле фильтра",
     "filterFieldValue": "Значения поля фильтра",
     "offsetRelation": "Offset",
-    "limitRelation": "Limit"
+    "limitRelation": "Limit",
+    "valueModifier": "Модификатор значения"
   },
   "links": {
     "exportFeed": "Экспорт. фид",
