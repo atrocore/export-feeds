@@ -49,8 +49,8 @@ Espo.define('export:views/export-configurator-item/fields/value-modifier', 'view
         },
 
         showViaType(type) {
-            let modifiers = this.getMetadata().get(['app', 'valueModifiers', type]) || [];
-            if (modifiers && modifiers.length > 0) {
+            let modifiers = this.getMetadata().get(['export', 'valueModifiers', type]) || {};
+            if (Object.keys(modifiers).length !== 0) {
                 this.show();
             }
         },
