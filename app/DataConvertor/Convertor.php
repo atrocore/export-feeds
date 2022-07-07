@@ -25,10 +25,9 @@ declare(strict_types=1);
 namespace Export\DataConvertor;
 
 use Espo\Core\Container;
-use Espo\Core\Exceptions\BadRequest;
-use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
 use Espo\Services\Record;
+use Export\Core\ValueModifier;
 
 class Convertor
 {
@@ -109,5 +108,10 @@ class Convertor
     public function translate(string $key, string $tab, string $scope): string
     {
         return $this->container->get('language')->translate($key, $tab, $scope);
+    }
+
+    public function getValueModifier(): ValueModifier
+    {
+        return $this->container->get(ValueModifier::class);
     }
 }

@@ -27,12 +27,11 @@ namespace Export\ValueModifiers;
 interface ValueModifierInterface
 {
     /**
-     * @param mixed $value
      * @param array $context
      *
-     * @return bool
+     * @return void
      */
-    public function validate($value, array $context = []): bool;
+    public function validate(array $context = []): void;
 
     /**
      * @param mixed $value

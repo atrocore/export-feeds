@@ -26,6 +26,7 @@ namespace Export\Repositories;
 
 use Espo\Core\Templates\Repositories\Base;
 use Espo\ORM\Entity;
+use Export\Core\ValueModifier;
 
 class ExportConfiguratorItem extends Base
 {
@@ -42,6 +43,17 @@ class ExportConfiguratorItem extends Base
             }
         }
 
+        if ($entity->isAttributeChanged('valueModifier') && !empty($entity->get('valueModifier'))) {
+            $this->getInjection(ValueModifier::class)->apply((string)$entity->get('valueModifier'));
+        }
+
         parent::beforeSave($entity, $options);
+    }
+
+    protected function init()
+    {
+        parent::init();
+
+        $this->addDependency(ValueModifier::class);
     }
 }
