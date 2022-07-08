@@ -34,6 +34,7 @@ class IntType extends AbstractType
         $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
             $result[$column] = (int)$record[$field];
+            $this->applyValueModifiers($configuration, $result[$column]);
         }
     }
 
@@ -52,6 +53,7 @@ class IntType extends AbstractType
                 $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
                 $result[$column] = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
+                $this->applyValueModifiers($configuration, $result[$column]);
             }
         }
     }
