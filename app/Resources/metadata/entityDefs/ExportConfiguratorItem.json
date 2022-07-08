@@ -59,7 +59,7 @@
     },
     "valueModifier": {
       "type": "text",
-      "view": "export:views/export-configurator-item/fields/value-modifier"б
+      "view": "export:views/export-configurator-item/fields/value-modifier",
       "tooltip": true
     },
     "attributeNameValue": {
