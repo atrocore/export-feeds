@@ -32,6 +32,7 @@
     "mainLocale": "Main Language"
   },
   "tooltips": {
+    "valueModifier": "Always put a pipeline \"|\" before modifier's name. Multiple modifiers can be used. Example: \"|title|trim\".",
     "exportIntoSeparateColumns": "Related data records will be exported as different fields/columns by using for the name the suffix \"_1\", \"_2\" and so on.",
     "filterField": "Select a filter field if you want to apply a filter on related records.",
     "filterFieldValue": "Only records filtered by filter field value will be selected.",

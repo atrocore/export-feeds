@@ -59,7 +59,8 @@
     },
     "valueModifier": {
       "type": "text",
-      "view": "export:views/export-configurator-item/fields/value-modifier"
+      "view": "export:views/export-configurator-item/fields/value-modifier"б
+      "tooltip": true
     },
     "attributeNameValue": {
       "type": "varchar",

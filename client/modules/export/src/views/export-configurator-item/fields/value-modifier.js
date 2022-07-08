@@ -51,6 +51,17 @@ Espo.define('export:views/export-configurator-item/fields/value-modifier', 'view
         showViaType(type) {
             let modifiers = this.getMetadata().get(['export', 'valueModifiers', 'fieldTypes', type]) || [];
             if (modifiers.length !== 0) {
+                let html = '<table class="table" style="margin-top: -4px;">';
+                html += `<tr><th style="width: 15%">${this.translate('name', 'fields', 'Global')}</th><th>${this.translate('description', 'fields', 'Global')}</th><th>${this.translate('Example')}</th></tr>`;
+                modifiers.forEach(modifier => {
+                    let data = this.getMetadata().get(['export', 'valueModifiers', 'modifiersDescription', modifier]);
+                    html += '<tr>';
+                    html += `<td>${modifier}</td><td>${data.description}</td><td>|${data.example}</td>`;
+                    html += '</tr>';
+                });
+                html += '</table>';
+
+                this.$el.append(html);
                 this.show();
             }
         },
