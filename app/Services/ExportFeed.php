@@ -308,6 +308,8 @@ class ExportFeed extends Base
                     'locale'                    => $item->get('locale'),
                     'column'                    => $eciService->prepareColumnName($item),
                     'entity'                    => $feed->getFeedField('entity'),
+                    'sortOrderField'            => $feed->get('sortOrderField'),
+                    'sortOrderDirection'        => $feed->get('sortOrderDirection'),
                     'emptyValue'                => $feed->getFeedField('emptyValue'),
                     'nullValue'                 => $feed->getFeedField('nullValue'),
                     'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
