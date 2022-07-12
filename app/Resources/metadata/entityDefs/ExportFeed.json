@@ -217,6 +217,22 @@
       "layoutMassUpdateDisabled": true,
       "noLoad": true,
       "importDisabled": true
+    },
+    "sortOrderField": {
+      "type": "varchar",
+      "required": false
+    },
+    "sortOrderDirection": {
+      "type": "enum",
+      "required": false,
+      "options": [
+        "ASC",
+        "DESC"
+      ],
+      "optionsIds": [
+        "1",
+        "2"
+      ]
     }
   },
   "links": {
