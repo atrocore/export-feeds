@@ -1,5 +1,7 @@
 {
   "fields": {
+    "sortOrderField": "Порядок сортировки (поле)",
+    "sortOrderDirection": "Порядок сортировки (направление)",
     "language": "Язык",
     "channel": "Канал",
     "entity": "Сущность",

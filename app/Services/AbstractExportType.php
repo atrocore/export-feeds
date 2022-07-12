@@ -289,6 +289,14 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $params['offset'] = $this->data['offset'];
         $params['maxSize'] = $this->data['limit'];
 
+        if (!empty($this->data['feed']['sortOrderField'])) {
+            $params['sortBy'] = $this->data['feed']['sortOrderField'];
+            $params['asc'] = true;
+            if (!empty($this->data['feed']['sortOrderDirection']) && $this->data['feed']['sortOrderDirection'] !== 'ASC') {
+                $params['asc'] = false;
+            }
+        }
+
         $result = $this->getEntityService()->findEntities($params);
 
         $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];

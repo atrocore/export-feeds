@@ -1,5 +1,7 @@
 {
   "fields": {
+    "sortOrderField": "Sort Order (field)",
+    "sortOrderDirection": "Sort Order (direction)",
     "language": "Language",
     "channel": "Channel",
     "entity": "Entity",

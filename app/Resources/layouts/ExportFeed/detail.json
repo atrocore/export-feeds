@@ -71,6 +71,14 @@
       ],
       [
         {
+          "name": "sortOrderField"
+        },
+        {
+          "name": "sortOrderDirection"
+        }
+      ],
+      [
+        {
           "name": "language"
         },
         {
