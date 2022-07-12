@@ -220,7 +220,8 @@
     },
     "sortOrderField": {
       "type": "varchar",
-      "required": false
+      "required": false,
+      "view": "export:views/export-feed/fields/sort-order-field"
     },
     "sortOrderDirection": {
       "type": "enum",
