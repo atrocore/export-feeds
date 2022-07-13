@@ -44,16 +44,16 @@ class ValueModifier extends Injectable
         $metadata = $this->getInjection('container')->get('metadata');
         $language = $this->getInjection('container')->get('language');
 
-        foreach (explode('|', $valueModifierStr) as $modifierName) {
+        foreach (explode('||', $valueModifierStr) as $modifierName) {
             if (empty($modifierName)) {
                 continue;
             }
 
             $context = [];
-            if (preg_match_all("/(.*)\((.*)\)/", $modifierName, $matches)) {
-                $modifierName = trim($matches[1][0]);
+            if (preg_match_all("/^([\w_]+)\((.*)\)$/", $modifierName, $matches)) {
+                $modifierName = $matches[1][0];
                 if (!empty($matches[2][0])) {
-                    $context = array_map('trim', explode(',', $matches[2][0]));
+                    $context = $matches[2][0];
                 }
             }
 
