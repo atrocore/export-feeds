@@ -48,6 +48,16 @@ class LinkMultipleType extends LinkType
             $params['exportByChannelId'] = $configuration['channelId'];
         }
 
+        if (!empty($configuration['filterField']) && !empty($configuration['filterFieldValue'])) {
+            $params['where'] = [
+                [
+                    'type'      => 'arrayAnyOf',
+                    'attribute' => $configuration['filterField'],
+                    'value'     => $configuration['filterFieldValue'],
+                ]
+            ];
+        }
+
         try {
             $foreignResult = $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
         } catch (\Throwable $e) {
@@ -65,16 +75,6 @@ class LinkMultipleType extends LinkType
                 $foreignList = $foreignResult['collection']->toArray();
             } else {
                 $foreignList = $foreignResult['list'];
-            }
-
-            if (!empty($configuration['filterField']) && !empty($configuration['filterFieldValue'])) {
-                $newForeignList = [];
-                foreach ($foreignList as $row) {
-                    if (isset($row[$configuration['filterField']]) && in_array($row[$configuration['filterField']], $configuration['filterFieldValue'])) {
-                        $newForeignList[] = $row;
-                    }
-                }
-                $foreignList = $newForeignList;
             }
 
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];

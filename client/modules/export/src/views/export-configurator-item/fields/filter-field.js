@@ -48,7 +48,7 @@ Espo.define('export:views/export-configurator-item/fields/filter-field', 'views/
             const fields = this.getMetadata().get(['entityDefs', scope, 'fields']);
             if (fields) {
                 $.each(fields, (field, fieldDefs) => {
-                    if (fieldDefs.type && fieldDefs.type === 'enum' && this.checkNotStorableField(fieldDefs)) {
+                    if (fieldDefs.type && ['enum', 'multiEnum'].includes(fieldDefs.type) && this.checkNotStorableField(fieldDefs)) {
                         this.params.options.push(field);
                         this.translatedOptions[field] = this.translate(field, 'fields', scope);
                     }
