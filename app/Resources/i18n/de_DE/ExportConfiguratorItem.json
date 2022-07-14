@@ -32,7 +32,7 @@
     "mainLocale": "Hauptsprache"
   },
   "tooltips": {
-    "valueModifier": "Setzen Sie immer eine Pipeline \"|\" vor dem Namen des Modifikators. Es können mehrere Modifikatoren verwendet werden. Beispiel: \"|title|trim\".",
+    "valueModifier": "Setzen Sie immer eine Pipeline \"||\" vor dem Namen des Modifikators. Es können mehrere Modifikatoren verwendet werden. Beispiel: \"|title|trim\".",
     "exportIntoSeparateColumns": "Datensätze für verknüpfte Entität werden als separate Felder/Spalten exportiert, indem für den Namen das Suffix „_1“, „_2“ usw. verwendet wird.",
     "filterField": "Wählen Sie ein Filterfeld aus, wenn Sie einen Filter auf verknüpfte Datensätze anwenden möchten.",
     "filterFieldValue": "Nur nach Filterfeldwert gefilterte Datensätze werden ausgewählt.",
