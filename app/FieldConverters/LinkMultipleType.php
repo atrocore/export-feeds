@@ -31,6 +31,7 @@ class LinkMultipleType extends LinkType
         $field = $configuration['field'];
         $column = $configuration['column'];
         $entity = $configuration['entity'];
+        $foreignEntity = $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
 
         $sortBy = $this->convertor->getMetadata()->get(['clientDefs', $entity, 'relationshipPanels', $field, 'sortBy']);
 
@@ -49,13 +50,26 @@ class LinkMultipleType extends LinkType
         }
 
         if (!empty($configuration['filterField']) && !empty($configuration['filterFieldValue'])) {
-            $params['where'] = [
-                [
-                    'type'      => 'arrayAnyOf',
-                    'attribute' => $configuration['filterField'],
-                    'value'     => $configuration['filterFieldValue'],
-                ]
-            ];
+            switch ($this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $configuration['filterField'], 'type'])) {
+                case 'enum':
+                    $params['where'] = [
+                        [
+                            'type'      => 'in',
+                            'attribute' => $configuration['filterField'],
+                            'value'     => $configuration['filterFieldValue'],
+                        ]
+                    ];
+                    break;
+                case 'multiEnum':
+                    $params['where'] = [
+                        [
+                            'type'      => 'arrayAnyOf',
+                            'attribute' => $configuration['filterField'],
+                            'value'     => $configuration['filterFieldValue'],
+                        ]
+                    ];
+                    break;
+            }
         }
 
         try {
@@ -69,8 +83,6 @@ class LinkMultipleType extends LinkType
         }
 
         if (!empty($foreignResult['total'])) {
-            $foreignEntity = $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
-
             if (isset($foreignResult['collection'])) {
                 $foreignList = $foreignResult['collection']->toArray();
             } else {
