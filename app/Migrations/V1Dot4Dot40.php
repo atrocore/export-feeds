@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -19,22 +20,35 @@
  * This software is not allowed to be used in Russia and Belarus.
  */
 
-Espo.define('export:views/export-configurator-item/fields/type', 'views/fields/enum',
-    Dep => Dep.extend({
+declare(strict_types=1);
 
-        setupOptions() {
-            Dep.prototype.setupOptions.call(this);
+namespace Export\Migrations;
 
-            if (this.model.get('entity') !== 'Product') {
-                const key = this.params.options.findIndex(option => {
-                    return option === 'Attribute';
-                });
+use Treo\Core\Migration\Base;
 
-                if (key !== -1) {
-                    this.params.options.splice(key, 1);
-                }
-            }
+class V1Dot4Dot40 extends Base
+{
+    /**
+     * @inheritDoc
+     */
+    public function up(): void
+    {
+        $this->execute("ALTER TABLE `export_configurator_item` ADD fixed_value VARCHAR(255) DEFAULT NULL COLLATE utf8mb4_unicode_ci");
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function down(): void
+    {
+        $this->execute("ALTER TABLE `export_configurator_item` DROP fixed_value");
+    }
+
+    protected function execute(string $query): void
+    {
+        try {
+            $this->getPDO()->exec($query);
+        } catch (\Throwable $e) {
         }
-
-    })
-);
+    }
+}

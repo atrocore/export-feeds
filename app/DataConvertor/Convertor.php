@@ -46,6 +46,12 @@ class Convertor
 
     public function convert(array $record, array $configuration, bool $toString = false): array
     {
+        if ($configuration['type'] == 'Fixed value' && isset($configuration['fixedValue'])) {
+            $column = $configuration['column'];
+
+            return [$column => (string)$configuration['fixedValue']];
+        }
+
         $type = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field'], 'type'], 'varchar');
 
         return $this->convertType($type, $record, $configuration, $toString);

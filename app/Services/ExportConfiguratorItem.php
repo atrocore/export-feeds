@@ -44,7 +44,8 @@ class ExportConfiguratorItem extends Base
             'locale',
             'scope',
             'channelId',
-            'channelName'
+            'channelName',
+            'fixedValue'
         ];
 
     protected array $languages = [];

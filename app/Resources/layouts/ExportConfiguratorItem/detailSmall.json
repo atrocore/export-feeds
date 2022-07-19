@@ -74,6 +74,12 @@
         {
           "name": "filterFieldValue"
         }
+      ],
+      [
+        {
+          "name": "fixedValue"
+        },
+        false
       ]
     ]
   }

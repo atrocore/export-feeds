@@ -17,7 +17,8 @@
     "filterFieldValue": "Filter Field Value",
     "offsetRelation": "Offset",
     "limitRelation": "Limit",
-    "valueModifier": "Value Modifier"
+    "valueModifier": "Value Modifier",
+    "fixedValue": "Fixed value"
   },
   "links": {
     "exportFeed": "Export Feed",

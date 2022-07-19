@@ -43,6 +43,14 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 this.model.set('name', this.params.options[0]);
             }
 
+            this.listenTo(this.model, 'change:type', () => {
+                if (this.model.get('type') === 'Fixed value') {
+                    this.model.set(this.name, null);
+                }
+                this.reRender();
+            })
+
+
             Dep.prototype.setup.call(this);
         },
 
@@ -74,6 +82,10 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                     name += ' / ' + this.model.get('locale');
                 }
             }
+            if (this.model.get('type') === 'Fixed value') {
+                name = this.getLanguage().translate('fixedValue', 'fields', 'ExportConfiguratorItem');
+            }
+
 
             return name;
         },

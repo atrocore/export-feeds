@@ -32,6 +32,15 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
                 this.listenTo(this.model, 'change:name', () => {
                     this.reRender();
                 });
+
+                this.listenTo(this.model, 'change:type', () => {
+                    if (this.model.get('type') === 'Fixed value') {
+                        this.model.set(this.name, 'custom');
+                    } else {
+                        this.model.set(this.name, 'name');
+                    }
+                    this.reRender();
+                })
             },
 
             setupOptions() {
@@ -48,6 +57,7 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
 
                 if (this.mode !== 'list') {
                     this.checkFieldVisibility();
+                    this.checkFieldDisability();
                 }
             },
 
@@ -56,6 +66,14 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
                     this.$el.hide();
                 } else {
                     this.$el.show();
+                }
+            },
+
+            checkFieldDisability() {
+                if (this.model.get('type') === 'Fixed value') {
+                    this.$el.find('select').attr('disabled', 'disabled');
+                } else {
+                    this.$el.find('select').removeAttr('disabled');
                 }
             },
 
