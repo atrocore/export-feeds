@@ -36,10 +36,6 @@ class VarcharType extends AbstractType
             $result[$column] = (string)$record[$field];
             $this->applyValueModifiers($configuration, $result[$column]);
         }
-
-        if (isset($configuration['fixedValue'])) {
-            $result[$column] = (string)$configuration['fixedValue'];
-        }
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -55,10 +51,6 @@ class VarcharType extends AbstractType
                 $result[$column] = $record[$field];
                 $this->applyValueModifiers($configuration, $result[$column]);
             }
-        }
-
-        if (isset($configuration['fixedValue'])) {
-            $result[$column] = (string)$configuration['fixedValue'];
         }
     }
 }
