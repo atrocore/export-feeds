@@ -22,15 +22,19 @@
 Espo.define('export:views/export-configurator-item/fields/type', 'views/fields/enum',
     Dep => Dep.extend({
 
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
+        setupOptions() {
+            Dep.prototype.setupOptions.call(this);
 
-            if (this.model.get('entity') === 'Product') {
-                this.show();
-            } else {
-                this.hide();
+            if (this.model.get('entity') !== 'Product') {
+                const key = this.params.options.findIndex(option => {
+                    return option === 'Attribute';
+                });
+
+                if (key !== -1) {
+                    this.params.options.splice(key, 1);
+                }
             }
-        },
+        }
 
     })
 );
