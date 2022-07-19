@@ -60,6 +60,6 @@ class FloatType extends AbstractType
 
     protected function floatToNumber(float $value, $decimalMark, $thousandSeparator): string
     {
-        return rtrim(rtrim(number_format($value, 3, $decimalMark, $thousandSeparator), '0'), $decimalMark);
+        return rtrim(rtrim(number_format($value, 10, $decimalMark, $thousandSeparator), '0'), $decimalMark);
     }
 }
