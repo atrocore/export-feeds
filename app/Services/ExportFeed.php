@@ -326,6 +326,7 @@ class ExportFeed extends Base
                     'offsetRelation'            => $item->get('offsetRelation'),
                     'limitRelation'             => $item->get('limitRelation'),
                     'valueModifier'             => $item->get('valueModifier'),
+                    'fixedValue'                => $item->get('fixedValue'),
                 ];
 
                 if ($feed->get('type') === 'simple') {

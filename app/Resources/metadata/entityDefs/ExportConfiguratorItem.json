@@ -50,7 +50,8 @@
       "view": "export:views/export-configurator-item/fields/type",
       "options": [
         "Field",
-        "Attribute"
+        "Attribute",
+        "Fixed value"
       ],
       "default": "Field"
     },
@@ -128,6 +129,9 @@
       "type": "int",
       "default": 20,
       "view": "export:views/export-configurator-item/fields/limit-relation"
+    },
+    "fixedValue": {
+      "type": "varchar"
     }
   },
   "links": {

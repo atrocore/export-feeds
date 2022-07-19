@@ -17,7 +17,8 @@
     "filterFieldValue": "Filterfeldwert",
     "offsetRelation": "Versatz",
     "limitRelation": "Grenze",
-    "valueModifier": "Wertmodifikator"
+    "valueModifier": "Wertmodifikator",
+    "fixedValue": "Fester Wert"
   },
   "links": {
     "exportFeed": "Exportfeed",
