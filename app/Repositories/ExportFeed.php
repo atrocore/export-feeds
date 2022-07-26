@@ -32,6 +32,18 @@ use Export\Entities\ExportFeed as ExportFeedEntity;
 
 class ExportFeed extends Base
 {
+    public function removeInvalidConfiguratorItems(string $exportFeedId): void
+    {
+        $id = $this->getPDO()->quote($exportFeedId);
+        try {
+            $this->getPDO()->exec(
+                "DELETE FROM `export_configurator_item` WHERE export_feed_id=$id AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
+            );
+        } catch (\Throwable $e) {
+            $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e);
+        }
+    }
+
     public function getIdsByExportEntity(string $exportEntity): array
     {
         $feeds = $this
