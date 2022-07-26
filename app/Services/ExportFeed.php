@@ -217,6 +217,7 @@ class ExportFeed extends Base
         if ($link === 'configuratorItems') {
             $this->prepareFeedViaLanguage();
             $this->prepareFeedViaChannel();
+            $this->getRepository()->removeInvalidConfiguratorItems($id);
         }
 
         return parent::findLinkedEntities($id, $link, $params);
@@ -230,8 +231,8 @@ class ExportFeed extends Base
         }
         $languages = implode("','", $languages);
 
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET language='mainLocale' WHERE language NOT IN ('$languages')");
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET deleted=1 WHERE locale NOT IN ('$languages')");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET `language`='mainLocale' WHERE `language` NOT IN ('$languages')");
+        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET `deleted`=1 WHERE `locale` NOT IN ('$languages')");
     }
 
     public function prepareFeedViaChannel(): void
