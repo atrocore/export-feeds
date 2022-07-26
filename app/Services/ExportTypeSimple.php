@@ -50,7 +50,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('name', $this->getExportFileName('csv'));
         $attachment->set('role', 'Export');
         $attachment->set('relatedType', 'ExportJob');
-        $attachment->set('relatedId', $this->data['id']);
+        $attachment->set('relatedId', $this->data['exportJobId']);
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
@@ -73,7 +73,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('name', $this->getExportFileName('xlsx'));
         $attachment->set('role', 'Export');
         $attachment->set('relatedType', 'ExportJob');
-        $attachment->set('relatedId', $this->data['id']);
+        $attachment->set('relatedId', $this->data['exportJobId']);
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
@@ -151,7 +151,7 @@ class ExportTypeSimple extends AbstractExportType
 
         // prepare header
         if ($this->data['feed']['isFileHeaderRow']) {
-            fputcsv($fp, array_column($columns, 'name'), $delimiter, $enclosure, '~~~~~');
+            fputcsv($fp, array_column($columns, 'name'), $delimiter, $enclosure);
         }
 
         $cacheFile = fopen($data['fullFileName'], "r");
@@ -170,7 +170,7 @@ class ExportTypeSimple extends AbstractExportType
                 $resultRow[$pos] = $rowData[$columnData['number']][$columnData['name']];
             }
 
-            fputcsv($fp, $resultRow, $delimiter, $enclosure, '~~~~~');
+            fputcsv($fp, $resultRow, $delimiter, $enclosure);
         }
         fclose($cacheFile);
 
