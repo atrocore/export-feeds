@@ -110,6 +110,10 @@ class LinkType extends AbstractType
             }
         }
         $this->needStringResult = false;
+
+        if (is_string($result[$column])) {
+            $this->applyValueModifiers($configuration, $result[$column]);
+        }
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
