@@ -44,7 +44,7 @@ Espo.define('export:views/export-feed/fields/sort-order-field', 'views/fields/en
                 this.translatedOptions = {};
 
                 $.each(fieldDefs, (field, defs) => {
-                    if (defs.notStorable) {
+                    if (defs.notStorable || defs.exportDisabled) {
                         return;
                     }
 

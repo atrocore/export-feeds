@@ -19,7 +19,7 @@
  * This software is not allowed to be used in Russia and Belarus.
  */
 
-Espo.define('export:views/export-configurator-item/fields/value-modifier', 'views/fields/text',
+Espo.define('export:views/export-configurator-item/fields/value-modifier', 'views/fields/array',
     Dep => Dep.extend({
 
         setup() {
@@ -56,7 +56,7 @@ Espo.define('export:views/export-configurator-item/fields/value-modifier', 'view
                 modifiers.forEach(modifier => {
                     let data = this.getMetadata().get(['export', 'valueModifiers', 'modifiersDescription', modifier]);
                     html += '<tr>';
-                    html += `<td>${modifier}</td><td>${data.description}</td><td>||${data.example}</td>`;
+                    html += `<td>${modifier}</td><td>${data.description}</td><td>${data.example}</td>`;
                     html += '</tr>';
                 });
                 html += '</table>';
