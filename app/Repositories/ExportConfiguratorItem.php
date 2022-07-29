@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Export\Repositories;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
 use Espo\ORM\Entity;
 use Export\Core\ValueModifier;
@@ -44,10 +45,43 @@ class ExportConfiguratorItem extends Base
         }
 
         if ($entity->isAttributeChanged('valueModifier') && !empty($entity->get('valueModifier'))) {
-            $this->getInjection(ValueModifier::class)->apply($entity->get('valueModifier'));
+            $this->getInjection(ValueModifier::class)->apply($this->getValueModifiers($entity));
         }
 
         parent::beforeSave($entity, $options);
+    }
+
+    protected function getValueModifiers(Entity $entity)
+    {
+        $valueModifiers = $entity->get('valueModifier');
+        if ($entity->get('name') !== 'value') {
+            return $valueModifiers;
+        }
+
+        $exportFeed = $this->getEntityManager()->getRepository('ExportFeed')->get($entity->get('exportFeedId'));
+        if ($exportFeed->getFeedField('entity') !== 'ProductAttributeValue') {
+            return $valueModifiers;
+        }
+
+        $preparedValueModifiers = [];
+        foreach ($valueModifiers as $modifier) {
+            $parts = explode(':', $modifier);
+            $attributeCode = array_shift($parts);
+
+            $attribute = $this
+                ->getEntityManager()
+                ->getRepository('Attribute')
+                ->select(['id'])
+                ->where(['code' => $attributeCode])
+                ->findOne();
+
+            if (empty($attribute)) {
+                throw new BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportConfiguratorItem'), $attributeCode));
+            }
+            $preparedValueModifiers[] = implode(':', $parts);
+        }
+
+        return $preparedValueModifiers;
     }
 
     protected function init()
@@ -55,5 +89,6 @@ class ExportConfiguratorItem extends Base
         parent::init();
 
         $this->addDependency(ValueModifier::class);
+        $this->addDependency('language');
     }
 }
