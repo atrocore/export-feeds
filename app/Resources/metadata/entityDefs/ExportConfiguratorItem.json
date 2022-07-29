@@ -59,7 +59,7 @@
       "type": "link"
     },
     "valueModifier": {
-      "type": "text",
+      "type": "array",
       "view": "export:views/export-configurator-item/fields/value-modifier",
       "tooltip": true
     },

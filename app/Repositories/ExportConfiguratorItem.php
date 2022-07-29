@@ -44,7 +44,7 @@ class ExportConfiguratorItem extends Base
         }
 
         if ($entity->isAttributeChanged('valueModifier') && !empty($entity->get('valueModifier'))) {
-            $this->getInjection(ValueModifier::class)->apply((string)$entity->get('valueModifier'));
+            $this->getInjection(ValueModifier::class)->apply($entity->get('valueModifier'));
         }
 
         parent::beforeSave($entity, $options);

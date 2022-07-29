@@ -35,16 +35,16 @@ class ValueModifier extends Injectable
         $this->addDependency('container');
     }
 
-    public function apply(string $valueModifierStr, &$value = null)
+    public function apply(array $valueModifiers, &$value = null)
     {
-        if (empty($valueModifierStr)) {
+        if (empty($valueModifiers)) {
             return;
         }
 
         $metadata = $this->getInjection('container')->get('metadata');
         $language = $this->getInjection('container')->get('language');
 
-        foreach (explode('||', $valueModifierStr) as $modifierName) {
+        foreach ($valueModifiers as $modifierName) {
             if (empty($modifierName)) {
                 continue;
             }
