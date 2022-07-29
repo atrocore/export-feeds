@@ -32,6 +32,17 @@ class ProductAttributeValueConvertor extends Convertor
     public function convert(array $record, array $configuration, bool $toString = false): array
     {
         if ($configuration['field'] === 'value') {
+            // prepare valueModifiers
+            $valueModifiers = [];
+            if (!empty($configuration['valueModifier'])) {
+                foreach ($configuration['valueModifier'] as $item) {
+                    if (preg_match_all("/^{$record['attributeCode']}\:(.*)$/", $item, $matches)) {
+                        $valueModifiers[] = $matches[1][0];
+                    }
+                }
+            }
+            $configuration['valueModifier'] = $valueModifiers;
+
             return $this->convertType($record['attributeType'], $record, $configuration, $toString);
         }
 

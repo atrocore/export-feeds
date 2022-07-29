@@ -40,6 +40,7 @@
     "column": "You can use related entity fields in the column name. Use the field name in the database as a variable, eg {{name}}. Checkbox \"Separate Columns\" should be activated."
   },
   "exceptions": {
+    "noSuchAttribute": "The attribute with such code '%s' does not exist.",
     "unknownModifier": "Modifier '%s' is unknown."
   }
 }
