@@ -34,10 +34,14 @@ class V1Dot4Dot43 extends Base
      */
     public function up(): void
     {
-        $items = $this
-            ->getPDO()
-            ->query("SELECT * FROM `export_configurator_item` WHERE deleted=0 AND value_modifier IS NOT NULL")
-            ->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $items = $this
+                ->getPDO()
+                ->query("SELECT * FROM `export_configurator_item` WHERE deleted=0 AND value_modifier IS NOT NULL")
+                ->fetchAll(\PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            $items = [];
+        }
 
         foreach ($items as $item) {
             if (!empty($item['value_modifier'])) {
