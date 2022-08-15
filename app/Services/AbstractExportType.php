@@ -291,6 +291,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         if (!empty($this->data['feed']['sortOrderField'])) {
             $params['sortBy'] = $this->data['feed']['sortOrderField'];
+            if ($this->getMetadata()->get(['entityDefs', $this->data['feed']['entity'], 'fields', $params['sortBy'], 'type']) === 'link') {
+                $params['sortBy'] .= 'Id';
+            }
             $params['asc'] = true;
             if (!empty($this->data['feed']['sortOrderDirection']) && $this->data['feed']['sortOrderDirection'] !== 'ASC') {
                 $params['asc'] = false;
