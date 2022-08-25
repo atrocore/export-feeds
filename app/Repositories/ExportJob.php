@@ -56,7 +56,7 @@ class ExportJob extends Base
                 throw new BadRequest('Unexpected job state.');
             }
 
-            if ($entity->get('state') === 'Pending' && !in_array($entity->getFetched('state'), ['Failed', 'Canceled'])) {
+            if ($entity->get('state') === 'Pending' && in_array($entity->getFetched('state'), ['Running'])) {
                 throw new BadRequest('Unexpected job state.');
             }
         }
