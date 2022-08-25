@@ -10,6 +10,7 @@
     "ExportJob": "Exportaufträge"
   },
   "labels": {
-    "Generate": "Generieren"
+    "Generate": "Generieren",
+    "tryAgain": "Erneut exportieren"
   }
 }

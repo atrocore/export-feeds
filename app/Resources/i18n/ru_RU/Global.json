@@ -10,6 +10,7 @@
     "ExportConfiguratorItem": "Конфигуратор"
   },
   "labels": {
-    "Generate": "Сгенерировать"
+    "Generate": "Сгенерировать",
+    "tryAgain": "Повторить попытку"
   }
 }

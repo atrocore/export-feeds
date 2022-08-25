@@ -36,6 +36,16 @@ Espo.define('export:views/export-job/record/row-actions/relationship', 'views/re
                 });
             }
 
+            if (['Failed', 'Canceled'].includes(this.model.get('state')) && this.options.acl.edit) {
+                list.push({
+                    action: 'tryAgainExportJob',
+                    label: 'tryAgain',
+                    data: {
+                        id: this.model.id
+                    }
+                });
+            }
+
             if (this.options.acl.delete) {
                 list.push({
                     action: 'removeRelated',
