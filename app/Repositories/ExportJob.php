@@ -40,6 +40,7 @@ class ExportJob extends Base
         parent::init();
 
         $this->addDependency('language');
+        $this->addDependency('queueManager');
     }
 
     protected function beforeSave(Entity $entity, array $options = [])
@@ -50,8 +51,14 @@ class ExportJob extends Base
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
 
-        if ($entity->isAttributeChanged('state') && $entity->get('state') === 'Canceled' && !in_array($entity->getFetched('state'), ['Pending', 'Running'])) {
-            throw new BadRequest('Unexpected job state.');
+        if ($entity->isAttributeChanged('state')) {
+            if ($entity->get('state') === 'Canceled' && !in_array($entity->getFetched('state'), ['Pending', 'Running'])) {
+                throw new BadRequest('Unexpected job state.');
+            }
+
+            if ($entity->get('state') === 'Pending' && !in_array($entity->getFetched('state'), ['Failed', 'Canceled'])) {
+                throw new BadRequest('Unexpected job state.');
+            }
         }
 
         parent::beforeSave($entity, $options);
@@ -61,10 +68,15 @@ class ExportJob extends Base
     {
         parent::afterSave($entity, $options);
 
-        if ($entity->isAttributeChanged('state') && $entity->get('state') === 'Canceled') {
+        if ($entity->isAttributeChanged('state')) {
             $qmJob = $this->getExportJob($entity->get('id'));
             if (!empty($qmJob)) {
-                $this->cancelQmJob($qmJob);
+                if ($entity->get('state') === 'Pending') {
+                    $this->toPendingQmJob($qmJob);
+                }
+                if ($entity->get('state') === 'Canceled') {
+                    $this->cancelQmJob($qmJob);
+                }
             }
         }
 
@@ -98,6 +110,11 @@ class ExportJob extends Base
         }
 
         parent::afterRemove($entity, $options);
+    }
+
+    protected function toPendingQmJob(Entity $qmJob): void
+    {
+        $this->getInjection('queueManager')->tryAgain($qmJob->get('id'));
     }
 
     protected function cancelQmJob(Entity $qmJob): void
