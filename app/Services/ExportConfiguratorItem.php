@@ -154,7 +154,7 @@ class ExportConfiguratorItem extends Base
             }
         }
 
-        return $column;
+        return (string)$column;
     }
 
     protected function init()
