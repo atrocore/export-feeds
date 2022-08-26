@@ -53,11 +53,17 @@ class ExportJob extends Base
 
         if ($entity->isAttributeChanged('state')) {
             if ($entity->get('state') === 'Canceled' && !in_array($entity->getFetched('state'), ['Pending', 'Running'])) {
-                throw new BadRequest('Unexpected job state.');
+                throw new BadRequest($this->getInjection('language')->translate('wrongJobState', 'exceptions', 'ExportJob'));
             }
 
-            if ($entity->get('state') === 'Pending' && $entity->getFetched('state') === 'Running') {
-                throw new BadRequest('Unexpected job state.');
+            if ($entity->get('state') === 'Pending') {
+                if ($entity->getFetched('state') === 'Running') {
+                    throw new BadRequest($this->getInjection('language')->translate('wrongJobState', 'exceptions', 'ExportJob'));
+                }
+                $qmJob = $this->getExportJob($entity->get('id'));
+                if (empty($qmJob)) {
+                    throw new BadRequest($this->getInjection('language')->translate('notExecutableJob', 'exceptions', 'ExportJob'));
+                }
             }
         }
 
