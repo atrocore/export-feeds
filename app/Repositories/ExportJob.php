@@ -45,24 +45,22 @@ class ExportJob extends Base
 
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        // set sort order
         if ($entity->isNew()) {
             $last = $this->select(['sortOrder'])->where(['exportFeedId' => $entity->get('exportFeedId')])->order('sortOrder', 'DESC')->findOne();
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
-        }
-
-        if ($entity->isAttributeChanged('state')) {
-            if ($entity->get('state') === 'Canceled' && !in_array($entity->getFetched('state'), ['Pending', 'Running'])) {
-                throw new BadRequest($this->getInjection('language')->translate('wrongJobState', 'exceptions', 'ExportJob'));
-            }
-
-            if ($entity->get('state') === 'Pending') {
-                if ($entity->getFetched('state') === 'Running') {
+        } else {
+            if ($entity->isAttributeChanged('state')) {
+                if ($entity->get('state') === 'Canceled' && !in_array($entity->getFetched('state'), ['Pending', 'Running'])) {
                     throw new BadRequest($this->getInjection('language')->translate('wrongJobState', 'exceptions', 'ExportJob'));
                 }
-                $qmJob = $this->getExportJob($entity->get('id'));
-                if (empty($qmJob)) {
-                    throw new BadRequest($this->getInjection('language')->translate('notExecutableJob', 'exceptions', 'ExportJob'));
+                if ($entity->get('state') === 'Pending') {
+                    if ($entity->getFetched('state') === 'Running') {
+                        throw new BadRequest($this->getInjection('language')->translate('wrongJobState', 'exceptions', 'ExportJob'));
+                    }
+                    $qmJob = $this->getExportJob($entity->get('id'));
+                    if (empty($qmJob)) {
+                        throw new BadRequest($this->getInjection('language')->translate('notExecutableJob', 'exceptions', 'ExportJob'));
+                    }
                 }
             }
         }
