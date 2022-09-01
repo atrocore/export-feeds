@@ -288,7 +288,7 @@ class ExportFeed extends Base
         }
     }
 
-    protected function prepareFeedData(Entity $feed): array
+    public function prepareFeedData(Entity $feed): array
     {
         $result = $feed->toArray();
 
@@ -382,7 +382,7 @@ class ExportFeed extends Base
      *
      * @return string
      */
-    protected function pushExport(array $data): string
+    public function pushExport(array $data): string
     {
         $data['offset'] = 0;
         $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
