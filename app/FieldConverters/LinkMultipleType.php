@@ -95,6 +95,11 @@ class LinkMultipleType extends LinkType
             foreach ($foreignList as $foreignData) {
                 $fieldResult = [];
                 foreach ($exportBy as $v) {
+                    $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
+                    if ($assetUrl !== null) {
+                        $fieldResult[$v] = $assetUrl;
+                        continue 1;
+                    }
                     $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                     $foreignConfiguration = array_merge($configuration, ['field' => $v]);
                     $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);

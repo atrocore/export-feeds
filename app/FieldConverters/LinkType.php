@@ -72,6 +72,11 @@ class LinkType extends AbstractType
                     $foreignData = $foreign->toArray();
                     $fieldResult = [];
                     foreach ($exportBy as $v) {
+                        $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
+                        if ($assetUrl !== null) {
+                            $fieldResult[$v] = $assetUrl;
+                            continue 1;
+                        }
                         $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
                         $foreignConfiguration = array_merge($configuration, ['field' => $v]);
                         $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
@@ -167,5 +172,22 @@ class LinkType extends AbstractType
         } else {
             $fieldResult[$field] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
         }
+    }
+
+    /**
+     * @deprecated  fix this hack soon
+     */
+    protected function prepareAssetUrl(string $name, string $foreignEntity, array $foreignData): ?string
+    {
+        if (substr($name, -3) === 'Url') {
+            $foreignFieldName = substr($name, 0, -3);
+            if ($this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $foreignFieldName, 'type']) === 'asset') {
+                if (!empty($foreignData["{$foreignFieldName}PathsData"]['download'])) {
+                    return rtrim($this->convertor->getConfig()->get('siteUrl'), '/') . '/' . $foreignData["{$foreignFieldName}PathsData"]['download'];
+                }
+            }
+        }
+
+        return null;
     }
 }

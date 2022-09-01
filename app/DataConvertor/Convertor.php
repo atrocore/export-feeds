@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Export\DataConvertor;
 
 use Espo\Core\Container;
+use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\Services\Record;
 use Export\Core\ValueModifier;
@@ -100,6 +101,11 @@ class Convertor
     public function getMetadata(): Metadata
     {
         return $this->container->get('metadata');
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->container->get('config');
     }
 
     public function getService(string $serviceName): Record

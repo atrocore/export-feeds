@@ -79,6 +79,10 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                             if (fieldData.type === 'link') {
                                 result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
                                 result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
+                            } else if (fieldData.type === 'asset') {
+                                result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
+                                result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
+                                result[field + 'Url'] = this.translate(field, 'fields', entity) + ' ' + this.translate('url', 'fields', 'Attachment');
                             } else {
                                 result[field] = this.translate(field, 'fields', entity);
                             }

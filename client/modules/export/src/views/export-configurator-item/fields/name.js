@@ -127,7 +127,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                             translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity) + ' ' + this.translate('id', 'fields', 'Global'));
                         } else if (field.substring(field.length - 4) === 'Name') {
                             translations.push(this.translate(field.substring(0, field.length - 4), 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global'));
-                        } else {
+                        } else if (field.substring(field.length - 3) === 'Url') {
+                            translations.push(this.translate(field.substring(0, field.length - 3), 'fields', entity) + ' ' + this.translate('url', 'fields', 'Attachment'));
+                        }else {
                             translations.push(this.translate(field, 'fields', entity));
                         }
                     }
