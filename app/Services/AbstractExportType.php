@@ -208,11 +208,11 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                     $name = Util::toCamelCase(strtolower($name . '_' . $locale));
                 }
 
-                return $attribute->get($name);
+                return (string)$attribute->get($name);
             }
 
             if ($row['columnType'] == 'internal') {
-                $value = $attribute->get('name');
+                $value = (string)$attribute->get('name');
                 if (!empty($locale)) {
                     $value .= ' / ' . $locale;
                 }
@@ -265,11 +265,12 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     protected function getSelectParams(): array
     {
         $params = [
-            'sortBy'  => 'id',
-            'asc'     => true,
-            'offset'  => 0,
-            'maxSize' => 1,
-            'where'   => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : []
+            'sortBy'      => 'id',
+            'asc'         => true,
+            'offset'      => 0,
+            'maxSize'     => 1,
+            'where'       => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : [],
+            'withDeleted' => !empty($this->data['feed']['data']['withDeleted']),
         ];
 
         return $params;
@@ -288,6 +289,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $params = $this->getSelectParams();
         $params['offset'] = $this->data['offset'];
         $params['maxSize'] = $this->data['limit'];
+        $params['withDeleted'] = !empty($this->data['withDeleted']);
 
         if (!empty($this->data['feed']['sortOrderField'])) {
             $params['sortBy'] = $this->data['feed']['sortOrderField'];
