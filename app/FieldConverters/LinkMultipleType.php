@@ -51,6 +51,16 @@ class LinkMultipleType extends LinkType
 
         if (!empty($configuration['filterField']) && !empty($configuration['filterFieldValue'])) {
             switch ($this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $configuration['filterField'], 'type'])) {
+                case 'bool':
+                    switch ($configuration['filterFieldValue']) {
+                        case ['+']:
+                            $params['where'] = [['type' => 'isTrue', 'attribute' => $configuration['filterField']]];
+                            break;
+                        case ['-']:
+                            $params['where'] = [['type' => 'isFalse', 'attribute' => $configuration['filterField']]];
+                            break;
+                    }
+                    break;
                 case 'enum':
                     $params['where'] = [
                         [

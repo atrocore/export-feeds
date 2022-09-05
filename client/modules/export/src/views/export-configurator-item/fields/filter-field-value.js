@@ -43,7 +43,16 @@ Espo.define('export:views/export-configurator-item/fields/filter-field-value', '
 
             let scope = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
 
-            (this.getMetadata().get(['entityDefs', scope, 'fields', this.model.get('filterField'), 'options']) || []).forEach(option => {
+            let fieldType = this.getMetadata().get(['entityDefs', scope, 'fields', this.model.get('filterField'), 'type']);
+
+            let options = [];
+            if (fieldType === 'bool') {
+                options = ['+', '-']
+            } else if (['enum', 'multiEnum'].includes(fieldType)) {
+                options = this.getMetadata().get(['entityDefs', scope, 'fields', this.model.get('filterField'), 'options']) || [];
+            }
+
+            options.forEach(option => {
                 this.params.options.push(option);
                 this.translatedOptions[option] = this.translate(option, 'labels', scope);
             });
