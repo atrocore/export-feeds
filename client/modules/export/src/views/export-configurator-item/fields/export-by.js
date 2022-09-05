@@ -70,10 +70,6 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
 
                     let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
                     let notAllowedType = ['jsonObject', 'linkMultiple'];
-                    if (fieldLinkDefs.type === 'hasMany') {
-                        notAllowedType = notAllowedType.concat(['array', 'arrayMultiLang', 'multiEnum', 'multiEnumMultiLang']);
-                    }
-
                     $.each(fields, function (field, fieldData) {
                         if (!fieldData.disabled && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
                             if (fieldData.type === 'link') {
