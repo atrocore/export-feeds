@@ -32,6 +32,12 @@
   "labels": {
     "mainLocale": "Main Language"
   },
+  "options": {
+    "boolFilterFieldValue": {
+      "+": "true",
+      "-": "false"
+    }
+  },
   "tooltips": {
     "valueModifier": "Multiple modifiers can be used by pressing the Enter key. In case of attribute values attribute codes with colon can be used as a filter to be applied. Example: \"shoes_color:trim\".",
     "exportIntoSeparateColumns": "Related data records will be exported as different fields/columns by using for the name the suffix \"_1\", \"_2\" and so on.",

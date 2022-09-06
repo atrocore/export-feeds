@@ -45,17 +45,18 @@ Espo.define('export:views/export-configurator-item/fields/filter-field-value', '
 
             let fieldType = this.getMetadata().get(['entityDefs', scope, 'fields', this.model.get('filterField'), 'type']);
 
-            let options = [];
             if (fieldType === 'bool') {
-                options = ['+', '-']
+                this.params.options = ['+', '-'];
+                this.translatedOptions = {
+                    "+": this.getLanguage().translateOption('+', 'boolFilterFieldValue', 'ExportConfiguratorItem'),
+                    "-": this.getLanguage().translateOption('-', 'boolFilterFieldValue', 'ExportConfiguratorItem'),
+                }
             } else if (['enum', 'multiEnum'].includes(fieldType)) {
-                options = this.getMetadata().get(['entityDefs', scope, 'fields', this.model.get('filterField'), 'options']) || [];
+                (this.getMetadata().get(['entityDefs', scope, 'fields', this.model.get('filterField'), 'options']) || []).forEach(option => {
+                    this.params.options.push(option);
+                    this.translatedOptions[option] = this.translate(option, 'labels', scope);
+                });
             }
-
-            options.forEach(option => {
-                this.params.options.push(option);
-                this.translatedOptions[option] = this.translate(option, 'labels', scope);
-            });
         },
 
         checkNotStorableField(fieldDefs) {

@@ -32,6 +32,12 @@
   "labels": {
     "mainLocale": "Hauptsprache"
   },
+  "options": {
+    "boolFilterFieldValue": {
+      "+": "wahr",
+      "-": "falsch"
+    }
+  },
   "tooltips": {
     "valueModifier": "Mehrere Modifiers können beim Klicken auf die Eingabetaste verwendet werden. Bei Attributwerten können Attributcodes mit Kolon als anzuwendender Filter verwendet werden. Beispiel: \"shoes_color:trim\".",
     "exportIntoSeparateColumns": "Datensätze für verknüpfte Entität werden als separate Felder/Spalten exportiert, indem für den Namen das Suffix „_1“, „_2“ usw. verwendet wird.",
