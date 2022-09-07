@@ -19,7 +19,7 @@
       "default": "Export Feeds"
     },
     "description": {
-      "default": "The module enables to use preconfigured feeds (templates) for data export."
+      "default": "The module enables to configure and execute multiple feeds for manual data export from any entity in the system and its direct relations. Different file formats can be used."
     },
     "tags": [
       "usability",
