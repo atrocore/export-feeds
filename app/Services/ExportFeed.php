@@ -414,6 +414,7 @@ class ExportFeed extends Base
         $user = $this->getInjection('user');
 
         $exportJob = $this->getEntityManager()->getEntity('ExportJob');
+        $exportJob->id = Util::generateId();
         $exportJob->set('name', $jobName);
         $exportJob->set('exportFeedId', $data['feed']['id']);
         $exportJob->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
@@ -421,13 +422,14 @@ class ExportFeed extends Base
         $exportJob->set('assignedUserId', $user->get('id'));
         $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
 
-        $this->getEntityManager()->saveEntity($exportJob);
-
         $data['exportJobId'] = $exportJob->get('id');
 
         $qmJobName = sprintf($this->getInjection('language')->translate('exportName', 'additionalTranslates', 'ExportFeed'), $jobName);
 
-        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data);
+        $md5Hash = md5(json_encode($data['feed']) . $data['offset'] . $data['limit']);
+
+        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data, 'Normal', $md5Hash);
+        $this->getEntityManager()->saveEntity($exportJob);
 
         return $exportJob->get('id');
     }
