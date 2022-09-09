@@ -33,11 +33,32 @@ use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 use Espo\Core\EventManager\Event;
 
-/**
- * ExportFeed service
- */
 class ExportFeed extends Base
 {
+    public function runExport(string $feedId, string $payload = null): string
+    {
+        $exportFeed = $this->getEntity($feedId);
+        if (empty($exportFeed)) {
+            throw new Exceptions\NotFound();
+        }
+
+        $data = [
+            'id'   => Util::generateId(),
+            'feed' => $this->prepareFeedData($exportFeed)
+        ];
+
+        if (!empty($payload)) {
+            $payload = @json_decode($payload, true);
+            if (!empty($payload)) {
+                foreach ($payload as $key => $value) {
+                    $data['feed']['data']->{$key} = $value;
+                }
+            }
+        }
+
+        return $this->pushExport($data);
+    }
+
     /**
      * Export file
      *
@@ -48,7 +69,7 @@ class ExportFeed extends Base
      */
     public function exportFile(\stdClass $requestData): string
     {
-        if (empty($exportFeed = $this->getEntityManager()->getEntity('ExportFeed', $requestData->id))) {
+        if (empty($exportFeed = $this->getEntity($requestData->id))) {
             throw new Exceptions\NotFound();
         }
 
