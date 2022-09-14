@@ -37,7 +37,7 @@ Espo.define('export:views/export-configurator-item/fields/filter-field', 'views/
 
         setupOptions() {
             this.params.options = [''];
-            this.translatedOptions = {"":""};
+            this.translatedOptions = {"": ""};
 
             if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) !== 'linkMultiple') {
                 return;
@@ -48,7 +48,7 @@ Espo.define('export:views/export-configurator-item/fields/filter-field', 'views/
             const fields = this.getMetadata().get(['entityDefs', scope, 'fields']);
             if (fields) {
                 $.each(fields, (field, fieldDefs) => {
-                    if (fieldDefs.type && ['enum', 'multiEnum', 'bool'].includes(fieldDefs.type) && this.checkNotStorableField(fieldDefs)) {
+                    if (fieldDefs.type && ['enum', 'multiEnum', 'bool'].includes(fieldDefs.type) && fieldDefs.exportDisabled !== true && this.checkNotStorableField(fieldDefs)) {
                         this.params.options.push(field);
                         this.translatedOptions[field] = this.translate(field, 'fields', scope);
                     }
