@@ -42,6 +42,11 @@ class LinkMultipleType extends LinkType
             $params['asc'] = !empty($asc);
         }
 
+        if (!empty($configuration['sortFieldRelation'])) {
+            $params['sortBy'] = $configuration['sortFieldRelation'];
+            $params['asc'] = $configuration['sortOrderRelation'] !== 'DESC';
+        }
+
         $params['offset'] = empty($configuration['offsetRelation']) ? 0 : (int)$configuration['offsetRelation'];
         $params['maxSize'] = empty($configuration['limitRelation']) ? 20 : (int)$configuration['limitRelation'];
 

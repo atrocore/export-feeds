@@ -17,6 +17,8 @@
     "filterFieldValue": "Filterfeldwert",
     "offsetRelation": "Versatz",
     "limitRelation": "Grenze",
+    "sortFieldRelation": "Sortierreihenfolge (Feld)",
+    "sortOrderRelation": "Sortierreihenfolge (Richtung)",
     "valueModifier": "Wertmodifikator",
     "fixedValue": "Fester Wert"
   },

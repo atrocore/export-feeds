@@ -347,6 +347,8 @@ class ExportFeed extends Base
                     'filterFieldValue'          => $item->get('filterFieldValue'),
                     'offsetRelation'            => $item->get('offsetRelation'),
                     'limitRelation'             => $item->get('limitRelation'),
+                    'sortFieldRelation'         => $item->get('sortFieldRelation'),
+                    'sortOrderRelation'         => $item->get('sortOrderRelation'),
                     'valueModifier'             => $item->get('valueModifier'),
                     'type'                      => $item->get('type'),
                     'fixedValue'                => $item->get('fixedValue'),

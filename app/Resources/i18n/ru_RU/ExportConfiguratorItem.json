@@ -17,6 +17,8 @@
     "filterFieldValue": "Значения поля фильтра",
     "offsetRelation": "Offset",
     "limitRelation": "Limit",
+    "sortFieldRelation": "Порядок сортировки (поле)",
+    "sortOrderRelation": "Порядок сортировки (направление)",
     "valueModifier": "Модификатор значения",
     "fixedValue": "Фиксированное значение"
   },

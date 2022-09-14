@@ -53,13 +53,6 @@
       "layout": "listInExportFeed"
     }
   },
-  "customEntities": {
-    "Product": {
-      "productCategories": {
-        "entity": "Category"
-      }
-    }
-  },
   "dynamicLogic": {
     "fields": {
       "type": {

@@ -130,6 +130,25 @@
       "default": 20,
       "view": "export:views/export-configurator-item/fields/limit-relation"
     },
+    "sortFieldRelation": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/sort-field-relation"
+    },
+    "sortOrderRelation": {
+      "type": "enum",
+      "view": "export:views/export-configurator-item/fields/sort-order-relation",
+      "required": false,
+      "prohibitedEmptyValue": true,
+      "options": [
+        "ASC",
+        "DESC"
+      ],
+      "optionsIds": [
+        "1",
+        "2"
+      ],
+      "default": "ASC"
+    },
     "fixedValue": {
       "type": "varchar"
     }

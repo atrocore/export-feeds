@@ -49,6 +49,14 @@
       ],
       [
         {
+          "name": "sortFieldRelation"
+        },
+        {
+          "name": "sortOrderRelation"
+        }
+      ],
+      [
+        {
           "name": "scope"
         },
         {

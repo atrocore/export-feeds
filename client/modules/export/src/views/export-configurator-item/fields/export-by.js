@@ -56,35 +56,31 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
 
         getTranslatesForExportByField() {
             let result = {'id': this.translate('id', 'fields', 'Global')};
-            let fieldLinkDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name')]);
-            if (fieldLinkDefs) {
-                let entity = this.getMetadata().get(['clientDefs', 'ExportFeed', 'customEntities', this.model.get('entity'), this.model.get('name'), 'entity']) || fieldLinkDefs.entity;
-                if (entity) {
-
-                    /**
-                     * For main image
-                     */
-                    if (this.model.get('name') === 'mainImage' || ['Category', 'Product'].includes(this.model.get('entity')) && this.model.get('name') === 'image') {
-                        entity = 'Asset';
-                    }
-
-                    let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
-                    let notAllowedType = ['jsonObject', 'linkMultiple'];
-                    $.each(fields, function (field, fieldData) {
-                        if (!fieldData.disabled && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
-                            if (fieldData.type === 'link') {
-                                result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
-                                result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
-                            } else if (fieldData.type === 'asset') {
-                                result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
-                                result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
-                                result[field + 'Url'] = this.translate(field, 'fields', entity) + ' ' + this.translate('url', 'fields', 'Attachment');
-                            } else {
-                                result[field] = this.translate(field, 'fields', entity);
-                            }
-                        }
-                    }.bind(this));
+            let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+            if (entity) {
+                /**
+                 * For main image
+                 */
+                if (this.model.get('name') === 'mainImage' || ['Category', 'Product'].includes(this.model.get('entity')) && this.model.get('name') === 'image') {
+                    entity = 'Asset';
                 }
+
+                let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
+                let notAllowedType = ['jsonObject', 'linkMultiple'];
+                $.each(fields, function (field, fieldData) {
+                    if (!fieldData.disabled && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
+                        if (fieldData.type === 'link') {
+                            result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
+                            result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
+                        } else if (fieldData.type === 'asset') {
+                            result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
+                            result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
+                            result[field + 'Url'] = this.translate(field, 'fields', entity) + ' ' + this.translate('url', 'fields', 'Attachment');
+                        } else {
+                            result[field] = this.translate(field, 'fields', entity);
+                        }
+                    }
+                }.bind(this));
             }
 
             return result;
