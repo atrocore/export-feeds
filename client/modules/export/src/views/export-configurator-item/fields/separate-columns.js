@@ -40,12 +40,7 @@ Espo.define('export:views/export-configurator-item/fields/separate-columns', 'vi
         },
 
         checkFieldDisability() {
-            if (this.model.get('entity') === 'Product' && this.model.get('name') === 'productAttributeValues') {
-                this.$el.find('input').attr('disabled', 'disabled');
-                this.model.set('exportIntoSeparateColumns', true);
-            } else {
-                this.$el.find('input').removeAttr('disabled');
-            }
+            this.$el.find('input').removeAttr('disabled');
         },
 
         checkFieldVisibility() {

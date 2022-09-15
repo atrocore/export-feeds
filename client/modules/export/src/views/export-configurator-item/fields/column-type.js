@@ -62,11 +62,7 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
             },
 
             checkFieldVisibility() {
-                if (this.isPavs()) {
-                    this.$el.hide();
-                } else {
-                    this.$el.show();
-                }
+                this.$el.show();
             },
 
             checkFieldDisability() {
@@ -75,10 +71,6 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
                 } else {
                     this.$el.find('select').removeAttr('disabled');
                 }
-            },
-
-            isPavs() {
-                return this.model.get('entity') === 'Product' && this.model.get('field') === 'productAttributeValues';
             },
 
         })

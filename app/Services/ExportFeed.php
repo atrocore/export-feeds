@@ -343,6 +343,7 @@ class ExportFeed extends Base
                     'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
                     'exportBy'                  => $item->get('exportBy'),
                     'mask'                      => $item->get('mask'),
+                    'searchFilter'              => $item->get('searchFilter'),
                     'filterField'               => $item->get('filterField'),
                     'filterFieldValue'          => $item->get('filterFieldValue'),
                     'offsetRelation'            => $item->get('offsetRelation'),

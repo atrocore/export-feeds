@@ -87,6 +87,10 @@ class LinkMultipleType extends LinkType
             }
         }
 
+        if (!empty($configuration['searchFilter'])) {
+            $params['where'] = !empty($configuration['searchFilter']['where']) ? $configuration['searchFilter']['where'] : [];
+        }
+
         try {
             $foreignResult = $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
         } catch (\Throwable $e) {

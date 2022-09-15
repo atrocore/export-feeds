@@ -87,11 +87,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
             if ($data['type'] === 'linkMultiple') {
                 $row['exportIntoSeparateColumns'] = false;
-                if ($scope === 'Product' && $field === 'productAttributeValues') {
-                    $row['column'] = '...';
-                    $row['exportIntoSeparateColumns'] = true;
-                    $row['exportBy'] = ['value'];
-                }
             }
 
             if ($data['type'] === 'currency') {

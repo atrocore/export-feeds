@@ -63,16 +63,6 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
             });
         },
 
-        data() {
-            let data = Dep.prototype.data.call(this);
-
-            if (this.isPavs()) {
-                data.value = '...';
-            }
-
-            return data;
-        },
-
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
@@ -83,7 +73,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         },
 
         checkFieldDisability() {
-            if (this.isPavs() || !this.isCustomType()) {
+            if (!this.isCustomType()) {
                 this.$el.find('input').attr('disabled', 'disabled');
             } else {
                 this.$el.find('input').removeAttr('disabled');
@@ -91,11 +81,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         },
 
         checkFieldVisibility() {
-            if (this.isPavs()) {
-                this.$el.parent().hide();
-            } else {
-                this.$el.parent().show();
-            }
+            this.$el.parent().show();
         },
 
         isCustomType() {
@@ -161,10 +147,6 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
             this.ajaxGetRequest(`I18n`, {locale: locale}).then(responseData => {
                 callback(responseData);
             });
-        },
-
-        isPavs() {
-            return this.model.get('entity') === 'Product' && this.model.get('name') === 'productAttributeValues';
         },
 
     })
