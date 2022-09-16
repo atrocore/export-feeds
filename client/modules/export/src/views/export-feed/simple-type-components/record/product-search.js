@@ -37,6 +37,10 @@ Espo.define('export:views/export-feed/simple-type-components/record/product-sear
                 Filter.prototype.afterRenderExportFilterPanel.call(this);
             },
 
+            getTextFilterPlaceholder() {
+                return Filter.prototype.getTextFilterPlaceholder.call(this);
+            },
+
             isLeftDropdown() {
                 return Filter.prototype.isLeftDropdown.call(this);
             },

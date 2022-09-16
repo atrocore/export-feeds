@@ -37,6 +37,7 @@
     "exportJobs": "Exportaufträge"
   },
   "labels": {
+    "typeToSearch": "Tippe um zu suchen...",
     "addMissingFields": "Alle fehlenden Felder hinzufügen",
     "selectAttributes": "Attribut(e) auswählen",
     "removeAllItems": "Alle Regel entfernen",

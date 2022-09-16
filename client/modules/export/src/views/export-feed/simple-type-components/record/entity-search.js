@@ -52,6 +52,10 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
             });
         },
 
+        getTextFilterPlaceholder() {
+            return this.translate('typeToSearch', 'labels', 'ExportFeed');
+        },
+
         getFilterData() {
             this.search();
             return {
