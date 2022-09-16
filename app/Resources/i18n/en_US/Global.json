@@ -11,6 +11,7 @@
   },
   "labels": {
     "Generate": "Generate",
-    "tryAgain": "Export again"
+    "tryAgain": "Export again",
+    "filter": "Filter"
   }
 }

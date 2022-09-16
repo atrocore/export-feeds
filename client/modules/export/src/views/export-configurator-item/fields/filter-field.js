@@ -74,9 +74,9 @@ Espo.define('export:views/export-configurator-item/fields/filter-field', 'views/
 
         checkFieldVisibility() {
             if (this.model.get('type') === 'Field' && this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple') {
-                this.$el.parent().show();
+                this.$el.parent().parent().parent().parent().show();
             } else {
-                this.$el.parent().hide();
+                this.$el.parent().parent().parent().parent().hide();
             }
         },
 

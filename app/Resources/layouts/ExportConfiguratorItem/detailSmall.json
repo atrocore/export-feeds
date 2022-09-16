@@ -77,17 +77,23 @@
       ],
       [
         {
+          "name": "fixedValue"
+        },
+        false
+      ]
+    ]
+  },
+  {
+    "label": "filter",
+    "style": "default",
+    "rows": [
+      [
+        {
           "name": "filterField"
         },
         {
           "name": "filterFieldValue"
         }
-      ],
-      [
-        {
-          "name": "fixedValue"
-        },
-        false
       ]
     ]
   }
