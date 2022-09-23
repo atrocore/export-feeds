@@ -167,7 +167,7 @@ class ExportTypeSimple extends AbstractExportType
 
             $resultRow = [];
             foreach ($columns as $pos => $columnData) {
-                $resultRow[$pos] = isset($rowData[$columnData['number']][$columnData['name']]) ?? null;
+                $resultRow[$pos] = isset($rowData[$columnData['number']][$columnData['name']]) ? $rowData[$columnData['number']][$columnData['name']] : null;
             }
 
             fputcsv($fp, $resultRow, $delimiter, $enclosure);
