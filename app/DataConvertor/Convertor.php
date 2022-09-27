@@ -38,8 +38,6 @@ class Convertor
 
     private array $entityItem = [];
 
-    private array $linkedEntities = [];
-
     public function __construct(Container $container)
     {
         $this->container = $container;
@@ -89,7 +87,7 @@ class Convertor
 
     public function findLinkedEntities(string $scope, string $id, string $field, array $params)
     {
-        $key = "{$id}_{$field}_" . implode('-', $params);
+        $key = md5("{$id}_{$field}_" . json_encode($params));
 
         if (!isset($this->linkedEntities[$key])) {
             $this->linkedEntities[$key] = $this->getService($scope)->findLinkedEntities($id, $field, $params);
