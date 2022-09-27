@@ -120,6 +120,12 @@ class LinkMultipleType extends LinkType
                         continue 1;
                     }
                     $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+
+                    // prepare type for product attribute value
+                    if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
+                        $foreignType = $foreignData['attributeType'] === 'asset' ? 'varchar' : $foreignData['attributeType'];
+                    }
+
                     $foreignConfiguration = array_merge($configuration, ['field' => $v]);
                     $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
                 }

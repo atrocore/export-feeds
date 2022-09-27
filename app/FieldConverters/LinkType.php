@@ -170,7 +170,7 @@ class LinkType extends AbstractType
                 }
             }
         } else {
-            $fieldResult[$field] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
+            $fieldResult[$field] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration, !empty($this->needStringResult))[$column];
         }
     }
 
