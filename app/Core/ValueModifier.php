@@ -45,7 +45,7 @@ class ValueModifier extends Injectable
         $language = $this->getInjection('container')->get('language');
 
         foreach ($valueModifiers as $modifierName) {
-            if (empty($modifierName)) {
+            if (empty($modifierName) || $modifierName === '[]') {
                 continue;
             }
 

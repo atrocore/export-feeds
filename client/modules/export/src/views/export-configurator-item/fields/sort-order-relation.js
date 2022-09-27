@@ -25,7 +25,7 @@ Espo.define('export:views/export-configurator-item/fields/sort-order-relation', 
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:name change:type', () => {
+            this.listenTo(this.model, 'change:name change:type change:sortFieldRelation', () => {
                 this.reRender();
             });
         },
@@ -39,7 +39,11 @@ Espo.define('export:views/export-configurator-item/fields/sort-order-relation', 
         },
 
         checkFieldVisibility() {
-            if (this.model.get('type') === 'Field' && this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple') {
+            if (
+                this.model.get('type') === 'Field'
+                && this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple'
+                && this.model.get('sortFieldRelation') !== ''
+            ) {
                 this.show();
             } else {
                 this.hide();
