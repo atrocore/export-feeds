@@ -495,4 +495,21 @@ class ExportFeed extends Base
     {
         return [];
     }
+
+    public function duplicateConfiguratorItems(Entity $entity, Entity $duplicatingEntity): void
+    {
+        if (empty($items = $duplicatingEntity->get('configuratorItems')) || count($items) === 0) {
+            return;
+        }
+
+        foreach ($items as $item) {
+            $data = $item->toArray();
+            unset($data['id']);
+            $data['exportFeedId'] = $entity->get('id');
+
+            $newItem = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
+            $newItem->set($data);
+            $this->getEntityManager()->saveEntity($newItem);
+        }
+    }
 }
