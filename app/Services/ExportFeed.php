@@ -505,7 +505,7 @@ class ExportFeed extends Base
         foreach ($items as $item) {
             $data = $item->toArray();
             unset($data['id']);
-            unset($data['created_at']);
+            unset($data['createdAt']);
             $data['exportFeedId'] = $entity->get('id');
 
             $newItem = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
