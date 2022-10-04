@@ -40,6 +40,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
         afterRenderExportFilterPanel() {
             this.$el.find('.search-row > .form-group').attr('class', 'form-group col-md-12');
             this.$el.find('.search[data-action="search"]').remove();
+            this.$el.find('.filter-actions').remove();
 
             this.setFilterMode();
             this.listenTo(this.options.feedModel, 'change:export-feed-mode', () => {
