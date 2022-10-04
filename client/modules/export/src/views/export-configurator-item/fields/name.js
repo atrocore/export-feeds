@@ -123,13 +123,19 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 } else {
                     let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
                     if (entity) {
+                        let parts = field.split('.');
                         if (field.substring(field.length - 2) === 'Id') {
                             translations.push(this.translate(field.substring(0, field.length - 2), 'fields', entity) + ' ' + this.translate('id', 'fields', 'Global'));
                         } else if (field.substring(field.length - 4) === 'Name') {
                             translations.push(this.translate(field.substring(0, field.length - 4), 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global'));
                         } else if (field.substring(field.length - 3) === 'Url') {
                             translations.push(this.translate(field.substring(0, field.length - 3), 'fields', entity) + ' ' + this.translate('url', 'fields', 'Attachment'));
-                        }else {
+                        } else if (parts.length === 2) {
+                            let linkEntity = this.getMetadata().get(['entityDefs', entity, 'links', parts[0], 'entity']);
+                            if (linkEntity) {
+                                translations.push(this.translate(parts[0], 'fields', entity) + ' ' + this.translate(parts[1], 'fields', linkEntity));
+                            }
+                        } else {
                             translations.push(this.translate(field, 'fields', entity));
                         }
                     }
