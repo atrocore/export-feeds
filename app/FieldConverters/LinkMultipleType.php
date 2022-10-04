@@ -119,7 +119,10 @@ class LinkMultipleType extends LinkType
                         $fieldResult[$v] = $assetUrl;
                         continue 1;
                     }
-                    $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+
+                    $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+
+                    $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
 
                     // prepare type for product attribute value
                     if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
@@ -127,7 +130,7 @@ class LinkMultipleType extends LinkType
                     }
 
                     $foreignConfiguration = array_merge($configuration, ['field' => $v]);
-                    $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
+                    $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
                 }
 
                 if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {

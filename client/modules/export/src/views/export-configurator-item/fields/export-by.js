@@ -66,22 +66,38 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 }
 
                 let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
-                let notAllowedType = ['jsonObject', 'linkMultiple'];
-                $.each(fields, function (field, fieldData) {
-                    if (!fieldData.disabled && !fieldData.exportDisabled && !notAllowedType.includes(fieldData.type)) {
+                $.each(fields, (field, fieldData) => {
+                    if (!fieldData.disabled && !fieldData.exportDisabled && !['jsonObject', 'linkMultiple'].includes(fieldData.type)) {
                         if (fieldData.type === 'link') {
-                            result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
-                            result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
+                            result = this.pushLinkFields(result, entity, field);
                         } else if (fieldData.type === 'asset') {
-                            result[field + 'Id'] = this.translate(field, 'fields', entity) + ' ID';
-                            result[field + 'Name'] = this.translate(field, 'fields', entity) + ' ' + this.translate('name', 'fields', 'Global');
+                            result = this.pushLinkFields(result, entity, field);
                             result[field + 'Url'] = this.translate(field, 'fields', entity) + ' ' + this.translate('url', 'fields', 'Attachment');
                         } else {
                             result[field] = this.translate(field, 'fields', entity);
                         }
                     }
-                }.bind(this));
+                });
             }
+
+            return result;
+        },
+
+        pushLinkFields(result, entity, field) {
+            let linkEntity = this.getMetadata().get(['entityDefs', entity, 'links', field, 'entity']);
+            if (linkEntity) {
+                result[field + 'Id'] = this.translate(field, 'fields', entity) + ': ID';
+            }
+
+            $.each(this.getMetadata().get(['entityDefs', linkEntity, 'fields']), (linkField, linkFieldDefs) => {
+                if (!linkFieldDefs.disabled && !linkFieldDefs.exportDisabled && !['jsonObject', 'linkMultiple', 'link'].includes(linkFieldDefs.type)) {
+                    if (linkField === 'name') {
+                        result[field + 'Name'] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                    } else {
+                        result[field + '.' + linkField] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                    }
+                }
+            });
 
             return result;
         },
