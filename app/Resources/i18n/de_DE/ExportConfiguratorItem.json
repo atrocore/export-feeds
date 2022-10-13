@@ -32,7 +32,9 @@
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {
-    "mainLocale": "Hauptsprache"
+    "mainLocale": "Hauptsprache",
+    "Field": "Feld",
+    "Fixed value": "Fester Wert"
   },
   "options": {
     "boolFilterFieldValue": {

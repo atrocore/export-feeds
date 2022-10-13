@@ -32,7 +32,9 @@
     "custom": "Пользовательское название"
   },
   "labels": {
-    "mainLocale": "Осн. язык"
+    "mainLocale": "Осн. язык",
+    "Field": "Поле",
+    "Fixed value": "Фиксированное значение"
   },
   "options": {
     "boolFilterFieldValue": {
