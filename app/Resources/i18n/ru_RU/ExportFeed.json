@@ -22,7 +22,6 @@
     "thousandSeparator": "Тысячный разделитель",
     "decimalMark": "Десятичный разделитель",
     "markForNotLinkedAttribute": "Пометка непривязанного атрибута",
-    "jobsMax": "Количество успешных заданий экспорта",
     "fieldDelimiterForRelation": "Разделитель полей для связи",
     "limit": "Максимальное число записей для итерации",
     "separateJob": "Отдельное задание для итерации",
@@ -58,8 +57,6 @@
     "addEntityField": "Создать сущность поле",
     "addProductAttribute": "Добавить атрибут продукта",
     "simple": "Файл",
-    "xlsx": "XLSX (Excel)",
-    "csv": "CSV",
     "doubleQuote": "Двойные кавычки",
     "singleQuote": "Одинарная кавычка",
     "Export": "Экспорт"

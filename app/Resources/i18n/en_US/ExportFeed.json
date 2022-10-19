@@ -21,7 +21,6 @@
     "nullValue": "Null Value",
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
-    "jobsMax": "Amount of \"Success\" Export Jobs to be stored",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
     "limit": "Maximum Number of Records per Iteration",
@@ -34,6 +33,14 @@
   "links": {
     "configuratorItems": "Configurator",
     "exportJobs": "Export Jobs"
+  },
+  "options": {
+    "fileType": {
+      "xlsx": "XLSX (Excel)",
+      "csv": "CSV",
+      "json": "JSON",
+      "xml": "XML"
+    }
   },
   "labels": {
     "typeToSearch": "Type to search...",
@@ -58,8 +65,6 @@
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",
     "simple": "File",
-    "xlsx": "XLSX (Excel)",
-    "csv": "CSV",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
     "Export": "Export"

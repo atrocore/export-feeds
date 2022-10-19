@@ -17,7 +17,6 @@
     "fieldOrAttribute": "Feld/Attribut",
     "delimiter": "Listenwerttrennzeichen",
     "data": "Daten",
-    "jobsMax": "Anzahl der zu speichernden \"Erfolg\" Exportaufträge",
     "exportJobs": "Exportaufträge",
     "emptyValue": "Leerer Wert",
     "nullValue": "Nullwert",
@@ -59,8 +58,6 @@
     "addEntityField": "Entitätsfeld hinzufügen",
     "addProductAttribute": "Produktattribut hinzufügen",
     "simple": "Datei",
-    "xlsx": "XLSX (Excel)",
-    "csv": "CSV",
     "doubleQuote": "Doppel-Anführungszeichen",
     "singleQuote": "Anführungszeichen",
     "Export": "Export"

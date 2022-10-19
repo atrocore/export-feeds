@@ -30,6 +30,8 @@ use Espo\ORM\Entity;
 
 class ExportJob extends Base
 {
+    protected const JOBS_MAX = 200;
+
     public function getExportJob(string $exportJobId): ?Entity
     {
         return $this->getEntityManager()->getRepository('QueueItem')->where(['data*' => '%"exportJobId":"' . $exportJobId . '"%'])->findOne();
@@ -85,13 +87,16 @@ class ExportJob extends Base
         }
 
         if (!empty($feed = $entity->get('exportFeed'))) {
-            $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
-            $jobsCount = count($jobs);
+            $jobs = $this
+                ->where([
+                    'exportFeedId' => $feed->get('id'),
+                    'state'        => ['Success', 'Failed', 'Canceled']
+                ])
+                ->order('createdAt')
+                ->limit(self::JOBS_MAX, 100)
+                ->find();
             foreach ($jobs as $job) {
-                if ($jobsCount > $feed->get('jobsMax')) {
-                    $this->getEntityManager()->removeEntity($job);
-                    $jobsCount--;
-                }
+                $this->getEntityManager()->removeEntity($job);
             }
         }
     }
