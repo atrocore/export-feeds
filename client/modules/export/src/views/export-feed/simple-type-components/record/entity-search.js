@@ -89,13 +89,13 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
         setFilterMode() {
             let detailView = this.getDetailView();
             if (detailView && detailView.mode === 'edit') {
-                this.$el.find('select, input, button, .selectize-input').removeClass('disabled').removeAttr('disabled');
+                this.$el.find('select, input, button, .selectize-input,[data-action="clearLinkSubQuery"],.link-subquery').removeClass('disabled').removeAttr('disabled');
                 this.$el.find('.remove-filter, .remove-attribute-filter').show();
                 $('.selectized').each(function () {
                     this.selectize.enable();
                 });
             } else {
-                this.$el.find('select, input, button, .selectize-input').addClass('disabled').attr('disabled', true);
+                this.$el.find('select, input, button, .selectize-input,[data-action="clearLinkSubQuery"],.link-subquery').addClass('disabled').attr('disabled', true);
                 this.$el.find('.remove-filter, .remove-attribute-filter').hide();
                 $('.selectized').each(function () {
                     this.selectize.disable();
