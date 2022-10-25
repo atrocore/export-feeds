@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Export\Services;
 
+use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
@@ -54,6 +55,10 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment]);
+
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimple', 'beforeStoreCsv', $event);
+
         $this->storeCsvFile($data, $repository->getFilePath($attachment));
 
         $attachment->set('type', 'text/csv');
@@ -77,6 +82,8 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment]);
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimple', 'beforeStoreXls', $event);
         $this->storeXlsxFile($data, $repository->getFilePath($attachment));
 
         $attachment->set('type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
