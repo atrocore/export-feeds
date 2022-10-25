@@ -56,7 +56,6 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storageFilePath', $this->createPath());
 
         $event = new Event(['data' => $this->data, 'attachment' => $attachment]);
-
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimple', 'beforeStoreCsv', $event);
 
         $this->storeCsvFile($data, $repository->getFilePath($attachment));
@@ -84,6 +83,7 @@ class ExportTypeSimple extends AbstractExportType
 
         $event = new Event(['data' => $this->data, 'attachment' => $attachment]);
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimple', 'beforeStoreXls', $event);
+
         $this->storeXlsxFile($data, $repository->getFilePath($attachment));
 
         $attachment->set('type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
