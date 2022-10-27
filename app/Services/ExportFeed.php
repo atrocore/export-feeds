@@ -513,4 +513,23 @@ class ExportFeed extends Base
             $this->getEntityManager()->saveEntity($newItem);
         }
     }
+
+    public function duplicateExportHttpHeaders(Entity $entity, Entity $duplicatingEntity): void
+    {
+        $headers = $duplicatingEntity->get('exportHttpHeaders');
+
+        if (empty($headers) || count($headers) === 0) {
+            return;
+        }
+
+        foreach ($headers as $header) {
+            $data = $header->toArray();
+            unset($data['id']);
+            $data['exportFeedId'] = $entity->get('id');
+
+            $newHeader = $this->getEntityManager()->getEntity('ExportHttpHeader');
+            $newHeader->set($data);
+            $this->getEntityManager()->saveEntity($newHeader);
+        }
+    }
 }
