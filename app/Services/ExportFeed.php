@@ -35,7 +35,7 @@ use Espo\Core\EventManager\Event;
 
 class ExportFeed extends Base
 {
-    public function runExport(string $feedId, string $payload = null): string
+    public function runExport(string $feedId, string $payload = null): bool
     {
         $exportFeed = $this->getEntity($feedId);
         if (empty($exportFeed)) {
@@ -59,15 +59,7 @@ class ExportFeed extends Base
         return $this->pushExport($data);
     }
 
-    /**
-     * Export file
-     *
-     * @param \stdClass $requestData
-     *
-     * @return string
-     * @throws Exceptions\NotFound
-     */
-    public function exportFile(\stdClass $requestData): string
+    public function exportFile(\stdClass $requestData): bool
     {
         if (empty($exportFeed = $this->getEntity($requestData->id))) {
             throw new Exceptions\NotFound();
@@ -401,12 +393,7 @@ class ExportFeed extends Base
             ->getArgument('result');
     }
 
-    /**
-     * @param array $data
-     *
-     * @return string
-     */
-    public function pushExport(array $data): string
+    public function pushExport(array $data): bool
     {
         $data['offset'] = 0;
         $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
@@ -421,15 +408,15 @@ class ExportFeed extends Base
                     $jobName .= " ($i)";
                 }
                 $data['iteration'] = $i;
-                $jobId = $this->pushExportJob($jobName, $data);
+                $this->pushExportJob($jobName, $data);
                 $data['offset'] = $data['offset'] + $data['limit'];
                 $i++;
             }
         } else {
-            $jobId = $this->pushExportJob($data['feed']['name'], $data);
+            $this->pushExportJob($data['feed']['name'], $data);
         }
 
-        return $jobId;
+        return true;
     }
 
     protected function pushExportJob(string $jobName, array $data): string
@@ -445,6 +432,7 @@ class ExportFeed extends Base
         $exportJob->set('ownerUserId', $user->get('id'));
         $exportJob->set('assignedUserId', $user->get('id'));
         $exportJob->set('teamsIds', array_column($user->get('teams')->toArray(), 'id'));
+        $exportJob->set('payload', $data);
 
         $data['exportJobId'] = $exportJob->get('id');
 

@@ -87,6 +87,20 @@
     "editable": {
       "type": "bool",
       "notStorable": true
+    },
+    "payload": {
+      "type": "jsonObject",
+      "notStorable": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutMassUpdateDisabled": true,
+      "filterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "textFilterDisabled": true,
+      "emHidden": true
     }
   },
   "links": {
