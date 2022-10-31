@@ -46,18 +46,9 @@ class ExportTypeSimple extends AbstractExportType
         return $this->$attachmentCreatorName($exportJob);
     }
 
-    protected function exportJson(ExportJob $exportJob): Attachment
+    protected function renderTemplateContents(EntityCollection $collection): string
     {
-        $collection = new EntityCollection();
-        while (!empty($v = $this->getCollection())) {
-            foreach ($v as $entity) {
-                $collection->append($entity);
-            }
-        }
-
-        $exportJob->set('count', count($collection));
-
-        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => $this->data['feed']['template']]));
+        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => (string)$this->data['feed']['template']]));
         foreach ($this->getMetadata()->get(['app', 'twigFilters'], []) as $alias => $className) {
             $filter = $this->getContainer()->get($className);
             if ($filter instanceof AbstractTwigFilter) {
@@ -74,11 +65,25 @@ class ExportTypeSimple extends AbstractExportType
             }
         }
 
-        $contents = $twig->render('template', [
+        return $twig->render('template', [
             'entities' => $collection,
             'config'   => $this->getConfig()->getData(),
             'feedData' => $this->data['feed'],
         ]);
+    }
+
+    protected function exportJson(ExportJob $exportJob): Attachment
+    {
+        $collection = new EntityCollection();
+        while (!empty($v = $this->getCollection())) {
+            foreach ($v as $entity) {
+                $collection->append($entity);
+            }
+        }
+
+        $exportJob->set('count', count($collection));
+
+        $contents = $this->renderTemplateContents($collection);
 
         if (!empty($contents)) {
             $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
@@ -98,11 +103,13 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->createDir($repository->getFilePath($attachment));
-        file_put_contents($repository->getFilePath($attachment), $contents);
+        $fileName = $repository->getFilePath($attachment);
+
+        $this->createDir($fileName);
+        file_put_contents($fileName, $contents);
 
         $attachment->set('type', 'application/json');
-        $attachment->set('size', \filesize($repository->getFilePath($attachment)));
+        $attachment->set('size', \filesize($fileName));
 
         $this->getEntityManager()->saveEntity($attachment);
 
@@ -111,10 +118,39 @@ class ExportTypeSimple extends AbstractExportType
 
     protected function exportXml(ExportJob $exportJob): Attachment
     {
-        echo '<pre>';
-        print_r('123');
-        die();
+        $collection = new EntityCollection();
+        while (!empty($v = $this->getCollection())) {
+            foreach ($v as $entity) {
+                $collection->append($entity);
+            }
+        }
 
+        $exportJob->set('count', count($collection));
+
+        $contents = $this->renderTemplateContents($collection);
+
+        $repository = $this->getEntityManager()->getRepository('Attachment');
+
+        // create attachment
+        $attachment = $repository->get();
+        $attachment->set('name', $this->getExportFileName('xml'));
+        $attachment->set('role', 'Export');
+        $attachment->set('relatedType', 'ExportJob');
+        $attachment->set('relatedId', $this->data['exportJobId']);
+        $attachment->set('storage', 'UploadDir');
+        $attachment->set('storageFilePath', $this->createPath());
+
+        $fileName = $repository->getFilePath($attachment);
+
+        $this->createDir($fileName);
+        file_put_contents($fileName, $contents);
+
+        $attachment->set('type', 'application/xml');
+        $attachment->set('size', \filesize($fileName));
+
+        $this->getEntityManager()->saveEntity($attachment);
+
+        return $attachment;
     }
 
     protected function exportCsv(ExportJob $exportJob): Attachment
