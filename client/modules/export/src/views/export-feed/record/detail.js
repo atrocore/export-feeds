@@ -83,10 +83,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         validateConfigurator() {
-            const type = this.model.get('type');
-            const configuratorTypes = this.getMetadata().get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []);
-
-            if (configuratorTypes.includes(type)) {
+            if (this.model.get('hasConfigurator')) {
                 const configuratorItemsView = this.getView('bottom').getView('configuratorItems');
                 if (configuratorItemsView) {
                     const collection = configuratorItemsView.collection;

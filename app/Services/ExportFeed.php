@@ -65,9 +65,8 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
-        if (in_array($exportFeed->get('type'), $this->getMetadata()->get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []))) {
+        if (!empty($exportFeed->get('hasConfigurator'))) {
             $configuratorItems = $exportFeed->get('configuratorItems');
-
             if (empty($configuratorItems) || count($configuratorItems) == 0) {
                 throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
             }
@@ -271,7 +270,7 @@ class ExportFeed extends Base
             $entity->set('convertRelationsToString', true);
         }
 
-        $entity->set('hasConfigurator', in_array($entity->get('type'), $this->getMetadata()->get('scopes.ExportFeed.typesWithConfigurator')));
+        $entity->set('hasConfigurator', in_array($entity->get('fileType'), ['xlsx', 'csv']));
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
     }
 
