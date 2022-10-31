@@ -231,7 +231,8 @@
       "useDisabledTextareaInViewMode": true,
       "rows": 20,
       "required": false,
-      "tooltip": true
+      "tooltip": true,
+      "view": "export:views/export-feed/fields/template"
     }
   },
   "links": {
