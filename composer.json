@@ -3,7 +3,8 @@
   "description": "",
   "require": {
     "atrocore/core": "~1.4.115",
-    "phpoffice/phpspreadsheet": "~1.16.0"
+    "phpoffice/phpspreadsheet": "~1.16.0",
+    "twig/twig": "^3.4"
   },
   "conflict": {
     "atrocore/pim": "<1.5.23 || >=1.6.0"

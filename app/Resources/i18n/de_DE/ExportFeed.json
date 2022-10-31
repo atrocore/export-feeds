@@ -1,5 +1,6 @@
 {
   "fields": {
+    "template": "Vorlage",
     "sortOrderField": "Sortierreihenfolge (Feld)",
     "sortOrderDirection": "Sortierreihenfolge (Richtung)",
     "language": "Sprache",
@@ -84,6 +85,7 @@
     "noConfiguratorItems": "Bitte erstellen Sie mindestens eine Konfigurator-Regel, um diesen Feed ausführen zu können."
   },
   "tooltips": {
+    "template": "Sie können die Syntax von <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig-Template-Engine</a> verwenden.",
     "language": "Dieser Wert wird bei der Erstellung einer Regel für ein sprachspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.\n\n",
     "channel": "Dieser Wert wird bei der Erstellung einer Regel für ein kanalspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.",
     "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",

@@ -230,6 +230,13 @@
         "1",
         "2"
       ]
+    },
+    "template": {
+      "type": "text",
+      "useDisabledTextareaInViewMode": true,
+      "rows": 20,
+      "required": false,
+      "tooltip": true
     }
   },
   "links": {

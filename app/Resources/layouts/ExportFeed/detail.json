@@ -52,6 +52,12 @@
         {
           "name": "csvTextQualifier"
         }
+      ],
+      [
+        {
+          "name": "template",
+          "fullWidth": true
+        }
       ]
     ]
   },
