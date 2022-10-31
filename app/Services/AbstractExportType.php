@@ -135,7 +135,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $this->setData($data);
         $this->convertor = $this->getDataConvertor();
-        $this->createCacheFile($exportJob);
 
         return $this->runExport($exportJob);
     }
@@ -310,6 +309,32 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $this->iteration++;
 
         return $list;
+    }
+
+    protected function getCollection(): ?EntityCollection
+    {
+        if (!empty($this->data['feed']['separateJob']) && !empty($this->iteration)) {
+            return null;
+        }
+
+        if (!$this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+            return null;
+        }
+
+        $params = $this->getSelectParams();
+        $params['offset'] = $this->data['offset'];
+        $params['maxSize'] = $this->data['limit'];
+        $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
+
+        $this->data['offset'] = $this->data['offset'] + $this->data['limit'];
+        $this->iteration++;
+
+        $result = $this->getEntityService()->findEntities($params);
+        if (isset($result['collection']) && count($result['collection']) > 0) {
+            return $result['collection'];
+        }
+
+        return null;
     }
 
     protected function loadPavs(array $productsIds): void
