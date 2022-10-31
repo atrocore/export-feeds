@@ -75,7 +75,7 @@ class ExportJob extends Base
         if ($entity->isAttributeChanged('state')) {
             $qmJob = $this->getExportJob($entity->get('id'));
             if (!empty($qmJob)) {
-                if ($entity->get('state') === 'Pending') {
+                if ($entity->get('state') === 'Pending' && in_array($qmJob->get('status'), ['Success', 'Failed', 'Canceled'])) {
                     $this->toPendingQmJob($qmJob);
                 }
                 if ($entity->get('state') === 'Canceled') {

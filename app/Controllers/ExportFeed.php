@@ -82,9 +82,7 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        $id = $this->getRecordService()->exportFile($data);
-
-        return !empty($id);
+        return $this->getRecordService()->exportFile($data);
     }
 
     public function actionExportChannel($params, $data, Request $request): bool
