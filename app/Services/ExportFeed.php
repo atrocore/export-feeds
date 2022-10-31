@@ -320,6 +320,7 @@ class ExportFeed extends Base
                     'locale'                    => $item->get('locale'),
                     'column'                    => $eciService->prepareColumnName($item),
                     'entity'                    => $feed->getFeedField('entity'),
+                    'template'                  => $feed->get('template'),
                     'sortOrderField'            => $feed->get('sortOrderField'),
                     'sortOrderDirection'        => $feed->get('sortOrderDirection'),
                     'emptyValue'                => $feed->getFeedField('emptyValue'),

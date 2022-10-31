@@ -25,18 +25,6 @@
       }
     ]
   },
-  "optionalBottomPanels": {
-    "configuratorItems": [
-      {
-        "type": "in",
-        "attribute": "fileType",
-        "value": [
-          "xlsx",
-          "csv"
-        ]
-      }
-    ]
-  },
   "relationshipPanels": {
     "configuratorItems": {
       "select": false,
