@@ -65,9 +65,8 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
-        if (in_array($exportFeed->get('type'), $this->getMetadata()->get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []))) {
+        if (in_array($exportFeed->get('fileType'), ['csv', 'xlsx'])) {
             $configuratorItems = $exportFeed->get('configuratorItems');
-
             if (empty($configuratorItems) || count($configuratorItems) == 0) {
                 throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
             }
@@ -271,7 +270,6 @@ class ExportFeed extends Base
             $entity->set('convertRelationsToString', true);
         }
 
-        $entity->set('hasConfigurator', in_array($entity->get('type'), $this->getMetadata()->get('scopes.ExportFeed.typesWithConfigurator')));
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
     }
 
@@ -322,6 +320,7 @@ class ExportFeed extends Base
                     'locale'                    => $item->get('locale'),
                     'column'                    => $eciService->prepareColumnName($item),
                     'entity'                    => $feed->getFeedField('entity'),
+                    'template'                  => $feed->get('template'),
                     'sortOrderField'            => $feed->get('sortOrderField'),
                     'sortOrderDirection'        => $feed->get('sortOrderDirection'),
                     'emptyValue'                => $feed->getFeedField('emptyValue'),

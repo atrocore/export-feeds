@@ -18,8 +18,5 @@
   "hasOwner": true,
   "hasAssignedUser": true,
   "hasTeam": true,
-  "hasAccount": true,
-  "typesWithConfigurator": [
-    "simple"
-  ]
+  "hasAccount": true
 }

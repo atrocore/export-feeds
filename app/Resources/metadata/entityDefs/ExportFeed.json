@@ -18,12 +18,6 @@
     "separateJob": {
       "type": "bool"
     },
-    "jobsMax": {
-      "type": "int",
-      "required": true,
-      "min": 1,
-      "default": 10
-    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
@@ -81,7 +75,9 @@
       "dataField": true,
       "options": [
         "csv",
-        "xlsx"
+        "xlsx",
+        "json",
+        "xml"
       ],
       "prohibitedEmptyValue": false
     },
@@ -123,11 +119,6 @@
       "dataField": true,
       "prohibitedEmptyValue": true,
       "view": "export:views/export-feed/fields/entity"
-    },
-    "hasConfigurator": {
-      "type": "bool",
-      "notStorable": true,
-      "default": false
     },
     "convertCollectionToString": {
       "type": "bool",
@@ -234,6 +225,14 @@
         "1",
         "2"
       ]
+    },
+    "template": {
+      "type": "text",
+      "useDisabledTextareaInViewMode": true,
+      "rows": 20,
+      "required": false,
+      "tooltip": true,
+      "view": "export:views/export-feed/fields/template"
     }
   },
   "links": {

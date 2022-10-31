@@ -45,12 +45,21 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
             this.listenTo(this.model, 'change:entity', () => {
                 this.prepareActionsVisibility();
             });
+
+            this.listenTo(this.model, 'change:fileType', () => {
+                this.reRender();
+            });
         },
 
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
             this.prepareActionsVisibility();
+
+            this.$el.parent().hide();
+            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
+                this.$el.parent().show();
+            }
         },
 
         prepareActionsVisibility() {

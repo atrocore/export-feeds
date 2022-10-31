@@ -85,13 +85,16 @@ class ExportJob extends Base
         }
 
         if (!empty($feed = $entity->get('exportFeed'))) {
-            $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
-            $jobsCount = count($jobs);
+            $jobs = $this
+                ->where([
+                    'exportFeedId' => $feed->get('id'),
+                    'state'        => ['Success', 'Failed', 'Canceled']
+                ])
+                ->order('createdAt')
+                ->limit(2000, 100)
+                ->find();
             foreach ($jobs as $job) {
-                if ($jobsCount > $feed->get('jobsMax')) {
-                    $this->getEntityManager()->removeEntity($job);
-                    $jobsCount--;
-                }
+                $this->getEntityManager()->removeEntity($job);
             }
         }
     }

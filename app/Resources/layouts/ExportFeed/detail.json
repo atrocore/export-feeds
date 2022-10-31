@@ -21,9 +21,7 @@
         {
           "name": "description"
         },
-        {
-          "name": "jobsMax"
-        }
+        false
       ],
       [
         {
@@ -53,6 +51,12 @@
         },
         {
           "name": "csvTextQualifier"
+        }
+      ],
+      [
+        {
+          "name": "template",
+          "fullWidth": true
         }
       ]
     ]

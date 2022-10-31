@@ -1,5 +1,6 @@
 {
   "fields": {
+    "template": "Template",
     "sortOrderField": "Sort Order (field)",
     "sortOrderDirection": "Sort Order (direction)",
     "language": "Language",
@@ -21,7 +22,6 @@
     "nullValue": "Null Value",
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
-    "jobsMax": "Amount of \"Success\" Export Jobs to be stored",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
     "limit": "Maximum Number of Records per Iteration",
@@ -34,6 +34,14 @@
   "links": {
     "configuratorItems": "Configurator",
     "exportJobs": "Export Jobs"
+  },
+  "options": {
+    "fileType": {
+      "xlsx": "XLSX (Excel)",
+      "csv": "CSV",
+      "json": "JSON",
+      "xml": "XML"
+    }
   },
   "labels": {
     "typeToSearch": "Type to search...",
@@ -58,8 +66,6 @@
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",
     "simple": "File",
-    "xlsx": "XLSX (Excel)",
-    "csv": "CSV",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
     "Export": "Export"
@@ -86,6 +92,7 @@
     "noConfiguratorItems": "Please create at least one configurator rule to be able to execute this feed."
   },
   "tooltips": {
+    "template": "You can use the syntax for <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig</a> template engine.",
     "language": "This value is inherited by creating a rule for some language specific attribute and has no impact on export itself.",
     "channel": "This value is inherited by creating a rule for some channel specific attribute and has no impact on export itself.",
     "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",

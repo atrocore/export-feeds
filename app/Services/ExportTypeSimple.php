@@ -27,7 +27,12 @@ namespace Export\Services;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
+use Espo\ORM\EntityCollection;
 use Export\Entities\ExportJob;
+use Export\TwigFilter\AbstractTwigFilter;
+use Export\TwigFunction\AbstractTwigFunction;
+use Twig\TwigFilter;
+use Twig\TwigFunction;
 
 class ExportTypeSimple extends AbstractExportType
 {
@@ -38,11 +43,120 @@ class ExportTypeSimple extends AbstractExportType
             throw new Error('Unsupported file type.');
         }
 
-        return $this->$attachmentCreatorName($exportJob->getData());
+        return $this->$attachmentCreatorName($exportJob);
     }
 
-    protected function exportCsv(array $data): Attachment
+    protected function renderTemplateContents(EntityCollection $collection): string
     {
+        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => (string)$this->data['feed']['template']]));
+        foreach ($this->getMetadata()->get(['app', 'twigFilters'], []) as $alias => $className) {
+            $filter = $this->getContainer()->get($className);
+            if ($filter instanceof AbstractTwigFilter) {
+                $filter->setFeedData($this->data['feed']);
+                $twig->addFilter(new TwigFilter($alias, [$filter, 'filter']));
+            }
+        }
+
+        foreach ($this->getMetadata()->get(['app', 'twigFunctions'], []) as $alias => $className) {
+            $twigFunction = $this->getContainer()->get($className);
+            if ($twigFunction instanceof AbstractTwigFunction && method_exists($twigFunction, 'run')) {
+                $twigFunction->setFeedData($this->data['feed']);
+                $twig->addFunction(new TwigFunction($alias, [$twigFunction, 'run']));
+            }
+        }
+
+        return $twig->render('template', [
+            'entities' => $collection,
+            'config'   => $this->getConfig()->getData(),
+            'feedData' => $this->data['feed'],
+        ]);
+    }
+
+    protected function exportJson(ExportJob $exportJob): Attachment
+    {
+        $collection = new EntityCollection();
+        while (!empty($v = $this->getCollection())) {
+            foreach ($v as $entity) {
+                $collection->append($entity);
+            }
+        }
+
+        $exportJob->set('count', count($collection));
+
+        $contents = $this->renderTemplateContents($collection);
+
+        if (!empty($contents)) {
+            $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
+            if (!empty($array)) {
+                $contents = json_encode($array);
+            }
+        }
+
+        $repository = $this->getEntityManager()->getRepository('Attachment');
+
+        // create attachment
+        $attachment = $repository->get();
+        $attachment->set('name', $this->getExportFileName('json'));
+        $attachment->set('role', 'Export');
+        $attachment->set('relatedType', 'ExportJob');
+        $attachment->set('relatedId', $this->data['exportJobId']);
+        $attachment->set('storage', 'UploadDir');
+        $attachment->set('storageFilePath', $this->createPath());
+
+        $fileName = $repository->getFilePath($attachment);
+
+        $this->createDir($fileName);
+        file_put_contents($fileName, $contents);
+
+        $attachment->set('type', 'application/json');
+        $attachment->set('size', \filesize($fileName));
+
+        $this->getEntityManager()->saveEntity($attachment);
+
+        return $attachment;
+    }
+
+    protected function exportXml(ExportJob $exportJob): Attachment
+    {
+        $collection = new EntityCollection();
+        while (!empty($v = $this->getCollection())) {
+            foreach ($v as $entity) {
+                $collection->append($entity);
+            }
+        }
+
+        $exportJob->set('count', count($collection));
+
+        $contents = $this->renderTemplateContents($collection);
+
+        $repository = $this->getEntityManager()->getRepository('Attachment');
+
+        // create attachment
+        $attachment = $repository->get();
+        $attachment->set('name', $this->getExportFileName('xml'));
+        $attachment->set('role', 'Export');
+        $attachment->set('relatedType', 'ExportJob');
+        $attachment->set('relatedId', $this->data['exportJobId']);
+        $attachment->set('storage', 'UploadDir');
+        $attachment->set('storageFilePath', $this->createPath());
+
+        $fileName = $repository->getFilePath($attachment);
+
+        $this->createDir($fileName);
+        file_put_contents($fileName, $contents);
+
+        $attachment->set('type', 'application/xml');
+        $attachment->set('size', \filesize($fileName));
+
+        $this->getEntityManager()->saveEntity($attachment);
+
+        return $attachment;
+    }
+
+    protected function exportCsv(ExportJob $exportJob): Attachment
+    {
+        $this->createCacheFile($exportJob);
+
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
         // create attachment
@@ -54,7 +168,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->storeCsvFile($data, $repository->getFilePath($attachment));
+        $this->storeCsvFile($exportJob->getData(), $repository->getFilePath($attachment));
 
         $attachment->set('type', 'text/csv');
         $attachment->set('size', \filesize($repository->getFilePath($attachment)));
@@ -64,8 +178,10 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
-    protected function exportXlsx(array $data): Attachment
+    protected function exportXlsx(ExportJob $exportJob): Attachment
     {
+        $this->createCacheFile($exportJob);
+
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
         // create attachment
@@ -77,7 +193,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->storeXlsxFile($data, $repository->getFilePath($attachment));
+        $this->storeXlsxFile($exportJob->getData(), $repository->getFilePath($attachment));
 
         $attachment->set('type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $attachment->set('size', \filesize($repository->getFilePath($attachment)));
