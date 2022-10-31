@@ -83,7 +83,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         validateConfigurator() {
-            if (this.model.get('hasConfigurator')) {
+            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
                 const configuratorItemsView = this.getView('bottom').getView('configuratorItems');
                 if (configuratorItemsView) {
                     const collection = configuratorItemsView.collection;
