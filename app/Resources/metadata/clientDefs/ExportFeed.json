@@ -283,6 +283,14 @@
           "conditionGroup": [
             {
               "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
+            {
+              "type": "in",
               "attribute": "type",
               "value": [
                 "simple"
@@ -294,6 +302,14 @@
       "emptyValue": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
             {
               "type": "in",
               "attribute": "type",
@@ -309,6 +325,14 @@
           "conditionGroup": [
             {
               "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
+            {
+              "type": "in",
               "attribute": "type",
               "value": [
                 "simple"
@@ -320,6 +344,14 @@
       "decimalMark": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
             {
               "type": "in",
               "attribute": "type",
