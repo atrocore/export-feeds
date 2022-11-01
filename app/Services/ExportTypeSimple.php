@@ -36,6 +36,8 @@ use Twig\TwigFunction;
 
 class ExportTypeSimple extends AbstractExportType
 {
+    protected $fullCollection = null;
+
     public function runExport(ExportJob $exportJob): Attachment
     {
         $attachmentCreatorName = 'export' . ucfirst($this->data['feed']['fileType']);
@@ -46,9 +48,12 @@ class ExportTypeSimple extends AbstractExportType
         return $this->$attachmentCreatorName($exportJob);
     }
 
-    protected function renderTemplateContents(EntityCollection $collection): string
+    protected function renderTemplateContents(string $template, array $templateData): string
     {
-        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => (string)$this->data['feed']['template']]));
+        $templateData['config'] = $this->getConfig()->getData();
+        $templateData['feedData'] = $this->data['feed'];
+
+        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => $template]));
         foreach ($this->getMetadata()->get(['app', 'twigFilters'], []) as $alias => $className) {
             $filter = $this->getContainer()->get($className);
             if ($filter instanceof AbstractTwigFilter) {
@@ -65,25 +70,28 @@ class ExportTypeSimple extends AbstractExportType
             }
         }
 
-        return $twig->render('template', [
-            'entities' => $collection,
-            'config'   => $this->getConfig()->getData(),
-            'feedData' => $this->data['feed'],
-        ]);
+        return $twig->render('template', $templateData);
+    }
+
+    protected function getFullCollection(): EntityCollection
+    {
+        if ($this->fullCollection === null) {
+            $this->fullCollection = new EntityCollection();
+            while (!empty($v = $this->getCollection())) {
+                foreach ($v as $entity) {
+                    $this->fullCollection->append($entity);
+                }
+            }
+        }
+
+        return $this->fullCollection;
     }
 
     protected function exportJson(ExportJob $exportJob): Attachment
     {
-        $collection = new EntityCollection();
-        while (!empty($v = $this->getCollection())) {
-            foreach ($v as $entity) {
-                $collection->append($entity);
-            }
-        }
+        $exportJob->set('count', count($this->getFullCollection()));
 
-        $exportJob->set('count', count($collection));
-
-        $contents = $this->renderTemplateContents($collection);
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $this->getFullCollection()]);
 
         if (!empty($contents)) {
             $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
@@ -118,16 +126,9 @@ class ExportTypeSimple extends AbstractExportType
 
     protected function exportXml(ExportJob $exportJob): Attachment
     {
-        $collection = new EntityCollection();
-        while (!empty($v = $this->getCollection())) {
-            foreach ($v as $entity) {
-                $collection->append($entity);
-            }
-        }
+        $exportJob->set('count', count($this->getFullCollection()));
 
-        $exportJob->set('count', count($collection));
-
-        $contents = $this->renderTemplateContents($collection);
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $this->getFullCollection()]);
 
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
