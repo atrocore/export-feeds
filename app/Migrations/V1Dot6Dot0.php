@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Export\Migrations;
 
+use Espo\Core\Exceptions\Error;
 use Treo\Core\Migration\Base;
 
 class V1Dot6Dot0 extends Base
@@ -41,20 +42,40 @@ class V1Dot6Dot0 extends Base
         }
 
         $this->migrateSchema($fromSchema, $toSchema);
+
+        $records = $this
+            ->getSchema()
+            ->getConnection()
+            ->createQueryBuilder()
+            ->select('*')
+            ->from('export_feed')
+            ->where('deleted=0')
+            ->fetchAllAssociative();
+
+        foreach ($records as $record) {
+            $data = [];
+            if (!empty($record['data'])) {
+                $array = @json_decode((string)$record['data'], true);
+                if (!empty($array)) {
+                    $data = $array;
+                }
+            }
+
+            if (!empty($data['feedFields']['fileType'])) {
+                $this
+                    ->getSchema()
+                    ->getConnection()
+                    ->createQueryBuilder()
+                    ->update('export_feed')
+                    ->set('file_type', ':fileType')->setParameter('fileType', $data['feedFields']['fileType'])
+                    ->where('id=:id')->setParameter('id', $record['id'])
+                    ->executeQuery();
+            }
+        }
     }
 
     public function down(): void
     {
-        $fromSchema = $this->getSchema()->getCurrentSchema();
-        $toSchema = clone $fromSchema;
-
-        try {
-            $toSchema->getTable('export_feed')->addColumn('jobs_max', 'int', $this->getDbFieldParams(['default' => 10]));
-            $toSchema->getTable('export_feed')->dropColumn('template');
-            $toSchema->getTable('export_feed')->dropColumn('file_type');
-        } catch (\Throwable $e) {
-        }
-
-        $this->migrateSchema($fromSchema, $toSchema);
+        throw new Error('Downgrade is prohibited!');
     }
 }
