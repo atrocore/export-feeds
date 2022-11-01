@@ -90,7 +90,7 @@ class ExportJob extends Base
                     'exportFeedId' => $feed->get('id'),
                     'state'        => ['Success', 'Failed', 'Canceled']
                 ])
-                ->order('createdAt')
+                ->order('createdAt', 'DESC')
                 ->limit(2000, 100)
                 ->find();
             foreach ($jobs as $job) {
