@@ -71,8 +71,6 @@
     "fileType": {
       "type": "enum",
       "required": false,
-      "notStorable": true,
-      "dataField": true,
       "options": [
         "csv",
         "xlsx",

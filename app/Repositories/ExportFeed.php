@@ -121,7 +121,7 @@ class ExportFeed extends Base
             (string)$entity->getFeedField('fieldDelimiterForRelation'),
         ];
 
-        if ($entity->getFeedField('fileType') == 'csv') {
+        if ($entity->get('fileType') == 'csv') {
             $delimiters[] = (string)$entity->getFeedField('csvFieldDelimiter');
         }
 

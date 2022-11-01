@@ -36,6 +36,7 @@ class V1Dot6Dot0 extends Base
         try {
             $toSchema->getTable('export_feed')->dropColumn('jobs_max');
             $toSchema->getTable('export_feed')->addColumn('template', 'text', $this->getDbFieldParams([]));
+            $toSchema->getTable('export_feed')->addColumn('file_type', 'varchar', $this->getDbFieldParams([]));
         } catch (\Throwable $e) {
         }
 
@@ -50,6 +51,7 @@ class V1Dot6Dot0 extends Base
         try {
             $toSchema->getTable('export_feed')->addColumn('jobs_max', 'int', $this->getDbFieldParams(['default' => 10]));
             $toSchema->getTable('export_feed')->dropColumn('template');
+            $toSchema->getTable('export_feed')->dropColumn('file_type');
         } catch (\Throwable $e) {
         }
 
