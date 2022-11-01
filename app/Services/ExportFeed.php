@@ -262,7 +262,9 @@ class ExportFeed extends Base
         parent::prepareEntityForOutput($entity);
 
         foreach ($entity->getFeedFields() as $name => $value) {
-            $entity->set($name, $value);
+            if (!in_array($name, ['fileType'])) {
+                $entity->set($name, $value);
+            }
         }
 
         if ($entity->get('type') === 'simple') {
