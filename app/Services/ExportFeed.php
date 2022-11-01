@@ -310,6 +310,8 @@ class ExportFeed extends Base
             $result['data']->$name = $value;
         }
 
+        $result['fileType'] = $feed->get('fileType');
+
         $configuration = [];
         $items = $this->findLinkedEntities($feed->get('id'), 'configuratorItems', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
         if (!empty($items['total'])) {
