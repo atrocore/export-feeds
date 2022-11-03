@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Export\Services;
 
+use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
@@ -111,6 +112,9 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment, 'extension' => 'json']);
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
+
         $fileName = $repository->getFilePath($attachment);
 
         $this->createDir($fileName);
@@ -141,6 +145,9 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment, 'extension' => 'xml']);
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
+
         $fileName = $repository->getFilePath($attachment);
 
         $this->createDir($fileName);
@@ -169,6 +176,9 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment, 'extension' => 'csv']);
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
+
         $this->storeCsvFile($exportJob->getData(), $repository->getFilePath($attachment));
 
         $attachment->set('type', 'text/csv');
@@ -193,6 +203,9 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('relatedId', $this->data['exportJobId']);
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
+
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment, 'extension' => 'xlsx']);
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
 
         $this->storeXlsxFile($exportJob->getData(), $repository->getFilePath($attachment));
 
