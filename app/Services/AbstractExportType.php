@@ -567,6 +567,16 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $collection->append($pav);
         }
 
-        return $productService->preparePavsForOutput($collection)->toArray();
+        $result = $productService->preparePavsForOutput($collection)->toArray();
+        foreach ($result as $key => $pav) {
+            foreach ($pavs as $v) {
+                if ($v['id'] == $pav['id']) {
+                    $result[$key]['isAttributeMultiLang'] = $v['isAttributeMultiLang'];
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 }
