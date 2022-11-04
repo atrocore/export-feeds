@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace Export\Services;
 
+use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
@@ -111,6 +112,8 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $this->beforeStore($attachment, 'json');
+
         $fileName = $repository->getFilePath($attachment);
 
         $this->createDir($fileName);
@@ -141,6 +144,8 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $this->beforeStore($attachment, 'xml');
+
         $fileName = $repository->getFilePath($attachment);
 
         $this->createDir($fileName);
@@ -169,6 +174,8 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $this->beforeStore($attachment, 'csv');
+
         $this->storeCsvFile($exportJob->getData(), $repository->getFilePath($attachment));
 
         $attachment->set('type', 'text/csv');
@@ -193,6 +200,8 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('relatedId', $this->data['exportJobId']);
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
+
+        $this->beforeStore($attachment, 'xlsx');
 
         $this->storeXlsxFile($exportJob->getData(), $repository->getFilePath($attachment));
 
@@ -329,5 +338,11 @@ class ExportTypeSimple extends AbstractExportType
             mkdir($dir, 0777, true);
             sleep(1);
         }
+    }
+
+    protected function beforeStore(Attachment $attachment, string $format)
+    {
+        $event = new Event(['data' => $this->data, 'attachment' => $attachment, 'extension' => $format]);
+        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 }
