@@ -92,7 +92,11 @@ class ExportTypeSimple extends AbstractExportType
 
     protected function exportJson(ExportJob $exportJob): Attachment
     {
-        $exportJob->set('count', count($this->getFullCollection()));
+        if (!empty($this->data['feed']['separateJob'])) {
+            $exportJob->set('count', count($this->getCollection()));
+        } else {
+            $exportJob->set('count', count($this->getFullCollection()));
+        }
 
         $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $this->getFullCollection()]);
 
@@ -131,7 +135,11 @@ class ExportTypeSimple extends AbstractExportType
 
     protected function exportXml(ExportJob $exportJob): Attachment
     {
-        $exportJob->set('count', count($this->getFullCollection()));
+        if (!empty($this->data['feed']['separateJob'])) {
+            $exportJob->set('count', count($this->getCollection()));
+        } else {
+            $exportJob->set('count', count($this->getFullCollection()));
+        }
 
         $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $this->getFullCollection()]);
 
