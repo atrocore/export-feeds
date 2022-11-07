@@ -49,7 +49,7 @@ class ExportTypeSimple extends AbstractExportType
         return $this->$attachmentCreatorName($exportJob);
     }
 
-    protected function renderTemplateContents(string $template, array $templateData): string
+    public function renderTemplateContents(string $template, array $templateData): string
     {
         $templateData['config'] = $this->getConfig()->getData();
         $templateData['feedData'] = $this->data['feed'];
@@ -74,11 +74,13 @@ class ExportTypeSimple extends AbstractExportType
         return $twig->render('template', $templateData);
     }
 
-    protected function getFullCollection(): EntityCollection
+    public function getFullCollection(): EntityCollection
     {
         if ($this->fullCollection === null) {
             $this->fullCollection = new EntityCollection();
-            while (!empty($v = $this->getCollection())) {
+            $offset = (int)$this->data['offset'];
+            while (!empty($v = $this->getCollection($offset))) {
+                $offset = $offset + $this->data['limit'];
                 foreach ($v as $entity) {
                     $this->fullCollection->append($entity);
                 }
@@ -112,7 +114,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->beforeStore($attachment, 'json');
+        $this->beforeStore($this, $attachment, 'json');
 
         $fileName = $repository->getFilePath($attachment);
 
@@ -144,7 +146,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->beforeStore($attachment, 'xml');
+        $this->beforeStore($this, $attachment, 'xml');
 
         $fileName = $repository->getFilePath($attachment);
 
@@ -174,7 +176,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->beforeStore($attachment, 'csv');
+        $this->beforeStore($this, $attachment, 'csv');
 
         $this->storeCsvFile($exportJob->getData(), $repository->getFilePath($attachment));
 
@@ -201,7 +203,7 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
-        $this->beforeStore($attachment, 'xlsx');
+        $this->beforeStore($this, $attachment, 'xlsx');
 
         $this->storeXlsxFile($exportJob->getData(), $repository->getFilePath($attachment));
 
@@ -340,9 +342,9 @@ class ExportTypeSimple extends AbstractExportType
         }
     }
 
-    protected function beforeStore(Attachment $attachment, string $format)
+    protected function beforeStore(ExportTypeSimple $typeService, Attachment $attachment, string $format)
     {
-        $event = new Event(['data' => $this->data, 'attachment' => $attachment, 'extension' => $format]);
+        $event = new Event(['data' => $this->data, 'typeService' => $typeService, 'attachment' => $attachment, 'extension' => $format]);
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 }

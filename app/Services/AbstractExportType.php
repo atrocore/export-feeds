@@ -270,7 +270,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $params;
     }
 
-    protected function getRecords(): array
+    protected function getRecords(int $offset = 0): array
     {
         if (!empty($this->data['feed']['separateJob']) && !empty($this->iteration)) {
             return [];
@@ -281,7 +281,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         }
 
         $params = $this->getSelectParams();
-        $params['offset'] = $this->data['offset'];
+        $params['offset'] = $offset;
         $params['maxSize'] = $this->data['limit'];
         $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
 
@@ -305,29 +305,36 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $this->loadPavs(array_column($list, 'id'));
         }
 
-        $this->data['offset'] = $this->data['offset'] + $this->data['limit'];
         $this->iteration++;
 
         return $list;
     }
 
-    protected function getCollection(): ?EntityCollection
+    public function getCollection(int $offset = null): ?EntityCollection
     {
-        if (!empty($this->data['feed']['separateJob']) && !empty($this->iteration)) {
-            return null;
-        }
-
         if (!$this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
             return null;
         }
 
+        if ($offset === null) {
+            $offset = $this->data['offset'];
+        }
+
         $params = $this->getSelectParams();
-        $params['offset'] = $this->data['offset'];
+        $params['offset'] = $offset;
         $params['maxSize'] = $this->data['limit'];
         $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
 
-        $this->data['offset'] = $this->data['offset'] + $this->data['limit'];
-        $this->iteration++;
+        if (!empty($this->data['feed']['sortOrderField'])) {
+            $params['sortBy'] = $this->data['feed']['sortOrderField'];
+            if ($this->getMetadata()->get(['entityDefs', $this->data['feed']['entity'], 'fields', $params['sortBy'], 'type']) === 'link') {
+                $params['sortBy'] .= 'Id';
+            }
+            $params['asc'] = true;
+            if (!empty($this->data['feed']['sortOrderDirection']) && $this->data['feed']['sortOrderDirection'] !== 'ASC') {
+                $params['asc'] = false;
+            }
+        }
 
         $result = $this->getEntityService()->findEntities($params);
         if (isset($result['collection']) && count($result['collection']) > 0) {
@@ -461,8 +468,11 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         $file = fopen($jobMetadata['fullFileName'], 'a');
 
+        $offset = $this->data['offset'];
+
         $count = 0;
-        while (!empty($records = $this->getRecords())) {
+        while (!empty($records = $this->getRecords($offset))) {
+            $offset = $offset + $this->data['limit'];
             foreach ($records as $record) {
                 if ($this->data['feed']['entity'] === 'Product') {
                     $record['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
