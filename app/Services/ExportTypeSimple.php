@@ -25,6 +25,7 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\EventManager\Event;
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
@@ -46,7 +47,14 @@ class ExportTypeSimple extends AbstractExportType
             throw new Error('Unsupported file type.');
         }
 
-        return $this->$attachmentCreatorName($exportJob);
+        $attachment = $this->$attachmentCreatorName($exportJob);
+
+        if ($exportJob->get('count') === 0) {
+            $this->getEntityManager()->removeEntity($attachment);
+            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
+        }
+
+        return $attachment;
     }
 
     public function renderTemplateContents(string $template, array $templateData): string

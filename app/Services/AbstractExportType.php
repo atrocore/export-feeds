@@ -124,10 +124,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $result = $this->getEntityService()->findEntities($this->getSelectParams());
         }
 
-        if (empty($result['total'])) {
-            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
-        }
-
         return $result['total'];
     }
 
