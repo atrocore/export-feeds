@@ -51,14 +51,49 @@ class ExportConfiguratorItem extends Base
         parent::beforeSave($entity, $options);
     }
 
+    public function updatePosition(Entity $entity): void
+    {
+        $res = $this
+            ->getConnection()
+            ->createQueryBuilder()
+            ->select('id')
+            ->from('export_configurator_item')
+            ->where('deleted=0')
+            ->andWhere('export_feed_id=:exportFeedId')->setParameter('exportFeedId', $entity->get('exportFeedId'))
+            ->orderBy('sort_order', 'ASC')
+            ->fetchFirstColumn();
+
+        $ids = [];
+        if (empty($entity->get('previousItem'))) {
+            $ids[] = $entity->get('id');
+        }
+
+        foreach ($res as $id) {
+            if (!in_array($id, $ids)) {
+                $ids[] = $id;
+            }
+            if ($id === $entity->get('previousItem')) {
+                $ids[] = $entity->get('id');
+            }
+        }
+
+        foreach ($ids as $k => $id) {
+            $this
+                ->getConnection()
+                ->createQueryBuilder()
+                ->update('export_configurator_item')
+                ->set('sort_order', ':sortOrder')->setParameter('sortOrder', $k * 10)
+                ->where('id=:id')->setParameter('id', $id)
+                ->executeQuery();
+        }
+    }
+
     protected function afterSave(Entity $entity, array $options = [])
     {
         parent::afterSave($entity, $options);
 
         if ($entity->isAttributeChanged('previousItem')) {
-            echo '<pre>';
-            print_r($entity->get('previousItem'));
-            die();
+            $this->updatePosition($entity);
         }
     }
 
