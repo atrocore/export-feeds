@@ -33,7 +33,7 @@ class ExportConfiguratorItem extends Base
 {
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if ($entity->isNew()) {
+        if ($entity->isNew() && !$entity->has('previousItem')) {
             $last = $this->select(['sortOrder'])->where(['exportFeedId' => $entity->get('exportFeedId')])->order('sortOrder', 'DESC')->findOne();
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
@@ -49,6 +49,17 @@ class ExportConfiguratorItem extends Base
         }
 
         parent::beforeSave($entity, $options);
+    }
+
+    protected function afterSave(Entity $entity, array $options = [])
+    {
+        parent::afterSave($entity, $options);
+
+        if ($entity->isAttributeChanged('previousItem')) {
+            echo '<pre>';
+            print_r($entity->get('previousItem'));
+            die();
+        }
     }
 
     protected function getValueModifiers(Entity $entity)

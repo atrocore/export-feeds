@@ -151,6 +151,16 @@
     },
     "fixedValue": {
       "type": "varchar"
+    },
+    "previousItem": {
+      "type": "enum",
+      "view": "export:views/export-configurator-item/fields/previous-item",
+      "notStorable": true,
+      "layoutMassUpdateDisabled": true,
+      "filterDisabled": true,
+      "importDisabled": true,
+      "textFilterDisabled": true,
+      "emHidden": true
     }
   },
   "links": {
@@ -172,7 +182,7 @@
     }
   },
   "collection": {
-    "sortBy": "createdAt",
+    "sortBy": "sortOrder",
     "asc": true
   },
   "indexes": {

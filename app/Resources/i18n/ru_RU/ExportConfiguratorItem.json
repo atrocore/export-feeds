@@ -20,7 +20,8 @@
     "sortFieldRelation": "Порядок сортировки (поле)",
     "sortOrderRelation": "Порядок сортировки (направление)",
     "valueModifier": "Модификатор значения",
-    "fixedValue": "Фиксированное значение"
+    "fixedValue": "Фиксированное значение",
+    "previousItem": "Предыдущий элемент"
   },
   "links": {
     "exportFeed": "Экспорт. фид",
