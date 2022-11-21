@@ -75,14 +75,10 @@ class ExportConfiguratorItem extends Base
 
     public function updateEntity($id, $data)
     {
-        if (property_exists($data, '_sortedIds')) {
-            foreach ($data->_sortedIds as $k => $id) {
-                if (!empty($item = $this->getRepository()->get($id))) {
-                    $item->set('sortOrder', $k * 10);
-                    $this->getEntityManager()->saveEntity($item);
-                }
-            }
-            return $this->readEntity($id);
+        if (property_exists($data, '_previousItemId') && property_exists($data, '_itemId')) {
+            $data->previousItem = $data->_previousItemId;
+            unset($data->_previousItemId);
+            unset($data->_itemId);
         }
 
         return parent::updateEntity($id, $data);

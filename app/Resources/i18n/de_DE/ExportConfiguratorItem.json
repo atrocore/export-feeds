@@ -20,7 +20,8 @@
     "sortFieldRelation": "Sortierreihenfolge (Feld)",
     "sortOrderRelation": "Sortierreihenfolge (Richtung)",
     "valueModifier": "Wertmodifikator",
-    "fixedValue": "Fester Wert"
+    "fixedValue": "Fester Wert",
+    "previousItem": "Vorheriges Item"
   },
   "links": {
     "exportFeed": "Exportfeed",
