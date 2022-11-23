@@ -40,6 +40,10 @@ class Metadata extends AbstractListener
             $data['entityDefs']['ExportFeed']['links']['channel']['entity'] = 'Channel';
         }
 
+        if (!empty($data['clientDefs']['ExportFeed']['relationshipPanels']['configuratorItems'])) {
+            $data['clientDefs']['ExportFeed']['relationshipPanels']['configuratorItems']['dragDrop']['maxSize'] = $this->getConfig()->get('recordsPerPageSmall', 20);
+        }
+
         $event->setArgument('data', $data);
     }
 }
