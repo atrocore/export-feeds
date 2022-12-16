@@ -101,12 +101,14 @@ class ExportTypeSimple extends AbstractExportType
     protected function exportJson(ExportJob $exportJob): Attachment
     {
         if (!empty($this->data['feed']['separateJob'])) {
-            $exportJob->set('count', count($this->getCollection()));
+            $collection = $this->getCollection();
         } else {
-            $exportJob->set('count', count($this->getFullCollection()));
+            $collection = $this->getFullCollection();
         }
 
-        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $this->getFullCollection()]);
+        $exportJob->set('count', count($collection));
+
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
 
         if (!empty($contents)) {
             $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
@@ -144,12 +146,14 @@ class ExportTypeSimple extends AbstractExportType
     protected function exportXml(ExportJob $exportJob): Attachment
     {
         if (!empty($this->data['feed']['separateJob'])) {
-            $exportJob->set('count', count($this->getCollection()));
+            $collection = $this->getCollection();
         } else {
-            $exportJob->set('count', count($this->getFullCollection()));
+            $collection = $this->getFullCollection();
         }
 
-        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $this->getFullCollection()]);
+        $exportJob->set('count', count($collection));
+
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
 
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
