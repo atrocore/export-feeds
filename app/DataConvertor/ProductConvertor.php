@@ -24,17 +24,13 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
-use Espo\Core\Utils\Util;
-use Espo\ORM\EntityCollection;
+use Espo\ORM\Entity;
 
 class ProductConvertor extends Convertor
 {
     public function convert(array $record, array $configuration, bool $toString = false): array
     {
         if (isset($configuration['attributeId'])) {
-            if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
-                return $this->convertAttributeValueForPim1Dot3DotX($record, $configuration, $toString);
-            }
             return $this->convertAttributeValue($record, $configuration, $toString);
         }
 
@@ -43,7 +39,22 @@ class ProductConvertor extends Convertor
 
     protected function convertAttributeValue(array $record, array $configuration, bool $toString = false): array
     {
-        if (empty($record['pavs'])) {
+        $pavs = $this->getService('ProductAttributeValue')->findEntities([
+            'where' => [
+                [
+                    'type'      => 'equals',
+                    'attribute' => 'productId',
+                    'value'     => $record['id'],
+                ],
+                [
+                    'type'      => 'equals',
+                    'attribute' => 'attributeId',
+                    'value'     => $configuration['attributeId'],
+                ]
+            ]
+        ]);
+
+        if (empty($pavs['total']) || !array_key_exists('collection', $pavs)) {
             return [];
         }
 
@@ -53,22 +64,22 @@ class ProductConvertor extends Convertor
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
-        foreach ($record['pavs'] as $v) {
-            if ($this->isLanguageEquals($v, $configuration) && $v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
-                $productAttribute = $v;
+        foreach ($pavs['collection'] as $pav) {
+            if ($this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
+                $productAttribute = $pav;
                 break 1;
             }
         }
 
         if (!empty($configuration['channelId'])) {
-            foreach ($record['pavs'] as $v) {
+            foreach ($pavs['collection'] as $pav) {
                 if (
-                    $this->isLanguageEquals($v, $configuration)
-                    && $v['attributeId'] == $configuration['attributeId']
-                    && $v['scope'] == 'Channel'
-                    && $configuration['channelId'] == $v['channelId']
+                    $this->isLanguageEquals($pav, $configuration)
+                    && $pav->get('attributeId') == $configuration['attributeId']
+                    && $pav->get('scope') == 'Channel'
+                    && $pav->get('channelId') == $configuration['channelId']
                 ) {
-                    $productAttribute = $v;
+                    $productAttribute = $pav;
                     break 1;
                 }
             }
@@ -76,69 +87,21 @@ class ProductConvertor extends Convertor
 
         if (!empty($productAttribute)) {
             // exit if replaceAttributeValues disabled
-            if (empty($configuration['replaceAttributeValues']) && $productAttribute['scope'] === 'Global' && !empty($configuration['channelId'])) {
+            if (empty($configuration['replaceAttributeValues']) && $productAttribute->get('scope') === 'Global' && !empty($configuration['channelId'])) {
                 return $result;
             }
-            $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => 'value']), $toString);
+            $result = $this->convertType($productAttribute->get('attributeType'), $productAttribute->toArray(), array_merge($configuration, ['field' => 'value']), $toString);
         }
 
         return $result;
     }
 
-    /**
-     * @deprecated This only for pim < 1.4.0
-     */
-    protected function convertAttributeValueForPim1Dot3DotX(array $record, array $configuration, bool $toString = false): array
+    protected function isLanguageEquals(Entity $pav, array $configuration): bool
     {
-        if (empty($record['pavs'])) {
-            return [];
-        }
-
-        $result = [];
-
-        if ($toString) {
-            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
-        }
-
-        foreach ($record['pavs'] as $v) {
-            if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Global') {
-                $productAttribute = $v;
-                break 1;
-            }
-        }
-
-        if (!empty($configuration['channelId'])) {
-            foreach ($record['pavs'] as $v) {
-                if ($v['attributeId'] == $configuration['attributeId'] && $v['scope'] == 'Channel' && $configuration['channelId'] == $v['channelId']) {
-                    $productAttribute = $v;
-                    break 1;
-                }
-            }
-        }
-
-        if (!empty($productAttribute)) {
-            // exit if replaceAttributeValues disabled
-            if (empty($configuration['replaceAttributeValues']) && $productAttribute['scope'] === 'Global' && !empty($configuration['channelId'])) {
-                return $result;
-            }
-
-            $valueField = 'value';
-            if (!empty($configuration['locale']) && $configuration['locale'] !== 'main') {
-                $valueField .= ucfirst(Util::toCamelCase(strtolower($configuration['locale'])));
-            }
-
-            $result = $this->convertType($productAttribute['attributeType'], $productAttribute, array_merge($configuration, ['field' => $valueField]), $toString);
-        }
-
-        return $result;
-    }
-
-    protected function isLanguageEquals(array $pav, array $configuration): bool
-    {
-        if (empty($pav['isAttributeMultiLang'])) {
+        if (empty($pav->get('isAttributeMultiLang'))) {
             return true;
         }
 
-        return $pav['language'] === $configuration['locale'];
+        return $pav->get('language') === $configuration['locale'];
     }
 }

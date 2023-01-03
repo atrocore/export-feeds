@@ -51,8 +51,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     private array $languages = [];
 
-    private array $pavs = [];
-
     private int $iteration = 0;
 
     private array $attributes = [];
@@ -296,11 +294,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
 
-        // caching ProductAttributeValues if Product
-        if ($this->data['feed']['entity'] === 'Product') {
-            $this->loadPavs(array_column($list, 'id'));
-        }
-
         $this->iteration++;
 
         return $list;
@@ -340,103 +333,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return null;
     }
 
-    protected function loadPavs(array $productsIds): void
-    {
-        $this->pavs = [];
-
-        /**
-         * @deprecated This only for pim < 1.4.0
-         */
-        if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
-            foreach ($productsIds as $productId) {
-                $params = ['select' => ['id', 'productId', 'attributeId', 'attributeName', 'scope', 'channelId', 'value', 'data', 'locale', 'isLocale']];
-                if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
-                    foreach ($locales as $locale) {
-                        $params['select'][] = Util::toCamelCase('value_' . strtolower($locale));
-                    }
-                }
-                $pavs = $this->getService('Product')->findLinkedEntities($productId, 'productAttributeValues', $params);
-                $this->pavs[$productId] = [];
-                if (!empty($pavs['total'])) {
-                    if (isset($pavs['list'])) {
-                        $this->pavs[$productId] = $pavs['list'];
-                    } elseif (isset($pavs['collection'])) {
-                        $this->pavs[$productId] = $pavs['collection']->toArray();
-                    }
-                }
-            }
-            return;
-        }
-
-        $pavParams = [
-            'sortBy'  => 'id',
-            'offset'  => 0,
-            'maxSize' => \PHP_INT_MAX,
-            'where'   => [
-                [
-                    'type'      => 'equals',
-                    'attribute' => 'productId',
-                    'value'     => $productsIds
-                ]
-            ]
-        ];
-
-        $selectParams = $this->getSelectManager('ProductAttributeValue')->getSelectParams($pavParams, true, true);
-        foreach (['customJoin', 'additionalSelectColumns', 'customWhere'] as $key) {
-            if (isset($selectParams[$key])) {
-                unset($selectParams[$key]);
-            }
-        }
-
-        $selectFields = [
-            'id',
-            'productId',
-            'attributeId',
-            'scope',
-            'channelId',
-            'language',
-            'boolValue',
-            'dateValue',
-            'datetimeValue',
-            'intValue',
-            'floatValue',
-            'varcharValue',
-            'textValue',
-            'attributeType',
-            'data'
-        ];
-
-        $pavs = $this
-            ->getEntityManager()
-            ->getRepository('ProductAttributeValue')
-            ->select($selectFields)
-            ->find($selectParams)
-            ->toArray();
-
-        if (!empty($pavs)) {
-            $attrs = $this
-                ->getEntityManager()
-                ->getRepository('Attribute')
-                ->select(['id', 'name', 'code', 'type', 'isMultilang'])
-                ->where(['id' => array_column($pavs, 'attributeId')])
-                ->find()
-                ->toArray();
-            $preparedAttrs = [];
-            foreach ($attrs as $attr) {
-                $preparedAttrs[$attr['id']] = $attr;
-            }
-
-            foreach ($pavs as $pav) {
-                $row = $pav;
-                $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
-                $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
-                $row['attributeType'] = $preparedAttrs[$pav['attributeId']]['type'];
-                $row['isAttributeMultiLang'] = !empty($preparedAttrs[$pav['attributeId']]['isMultilang']);
-                $this->pavs[$pav['productId']][] = $row;
-            }
-        }
-    }
-
     protected function createCacheFile(ExportJob $exportJob): string
     {
         // prepare export feed data
@@ -470,13 +366,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $this->data['limit'];
             foreach ($records as $record) {
-                if ($this->data['feed']['entity'] === 'Product') {
-                    $record['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
-                    if (!empty($record['pavs'])) {
-                        $record['pavs'] = $this->preparePavsForOutput($record['pavs']);
-                    }
-                }
-
                 fwrite($file, Json::encode($record) . PHP_EOL);
                 $count++;
             }
@@ -557,32 +446,5 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         parent::init();
 
         $this->addDependency('container');
-    }
-
-    protected function preparePavsForOutput(array $pavs): array
-    {
-        $productService = $this->getService('Product');
-        if (!method_exists($productService, 'preparePavsForOutput')) {
-            return $pavs;
-        }
-
-        $collection = new EntityCollection();
-        foreach ($pavs as $v) {
-            $pav = $this->getEntityManager()->getEntity('ProductAttributeValue');
-            $pav->set($v);
-            $collection->append($pav);
-        }
-
-        $result = $productService->preparePavsForOutput($collection)->toArray();
-        foreach ($result as $key => $pav) {
-            foreach ($pavs as $v) {
-                if ($v['id'] == $pav['id']) {
-                    $result[$key]['isAttributeMultiLang'] = $v['isAttributeMultiLang'];
-                    break;
-                }
-            }
-        }
-
-        return $result;
     }
 }
