@@ -25,9 +25,12 @@ declare(strict_types=1);
 namespace Export\DataConvertor;
 
 use Espo\ORM\Entity;
+use Espo\ORM\EntityCollection;
 
 class ProductConvertor extends Convertor
 {
+    protected array $rowPavs = ['hash' => null, 'pavs' => null];
+
     public function convert(array $record, array $configuration, bool $toString = false): array
     {
         if (isset($configuration['attributeId'])) {
@@ -39,24 +42,32 @@ class ProductConvertor extends Convertor
 
     protected function convertAttributeValue(array $record, array $configuration, bool $toString = false): array
     {
-        $pavs = $this->getService('ProductAttributeValue')->findEntities([
-            'where' => [
-                [
-                    'type'      => 'equals',
-                    'attribute' => 'productId',
-                    'value'     => $record['id'],
-                ],
-                [
-                    'type'      => 'equals',
-                    'attribute' => 'attributeId',
-                    'value'     => $configuration['attributeId'],
+        /**
+         * Get from DB only for different row
+         */
+        $hash = md5(json_encode($record));
+        if ($this->rowPavs['hash'] !== $hash) {
+            $this->rowPavs['hash'] = $hash;
+            $productPavs = $this->getService('ProductAttributeValue')->findEntities([
+                'where' => [
+                    [
+                        'type'      => 'equals',
+                        'attribute' => 'productId',
+                        'value'     => $record['id'],
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+            $this->rowPavs['pavs'] = array_key_exists('collection', $productPavs) ? $productPavs['collection'] : new EntityCollection();
+        }
 
-        if (empty($pavs['total']) || !array_key_exists('collection', $pavs)) {
+        /**
+         * Exit if empty
+         */
+        if (empty($this->rowPavs['pavs']) || count($this->rowPavs['pavs']) === 0) {
             return [];
         }
+
+        $pavs = $this->rowPavs['pavs'];
 
         $result = [];
 
@@ -64,7 +75,7 @@ class ProductConvertor extends Convertor
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
-        foreach ($pavs['collection'] as $pav) {
+        foreach ($pavs as $pav) {
             if ($this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
                 $productAttribute = $pav;
                 break 1;
@@ -72,7 +83,7 @@ class ProductConvertor extends Convertor
         }
 
         if (!empty($configuration['channelId'])) {
-            foreach ($pavs['collection'] as $pav) {
+            foreach ($pavs as $pav) {
                 if (
                     $this->isLanguageEquals($pav, $configuration)
                     && $pav->get('attributeId') == $configuration['attributeId']
