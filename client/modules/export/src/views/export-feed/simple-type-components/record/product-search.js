@@ -15,8 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-feed/simple-type-components/record/product-search', ['pim:views/product/record/search', 'export:views/export-feed/simple-type-components/record/entity-search'], function (Dep, Filter) {
