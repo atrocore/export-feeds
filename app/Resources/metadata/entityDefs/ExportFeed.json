@@ -53,6 +53,9 @@
     "type": {
       "type": "enum",
       "required": true,
+      "optionsIds": [
+        "simple"
+      ],
       "options": [
         "simple"
       ],
@@ -71,6 +74,12 @@
     "fileType": {
       "type": "enum",
       "required": false,
+      "optionsIds": [
+        "csv",
+        "xlsx",
+        "json",
+        "xml"
+      ],
       "options": [
         "csv",
         "xlsx",
@@ -87,6 +96,11 @@
     },
     "csvFieldDelimiter": {
       "type": "enum",
+      "optionsIds": [
+        ";",
+        ",",
+        "\\t"
+      ],
       "options": [
         ";",
         ",",
@@ -100,6 +114,10 @@
     },
     "csvTextQualifier": {
       "type": "enum",
+      "optionsIds": [
+        "doubleQuote",
+        "singleQuote"
+      ],
       "options": [
         "doubleQuote",
         "singleQuote"
