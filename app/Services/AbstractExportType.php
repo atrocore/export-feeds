@@ -288,6 +288,24 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             }
         }
 
+        /**
+         * Set language prism
+         */
+        if (!empty($params['where'])) {
+            foreach ($params['where'] as $where) {
+                if (!empty($where['value'][0]) && strpos($where['value'][0], 'prismVia') !== false) {
+                    $language = str_replace('prismVia', '', $where['value'][0]);
+                    if ($language === 'Main') {
+                        $languagePrism = 'main';
+                    } else {
+                        $parts = explode("_", Util::toUnderScore($language));
+                        $languagePrism = $parts[0] . '_' . strtoupper($parts[1]);
+                    }
+                    $GLOBALS['languagePrism'] = $languagePrism;
+                }
+            }
+        }
+
         $result = $this->getEntityService()->findEntities($params);
 
         $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
