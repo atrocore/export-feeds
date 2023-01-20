@@ -293,7 +293,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
          */
         if (!empty($params['where'])) {
             foreach ($params['where'] as $where) {
-                if (!empty($where['value'][0]) && strpos($where['value'][0], 'prismVia') !== false) {
+                if (!empty($where['value'][0]) && is_string($where['value'][0]) && strpos((string)$where['value'][0], 'prismVia') !== false) {
                     $language = str_replace('prismVia', '', $where['value'][0]);
                     if ($language === 'Main') {
                         $languagePrism = 'main';
