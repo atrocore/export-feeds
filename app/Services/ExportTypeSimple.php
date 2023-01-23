@@ -25,7 +25,6 @@ namespace Export\Services;
 use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
-use Espo\Core\Utils\Json;
 use Espo\Entities\Attachment;
 use Espo\ORM\EntityCollection;
 use Export\Entities\ExportJob;
@@ -238,18 +237,18 @@ class ExportTypeSimple extends AbstractExportType
         $columns = [];
 
         $cacheFile = fopen($data['fullFileName'], "r");
-        while (($json = fgets($cacheFile)) !== false) {
-            if (empty($json)) {
+        while (($line = fgets($cacheFile)) !== false) {
+            if (empty($line)) {
+                continue;
+            }
+            $json = @json_decode($line, true);
+            if (!is_array($json)) {
                 continue;
             }
 
-            foreach ($data['configuration'] as $rowNumber => $row) {
-                $row['convertCollectionToString'] = false;
-                $row['convertRelationsToString'] = false;
-
-                $converted = $this->convertor->convert(Json::decode($json, true), $row);
+            foreach ($json as $rowNumber => $colData) {
                 $n = 0;
-                foreach ($converted as $colName => $value) {
+                foreach ($colData as $colName => $colValue) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
                         'pos'    => $rowNumber * 1000 + $n,
@@ -278,20 +277,14 @@ class ExportTypeSimple extends AbstractExportType
         return $result;
     }
 
-
     protected function storeCsvFile(array $data, string $fileName): void
     {
         $columns = $this->prepareColumns($data);
 
         $this->createDir($fileName);
 
-        // prepare settings
-        $delimiter = $this->data['feed']['csvFieldDelimiter'];
-        if ($delimiter === '\t') {
-            $delimiter = "\t";
-        }
-
-        $enclosure = ($this->data['feed']['csvTextQualifier'] == 'doubleQuote') ? '"' : "'";
+        $delimiter = $this->getDelimiter();
+        $enclosure = $this->getEnclosure();
 
         $fp = fopen($fileName, "w");
 
@@ -301,14 +294,14 @@ class ExportTypeSimple extends AbstractExportType
         }
 
         $cacheFile = fopen($data['fullFileName'], "r");
-        while (($json = fgets($cacheFile)) !== false) {
-            if (empty($json)) {
+        while (($line = fgets($cacheFile)) !== false) {
+            if (empty($line)) {
                 continue;
             }
 
-            $rowData = [];
-            foreach ($data['configuration'] as $row) {
-                $rowData[] = $this->convertor->convert(Json::decode($json, true), $row, true);
+            $rowData = @json_decode($line, true);
+            if (!is_array($rowData)) {
+                continue;
             }
 
             $resultRow = [];
@@ -335,8 +328,8 @@ class ExportTypeSimple extends AbstractExportType
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
 
         // set CSV parsing options
-        $reader->setDelimiter(";");
-        $reader->setEnclosure('"');
+        $reader->setDelimiter($this->getDelimiter());
+        $reader->setEnclosure($this->getEnclosure());
         $reader->setSheetIndex(0);
 
         // load a CSV file and save as a XLS

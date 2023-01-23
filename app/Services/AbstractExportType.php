@@ -23,9 +23,9 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\Container;
-use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\FilePathBuilder;
+use Espo\Core\Services\Base;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
@@ -39,19 +39,13 @@ use Espo\Services\Record;
 use Export\DataConvertor\Convertor;
 use Export\Entities\ExportJob;
 
-abstract class AbstractExportType extends \Espo\Core\Services\Base
+abstract class AbstractExportType extends Base
 {
     protected array $data;
 
     protected Convertor $convertor;
 
-    private array $services = [];
-
-    private array $languages = [];
-
     private int $iteration = 0;
-
-    private array $attributes = [];
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -228,11 +222,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $row['column'];
     }
 
-    protected function getContainer(): Container
-    {
-        return $this->getInjection('container');
-    }
-
     protected function getDataConvertor(): Convertor
     {
         $className = "Export\\DataConvertor\\{$this->data['feed']['data']['entity']}Convertor";
@@ -354,8 +343,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         // prepare export feed data
         $data = $this->data['feed']['data'];
 
-        $configuration = $data['configuration'];
-
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
         $filePath = $this->createPath();
@@ -367,7 +354,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             'fullFileName'  => $fullFilePath . '/' . $fileName
         ];
 
-        foreach ($configuration as $rowNumber => $row) {
+        foreach ($data['configuration'] as $rowNumber => $row) {
             $jobMetadata['configuration'][$rowNumber] = $this->prepareRow($row);
         }
 
@@ -382,7 +369,11 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $this->data['limit'];
             foreach ($records as $record) {
-                fwrite($file, Json::encode($record) . PHP_EOL);
+                $rowData = [];
+                foreach ($data['configuration'] as $row) {
+                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row), true);
+                }
+                fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $count++;
             }
         }
@@ -395,13 +386,24 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $jobMetadata['fullFileName'];
     }
 
-    protected function getAttribute(string $id): Entity
+    protected function getDelimiter(): string
     {
-        if (!isset($this->attributes[$id])) {
-            $this->attributes[$id] = $this->getEntityManager()->getEntity('Attribute', $id);
+        $delimiter = empty($this->data['feed']['csvFieldDelimiter']) ? ';' : $this->data['feed']['csvFieldDelimiter'];
+        if ($delimiter === '\t') {
+            $delimiter = "\t";
         }
 
-        return $this->attributes[$id];
+        return $delimiter;
+    }
+
+    protected function getEnclosure(): string
+    {
+        return $this->data['feed']['csvTextQualifier'] !== 'doubleQuote' ? "'" : '"';
+    }
+
+    protected function getAttribute(string $id): Entity
+    {
+        return $this->getEntityManager()->getEntity('Attribute', $id);
     }
 
     protected function getEntityManager(): EntityManager
@@ -411,11 +413,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getService(string $serviceName): Record
     {
-        if (!isset($this->services[$serviceName])) {
-            $this->services[$serviceName] = $this->getContainer()->get('serviceFactory')->create($serviceName);
-        }
-
-        return $this->services[$serviceName];
+        return $this->getContainer()->get('serviceFactory')->create($serviceName);
     }
 
     protected function getEntityService(): Record
@@ -445,16 +443,17 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getLanguage(string $locale): Language
     {
-        if (!isset($this->languages[$locale])) {
-            $this->languages[$locale] = new Language($this->getContainer(), $locale);
-        }
-
-        return $this->languages[$locale];
+        return new Language($this->getContainer(), $locale);
     }
 
     protected function createPath(): string
     {
         return $this->getContainer()->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD);
+    }
+
+    protected function getContainer(): Container
+    {
+        return $this->getInjection('container');
     }
 
     protected function init()
