@@ -45,13 +45,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected Convertor $convertor;
 
-    private array $services = [];
-
-    private array $languages = [];
-
     private int $iteration = 0;
-
-    private array $attributes = [];
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -228,11 +222,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $row['column'];
     }
 
-    protected function getContainer(): Container
-    {
-        return $this->getInjection('container');
-    }
-
     protected function getDataConvertor(): Convertor
     {
         $className = "Export\\DataConvertor\\{$this->data['feed']['data']['entity']}Convertor";
@@ -354,8 +343,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         // prepare export feed data
         $data = $this->data['feed']['data'];
 
-        $configuration = $data['configuration'];
-
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
         $filePath = $this->createPath();
@@ -367,14 +354,12 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             'fullFileName'  => $fullFilePath . '/' . $fileName
         ];
 
-        foreach ($configuration as $rowNumber => $row) {
+        foreach ($data['configuration'] as $rowNumber => $row) {
             $jobMetadata['configuration'][$rowNumber] = $this->prepareRow($row);
         }
 
         // clearing file if it needs
         file_put_contents($jobMetadata['fullFileName'], '');
-
-        $file = fopen($jobMetadata['fullFileName'], 'a');
 
         $offset = $this->data['offset'];
 
@@ -382,12 +367,10 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $this->data['limit'];
             foreach ($records as $record) {
-                fwrite($file, Json::encode($record) . PHP_EOL);
+                exec("echo '" . Json::encode($record) . "' >> {$jobMetadata['fullFileName']}");
                 $count++;
             }
         }
-
-        fclose($file);
 
         $exportJob->set('count', $count);
         $exportJob->set('data', array_merge($exportJob->getData(), $jobMetadata));
@@ -397,11 +380,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getAttribute(string $id): Entity
     {
-        if (!isset($this->attributes[$id])) {
-            $this->attributes[$id] = $this->getEntityManager()->getEntity('Attribute', $id);
-        }
-
-        return $this->attributes[$id];
+        return $this->getEntityManager()->getEntity('Attribute', $id);
     }
 
     protected function getEntityManager(): EntityManager
@@ -411,11 +390,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getService(string $serviceName): Record
     {
-        if (!isset($this->services[$serviceName])) {
-            $this->services[$serviceName] = $this->getContainer()->get('serviceFactory')->create($serviceName);
-        }
-
-        return $this->services[$serviceName];
+        return $this->getContainer()->get('serviceFactory')->create($serviceName);
     }
 
     protected function getEntityService(): Record
@@ -445,16 +420,17 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getLanguage(string $locale): Language
     {
-        if (!isset($this->languages[$locale])) {
-            $this->languages[$locale] = new Language($this->getContainer(), $locale);
-        }
-
-        return $this->languages[$locale];
+        return new Language($this->getContainer(), $locale);
     }
 
     protected function createPath(): string
     {
         return $this->getContainer()->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD);
+    }
+
+    protected function getContainer(): Container
+    {
+        return $this->getInjection('container');
     }
 
     protected function init()

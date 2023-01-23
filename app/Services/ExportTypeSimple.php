@@ -238,16 +238,19 @@ class ExportTypeSimple extends AbstractExportType
         $columns = [];
 
         $cacheFile = fopen($data['fullFileName'], "r");
-        while (($json = fgets($cacheFile)) !== false) {
-            if (empty($json)) {
+        while (($line = fgets($cacheFile)) !== false) {
+            if (empty($line)) {
+                continue;
+            }
+            $json = @json_decode($line, true);
+            if (!is_array($json)) {
                 continue;
             }
 
             foreach ($data['configuration'] as $rowNumber => $row) {
                 $row['convertCollectionToString'] = false;
                 $row['convertRelationsToString'] = false;
-
-                $converted = $this->convertor->convert(Json::decode($json, true), $row);
+                $converted = $this->convertor->convert($json, $row);
                 $n = 0;
                 foreach ($converted as $colName => $value) {
                     $columns[$rowNumber . '_' . $colName] = [
@@ -301,14 +304,19 @@ class ExportTypeSimple extends AbstractExportType
         }
 
         $cacheFile = fopen($data['fullFileName'], "r");
-        while (($json = fgets($cacheFile)) !== false) {
-            if (empty($json)) {
+        while (($line = fgets($cacheFile)) !== false) {
+            if (empty($line)) {
+                continue;
+            }
+
+            $json = @json_decode($line, true);
+            if (!is_array($json)) {
                 continue;
             }
 
             $rowData = [];
             foreach ($data['configuration'] as $row) {
-                $rowData[] = $this->convertor->convert(Json::decode($json, true), $row, true);
+                $rowData[] = $this->convertor->convert($json, $row, true);
             }
 
             $resultRow = [];
