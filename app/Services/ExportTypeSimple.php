@@ -283,13 +283,8 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->createDir($fileName);
 
-        // prepare settings
-        $delimiter = $this->data['feed']['csvFieldDelimiter'];
-        if ($delimiter === '\t') {
-            $delimiter = "\t";
-        }
-
-        $enclosure = ($this->data['feed']['csvTextQualifier'] == 'doubleQuote') ? '"' : "'";
+        $delimiter = $this->getDelimiter();
+        $enclosure = $this->getEnclosure();
 
         $fp = fopen($fileName, "w");
 
@@ -333,8 +328,8 @@ class ExportTypeSimple extends AbstractExportType
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
 
         // set CSV parsing options
-        $reader->setDelimiter(";");
-        $reader->setEnclosure('"');
+        $reader->setDelimiter($this->getDelimiter());
+        $reader->setEnclosure($this->getEnclosure());
         $reader->setSheetIndex(0);
 
         // load a CSV file and save as a XLS

@@ -386,6 +386,21 @@ abstract class AbstractExportType extends Base
         return $jobMetadata['fullFileName'];
     }
 
+    protected function getDelimiter(): string
+    {
+        $delimiter = empty($this->data['feed']['csvFieldDelimiter']) ? ';' : $this->data['feed']['csvFieldDelimiter'];
+        if ($delimiter === '\t') {
+            $delimiter = "\t";
+        }
+
+        return $delimiter;
+    }
+
+    protected function getEnclosure(): string
+    {
+        return $this->data['feed']['csvTextQualifier'] !== 'doubleQuote' ? "'" : '"';
+    }
+
     protected function getAttribute(string $id): Entity
     {
         return $this->getEntityManager()->getEntity('Attribute', $id);
