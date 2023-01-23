@@ -23,9 +23,9 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\Container;
-use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\FilePathBuilder;
+use Espo\Core\Services\Base;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
@@ -39,7 +39,7 @@ use Espo\Services\Record;
 use Export\DataConvertor\Convertor;
 use Export\Entities\ExportJob;
 
-abstract class AbstractExportType extends \Espo\Core\Services\Base
+abstract class AbstractExportType extends Base
 {
     protected array $data;
 
@@ -361,16 +361,24 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         // clearing file if it needs
         file_put_contents($jobMetadata['fullFileName'], '');
 
+        $file = fopen($jobMetadata['fullFileName'], 'a');
+
         $offset = $this->data['offset'];
 
         $count = 0;
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $this->data['limit'];
             foreach ($records as $record) {
-                exec("echo '" . Json::encode($record) . "' >> {$jobMetadata['fullFileName']}");
+                $rowData = [];
+                foreach ($data['configuration'] as $row) {
+                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row), true);
+                }
+                fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $count++;
             }
         }
+
+        fclose($file);
 
         $exportJob->set('count', $count);
         $exportJob->set('data', array_merge($exportJob->getData(), $jobMetadata));

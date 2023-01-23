@@ -247,12 +247,9 @@ class ExportTypeSimple extends AbstractExportType
                 continue;
             }
 
-            foreach ($data['configuration'] as $rowNumber => $row) {
-                $row['convertCollectionToString'] = false;
-                $row['convertRelationsToString'] = false;
-                $converted = $this->convertor->convert($json, $row);
+            foreach ($json as $rowNumber => $colData) {
                 $n = 0;
-                foreach ($converted as $colName => $value) {
+                foreach ($colData as $colName => $colValue) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
                         'pos'    => $rowNumber * 1000 + $n,
@@ -281,7 +278,6 @@ class ExportTypeSimple extends AbstractExportType
         return $result;
     }
 
-
     protected function storeCsvFile(array $data, string $fileName): void
     {
         $columns = $this->prepareColumns($data);
@@ -309,14 +305,9 @@ class ExportTypeSimple extends AbstractExportType
                 continue;
             }
 
-            $json = @json_decode($line, true);
-            if (!is_array($json)) {
+            $rowData = @json_decode($line, true);
+            if (!is_array($rowData)) {
                 continue;
-            }
-
-            $rowData = [];
-            foreach ($data['configuration'] as $row) {
-                $rowData[] = $this->convertor->convert($json, $row, true);
             }
 
             $resultRow = [];
