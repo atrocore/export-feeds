@@ -21,9 +21,13 @@
         {
           "name": "attribute"
         },
+        false
+      ],
+      [
         {
           "name": "locale"
-        }
+        },
+        false
       ],
       [
         {

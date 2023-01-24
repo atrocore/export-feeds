@@ -24,23 +24,15 @@ Espo.define('export:views/export-configurator-item/fields/locale', 'views/fields
 
             prohibitedEmptyValue: true,
 
-            isAttributeMultiLang: false,
+            isMultiLang: false,
 
             init: function () {
-                this.isAttributeMultiLang = this.model.get('isAttributeMultiLang');
+                this.prepareMultiLangParam();
 
                 Dep.prototype.init.call(this);
 
-                this.listenTo(this.model, 'change:attributeId', () => {
-                    if (this.model.get('attributeId')) {
-                        this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
-                            this.isAttributeMultiLang = attribute.isMultilang;
-                            this.reRender();
-                        });
-                    } else {
-                        this.isAttributeMultiLang = false;
-                        this.reRender();
-                    }
+                this.listenTo(this.model, 'change:type change:name change:attributeId', () => {
+                    this.prepareMultiLangParam();
                 });
             },
 
@@ -62,8 +54,31 @@ Espo.define('export:views/export-configurator-item/fields/locale', 'views/fields
                 }
             },
 
+            prepareMultiLangParam() {
+                if (this.model.get('exportFeedLanguage')) {
+                    this.isMultiLang = false;
+                    this.reRender();
+                    return;
+                }
+
+                if (this.model.get('type') === 'Field') {
+                    this.isMultiLang = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('name')}.isMultilang`);
+                    this.reRender();
+                } else if (this.model.get('type') === 'Attribute') {
+                    if (this.model.get('attributeId')) {
+                        this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
+                            this.isMultiLang = attribute.isMultilang;
+                            this.reRender();
+                        });
+                    } else {
+                        this.isMultiLang = false;
+                        this.reRender();
+                    }
+                }
+            },
+
             checkFieldVisibility() {
-                if (this.isAttributeMultiLang && (this.getConfig().get('inputLanguageList') || []).length > 0) {
+                if (this.isMultiLang && (this.getConfig().get('inputLanguageList') || []).length > 0) {
                     this.show();
                 } else {
                     this.hide();

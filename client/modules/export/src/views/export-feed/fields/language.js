@@ -22,7 +22,7 @@ Espo.define('export:views/export-feed/fields/language', 'views/fields/enum',
 
         return Dep.extend({
 
-            prohibitedEmptyValue: true,
+            prohibitedEmptyValue: false,
 
             setupOptions() {
                 this.params.options = ['mainLocale'];

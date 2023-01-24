@@ -75,6 +75,20 @@
       "type": "bool",
       "notStorable": true
     },
+    "exportFeedLanguage": {
+      "type": "varchar",
+      "notStorable": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "textFilterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "emHidden": true
+    },
     "locale": {
       "type": "varchar",
       "view": "export:views/export-configurator-item/fields/locale"
