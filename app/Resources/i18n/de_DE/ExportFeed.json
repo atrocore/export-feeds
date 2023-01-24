@@ -84,9 +84,12 @@
     "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt.",
     "noConfiguratorItems": "Bitte erstellen Sie mindestens eine Konfigurator-Regel, um diesen Feed ausführen zu können."
   },
+  "confirmations": {
+    "languageChanged": "Sie haben die Sprache ausgewählt, die als Prisma zum Filtern und Lokalisieren Ihrer Daten verwendet wird. Daher können keine Konfiguratorregeln mit anderen ausgewählten Sprachen vorhanden sein. Solche Regeln werden gelöscht."
+  },
   "tooltips": {
     "template": "Sie können die Syntax von <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig-Template-Engine</a> verwenden.",
-    "language": "Dieser Wert wird bei der Erstellung einer Regel für ein sprachspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.\n\n",
+    "language": "Wählen Sie die Sprache aus, um die lokalisierten Daten zu erhalten.",
     "channel": "Dieser Wert wird bei der Erstellung einer Regel für ein kanalspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.",
     "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt.",
