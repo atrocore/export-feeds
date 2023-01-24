@@ -70,8 +70,7 @@ class ExportFeed extends Base
             }
         }
 
-        $this->prepareFeedViaLanguage();
-        $this->prepareFeedViaChannel();
+        $this->getRepository()->removeInvalidConfiguratorItems($exportFeed->get('id'));
 
         $data = [
             'id'   => Util::generateId(),
@@ -181,7 +180,9 @@ class ExportFeed extends Base
             $post = new \stdClass();
             $post->type = 'Attribute';
             $post->name = $attribute->get('name');
-            $post->locale = $feed->get('language');
+            if (empty($feed->get('language'))) {
+                $post->locale = 'mainLocale';
+            }
             $post->exportFeedId = $feed->get('id');
             $post->exportFeedName = $feed->get('name');
             $post->attributeId = $attribute->get('id');
@@ -216,8 +217,7 @@ class ExportFeed extends Base
 
     public function readEntity($id)
     {
-        $this->prepareFeedViaLanguage();
-        $this->prepareFeedViaChannel();
+        $this->getRepository()->removeInvalidConfiguratorItems($id);
 
         return parent::readEntity($id);
     }
@@ -225,34 +225,10 @@ class ExportFeed extends Base
     public function findLinkedEntities($id, $link, $params)
     {
         if ($link === 'configuratorItems') {
-            $this->prepareFeedViaLanguage();
-            $this->prepareFeedViaChannel();
             $this->getRepository()->removeInvalidConfiguratorItems($id);
         }
 
         return parent::findLinkedEntities($id, $link, $params);
-    }
-
-    public function prepareFeedViaLanguage(): void
-    {
-        $languages = ['mainLocale'];
-        if ($this->getConfig()->get('isMultilangActive', false)) {
-            $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
-        }
-        $languages = implode("','", $languages);
-
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET `language`='mainLocale' WHERE `language` NOT IN ('$languages')");
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET `deleted`=1 WHERE `locale` NOT IN ('$languages')");
-    }
-
-    public function prepareFeedViaChannel(): void
-    {
-        $this->getEntityManager()->getPDO()->exec(
-            "UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
-        );
-        $this->getEntityManager()->getPDO()->exec(
-            "UPDATE `export_configurator_item` SET deleted=1 WHERE `type`='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
-        );
     }
 
     public function prepareEntityForOutput(Entity $entity)
