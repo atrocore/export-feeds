@@ -64,7 +64,7 @@ class ExportFeed extends Base
                 "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id=$id AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
             );
         } catch (\Throwable $e) {
-            $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e);
+            $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e->getMessage());
         }
     }
 
