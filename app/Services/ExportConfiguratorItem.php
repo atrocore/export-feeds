@@ -58,6 +58,7 @@ class ExportConfiguratorItem extends Base
 
         $entity->set('entity', $feed->getFeedField('entity'));
         $entity->set('column', $this->prepareColumnName($entity));
+        $entity->set('exportFeedLanguage', !empty($feed->get('language')) ? $feed->get('language') : null);
         $entity->set('isAttributeMultiLang', false);
         $entity->set('attributeNameValue', $entity->get('name'));
         $entity->set('editable', $this->getAcl()->check($feed, 'edit'));
