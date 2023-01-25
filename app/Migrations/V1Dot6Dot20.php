@@ -30,10 +30,30 @@ class V1Dot6Dot20 extends Base
     public function up(): void
     {
         $this->getPDO()->exec("UPDATE export_feed SET `language`='main' WHERE `language`='mainLocale'");
-        $this->getPDO()->exec("UPDATE export_configurator_item SET locale='main' WHERE locale='mainLocale'");
-        $this->getPDO()->exec("ALTER TABLE export_configurator_item CHANGE locale language VARCHAR(255) DEFAULT NULL COLLATE `utf8mb4_unicode_ci`");
+        $this->getPDO()->exec("UPDATE export_configurator_item SET locale='main' WHERE locale='' OR locale IS NULL OR locale='mainLocale'");
+        $this->getPDO()->exec("ALTER TABLE export_configurator_item CHANGE locale `language` VARCHAR(255) DEFAULT NULL COLLATE `utf8mb4_unicode_ci`");
 
-        // всі мовні записи потрібно мутувати в новий спосіб збереження. nameDeDe -> name + de_DE
+        $records = $this->getPDO()->query(
+            "SELECT eci.*, ef.data as ef_data FROM export_configurator_item eci INNER JOIN export_feed ef ON ef.id=eci.export_feed_id WHERE eci.deleted=0 AND ef.deleted=0 AND eci.type='Field'"
+        )->fetchAll(\PDO::FETCH_ASSOC);
+
+        /** @var \Espo\Core\Utils\Metadata $metadata */
+        $metadata = (new \Espo\Core\Application())->getContainer()->get('metadata');
+
+        foreach ($records as $record) {
+            $data = @json_decode($record['ef_data'], true);
+            if (empty($data) || empty($data['entity'])) {
+                continue;
+            }
+
+            $fieldDefs = $metadata->get(['entityDefs', $data['entity'], 'fields', $record['name']]);
+            if (empty($fieldDefs['multilangField'])) {
+                continue;
+            }
+            $this->getPDO()->exec(
+                "UPDATE export_configurator_item SET `name`='{$fieldDefs['multilangField']}', `language`='{$fieldDefs['multilangLocale']}' WHERE id='{$record['id']}'"
+            );
+        }
     }
 
     public function down(): void
