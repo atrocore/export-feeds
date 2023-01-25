@@ -26,7 +26,7 @@ Espo.define('export:views/export-feed/fields/language', 'views/fields/enum',
 
             setupOptions() {
                 this.params.options = ['main'];
-                this.translatedOptions = {"main": this.translate('main', 'languageFilter', 'Global')};
+                this.translatedOptions = {"main": this.getLanguage().translateOption('main', 'languageFilter', 'Global')};
 
                 (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
                     this.params.options.push(locale);
