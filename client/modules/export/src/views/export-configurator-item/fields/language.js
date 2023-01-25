@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-configurator-item/fields/locale', 'views/fields/enum',
+Espo.define('export:views/export-configurator-item/fields/language', 'views/fields/enum',
     Dep => {
 
         return Dep.extend({

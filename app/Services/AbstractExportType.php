@@ -172,7 +172,7 @@ abstract class AbstractExportType extends Base
         if (!empty($row['attributeId'])) {
             $attribute = $this->getAttribute($row['attributeId']);
 
-            $locale = $row['locale'];
+            $locale = $row['language'];
             if ($locale === 'main') {
                 $locale = '';
             }

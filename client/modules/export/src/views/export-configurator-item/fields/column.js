@@ -38,7 +38,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
                         this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
                             let name = 'name';
                             if (this.model.get('columnType') === 'name') {
-                                let locale = this.model.get('locale');
+                                let locale = this.model.get('language');
                                 if (locale === 'main') {
                                     locale = '';
                                 }
@@ -121,10 +121,10 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         },
 
         prepareAttributeValue() {
-            let locale = this.model.get('locale');
+            let language = this.model.get('language');
 
-            if (locale === 'main') {
-                locale = '';
+            if (language === 'main') {
+                language = '';
             }
 
             if (this.model.get('columnType') === 'name') {
@@ -133,8 +133,8 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
 
             if (this.model.get('columnType') === 'internal') {
                 let name = this.model.get('attributeNameValue');
-                if (locale) {
-                    name = name + ' / ' + locale;
+                if (language) {
+                    name = name + ' / ' + language;
                 }
 
                 this.model.set('column', name);

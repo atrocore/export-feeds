@@ -9,7 +9,7 @@
     "exportBy": "Verwandte Entitätsfelder",
     "exportIntoSeparateColumns": "Trennen",
     "type": "Typ",
-    "locale": "Sprache",
+    "language": "Sprache",
     "scope": "Scope",
     "channel": "Kanal",
     "mask": "Maske",

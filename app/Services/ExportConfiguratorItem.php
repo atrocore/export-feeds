@@ -39,7 +39,7 @@ class ExportConfiguratorItem extends Base
             'exportIntoSeparateColumns',
             'sortOrder',
             'attributeId',
-            'locale',
+            'language',
             'scope',
             'channelId',
             'channelName',
@@ -127,25 +127,25 @@ class ExportConfiguratorItem extends Base
             return '-';
         }
 
-        $locale = $entity->get('locale');
+        $language = $entity->get('language');
 
-        if ($locale === 'main') {
-            $locale = '';
+        if ($language === 'main') {
+            $language = '';
         }
 
         $column = (string)$entity->get('column');
 
         if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
             $name = 'name';
-            if (!empty($locale) && !empty($attribute->get('isMultilang'))) {
-                $name .= ucfirst(Util::toCamelCase(strtolower($locale)));
+            if (!empty($language) && !empty($attribute->get('isMultilang'))) {
+                $name .= ucfirst(Util::toCamelCase(strtolower($language)));
             }
 
             $column = $attribute->get($name);
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $attribute->get('name');
-            if (!empty($locale)) {
-                $column .= ' / ' . $locale;
+            if (!empty($language)) {
+                $column .= ' / ' . $language;
             }
         }
 

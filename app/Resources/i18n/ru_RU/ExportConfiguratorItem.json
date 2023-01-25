@@ -9,7 +9,7 @@
     "exportBy": "Поля связанных сущностей",
     "exportIntoSeparateColumns": "Разделять",
     "type": "Тип",
-    "locale": "Язык",
+    "language": "Язык",
     "scope": "Область действия",
     "channel": "Канал",
     "mask": "Маска",

@@ -136,7 +136,7 @@ class ExportFeed extends Base
         $addedAttributes = [];
         if (!empty($items = $feed->get('configuratorItems')) && count($items) > 0) {
             foreach ($items as $item) {
-                if (!empty($item->get('attributeId')) && $item->get('locale') === 'main') {
+                if (!empty($item->get('attributeId')) && $item->get('language') === 'main') {
                     $addedAttributes[] = $item->get('attributeId');
                 }
             }
@@ -295,7 +295,7 @@ class ExportFeed extends Base
             foreach ($items['collection'] as $item) {
                 $row = [
                     'columnType'                => $item->get('columnType'),
-                    'locale'                    => $item->get('locale'),
+                    'language'                  => $item->get('language'),
                     'column'                    => $eciService->prepareColumnName($item),
                     'entity'                    => $feed->getFeedField('entity'),
                     'template'                  => $feed->get('template'),

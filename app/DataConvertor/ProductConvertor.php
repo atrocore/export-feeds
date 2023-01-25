@@ -111,6 +111,6 @@ class ProductConvertor extends Convertor
             return true;
         }
 
-        return $pav->get('language') === $configuration['locale'];
+        return $pav->get('language') === $configuration['language'];
     }
 }

@@ -89,9 +89,9 @@
       "importDisabled": true,
       "emHidden": true
     },
-    "locale": {
+    "language": {
       "type": "varchar",
-      "view": "export:views/export-configurator-item/fields/locale"
+      "view": "export:views/export-configurator-item/fields/language"
     },
     "entity": {
       "type": "varchar",
