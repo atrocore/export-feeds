@@ -48,7 +48,7 @@ class ExportFeed extends Base
              * Prepare language configuration
              */
             $this->getPDO()->exec(
-                "UPDATE `export_feed` SET `language`='' WHERE export_feed_id='{$exportFeed->get('id')}' AND `language` NOT IN ('$languages')"
+                "UPDATE `export_feed` SET `language`='' WHERE id='{$exportFeed->get('id')}' AND `language` NOT IN ('$languages')"
             );
             $this->getPDO()->exec(
                 "UPDATE `export_configurator_item` SET `deleted`=1 WHERE `locale` NOT IN ('$languages')"
