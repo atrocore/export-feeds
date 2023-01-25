@@ -54,14 +54,6 @@ class ExportFeed extends Base
                 "UPDATE `export_configurator_item` SET `deleted`=1 WHERE `locale` NOT IN ('$languages')"
             );
 
-
-            if (!empty($exportFeed->get('language'))) {
-                // видали мовні записи якщо мова вказана і вона інша
-//                $this->getPDO()->exec(
-//                    "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND `language` NOT IN ('mainLocale')!='{}'"
-//                );
-            }
-
             /**
              * Prepare scope|channel configuration
              */
