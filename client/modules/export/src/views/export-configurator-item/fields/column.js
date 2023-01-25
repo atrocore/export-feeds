@@ -116,7 +116,18 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
             }
 
             if (this.model.get('columnType') === 'internal') {
-                this.model.set('column', this.translate(this.model.get('name'), 'fields', this.model.get('entity')));
+                let columnName = this.translate(this.model.get('name'), 'fields', this.model.get('entity'));
+
+                let language = this.model.get('language');
+                if (language === 'main') {
+                    language = '';
+                }
+
+                if (language) {
+                    columnName += ' / ' + language;
+                }
+
+                this.model.set('column', columnName);
             }
         },
 

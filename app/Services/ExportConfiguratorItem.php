@@ -114,6 +114,10 @@ class ExportConfiguratorItem extends Base
             }
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+            $language = !empty($entity->get('language')) && $entity->get('language') !== 'main' ? $entity->get('language') : '';
+            if (!empty($language)) {
+                $column .= ' / ' . $language;
+            }
         } elseif ($entity->get('columnType') === 'custom') {
             $column = (string)$entity->get('column');
         }
