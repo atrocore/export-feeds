@@ -107,7 +107,7 @@ class ProductConvertor extends Convertor
 
     protected function isLanguageEquals(Entity $pav, array $configuration): bool
     {
-        if (empty($pav->get('isAttributeMultiLang'))) {
+        if (empty($pav->get('attributeIsMultilang'))) {
             return true;
         }
 
