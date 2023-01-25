@@ -1,3 +1,4 @@
+<?php
 /*
  * Export Feeds
  * Free Extension
@@ -17,22 +18,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-feed/fields/language', 'views/fields/enum',
-    Dep => {
+declare(strict_types=1);
 
-        return Dep.extend({
+namespace Export\Migrations;
 
-            prohibitedEmptyValue: false,
+use Espo\Core\Exceptions\Error;
+use Treo\Core\Migration\Base;
 
-            setupOptions() {
-                this.params.options = ['main'];
-                this.translatedOptions = {"main": this.translate('main', 'languageFilter', 'Global')};
+class V1Dot6Dot20 extends Base
+{
+    public function up(): void
+    {
+        $this->getPDO()->exec("UPDATE export_configurator_item SET locale='main' WHERE locale='mainLocale'");
 
-                (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
-                    this.params.options.push(locale);
-                    this.translatedOptions[locale] = locale;
-                });
-            },
+        // всі мовні записи потрібно мутувати в новий спосіб збереження. nameDeDe -> name + de_DE
+    }
 
-        })
-    });
+    public function down(): void
+    {
+        throw new Error('Downgrade is prohibited!');
+    }
+}

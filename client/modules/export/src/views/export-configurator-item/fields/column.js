@@ -39,7 +39,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
                             let name = 'name';
                             if (this.model.get('columnType') === 'name') {
                                 let locale = this.model.get('locale');
-                                if (locale === 'mainLocale') {
+                                if (locale === 'main') {
                                     locale = '';
                                 }
 
@@ -123,7 +123,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         prepareAttributeValue() {
             let locale = this.model.get('locale');
 
-            if (locale === 'mainLocale') {
+            if (locale === 'main') {
                 locale = '';
             }
 

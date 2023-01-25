@@ -163,10 +163,6 @@ abstract class AbstractExportType extends Base
         $row['entity'] = $feedData['entity'];
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
-        if ($row['locale'] === 'mainLocale') {
-            $row['locale'] = 'main';
-        }
-
         return $row;
     }
 
@@ -177,7 +173,7 @@ abstract class AbstractExportType extends Base
             $attribute = $this->getAttribute($row['attributeId']);
 
             $locale = $row['locale'];
-            if ($locale === 'mainLocale') {
+            if ($locale === 'main') {
                 $locale = '';
             }
 
@@ -207,7 +203,7 @@ abstract class AbstractExportType extends Base
                 $originField = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangField']);
                 return $this->getLanguage($locale)->translate($originField, 'fields', $entity);
             } else {
-                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'mainLocale') {
+                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'main') {
                     return $this->getLanguage($row['channelLocales'][0])->translate($row['field'], 'fields', $entity);
                 } else {
                     return $this->translate($row['field'], 'fields', $entity);

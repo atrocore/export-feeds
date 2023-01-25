@@ -32,24 +32,35 @@ class ExportFeed extends Base
 {
     public function removeInvalidConfiguratorItems(string $exportFeedId): void
     {
-        $languages = ['', 'mainLocale'];
+        $exportFeed = $this->get($exportFeedId);
+        if (empty($exportFeed)) {
+            return;
+        }
+
+        $languages = ['', 'main'];
         if ($this->getConfig()->get('isMultilangActive', false)) {
             $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
         }
         $languages = implode("','", $languages);
-
-        $id = $this->getPDO()->quote($exportFeedId);
 
         try {
             /**
              * Prepare language configuration
              */
             $this->getPDO()->exec(
-                "UPDATE `export_feed` SET `language`='' WHERE export_feed_id=$id AND `language` NOT IN ('$languages')"
+                "UPDATE `export_feed` SET `language`='' WHERE export_feed_id='{$exportFeed->get('id')}' AND `language` NOT IN ('$languages')"
             );
             $this->getPDO()->exec(
                 "UPDATE `export_configurator_item` SET `deleted`=1 WHERE `locale` NOT IN ('$languages')"
             );
+
+
+            if (!empty($exportFeed->get('language'))) {
+                // видали мовні записи якщо мова вказана і вона інша
+//                $this->getPDO()->exec(
+//                    "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND `language` NOT IN ('mainLocale')!='{}'"
+//                );
+            }
 
             /**
              * Prepare scope|channel configuration
@@ -58,10 +69,10 @@ class ExportFeed extends Base
                 "UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
             );
             $this->getPDO()->exec(
-                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id=$id AND type='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
+                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
             );
             $this->getPDO()->exec(
-                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id=$id AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
+                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
             );
         } catch (\Throwable $e) {
             $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e->getMessage());

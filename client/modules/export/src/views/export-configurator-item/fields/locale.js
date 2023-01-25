@@ -37,8 +37,8 @@ Espo.define('export:views/export-configurator-item/fields/locale', 'views/fields
             },
 
             setupOptions() {
-                this.params.options = ['mainLocale'];
-                this.translatedOptions = {mainLocale: this.translate('mainLocale', 'labels', 'ExportConfiguratorItem')};
+                this.params.options = ['main'];
+                this.translatedOptions = {"main": this.translate('main', 'languageFilter', 'Global')};
 
                 (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
                     this.params.options.push(locale);

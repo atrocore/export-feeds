@@ -40,13 +40,14 @@ class ExportConfiguratorItem extends Base
             if (!empty($attribute = $entity->get('attribute'))) {
                 $entity->set('name', $attribute->get('name'));
             }
-            if (empty($entity->get('locale'))) {
-                $entity->set('locale', 'mainLocale');
-            }
         }
 
         if ($entity->isAttributeChanged('valueModifier') && !empty($entity->get('valueModifier'))) {
             $this->getInjection(ValueModifier::class)->apply($this->getValueModifiers($entity));
+        }
+
+        if (empty($entity->get('locale'))) {
+            $entity->set('locale', 'main');
         }
 
         parent::beforeSave($entity, $options);

@@ -129,7 +129,7 @@ class ExportConfiguratorItem extends Base
 
         $locale = $entity->get('locale');
 
-        if ($locale === 'mainLocale') {
+        if ($locale === 'main') {
             $locale = '';
         }
 

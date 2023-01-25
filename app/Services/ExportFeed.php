@@ -136,7 +136,7 @@ class ExportFeed extends Base
         $addedAttributes = [];
         if (!empty($items = $feed->get('configuratorItems')) && count($items) > 0) {
             foreach ($items as $item) {
-                if (!empty($item->get('attributeId')) && $item->get('locale') === 'mainLocale') {
+                if (!empty($item->get('attributeId')) && $item->get('locale') === 'main') {
                     $addedAttributes[] = $item->get('attributeId');
                 }
             }
@@ -181,7 +181,7 @@ class ExportFeed extends Base
             $post->type = 'Attribute';
             $post->name = $attribute->get('name');
             if (empty($feed->get('language'))) {
-                $post->locale = 'mainLocale';
+                $post->locale = 'main';
             }
             $post->exportFeedId = $feed->get('id');
             $post->exportFeedName = $feed->get('name');
