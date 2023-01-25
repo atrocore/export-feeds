@@ -30,16 +30,6 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
                 }
             ];
 
-            this.listenTo(this.model, 'before:save', attrs => {
-                let confirmMessage = this.translate('languageChanged', 'confirmations', 'ExportFeed');
-                if (this.model['_confirmMessage'] === confirmMessage) {
-                    this.model['_confirmMessage'] = null;
-                }
-                if (attrs.language) {
-                    this.model['_confirmMessage'] = confirmMessage;
-                }
-            });
-
             this.listenTo(this.model, 'after:save', () => {
                 this.handleExportButtonDisability();
             });
