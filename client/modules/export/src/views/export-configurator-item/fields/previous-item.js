@@ -64,8 +64,8 @@ Espo.define('export:views/export-configurator-item/fields/previous-item', 'views
             if (object.type === 'Attribute') {
                 name = object.attributeNameValue;
 
-                if (object.isAttributeMultiLang && object.locale !== 'main') {
-                    name += ' / ' + object.locale;
+                if (object.isAttributeMultiLang && object.language !== 'main') {
+                    name += ' / ' + object.language;
                 }
             }
 

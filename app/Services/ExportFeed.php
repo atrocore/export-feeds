@@ -181,7 +181,7 @@ class ExportFeed extends Base
             $post->type = 'Attribute';
             $post->name = $attribute->get('name');
             if (empty($feed->get('language'))) {
-                $post->locale = 'main';
+                $post->language = 'main';
             }
             $post->exportFeedId = $feed->get('id');
             $post->exportFeedName = $feed->get('name');

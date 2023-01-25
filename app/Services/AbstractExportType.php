@@ -172,16 +172,16 @@ abstract class AbstractExportType extends Base
         if (!empty($row['attributeId'])) {
             $attribute = $this->getAttribute($row['attributeId']);
 
-            $locale = $row['language'];
-            if ($locale === 'main') {
-                $locale = '';
+            $language = $row['language'];
+            if ($language === 'main') {
+                $language = '';
             }
 
             if (empty($row['columnType']) || $row['columnType'] == 'name') {
                 $name = 'name';
 
-                if (!empty($attribute->get('isMultilang')) && !empty($locale)) {
-                    $name = Util::toCamelCase(strtolower($name . '_' . $locale));
+                if (!empty($attribute->get('isMultilang')) && !empty($language)) {
+                    $name = Util::toCamelCase(strtolower($name . '_' . $language));
                 }
 
                 return (string)$attribute->get($name);
@@ -189,8 +189,8 @@ abstract class AbstractExportType extends Base
 
             if ($row['columnType'] == 'internal') {
                 $value = (string)$attribute->get('name');
-                if (!empty($locale)) {
-                    $value .= ' / ' . $locale;
+                if (!empty($language)) {
+                    $value .= ' / ' . $language;
                 }
 
                 return $value;
