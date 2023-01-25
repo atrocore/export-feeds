@@ -71,15 +71,18 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
 
             if (this.model.get('type') === 'Field') {
                 name = this.translate(name, 'fields', this.model.get('entity'));
+                if (!this.model.get('exportFeedLanguage') && this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('name')}.isMultilang`) && this.model.get('language') !== 'main') {
+                    name += ' / ' + this.model.get('language');
+                }
             }
 
             if (this.model.get('type') === 'Attribute') {
                 name = this.model.get('attributeNameValue');
-
-                if (this.model.get('isAttributeMultiLang') && this.model.get('locale') !== 'mainLocale') {
-                    name += ' / ' + this.model.get('locale');
+                if (!this.model.get('exportFeedLanguage') && this.model.get('isAttributeMultiLang') && this.model.get('language') !== 'main') {
+                    name += ' / ' + this.model.get('language');
                 }
             }
+
             if (this.model.get('type') === 'Fixed value') {
                 name = this.getLanguage().translate('fixedValue', 'fields', 'ExportConfiguratorItem');
             }
@@ -161,7 +164,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || [];
                 Object.keys(fields).forEach(name => {
                     let field = fields[name];
-                    if (!notExportedType.includes(field.type) && !field.disabled && !field.exportDisabled) {
+                    if (!notExportedType.includes(field.type) && !field.disabled && !field.exportDisabled && !field.multilangField) {
                         result[name] = fields[name];
                     }
                 });

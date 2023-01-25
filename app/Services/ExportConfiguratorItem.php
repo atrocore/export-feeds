@@ -39,7 +39,7 @@ class ExportConfiguratorItem extends Base
             'exportIntoSeparateColumns',
             'sortOrder',
             'attributeId',
-            'locale',
+            'language',
             'scope',
             'channelId',
             'channelName',
@@ -58,6 +58,7 @@ class ExportConfiguratorItem extends Base
 
         $entity->set('entity', $feed->getFeedField('entity'));
         $entity->set('column', $this->prepareColumnName($entity));
+        $entity->set('exportFeedLanguage', !empty($feed->get('language')) ? $feed->get('language') : null);
         $entity->set('isAttributeMultiLang', false);
         $entity->set('attributeNameValue', $entity->get('name'));
         $entity->set('editable', $this->getAcl()->check($feed, 'edit'));
@@ -113,6 +114,10 @@ class ExportConfiguratorItem extends Base
             }
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+            $language = !empty($entity->get('language')) && $entity->get('language') !== 'main' ? $entity->get('language') : '';
+            if (!empty($language)) {
+                $column .= ' / ' . $language;
+            }
         } elseif ($entity->get('columnType') === 'custom') {
             $column = (string)$entity->get('column');
         }
@@ -126,25 +131,25 @@ class ExportConfiguratorItem extends Base
             return '-';
         }
 
-        $locale = $entity->get('locale');
+        $language = $entity->get('language');
 
-        if ($locale === 'mainLocale') {
-            $locale = '';
+        if ($language === 'main') {
+            $language = '';
         }
 
         $column = (string)$entity->get('column');
 
         if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
             $name = 'name';
-            if (!empty($locale) && !empty($attribute->get('isMultilang'))) {
-                $name .= ucfirst(Util::toCamelCase(strtolower($locale)));
+            if (!empty($language) && !empty($attribute->get('isMultilang'))) {
+                $name .= ucfirst(Util::toCamelCase(strtolower($language)));
             }
 
             $column = $attribute->get($name);
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $attribute->get('name');
-            if (!empty($locale)) {
-                $column .= ' / ' . $locale;
+            if (!empty($language)) {
+                $column .= ' / ' . $language;
             }
         }
 

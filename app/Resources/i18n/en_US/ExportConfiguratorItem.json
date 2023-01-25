@@ -9,7 +9,7 @@
     "remove": "Remove",
     "exportIntoSeparateColumns": "Separate",
     "type": "Type",
-    "locale": "Language",
+    "language": "Language",
     "scope": "Scope",
     "channel": "Channel",
     "mask": "Mask",
@@ -31,9 +31,6 @@
     "name": "Name",
     "internal": "Name / Language",
     "custom": "Custom Name"
-  },
-  "labels": {
-    "mainLocale": "Main Language"
   },
   "options": {
     "boolFilterFieldValue": {

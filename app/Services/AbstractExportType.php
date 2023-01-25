@@ -163,8 +163,9 @@ abstract class AbstractExportType extends Base
         $row['entity'] = $feedData['entity'];
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
-        if ($row['locale'] === 'mainLocale') {
-            $row['locale'] = 'main';
+        // change field name for multilingual field
+        if ($row['type'] === 'Field' && $row['language'] !== 'main') {
+            $row['field'] .= ucfirst(Util::toCamelCase(strtolower($row['language'])));
         }
 
         return $row;
@@ -176,16 +177,16 @@ abstract class AbstractExportType extends Base
         if (!empty($row['attributeId'])) {
             $attribute = $this->getAttribute($row['attributeId']);
 
-            $locale = $row['locale'];
-            if ($locale === 'mainLocale') {
-                $locale = '';
+            $language = $row['language'];
+            if ($language === 'main') {
+                $language = '';
             }
 
             if (empty($row['columnType']) || $row['columnType'] == 'name') {
                 $name = 'name';
 
-                if (!empty($attribute->get('isMultilang')) && !empty($locale)) {
-                    $name = Util::toCamelCase(strtolower($name . '_' . $locale));
+                if (!empty($attribute->get('isMultilang')) && !empty($language)) {
+                    $name = Util::toCamelCase(strtolower($name . '_' . $language));
                 }
 
                 return (string)$attribute->get($name);
@@ -193,8 +194,8 @@ abstract class AbstractExportType extends Base
 
             if ($row['columnType'] == 'internal') {
                 $value = (string)$attribute->get('name');
-                if (!empty($locale)) {
-                    $value .= ' / ' . $locale;
+                if (!empty($language)) {
+                    $value .= ' / ' . $language;
                 }
 
                 return $value;
@@ -207,7 +208,7 @@ abstract class AbstractExportType extends Base
                 $originField = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangField']);
                 return $this->getLanguage($locale)->translate($originField, 'fields', $entity);
             } else {
-                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'mainLocale') {
+                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'main') {
                     return $this->getLanguage($row['channelLocales'][0])->translate($row['field'], 'fields', $entity);
                 } else {
                     return $this->translate($row['field'], 'fields', $entity);
@@ -280,7 +281,14 @@ abstract class AbstractExportType extends Base
         /**
          * Set language prism
          */
-        if (!empty($params['where'])) {
+        if (!empty($this->data['feed']['language'])) {
+            $GLOBALS['languagePrism'] = $this->data['feed']['language'];
+        }
+
+        /**
+         * Set language prism via prism filter
+         */
+        if (empty($GLOBALS['languagePrism']) && !empty($params['where'])) {
             foreach ($params['where'] as $where) {
                 if (!empty($where['value'][0]) && is_string($where['value'][0]) && strpos((string)$where['value'][0], 'prismVia') !== false) {
                     $language = str_replace('prismVia', '', $where['value'][0]);

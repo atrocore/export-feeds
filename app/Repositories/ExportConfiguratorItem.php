@@ -46,6 +46,10 @@ class ExportConfiguratorItem extends Base
             $this->getInjection(ValueModifier::class)->apply($this->getValueModifiers($entity));
         }
 
+        if (empty($entity->get('language'))) {
+            $entity->set('language', 'main');
+        }
+
         parent::beforeSave($entity, $options);
     }
 

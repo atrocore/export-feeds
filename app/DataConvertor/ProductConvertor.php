@@ -46,15 +46,7 @@ class ProductConvertor extends Convertor
         $hash = md5(json_encode($record));
         if ($this->rowPavs['hash'] !== $hash) {
             $this->rowPavs['hash'] = $hash;
-            $productPavs = $this->getService('ProductAttributeValue')->findEntities([
-                'where' => [
-                    [
-                        'type'      => 'equals',
-                        'attribute' => 'productId',
-                        'value'     => $record['id'],
-                    ]
-                ]
-            ]);
+            $productPavs = $this->getService('Product')->findLinkedEntities($record['id'], 'productAttributeValues', []);
             $this->rowPavs['pavs'] = array_key_exists('collection', $productPavs) ? $productPavs['collection'] : new EntityCollection();
         }
 
@@ -107,10 +99,10 @@ class ProductConvertor extends Convertor
 
     protected function isLanguageEquals(Entity $pav, array $configuration): bool
     {
-        if (empty($pav->get('isAttributeMultiLang'))) {
+        if (!empty($GLOBALS['languagePrism']) || empty($pav->get('attributeIsMultilang'))) {
             return true;
         }
 
-        return $pav->get('language') === $configuration['locale'];
+        return $pav->get('language') === $configuration['language'];
     }
 }

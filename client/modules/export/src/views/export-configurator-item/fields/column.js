@@ -32,19 +32,19 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
                 this.prepareValue();
             }
 
-            this.listenTo(this.model, 'change:attributeId change:locale change:columnType', () => {
+            this.listenTo(this.model, 'change:attributeId change:language change:columnType', () => {
                 if (this.model.get('columnType') !== 'custom') {
                     if (this.model.get('attributeId')) {
                         this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
                             let name = 'name';
                             if (this.model.get('columnType') === 'name') {
-                                let locale = this.model.get('locale');
-                                if (locale === 'mainLocale') {
-                                    locale = '';
+                                let language = this.model.get('language');
+                                if (language === 'main') {
+                                    language = '';
                                 }
 
-                                if (locale && attribute.isMultilang) {
-                                    name = name + locale.charAt(0).toUpperCase() + locale.charAt(1) + locale.charAt(3) + locale.charAt(4).toLowerCase();
+                                if (language && attribute.isMultilang) {
+                                    name = name + language.charAt(0).toUpperCase() + language.charAt(1) + language.charAt(3) + language.charAt(4).toLowerCase();
                                 }
                             }
                             this.model.set('attributeNameValue', attribute[name]);
@@ -116,15 +116,26 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
             }
 
             if (this.model.get('columnType') === 'internal') {
-                this.model.set('column', this.translate(this.model.get('name'), 'fields', this.model.get('entity')));
+                let columnName = this.translate(this.model.get('name'), 'fields', this.model.get('entity'));
+
+                let language = this.model.get('language');
+                if (language === 'main') {
+                    language = '';
+                }
+
+                if (language) {
+                    columnName += ' / ' + language;
+                }
+
+                this.model.set('column', columnName);
             }
         },
 
         prepareAttributeValue() {
-            let locale = this.model.get('locale');
+            let language = this.model.get('language');
 
-            if (locale === 'mainLocale') {
-                locale = '';
+            if (language === 'main') {
+                language = '';
             }
 
             if (this.model.get('columnType') === 'name') {
@@ -133,8 +144,8 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
 
             if (this.model.get('columnType') === 'internal') {
                 let name = this.model.get('attributeNameValue');
-                if (locale) {
-                    name = name + ' / ' + locale;
+                if (language) {
+                    name = name + ' / ' + language;
                 }
 
                 this.model.set('column', name);

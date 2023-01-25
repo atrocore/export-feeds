@@ -93,7 +93,7 @@
   },
   "tooltips": {
     "template": "You can use the syntax for <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig</a> template engine.",
-    "language": "This value is inherited by creating a rule for some language specific attribute and has no impact on export itself.",
+    "language": "Choose the language to receive the localized data.",
     "channel": "This value is inherited by creating a rule for some channel specific attribute and has no impact on export itself.",
     "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation.",
