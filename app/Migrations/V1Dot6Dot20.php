@@ -29,7 +29,9 @@ class V1Dot6Dot20 extends Base
 {
     public function up(): void
     {
+        $this->getPDO()->exec("UPDATE export_feed SET `language`='main' WHERE `language`='mainLocale'");
         $this->getPDO()->exec("UPDATE export_configurator_item SET locale='main' WHERE locale='mainLocale'");
+        $this->getPDO()->exec("ALTER TABLE export_configurator_item CHANGE locale language VARCHAR(255) DEFAULT NULL COLLATE `utf8mb4_unicode_ci`");
 
         // всі мовні записи потрібно мутувати в новий спосіб збереження. nameDeDe -> name + de_DE
     }
