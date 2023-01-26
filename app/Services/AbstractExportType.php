@@ -279,13 +279,6 @@ abstract class AbstractExportType extends Base
         }
 
         /**
-         * Set language prism
-         */
-        if (!empty($this->data['feed']['language'])) {
-            $GLOBALS['languagePrism'] = $this->data['feed']['language'];
-        }
-
-        /**
          * Set language prism via prism filter
          */
         if (empty($GLOBALS['languagePrism']) && !empty($params['where'])) {
@@ -356,6 +349,13 @@ abstract class AbstractExportType extends Base
         $filePath = $this->createPath();
         $fullFilePath = $this->getConfig()->get('filesPath', 'upload/files/') . $filePath;
         Util::createDir($fullFilePath);
+
+        /**
+         * Set language prism
+         */
+        if (!empty($this->data['feed']['language'])) {
+            $GLOBALS['languagePrism'] = $this->data['feed']['language'];
+        }
 
         $jobMetadata = [
             'configuration' => [],
