@@ -164,7 +164,7 @@ abstract class AbstractExportType extends Base
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         // change field name for multilingual field
-        if ($row['type'] === 'Field' && $row['language'] !== 'main') {
+        if ($row['type'] === 'Field' && $row['language'] !== 'main' && empty($GLOBALS['languagePrism'])) {
             $row['field'] .= ucfirst(Util::toCamelCase(strtolower($row['language'])));
         }
 
