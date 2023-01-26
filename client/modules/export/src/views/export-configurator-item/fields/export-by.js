@@ -85,17 +85,16 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
             let linkEntity = this.getMetadata().get(['entityDefs', entity, 'links', field, 'entity']);
             if (linkEntity) {
                 result[field + 'Id'] = this.translate(field, 'fields', entity) + ': ID';
-            }
-
-            $.each(this.getMetadata().get(['entityDefs', linkEntity, 'fields']), (linkField, linkFieldDefs) => {
-                if (!linkFieldDefs.disabled && !linkFieldDefs.exportDisabled && !['jsonObject', 'linkMultiple', 'link'].includes(linkFieldDefs.type)) {
-                    if (linkField === 'name') {
-                        result[field + 'Name'] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
-                    } else {
-                        result[field + '.' + linkField] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                $.each(this.getMetadata().get(['entityDefs', linkEntity, 'fields']), (linkField, linkFieldDefs) => {
+                    if (!linkFieldDefs.disabled && !linkFieldDefs.exportDisabled && !['jsonObject', 'linkMultiple', 'link'].includes(linkFieldDefs.type)) {
+                        if (linkField === 'name') {
+                            result[field + 'Name'] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                        } else {
+                            result[field + '.' + linkField] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                        }
                     }
-                }
-            });
+                });
+            }
 
             return result;
         },
