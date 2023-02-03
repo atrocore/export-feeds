@@ -45,7 +45,7 @@ class V1Dot6Dot20 extends Base
 
         foreach ($languages as $language) {
             foreach ($records as $record) {
-                if (empty($record['name']) || !is_string($record['name']) || mb_strlen($record['name']) < 4) {
+                if (empty($record['name']) || !is_string($record['name']) || mb_strlen($record['name']) < 5) {
                     continue;
                 }
 
