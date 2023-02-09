@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Espo\Core\EventManager\Event;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 
@@ -65,6 +66,8 @@ class ProductConvertor extends Convertor
             $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
         }
 
+        $productAttribute = null;
+
         foreach ($pavs as $pav) {
             if ($this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
                 $productAttribute = $pav;
@@ -94,7 +97,15 @@ class ProductConvertor extends Convertor
             $result = $this->convertType($productAttribute->get('attributeType'), $productAttribute->toArray(), array_merge($configuration, ['field' => 'value']), $toString);
         }
 
-        return $result;
+        $eventPayload = [
+            'result'           => $result,
+            'productAttribute' => $productAttribute,
+            'record'           => $record,
+            'configuration'    => $configuration,
+            'toString'         => $toString
+        ];
+
+        return $this->container->get('eventManager')->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');
     }
 
     protected function isLanguageEquals(Entity $pav, array $configuration): bool
