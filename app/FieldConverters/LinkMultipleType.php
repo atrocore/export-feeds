@@ -139,6 +139,7 @@ class LinkMultipleType extends LinkType
             }
 
             if (!empty($configuration['exportIntoSeparateColumns'])) {
+                $k = 0;
                 foreach ($links as $k => $link) {
                     $columnName = $column;
                     foreach ($foreignList[$k] as $relField => $relVal) {
@@ -153,6 +154,13 @@ class LinkMultipleType extends LinkType
                     }
 
                     $result[$columnName] = $link;
+                }
+                if (!empty($configuration['limitRelation']) && is_int($configuration['limitRelation'])) {
+                    while ($k < $configuration['limitRelation']) {
+                        $columnName = $column . '_' . ($k + 1);
+                        $result[$columnName] = $this->needStringResult ? $configuration['nullValue'] : null;
+                        $k++;
+                    }
                 }
             } else {
                 if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
