@@ -155,7 +155,7 @@ abstract class AbstractExportType extends Base
 
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
-        $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
+        $row['nullValue'] = array_key_exists('nullValue', $feedData) ? $feedData['nullValue'] : 'Null';
         $row['markForNotLinkedAttribute'] = !empty($feedData['markForNotLinkedAttribute']) ? $feedData['markForNotLinkedAttribute'] : '--';
         $row['decimalMark'] = !empty($feedData['decimalMark']) ? $feedData['decimalMark'] : ',';
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
