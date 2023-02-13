@@ -156,7 +156,7 @@ class LinkMultipleType extends LinkType
                     $result[$columnName] = $link;
                 }
                 if (!empty($configuration['limitRelation']) && is_int($configuration['limitRelation'])) {
-                    while ($k < $configuration['limitRelation']) {
+                    while ($k < ($configuration['limitRelation'] - 1)) {
                         $k++;
                         $columnName = $column . '_' . ($k + 1);
                         $result[$columnName] = $this->needStringResult ? $configuration['nullValue'] : null;
