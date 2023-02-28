@@ -39,48 +39,7 @@ Espo.define('export:views/export-job/record/detail', 'views/record/detail', func
             this.model.save().then(() => {
                 this.notify('Saved', 'success');
             });
-        },
-        actionCancelExportJob(data) {
-            this.notify('Saving...');
-            this.model.set('state', 'Canceled');
-            this.model.save().then(() => {
-                this.notify('Saved', 'success');
-            });
-        },
-        actionRemoveRelated: function (data) {
-            let id = data.id;
-
-            let message = 'Global.messages.removeRecordConfirmation';
-            if (this.getMetadata().get(`scopes.${this.scope}.type`) === 'Hierarchy') {
-                message = 'Global.messages.removeRecordConfirmationHierarchically';
-            }
-
-            let scopeMessage = this.getMetadata().get(`clientDefs.${this.scope}.deleteConfirmation`);
-            if (scopeMessage) {
-                message = scopeMessage;
-            }
-
-            let parts = message.split('.');
-
-            this.confirm({
-                message: this.translate(parts.pop(), parts.pop(), parts.pop()),
-                confirmText: this.translate('Remove')
-            }, () => {
-                let model = this.collection.get(id);
-                this.notify('removing');
-                model.destroy({
-                    success: () => {
-                        this.notify('Removed', 'success');
-                        this.collection.fetch();
-                        this.model.trigger('after:unrelate', this.link, this.defs);
-                    },
-
-                    error: () => {
-                        this.collection.push(model);
-                    }
-                });
-            });
-        },
+        }
     });
 
 });
