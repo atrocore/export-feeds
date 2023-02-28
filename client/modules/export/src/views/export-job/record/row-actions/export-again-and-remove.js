@@ -17,18 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-Espo.define('export:views/export-job/record/list', 'views/record/list',
-    Dep => Dep.extend({
-        rowActionsView: 'export:views/export-job/record/row-actions/export-again-and-remove',
+Espo.define('export:views/export-job/record/row-actions/export-again-and-remove', 'views/record/row-actions/remove-only', Dep => {
 
-        actionTryAgainExportJob(data) {
-            let model = this.collection.get(data.id);
+    return Dep.extend({
 
-            this.notify('Saving...');
-            model.set('state', 'Pending');
-            model.save().then(() => {
-                this.notify('Saved', 'success');
-            });
+        getActionList() {
+            let list = Dep.prototype.getActionList.call(this);
+
+            if (['Failed', 'Canceled'].includes(this.model.get('state')) && this.options.acl.edit) {
+                list.unshift({
+                    action: 'tryAgainExportJob',
+                    label: 'tryAgain',
+                    data: {
+                        id: this.model.id
+                    }
+                });
+            }
+
+            return list;
         }
-    })
-);
+    });
+
+});

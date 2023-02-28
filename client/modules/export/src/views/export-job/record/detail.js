@@ -21,8 +21,25 @@ Espo.define('export:views/export-job/record/detail', 'views/record/detail', func
 
     return Dep.extend({
 
-        duplicateAction: false
+        duplicateAction: false,
 
+        setupActionItems: function () {
+            if (['Failed', 'Canceled'].includes(this.model.get('state'))) {
+                this.dropdownItemList.push({
+                    'name': 'tryAgainExportJob',
+                    action: 'tryAgainExportJob',
+                    label: 'tryAgain',
+                });
+            }
+            Dep.prototype.setupActionItems.call(this);
+        },
+        actionTryAgainExportJob(data) {
+            this.notify('Saving...');
+            this.model.set('state', 'Pending');
+            this.model.save().then(() => {
+                this.notify('Saved', 'success');
+            });
+        }
     });
 
 });
