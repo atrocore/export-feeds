@@ -83,6 +83,10 @@ abstract class AbstractExportType extends Base
 
             if ($data['type'] === 'linkMultiple') {
                 $row['exportIntoSeparateColumns'] = false;
+                $row['offsetRelation'] = 0;
+                $row['limitRelation'] = 20;
+                $row['sortFieldRelation'] = 'id';
+                $row['sortOrderRelation'] = '1'; // ASC
             }
 
             if ($data['type'] === 'currency') {

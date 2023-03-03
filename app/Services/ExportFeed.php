@@ -101,7 +101,7 @@ class ExportFeed extends Base
         $feed = $this->readEntity($feedId);
 
         $addedFields = [];
-        foreach ($feed->get('configuratorItems') as $item){
+        foreach ($feed->get('configuratorItems') as $item) {
             $addedFields[] = $item->get('name') . '_' . $item->get('language');
         }
 
@@ -123,6 +123,18 @@ class ExportFeed extends Base
             }
             if (isset($row['exportIntoSeparateColumns'])) {
                 $item->set('exportIntoSeparateColumns', !empty($row['exportIntoSeparateColumns']));
+            }
+            if (isset($row['offsetRelation'])) {
+                $item->set('offsetRelation', $row['offsetRelation']);
+            }
+            if (isset($row['limitRelation'])) {
+                $item->set('limitRelation', $row['limitRelation']);
+            }
+            if (isset($row['sortFieldRelation'])) {
+                $item->set('sortFieldRelation', $row['sortFieldRelation']);
+            }
+            if (isset($row['sortOrderRelation'])) {
+                $item->set('sortOrderRelation', $row['sortOrderRelation']);
             }
             if (isset($row['mask'])) {
                 $item->set('mask', $row['mask']);
