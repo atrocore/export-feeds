@@ -214,7 +214,10 @@ abstract class AbstractExportType extends Base
         }
 
         if ($row['columnType'] == 'internal') {
-            return $this->translate($row['field'], 'fields', $entity);
+            $language = $row['language'];
+            $language = $language === 'main' ? '' : Util::toCamelCase(strtolower($language), '_', true);
+
+            return $this->translate($row['field'] . $language, 'fields', $entity);
         }
 
         return $row['column'];
