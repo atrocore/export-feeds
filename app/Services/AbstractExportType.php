@@ -49,7 +49,7 @@ abstract class AbstractExportType extends Base
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
-        $configuration = [['field' => 'id', 'column' => 'ID']];
+        $configuration = [['field' => 'id', 'language' => 'main', 'column' => 'ID']];
 
         /** @var array $allFields */
         $allFields = $metadata->get(['entityDefs', $scope, 'fields'], []);

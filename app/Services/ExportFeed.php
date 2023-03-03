@@ -100,12 +100,15 @@ class ExportFeed extends Base
     {
         $feed = $this->readEntity($feedId);
 
-        $addedFields = array_column($feed->get('configuratorItems')->toArray(), 'name');
+        $addedFields = [];
+        foreach ($feed->get('configuratorItems') as $item){
+            $addedFields[] = $item->get('name') . '_' . $item->get('language');
+        }
 
         $allFields = AbstractExportType::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
 
         foreach ($allFields as $row) {
-            if (in_array($row['field'], $addedFields)) {
+            if (in_array($row['field'] . '_' . $row['language'], $addedFields)) {
                 continue;
             }
 
