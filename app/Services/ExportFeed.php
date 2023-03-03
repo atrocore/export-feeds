@@ -112,6 +112,8 @@ class ExportFeed extends Base
             $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
             $item->set('type', 'Field');
             $item->set('name', $row['field']);
+            $item->set('language', $row['language']);
+            $item->set('columnType', 'internal');
             $item->set('exportFeedId', $feedId);
             if (isset($row['exportBy'])) {
                 $item->set('exportBy', $row['exportBy']);

@@ -63,9 +63,15 @@ abstract class AbstractExportType extends Base
             }
 
             $row = [
-                'field'  => $field,
-                'column' => $language->translate($field, 'fields', $scope)
+                'field'    => $field,
+                'language' => 'main',
+                'column'   => $language->translate($field, 'fields', $scope)
             ];
+
+            if (!empty($data['multilangLocale'])) {
+                $row['field'] = $data['multilangField'];
+                $row['language'] = $data['multilangLocale'];
+            }
 
             if (isset($configuration[$row['column']])) {
                 continue 1;
@@ -88,19 +94,6 @@ abstract class AbstractExportType extends Base
             }
 
             $configuration[$row['column']] = $row;
-
-            // push locales fields
-            if (!empty($data['isMultilang'])) {
-                foreach ($allFields as $langField => $langData) {
-                    if (!empty($langData['multilangField']) && $langData['multilangField'] == $field) {
-                        $langRow = [
-                            'field'  => $langField,
-                            'column' => $language->translate($langField, 'fields', $scope)
-                        ];
-                        $configuration[$langRow['column']] = $langRow;
-                    }
-                }
-            }
         }
 
         return array_values($configuration);
