@@ -41,10 +41,6 @@
       "csv": "CSV",
       "json": "JSON",
       "xml": "XML"
-    },
-    "priority": {
-      "Normal": "Normal",
-      "Crucial": "Crucial"
     }
   },
   "labels": {

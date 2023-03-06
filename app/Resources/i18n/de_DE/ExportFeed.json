@@ -63,12 +63,6 @@
     "singleQuote": "Anführungszeichen",
     "Export": "Export"
   },
-  "options": {
-    "priority": {
-      "Normal": "Normal",
-      "Crucial": "Wesentlich"
-    }
-  },
   "messages": {
     "delimitersMustBeDifferent": "Alle Feedparameter sollten eindeutige Werte haben.",
     "noExportFeedSelected": "Kein Exportfeed ausgewählt.",
