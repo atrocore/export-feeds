@@ -1,6 +1,5 @@
 {
   "fields": {
-    "priority": "Priorität",
     "template": "Vorlage",
     "sortOrderField": "Sortierreihenfolge (Feld)",
     "sortOrderDirection": "Sortierreihenfolge (Richtung)",

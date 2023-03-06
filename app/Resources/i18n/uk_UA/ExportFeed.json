@@ -1,6 +1,5 @@
 {
   "fields": {
-    "priority": "Пріоритет",
     "template": "Шаблон",
     "sortOrderField": "Порядок сортування (поле)",
     "sortOrderDirection": "Порядок сортування (напрямок)",
