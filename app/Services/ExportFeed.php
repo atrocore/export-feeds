@@ -434,7 +434,9 @@ class ExportFeed extends Base
 
         $md5Hash = md5(json_encode($data['feed']) . $data['offset'] . $data['limit']);
 
-        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data, 'Normal', $md5Hash);
+        $priority = empty($data['feed']['priority']) ? 'Normal' : (string)$data['feed']['priority'];
+
+        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data, $priority, $md5Hash);
         $this->getEntityManager()->saveEntity($exportJob);
 
         return $exportJob->get('id');

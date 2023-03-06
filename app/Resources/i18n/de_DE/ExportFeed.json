@@ -1,5 +1,6 @@
 {
   "fields": {
+    "priority": "Priorität",
     "template": "Vorlage",
     "sortOrderField": "Sortierreihenfolge (Feld)",
     "sortOrderDirection": "Sortierreihenfolge (Richtung)",
@@ -62,6 +63,12 @@
     "doubleQuote": "Doppel-Anführungszeichen",
     "singleQuote": "Anführungszeichen",
     "Export": "Export"
+  },
+  "options": {
+    "priority": {
+      "Normal": "Normal",
+      "Crucial": "Wesentlich"
+    }
   },
   "messages": {
     "delimitersMustBeDifferent": "Alle Feedparameter sollten eindeutige Werte haben.",

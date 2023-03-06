@@ -1,0 +1,13 @@
+{
+  "fields": {
+    "exportFeed": "Експортний фід"
+  },
+  "links": {
+    "exportFeed": "Експортний фід"
+  },
+  "options": {
+    "job": {
+      "ExportFeed": "Експортний фід"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "scopeNames": {
+    "ExportFeed": "Експортний фід",
+    "ExportJob": "Задача експорту",
+    "ExportConfiguratorItem": "Конфігуратор"
+  },
+  "scopeNamesPlural": {
+    "ExportFeed": "Експортний фіди",
+    "ExportJob": "Задачі експорту",
+    "ExportConfiguratorItem": "Конфігуратор"
+  },
+  "labels": {
+    "Generate": "Згенерувати",
+    "tryAgain": "Повторити спробу",
+    "filter": "Фільтр"
+  }
+}

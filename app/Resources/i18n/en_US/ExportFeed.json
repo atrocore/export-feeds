@@ -1,5 +1,6 @@
 {
   "fields": {
+    "priority": "Priority",
     "template": "Template",
     "sortOrderField": "Sort Order (field)",
     "sortOrderDirection": "Sort Order (direction)",
@@ -41,6 +42,10 @@
       "csv": "CSV",
       "json": "JSON",
       "xml": "XML"
+    },
+    "priority": {
+      "Normal": "Normal",
+      "Crucial": "Crucial"
     }
   },
   "labels": {
