@@ -106,6 +106,8 @@ class LinkMultipleType extends LinkType
                 $foreignList = $foreignResult['list'];
             }
 
+            $foreignList = array_slice($foreignList, 0, $params['maxSize']);
+
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
             $links = [];
