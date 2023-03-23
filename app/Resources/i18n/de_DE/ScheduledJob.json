@@ -7,7 +7,8 @@
   },
   "options": {
     "job": {
-      "ExportFeed": "Exportfeed"
+      "ExportFeed": "Exportfeed",
+      "TrialExport": "Probe-Export"
     }
   }
 }
