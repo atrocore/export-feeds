@@ -23,7 +23,6 @@ declare(strict_types=1);
 namespace Export\Jobs;
 
 use Espo\Core\Jobs\Base;
-use Exception;
 
 class TrialExport extends Base
 {
