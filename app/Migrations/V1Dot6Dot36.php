@@ -24,23 +24,15 @@ namespace Export\Migrations;
 
 use Treo\Core\Migration\Base;
 
-class V1Dot4Dot59 extends Base
+class V1Dot6Dot36 extends Base
 {
     public function up(): void
     {
-        $this->execute("ALTER TABLE export_job ADD trial INT DEFAULT 0 COLLATE `utf8mb4_unicode_ci`");
+        $this->getPDO()->exec("ALTER TABLE export_job ADD trial INT DEFAULT 0 COLLATE `utf8mb4_unicode_ci`");
     }
 
     public function down(): void
     {
-        $this->execute("ALTER TABLE export_job DROP trial");
-    }
-
-    protected function execute(string $sql)
-    {
-        try {
-            $this->getPDO()->exec($sql);
-        } catch (\Throwable $e) {
-        }
+        $this->getPDO()->exec("ALTER TABLE export_job DROP trial");
     }
 }
