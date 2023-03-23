@@ -8,7 +8,7 @@
   "options": {
     "job": {
       "ExportFeed": "Exportfeed",
-      "TrialExport": "Probe-Export"
+      "TrialExport": "Wiederholung von fehlgeschlagenen Export Jobs"
     }
   }
 }
