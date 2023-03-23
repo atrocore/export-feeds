@@ -5,6 +5,10 @@
       "required": true,
       "trim": true
     },
+    "trial": {
+      "type": "int",
+      "default": 0
+    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
