@@ -34,21 +34,23 @@ class TrialExport extends Base
             return true;
         }
 
-        $requestData = new \stdClass();
-        $requestData->id = $exportFeedId;
+        $records = $this
+            ->getEntityManager()
+            ->getRepository('ExportJob')
+            ->where([
+                "exportFeedId" => $exportFeedId,
+                "state"        => 'Failed',
+                "trial<"       => 3
+            ])
+            ->find();
 
-        $records = $this->getEntityManager()->getRepository('ExportJob')->where([
-            "exportFeedId" => $exportFeedId,
-            "state" => 'Failed',
-            "trial<" => 3
-        ])->order('createdAt','DESC')->limit(0,5)->find();
-
-        foreach($records as $record){
+        foreach ($records as $record) {
             $trial = intval($record->get('trial'));
             $record->set('state', 'Pending');
             $record->set('trial', ++$trial);
-            $this->getEntityManager()->getRepository('ExportJob')->save($record);
+            $this->getEntityManager()->saveEntity($record);
         }
+
         return true;
     }
 }
