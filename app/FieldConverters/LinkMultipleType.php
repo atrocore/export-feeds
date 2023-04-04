@@ -99,81 +99,86 @@ class LinkMultipleType extends LinkType
             $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
         }
 
-        if (!empty($foreignResult['total'])) {
-            if (isset($foreignResult['collection'])) {
-                $foreignList = $foreignResult['collection']->toArray();
+        $foreignList = [];
+        if (isset($foreignResult['collection'])) {
+            $foreignList = $foreignResult['collection']->toArray();
+        } elseif (isset($foreignResult['list'])) {
+            $foreignList = $foreignResult['list'];
+        }
+
+        $links = [];
+        if (empty($foreignList)) {
+            $links[] = $this->needStringResult ? $configuration['nullValue'] : null;
+        }
+
+        $foreignList = array_slice($foreignList, 0, $params['maxSize']);
+
+        $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
+
+        foreach ($foreignList as $foreignData) {
+            $fieldResult = [];
+            foreach ($exportBy as $v) {
+                $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
+                if ($assetUrl !== null) {
+                    $fieldResult[$v] = $assetUrl;
+                    continue 1;
+                }
+
+                $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+
+                $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
+
+                // prepare type for product attribute value
+                if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
+                    $foreignType = $foreignData['attributeType'] === 'asset' ? 'varchar' : $foreignData['attributeType'];
+                }
+
+                $foreignConfiguration = array_merge($configuration, ['field' => $v]);
+                $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
+            }
+
+            if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
+                $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
             } else {
-                $foreignList = $foreignResult['list'];
+                $links[] = $fieldResult;
             }
+        }
 
-            $foreignList = array_slice($foreignList, 0, $params['maxSize']);
-
-            $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
-
-            $links = [];
-            foreach ($foreignList as $foreignData) {
-                $fieldResult = [];
-                foreach ($exportBy as $v) {
-                    $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
-                    if ($assetUrl !== null) {
-                        $fieldResult[$v] = $assetUrl;
-                        continue 1;
-                    }
-
-                    $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-
-                    $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
-
-                    // prepare type for product attribute value
-                    if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
-                        $foreignType = $foreignData['attributeType'] === 'asset' ? 'varchar' : $foreignData['attributeType'];
-                    }
-
-                    $foreignConfiguration = array_merge($configuration, ['field' => $v]);
-                    $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
-                }
-
-                if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
-                    $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
-                } else {
-                    $links[] = $fieldResult;
-                }
-            }
-
-            if (!empty($configuration['exportIntoSeparateColumns'])) {
-                $k = 0;
-                foreach ($links as $k => $link) {
-                    $columnName = $column;
+        if (!empty($configuration['exportIntoSeparateColumns'])) {
+            $k = 0;
+            foreach ($links as $k => $link) {
+                $columnName = $column;
+                if (isset($foreignList[$k])) {
                     foreach ($foreignList[$k] as $relField => $relVal) {
                         if (is_array($relVal) || is_object($relVal)) {
                             continue 1;
                         }
                         $columnName = str_replace('{{' . $relField . '}}', (string)$relVal, $columnName);
                     }
-
-                    if ($columnName === $column) {
-                        $columnName = $column . '_' . ($k + 1);
-                    }
-
-                    $result[$columnName] = $link;
                 }
-                if (!empty($configuration['limitRelation']) && is_int($configuration['limitRelation'])) {
-                    while ($k < ($configuration['limitRelation'] - 1)) {
-                        $k++;
-                        $columnName = $column . '_' . ($k + 1);
-                        $result[$columnName] = $this->needStringResult ? $configuration['nullValue'] : null;
-                    }
+
+                if ($columnName === $column) {
+                    $columnName = $column . '_' . ($k + 1);
                 }
+
+                $result[$columnName] = $link;
+            }
+            if (!empty($configuration['limitRelation']) && is_int($configuration['limitRelation'])) {
+                while ($k < ($configuration['limitRelation'] - 1)) {
+                    $k++;
+                    $columnName = $column . '_' . ($k + 1);
+                    $result[$columnName] = $this->needStringResult ? $configuration['nullValue'] : null;
+                }
+            }
+        } else {
+            if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
+                $preparedLinks = [];
+                foreach ($links as $link) {
+                    $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
+                }
+                $result[$column] = implode($configuration['delimiter'], $preparedLinks);
             } else {
-                if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
-                    $preparedLinks = [];
-                    foreach ($links as $link) {
-                        $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
-                    }
-                    $result[$column] = implode($configuration['delimiter'], $preparedLinks);
-                } else {
-                    $result[$column] = $links;
-                }
+                $result[$column] = $links;
             }
         }
         $this->needStringResult = false;
