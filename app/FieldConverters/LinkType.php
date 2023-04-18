@@ -50,7 +50,6 @@ class LinkType extends AbstractType
                 }
 
                 if (!empty($foreign)) {
-
                     /**
                      * For main image
                      */
