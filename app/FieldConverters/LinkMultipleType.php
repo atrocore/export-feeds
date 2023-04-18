@@ -29,7 +29,8 @@ class LinkMultipleType extends LinkType
         $field = $configuration['field'];
         $column = $configuration['column'];
         $entity = $configuration['entity'];
-        $foreignEntity = $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
+
+        $foreignEntity = $this->getForeignEntityName($entity, $field);
 
         $sortBy = $this->convertor->getMetadata()->get(['clientDefs', $entity, 'relationshipPanels', $field, 'sortBy']);
 
@@ -90,7 +91,7 @@ class LinkMultipleType extends LinkType
         }
 
         try {
-            $foreignResult = $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
+            $foreignResult = $this->findLinkedEntities($entity, $record, $field, $params);
         } catch (\Throwable $e) {
             $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
         }
@@ -182,5 +183,10 @@ class LinkMultipleType extends LinkType
             }
         }
         $this->needStringResult = false;
+    }
+
+    protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
+    {
+        return $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
     }
 }
