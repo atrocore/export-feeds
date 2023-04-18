@@ -34,21 +34,13 @@ class LinkType extends AbstractType
 
         $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
 
-        $linkId = $record[$field . 'Id'];
+        $linkId = $record[$this->getFieldName($field)];
 
         if (!empty($linkId)) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
-            $needToCallForeignEntity = false;
-            foreach ($exportBy as $v) {
-                if (!in_array($v, ['id', 'name'])) {
-                    $needToCallForeignEntity = true;
-                    break 1;
-                }
-            }
-
-            if ($needToCallForeignEntity) {
-                $foreignEntity = $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
+            if ($this->needToCallForeignEntity($exportBy)) {
+                $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
                         $foreign = $this->convertor->getEntity((string)$foreignEntity, $linkId);
@@ -212,5 +204,26 @@ class LinkType extends AbstractType
         }
 
         return null;
+    }
+
+    protected function getFieldName(string $field): string
+    {
+        return $field . 'Id';
+    }
+
+    protected function getForeignEntityName(string $entity, string $field): string
+    {
+        return $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
+    }
+
+    protected function needToCallForeignEntity(array $exportBy): bool
+    {
+        foreach ($exportBy as $v) {
+            if (!in_array($v, ['id', 'name'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

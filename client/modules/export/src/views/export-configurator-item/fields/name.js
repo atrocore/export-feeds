@@ -122,6 +122,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                     translations.push(this.translate('id', 'fields', 'Global'));
                 } else {
                     let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+                    if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
+                        entity = 'ExtensibleEnumOption';
+                    }
                     if (entity) {
                         let parts = field.split('.');
                         if (field.substring(field.length - 2) === 'Id') {
