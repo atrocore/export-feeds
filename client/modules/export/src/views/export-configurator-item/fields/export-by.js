@@ -55,6 +55,9 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         getTranslatesForExportByField() {
             let result = {'id': this.translate('id', 'fields', 'Global')};
             let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
+                entity = 'ExtensibleEnumOption';
+            }
             if (entity) {
                 /**
                  * For main image
@@ -102,7 +105,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         isRequired() {
             let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name')]);
 
-            return this.model.get('type') === 'Field' && fieldDefs && ['image', 'asset', 'link', 'linkMultiple'].includes(fieldDefs.type) && (this.params.options || []).length;
+            return this.model.get('type') === 'Field' && fieldDefs && ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum'].includes(fieldDefs.type) && (this.params.options || []).length;
         },
 
     })
