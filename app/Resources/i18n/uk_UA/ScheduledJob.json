@@ -1,9 +1,12 @@
 {
   "fields": {
-    "exportFeed": "Експортний фід"
+    "exportFeed": "Експортний фід",
+    "exportFeeds": "Експортний фіди",
+    "maximumHoursToLookBack": "Максимальна кількість годин для ретроспективи"
   },
   "links": {
-    "exportFeed": "Експортний фід"
+    "exportFeed": "Експортний фід",
+    "exportFeeds": "Експортний фіди"
   },
   "options": {
     "job": {

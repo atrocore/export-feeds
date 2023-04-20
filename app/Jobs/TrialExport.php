@@ -29,18 +29,17 @@ class TrialExport extends Base
     public function run($data, $targetId, $targetType, $scheduledJobId): bool
     {
         $scheduledJob = $this->getEntityManager()->getEntity('ScheduledJob', $scheduledJobId);
-        if (empty($scheduledJob) || empty($exportFeedId = $scheduledJob->get('exportFeedId'))) {
+
+        if (empty($scheduledJob)) {
             return true;
         }
+
+        $whereClause = $this->buildWhereClause($scheduledJob);
 
         $records = $this
             ->getEntityManager()
             ->getRepository('ExportJob')
-            ->where([
-                "exportFeedId" => $exportFeedId,
-                "state"        => 'Failed',
-                "trial<"       => 3
-            ])
+            ->where($whereClause)
             ->find();
 
         foreach ($records as $record) {
@@ -51,5 +50,29 @@ class TrialExport extends Base
         }
 
         return true;
+    }
+
+    private function buildWhereClause($scheduledJob): array
+    {
+        $whereClause = [
+            "state"  => 'Failed',
+            "trial<" => 3,
+        ];
+
+        if (($maximumHoursToLookBack = $scheduledJob->get('maximumHoursToLookBack')) && $maximumHoursToLookBack > 0) {
+            $currentDate = new \DateTime();
+            $endDate = $currentDate->format('Y-m-d H:i:s');
+            $startDate = $currentDate->modify("-{$maximumHoursToLookBack} hours")->format('Y-m-d H:i:s');
+
+            $whereClause['createdAt>='] = $startDate;
+            $whereClause['createdAt<='] = $endDate;
+        }
+
+        $exportFeedIds = array_column(($scheduledJob->get('exportFeeds'))->toArray(), 'id');
+        if (!empty($exportFeedIds)) {
+            $whereClause['exportFeedId'] = $exportFeedIds;
+        }
+
+        return $whereClause;
     }
 }
