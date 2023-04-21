@@ -81,6 +81,10 @@ abstract class AbstractExportType extends Base
                 $row['exportBy'] = ['id'];
             }
 
+            if (in_array($data['type'], ['extensibleEnum', 'extensibleMultiEnum'])) {
+                $row['exportBy'] = ['name'];
+            }
+
             if ($data['type'] === 'linkMultiple') {
                 $row['exportIntoSeparateColumns'] = false;
                 $row['offsetRelation'] = 0;
