@@ -50,6 +50,7 @@ class LayoutController extends AbstractListener
             $newRows[] = $row;
             if ($row[0]['name'] === 'job') {
                 $newRows[] = [['name' => 'exportFeed'], false];
+                $newRows[] = [['name' => 'exportFeeds'], ['name' => 'maximumHoursToLookBack']];
             }
         }
 

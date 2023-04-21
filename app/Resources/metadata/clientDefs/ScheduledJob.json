@@ -5,18 +5,40 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "in",
+              "type": "equals",
               "attribute": "job",
-              "value": ["ExportFeed", "TrialExport"]
+              "value": "ExportFeed"
             }
           ]
         },
         "required": {
           "conditionGroup": [
             {
+              "type": "equals",
+              "attribute": "job",
+              "value": "ExportFeed"
+            }
+          ]
+        }
+      },
+      "exportFeeds": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "job",
+              "value": "TrialExport"
+            }
+          ]
+        }
+      },
+      "maximumHoursToLookBack": {
+        "visible": {
+          "conditionGroup": [
+            {
               "type": "in",
               "attribute": "job",
-              "value": ["ExportFeed", "TrialExport"]
+              "value": ["TrialImport","TrialExport"]
             }
           ]
         }

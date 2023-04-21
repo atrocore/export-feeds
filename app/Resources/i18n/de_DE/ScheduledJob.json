@@ -1,9 +1,12 @@
 {
   "fields": {
-    "exportFeed": "Exportfeed"
+    "exportFeed": "Exportfeed",
+    "exportFeeds": "Export Feeds",
+    "maximumHoursToLookBack": "Maximale Stundenzahl für die Rückschau"
   },
   "links": {
-    "exportFeed": "Exportfeed"
+    "exportFeed": "Exportfeed",
+    "exportFeeds": "Export Feeds"
   },
   "options": {
     "job": {
