@@ -99,6 +99,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 if (this.model.get('exportIntoSeparateColumns')) {
                     extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportConfiguratorItem')}`;
                 }
+                if (this.model.get('attributeId')) {
+                    extraInfo += '<br>';
+                }
             }
 
             if (this.model.get('attributeId')) {
@@ -121,10 +124,21 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 if (field === 'id') {
                     translations.push(this.translate('id', 'fields', 'Global'));
                 } else {
-                    let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
-                    if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
-                        entity = 'ExtensibleEnumOption';
+                    let entity;
+                    if (this.model.get('type') === 'Field') {
+                        entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+                        if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
+                            entity = 'ExtensibleEnumOption';
+                        }
+                    } else {
+                        if (this.model.get('attributeId')) {
+                            let attribute = this.getAttribute(this.model.get('attributeId'));
+                            if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
+                                entity = 'ExtensibleEnumOption';
+                            }
+                        }
                     }
+
                     if (entity) {
                         let parts = field.split('.');
                         if (field.substring(field.length - 2) === 'Id') {
@@ -174,6 +188,18 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             }
 
             return result;
+        },
+
+        getAttribute(attributeId) {
+            let key = `attribute_${attributeId}`;
+            if (!Espo[key]) {
+                Espo[key] = null;
+                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
+                    Espo[key] = attr;
+                });
+            }
+
+            return Espo[key];
         },
 
     })

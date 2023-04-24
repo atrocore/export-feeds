@@ -23,7 +23,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:name change:type', () => {
+            this.listenTo(this.model, 'change:name change:type change:attributeId', () => {
                 this.setupOptions();
                 this.reRender();
                 this.model.set('exportBy', null);
@@ -54,10 +54,22 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
 
         getTranslatesForExportByField() {
             let result = {'id': this.translate('id', 'fields', 'Global')};
-            let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
-            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
-                entity = 'ExtensibleEnumOption';
+
+            let entity;
+            if (this.model.get('type') === 'Field') {
+                entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+                if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
+                    entity = 'ExtensibleEnumOption';
+                }
+            } else {
+                if (this.model.get('attributeId')) {
+                    let attribute = this.getAttribute(this.model.get('attributeId'));
+                    if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
+                        entity = 'ExtensibleEnumOption';
+                    }
+                }
             }
+
             if (entity) {
                 /**
                  * For main image
@@ -103,9 +115,28 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         },
 
         isRequired() {
-            let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name')]);
+            let type = 'varchar';
+            if (this.model.get('type') === 'Field') {
+                type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
+            } else {
+                if (this.model.get('attributeId')) {
+                    type = this.getAttribute(this.model.get('attributeId')).type;
+                }
+            }
 
-            return this.model.get('type') === 'Field' && fieldDefs && ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum'].includes(fieldDefs.type) && (this.params.options || []).length;
+            return ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum'].includes(type) && (this.params.options || []).length;
+        },
+
+        getAttribute(attributeId) {
+            let key = `attribute_${attributeId}`;
+            if (!Espo[key]) {
+                Espo[key] = null;
+                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
+                    Espo[key] = attr;
+                });
+            }
+
+            return Espo[key];
         },
 
     })
