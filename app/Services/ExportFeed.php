@@ -211,12 +211,17 @@ class ExportFeed extends Base
                 $post->channelName = $feed->get('channelName');
             }
 
-            if ($attribute->get('type') === 'currency') {
-                $post->mask = "{{value}} {{currency}}";
-            }
-
-            if ($attribute->get('type') === 'unit') {
-                $post->mask = "{{value}} {{unit}}";
+            switch ($attribute->get('type')) {
+                case 'currency':
+                    $post->mask = "{{value}} {{currency}}";
+                    break;
+                case 'unit':
+                    $post->mask = "{{value}} {{unit}}";
+                    break;
+                case 'extensibleEnum':
+                case 'extensibleMultiEnum':
+                    $post->exportBy = ["name"];
+                    break;
             }
 
             $exportConfiguratorItemService->createEntity($post);
