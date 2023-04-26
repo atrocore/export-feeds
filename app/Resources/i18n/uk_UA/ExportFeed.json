@@ -8,6 +8,8 @@
     "entity": "Сутність",
     "type": "Тип",
     "isActive": "Активний",
+    "lastStatus": "Останній статус",
+    "lastTime": "Останнє виконання",
     "fileType": "Формат",
     "isFileHeaderRow": "Рядок заголовка",
     "csvFieldDelimiter": "Роздільник полів",

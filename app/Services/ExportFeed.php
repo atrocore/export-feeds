@@ -268,6 +268,19 @@ class ExportFeed extends Base
             $entity->set('convertRelationsToString', true);
         }
 
+        $latestJob = $this->getEntityManager()
+            ->getRepository('ExportJob')
+            ->where([
+                'exportFeedId' => $entity->id
+            ])
+            ->order('start', 'DESC')
+            ->limit(1, 0)
+            ->findOne();
+        if(!empty($latestJob)){
+            $entity->set('lastStatus', $latestJob->get('state'));
+            $entity->set('lastTime', $latestJob->get('start'));
+        }
+
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
     }
 
