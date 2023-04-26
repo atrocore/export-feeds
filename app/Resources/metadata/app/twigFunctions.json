@@ -1,3 +1,4 @@
 {
-  "getPreviousCategoryId": "\\Export\\TwigFunction\\PreviousCategoryId"
+  "getPreviousCategoryId": "\\Export\\TwigFunction\\PreviousCategoryId",
+  "getExtensibleEnumOption": "\\Export\\TwigFunction\\ExtensibleEnumOption"
 }
