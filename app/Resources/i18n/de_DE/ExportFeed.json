@@ -8,6 +8,8 @@
     "entity": "Entität",
     "type": "Typ",
     "isActive": "Aktiv",
+    "lastStatus": "Letzter Status",
+    "lastTime": "Letzte Ausführung",
     "fileType": "Format",
     "isFileHeaderRow": "Header-Zeile",
     "csvFieldDelimiter": "Feld-Trennzeichen",

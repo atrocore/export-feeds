@@ -255,6 +255,11 @@
       "required": false,
       "tooltip": true,
       "view": "export:views/export-feed/fields/template"
+    },
+    "lastTime": {
+      "type": "datetime",
+      "readOnly": true,
+      "notStorable": true
     }
   },
   "links": {
