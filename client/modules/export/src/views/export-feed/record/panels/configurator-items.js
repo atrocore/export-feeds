@@ -122,7 +122,7 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                     if (!selectObj.massRelate) {
                         postData.ids = [];
                         selectObj.forEach(model => {
-                            postData.ids.push(model.get('id'));
+                            postData.ids.push(model.id);
                         });
                     } else {
                         postData.where = selectObj.where;
