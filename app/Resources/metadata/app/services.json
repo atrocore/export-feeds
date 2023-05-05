@@ -1,4 +1,5 @@
 {
   "QueueManagerExport": "\\Export\\Services\\QueueManagerExport",
-  "ExportTypeSimple": "\\Export\\Services\\ExportTypeSimple"
+  "ExportTypeSimple": "\\Export\\Services\\ExportTypeSimple",
+  "DataSyncErrorsExportDashlet": "\\Export\\Services\\DataSyncErrorsExportDashlet"
 }

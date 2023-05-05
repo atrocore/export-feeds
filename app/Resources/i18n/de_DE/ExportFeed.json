@@ -93,5 +93,10 @@
     "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt.",
     "replaceAttributeValues": "Nicht existierende kanalspezifische Attributwerte mit globalen Werten ersetzen."
+  },
+  "boolFilters": {
+    "onlyExportFailed24Hours": "Nur Export Feeds, die in den letzten 24 Stunden fehlgeschlagen sind",
+    "onlyExportFailed7Days": "Nur Export Feeds, die in den letzten 7 Tagen fehlgeschlagen sind",
+    "onlyExportFailed28Days": "Nur Export Feeds, die in den letzten 28 Tagen fehlgeschlagen sind"
   }
 }

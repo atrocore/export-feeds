@@ -61,4 +61,39 @@ class ExportFeed extends Base
     {
         return $this->getEntityManager()->getRepository('ExportFeed');
     }
+
+    protected function boolFilterOnlyExportFailed24Hours(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'id' => $this->getExportFeedFilteredIds(1)
+        ];
+    }
+
+    protected function boolFilterOnlyExportFailed7Days(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'id' => $this->getExportFeedFilteredIds(7)
+        ];
+    }
+
+    protected function boolFilterOnlyExportFailed28Days(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'id' => $this->getExportFeedFilteredIds(28)
+        ];
+    }
+
+    protected function getExportFeedFilteredIds(int $interval): array
+    {
+        $query = "SELECT exp.id
+            FROM `export_feed` exp
+            JOIN export_job exj ON exj.export_feed_id = exp.id
+            WHERE exj.state = 'Failed'
+            AND exj.start >= DATE_SUB(NOW(), INTERVAL $interval DAY)";
+
+        return array_column(
+            $this->getEntityManager()->getPDO()->query($query)->fetchAll(\PDO::FETCH_ASSOC),
+            'id'
+        );
+    }
 }

@@ -100,5 +100,10 @@
     "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation.",
     "replaceAttributeValues": "Replace non-existing channel specific attribute values with global values."
+  },
+  "boolFilters": {
+    "onlyExportFailed24Hours": "Only Export Feeds that failed during last 24 hours",
+    "onlyExportFailed7Days": "Only Export Feeds that failed during last 7 days",
+    "onlyExportFailed28Days": "Only Export Feeds that failed during last 28 days"
   }
 }

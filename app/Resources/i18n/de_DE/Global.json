@@ -12,6 +12,12 @@
   "labels": {
     "Generate": "Generieren",
     "tryAgain": "Erneut exportieren",
-    "filter": "Filter"
+    "filter": "Filter",
+    "exportErrorDuring24Hours": "Fehler beim Exportieren von Feeds/Jobs während 24 Stunden",
+    "exportErrorDuring7Days": "Fehler beim Exportieren von Feeds/Jobs während 7 Tagen",
+    "exportErrorDuring28Days": "Fehler beim Exportieren von Feeds/Jobs während 28 Tagen"
+  },
+  "dashlets": {
+    "DataSyncErrorsExport": "Synchronisierungsfehler für Datenexport"
   }
 }
