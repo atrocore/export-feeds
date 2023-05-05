@@ -27,4 +27,38 @@ class ExportJob extends Base
     protected function accessOnlyOwn(&$result)
     {
     }
+
+    protected function boolFilterOnlyExportFailed24Hours(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'id' => $this->getFailedExportJobFilteredIds(1)
+        ];
+    }
+
+    protected function boolFilterOnlyExportFailed7Days(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'id' => $this->getFailedExportJobFilteredIds(7)
+        ];
+    }
+
+    protected function boolFilterOnlyExportFailed28Days(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'id' => $this->getFailedExportJobFilteredIds(28)
+        ];
+    }
+
+    protected function getFailedExportJobFilteredIds(int $interval): array
+    {
+        $query = "SELECT id
+            FROM `export_job`
+            WHERE state = 'Failed'
+            AND start >= DATE_SUB(NOW(), INTERVAL $interval DAY)";
+
+        return array_column(
+            $this->getEntityManager()->getPDO()->query($query)->fetchAll(\PDO::FETCH_ASSOC),
+            'id'
+        );
+    }
 }

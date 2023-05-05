@@ -92,5 +92,10 @@
     "convertCollectionToString": "Поля та атрибути типів: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Поля зв'язку будуть розділені \"Роздільником полів для зв'язку\".",
     "replaceAttributeValues": "Замінювати неіснуючі значення для атрибутів каналу глобальними значеннями."
+  },
+  "boolFilters": {
+    "onlyExportFailed24Hours": "Eкспортний фід , які зазнали невдачі протягом останніх 24 годин",
+    "onlyExportFailed7Days": "Eкспортний фід , які зазнали невдачі протягом останніх 7 днів",
+    "onlyExportFailed28Days": "Eкспортний фід , які зазнали невдачі протягом останніх 28 днів"
   }
 }

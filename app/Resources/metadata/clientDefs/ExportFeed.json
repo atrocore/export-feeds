@@ -1,7 +1,10 @@
 {
   "controller": "controllers/record",
   "boolFilterList": [
-    "onlyMy"
+    "onlyMy",
+    "onlyExportFailed24Hours",
+    "onlyExportFailed7Days",
+    "onlyExportFailed28Days"
   ],
   "navigateToEntityAfterQuickCreate": true,
   "disabledSelectList": true,

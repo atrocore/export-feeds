@@ -23,5 +23,10 @@
   "exceptions": {
     "wrongJobState": "Dieser Auftragsstatus kann nicht gesetzt werden.",
     "notExecutableJob": "Der Job kann nicht erneut ausgeführt werden."
+  },
+  "boolFilters": {
+    "onlyExportFailed24Hours": "Nur Exportaufträge, die in den letzten 24 Stunden fehlgeschlagen sind",
+    "onlyExportFailed7Days": "Nur Exportaufträge, die in den letzten 7 Tagen fehlgeschlagen sind",
+    "onlyExportFailed28Days": "Nur Exportaufträge, die in den letzten 28 Tagen fehlgeschlagen sind"
   }
 }

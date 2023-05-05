@@ -12,6 +12,12 @@
   "labels": {
     "Generate": "Згенерувати",
     "tryAgain": "Повторити спробу",
-    "filter": "Фільтр"
+    "filter": "Фільтр",
+    "exportErrorDuring24Hours": "Помилка експортних фідів/завдань протягом 24 годин",
+    "exportErrorDuring7Days": "Помилка експортих фідів/завдань протягом 7 днів",
+    "exportErrorDuring28Days": "Помилка експортних фідів/завдань протягом 28 днів"
+  },
+  "dashlets": {
+    "DataSyncErrorsExport": "Помилки синхронізації експорту даних"
   }
 }
