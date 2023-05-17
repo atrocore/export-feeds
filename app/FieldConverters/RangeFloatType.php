@@ -35,7 +35,7 @@ class RangeFloatType extends FloatType
         $valueFrom = array_key_exists($fieldFrom, $record) && $record[$fieldFrom] !== null ? (float)$record[$fieldFrom] : null;
         $valueTo = array_key_exists($fieldTo, $record) && $record[$fieldTo] !== null ? (float)$record[$fieldTo] : null;
 
-        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' - ' . $valueTo : null;
+        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : null;
 
         $this->applyValueModifiers($configuration, $result[$column]);
     }
@@ -71,7 +71,7 @@ class RangeFloatType extends FloatType
             }
         }
 
-        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' - ' . $valueTo : $nullValue;
+        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : $nullValue;
 
         $this->applyValueModifiers($configuration, $result[$column]);
     }
