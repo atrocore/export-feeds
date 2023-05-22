@@ -41,40 +41,34 @@ Espo.define('export:views/export-configurator-item/fields/mask', 'views/fields/v
             this.hide();
 
             if (this.model.get('type') === 'Field') {
-                let fieldType = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type'], 'varchar');
-                if (this.hasMask(fieldType)) {
-                    this.setRequired();
-                    this.show();
-                    this.setDefaultMask(fieldType);
-                }
-            }
-
-            if (this.model.get('type') === 'Attribute' && this.model.get('attributeId')) {
-                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
-                    if (this.hasMask(attribute.type)) {
+                let fieldDefs = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name')]);
+                if (fieldDefs) {
+                    if (fieldDefs.type === 'currency') {
                         this.setRequired();
                         this.show();
-                        this.setDefaultMask(attribute.type);
+                        this.model.set('mask', '{{value}} {{currency}}');
+                    }
+
+                    if (fieldDefs.measureId) {
+                        this.setRequired();
+                        this.show();
+                        this.model.set('mask', '{{value}} {{unit}}');
+                    }
+                }
+            } else if (this.model.get('type') === 'Attribute' && this.model.get('attributeId')) {
+                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
+                    if (attribute.type === 'currency') {
+                        this.setRequired();
+                        this.show();
+                        this.model.set('mask', '{{value}} {{currency}}');
+                    }
+
+                    if (attribute.measureId) {
+                        this.setRequired();
+                        this.show();
+                        this.model.set('mask', '{{value}} {{unit}}');
                     }
                 });
-            }
-        },
-
-        hasMask(type) {
-            return ['unit', 'currency'].includes(type);
-        },
-
-        setDefaultMask(type) {
-            if (this.model.get('id')) {
-                return;
-            }
-
-            if (type === 'currency') {
-                this.model.set('mask', '{{value}} {{currency}}');
-            }
-
-            if (type === 'unit') {
-                this.model.set('mask', '{{value}} {{unit}}');
             }
         },
 

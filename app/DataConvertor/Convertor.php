@@ -25,12 +25,15 @@ namespace Export\DataConvertor;
 use Espo\Core\Container;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
+use Espo\ORM\Entity;
 use Espo\Services\Record;
 use Export\Core\ValueModifier;
 
 class Convertor
 {
     protected Container $container;
+
+    protected array $attributes = [];
 
     public function __construct(Container $container)
     {
@@ -45,7 +48,11 @@ class Convertor
             return [$column => (string)$configuration['fixedValue']];
         }
 
-        $type = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field'], 'type'], 'varchar');
+        $fieldDefs = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field']]);
+        $type = $fieldDefs['type'] ?? 'varchar';
+        if (!empty($fieldDefs['unitField'])) {
+            $type = 'unit';
+        }
 
         return $this->convertType($type, $record, $configuration, $toString);
     }
@@ -103,5 +110,25 @@ class Convertor
     public function getValueModifier(): ValueModifier
     {
         return $this->container->get(ValueModifier::class);
+    }
+
+    public function getAttributeById(string $attributeId): ?Entity
+    {
+        if (!isset($this->attributes[$attributeId])) {
+            $this->attributes[$attributeId] = $this->container->get('entityManager')->getEntity('Attribute', $attributeId);
+        }
+
+        return $this->attributes[$attributeId];
+    }
+
+    public function getTypeForAttribute(string $attributeId): string
+    {
+        $attribute = $this->getAttributeById($attributeId);
+        $type = $attribute->get('type');
+        if (!empty($attribute->get('measureId'))) {
+            $type = 'unit';
+        }
+
+        return $type;
     }
 }

@@ -41,7 +41,7 @@ class ProductAttributeValueConvertor extends Convertor
             }
             $configuration['valueModifier'] = $valueModifiers;
 
-            return $this->convertType($record['attributeType'], $record, $configuration, $toString);
+            return $this->convertType($this->getTypeForAttribute($record['attributeId']), $record, $configuration, $toString);
         }
 
         return parent::convert($record, $configuration, $toString);
