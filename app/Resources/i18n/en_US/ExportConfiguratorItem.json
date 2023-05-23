@@ -22,7 +22,7 @@
     "valueModifier": "Value Modifier",
     "fixedValue": "Fixed value",
     "previousItem": "Previous Item",
-    "zip": "ZIP"
+    "zip": "Export Assets to a ZIP archive"
   },
   "links": {
     "exportFeed": "Export Feed",

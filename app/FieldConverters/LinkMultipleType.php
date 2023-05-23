@@ -122,9 +122,6 @@ class LinkMultipleType extends LinkType
                 $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
                 if ($assetUrl !== null) {
                     $fieldResult[$v] = $assetUrl;
-                    if ($configuration['zip'] == true) {
-                        $fieldResult[$v] = $foreignData[''];
-                    }
                     continue 1;
                 }
 

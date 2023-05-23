@@ -22,7 +22,7 @@
     "valueModifier": "Модифікатор значення",
     "fixedValue": "Фіксоване значення",
     "previousItem": "Попередній елемент",
-    "zip": "ZIP"
+    "zip": "Експорт ассетів у ZIP-архів"
   },
   "links": {
     "exportFeed": "Експорт. фід",
