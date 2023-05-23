@@ -42,8 +42,9 @@ Espo.define('export:views/export-configurator-item/fields/zip', 'views/fields/bo
         },
 
         checkFieldVisibility() {
-            console.log(this.model)
-            if (this.model.get('name') === 'mainImage' || ['Category', 'Product'].includes(this.model.get('entity')) && ['image','assets','productAssets'].indexOf(this.model.get('name'))>=0) {
+            let type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
+            let foreignEntity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+            if (this.model.get('type') === 'Field' && ['linkMultiple', 'link', 'image'].includes(type) && ['Asset', 'Attachment', 'ProductAsset'].includes(foreignEntity)) {
                 this.show();
             } else {
                 this.hide();

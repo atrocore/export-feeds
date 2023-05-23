@@ -37,11 +37,4 @@ class V1Dot6Dot48 extends Base
 
     }
 
-    protected function execute(string $sql)
-    {
-        try {
-            $this->getPDO()->exec($sql);
-        } catch (\Throwable $e) {
-        }
-    }
 }
