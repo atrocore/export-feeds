@@ -33,6 +33,8 @@ class V1Dot6Dot48 extends Base
 
     public function down(): void
     {
+        $this->getPDO()->exec("ALTER TABLE export_configurator_item drop column zip");
+
     }
 
     protected function execute(string $sql)
