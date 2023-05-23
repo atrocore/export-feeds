@@ -21,7 +21,8 @@
     "sortOrderRelation": "Sortierreihenfolge (Richtung)",
     "valueModifier": "Wertmodifikator",
     "fixedValue": "Fester Wert",
-    "previousItem": "Vorheriges Item"
+    "previousItem": "Vorheriges Item",
+    "zip": "ZIP"
   },
   "links": {
     "exportFeed": "Exportfeed",

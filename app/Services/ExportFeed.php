@@ -357,6 +357,7 @@ class ExportFeed extends Base
                     'valueModifier'             => $item->get('valueModifier'),
                     'type'                      => $item->get('type'),
                     'fixedValue'                => $item->get('fixedValue'),
+                    'zip'                       => $item->get('zip'),
                 ];
 
                 if ($feed->get('type') === 'simple') {

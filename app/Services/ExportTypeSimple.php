@@ -25,6 +25,7 @@ namespace Export\Services;
 use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
+use Espo\Core\Exceptions\Exception;
 use Espo\Entities\Attachment;
 use Espo\ORM\EntityCollection;
 use Export\Entities\ExportJob;
@@ -50,6 +51,75 @@ class ExportTypeSimple extends AbstractExportType
             $this->getEntityManager()->removeEntity($attachment);
             throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
+
+        $zipColumns = array_filter($exportJob->get('data')['configuration'], function ($field) {
+            return $field['zip'];
+        });
+
+        if (count($zipColumns) > 0) {
+            $repository = $this->getEntityManager()->getRepository('Attachment');
+
+            $zipAttachment = $repository->get();
+            $zipAttachment->set('name', $this->getExportFileName('zip'));
+            $zipAttachment->set('role', 'Export');
+            $zipAttachment->set('relatedType', 'ExportJob');
+            $zipAttachment->set('relatedId', $this->data['exportJobId']);
+            $zipAttachment->set('storage', 'UploadDir');
+            $zipAttachment->set('storageFilePath', $this->createPath());
+            $zipAttachment->set('type', 'application/zip');
+            $fileName = $repository->getFilePath($zipAttachment);
+            $this->createDir($fileName);
+
+            $za = new \ZipArchive();
+            if ($za->open($fileName, \ZipArchive::CREATE) !== TRUE) {
+                throw new Exception("cannot open $fileName\n");
+            }
+            $za->addFile($attachment->getFilePath(), $attachment->get('name'));
+
+            if (!empty($this->data['feed']['separateJob'])) {
+                $collection = $this->getCollection();
+            } else {
+                $collection = $this->getFullCollection();
+            }
+
+            foreach ($zipColumns as $zipColumn) {
+                $dir = $zipColumn['column'];
+                $za->addEmptyDir($dir);
+                foreach ($collection as $item) {
+                    $field = $zipColumn['field'];
+                    $type = $this->getMetadata()->get(['entityDefs', $item->getEntityType(), 'fields', $field, 'type']);
+                    $foreignEntity = (string)$this->getMetadata()->get(['entityDefs', $item->getEntityType(), 'links', $field, 'entity']);
+
+                    if ($type == "linkMultiple") {
+                        $foreignResult = $this->convertor->findLinkedEntities($zipColumn['entity'], $item->get('id'), $field, []);
+                        $foreignList = [];
+                        if (isset($foreignResult['collection'])) {
+                            $foreignList = $foreignResult['collection']->toArray();
+                        } elseif (isset($foreignResult['list'])) {
+                            $foreignList = $foreignResult['list'];
+                        }
+                        foreach ($foreignList as $fe) {
+                            $foreign = $this->convertor->getEntity('Attachment', $fe['fileId']);
+                            $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
+                        }
+                    } else {
+                        $linkId = $item->get($field . 'Id');
+                        if ($foreignEntity === 'Attachment') {
+                            $foreign = $this->convertor->getEntity($foreignEntity, $linkId);
+                            $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
+                        } else if ($foreignEntity === 'Asset') {
+                            $foreign = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
+                            $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
+                        }
+                    }
+                }
+            }
+            $za->close();
+            $zipAttachment->set('size', \filesize($repository->getFilePath($zipAttachment)));
+            $this->getEntityManager()->saveEntity($zipAttachment);
+            return $zipAttachment;
+        }
+
 
         return $attachment;
     }
@@ -251,8 +321,8 @@ class ExportTypeSimple extends AbstractExportType
                 foreach ($colData as $colName => $colValue) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
-                        'pos'    => $rowNumber * 1000 + $n,
-                        'name'   => $colName
+                        'pos' => $rowNumber * 1000 + $n,
+                        'name' => $colName
                     ];
                     $n++;
                 }
