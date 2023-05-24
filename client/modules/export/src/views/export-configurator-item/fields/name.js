@@ -99,6 +99,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 if (this.model.get('exportIntoSeparateColumns')) {
                     extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportConfiguratorItem')}`;
                 }
+                if (this.model.get('zip')) {
+                    extraInfo += '<br> Zip'
+                }
                 if (this.model.get('attributeId')) {
                     extraInfo += '<br>';
                 }
@@ -113,6 +116,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 } else {
                     extraInfo += this.model.get('channelName');
                 }
+
             }
 
             return extraInfo;
