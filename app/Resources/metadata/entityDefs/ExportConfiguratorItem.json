@@ -1,5 +1,9 @@
 {
   "fields": {
+    "zip": {
+      "type": "bool",
+      "view": "export:views/export-configurator-item/fields/zip"
+    },
     "name": {
       "type": "varchar",
       "view": "export:views/export-configurator-item/fields/name"
