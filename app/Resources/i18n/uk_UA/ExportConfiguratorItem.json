@@ -21,7 +21,8 @@
     "sortOrderRelation": "Порядок сортування (напрямок)",
     "valueModifier": "Модифікатор значення",
     "fixedValue": "Фіксоване значення",
-    "previousItem": "Попередній елемент"
+    "previousItem": "Попередній елемент",
+    "zip": "Експорт ассетів у ZIP-архів"
   },
   "links": {
     "exportFeed": "Експорт. фід",

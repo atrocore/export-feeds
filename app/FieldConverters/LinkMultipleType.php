@@ -68,18 +68,18 @@ class LinkMultipleType extends LinkType
                 case 'enum':
                     $params['where'] = [
                         [
-                            'type'      => 'in',
+                            'type' => 'in',
                             'attribute' => $configuration['filterField'],
-                            'value'     => $configuration['filterFieldValue'],
+                            'value' => $configuration['filterFieldValue'],
                         ]
                     ];
                     break;
                 case 'multiEnum':
                     $params['where'] = [
                         [
-                            'type'      => 'arrayAnyOf',
+                            'type' => 'arrayAnyOf',
                             'attribute' => $configuration['filterField'],
-                            'value'     => $configuration['filterFieldValue'],
+                            'value' => $configuration['filterFieldValue'],
                         ]
                     ];
                     break;

@@ -21,7 +21,8 @@
     "sortOrderRelation": "Sort Order (direction)",
     "valueModifier": "Value Modifier",
     "fixedValue": "Fixed value",
-    "previousItem": "Previous Item"
+    "previousItem": "Previous Item",
+    "zip": "Export Assets to a ZIP archive"
   },
   "links": {
     "exportFeed": "Export Feed",

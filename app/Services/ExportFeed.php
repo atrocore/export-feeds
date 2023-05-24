@@ -357,8 +357,8 @@ class ExportFeed extends Base
                     'valueModifier'             => $item->get('valueModifier'),
                     'type'                      => $item->get('type'),
                     'fixedValue'                => $item->get('fixedValue'),
+                    'zip'                       => !empty($item->get('zip')),
                 ];
-
                 if ($feed->get('type') === 'simple') {
                     $row['convertCollectionToString'] = true;
                     $row['convertRelationsToString'] = true;
