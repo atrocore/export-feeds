@@ -6,6 +6,8 @@
     "onlyExportFailed7Days",
     "onlyExportFailed28Days"
   ],
+  "hiddenBoolFilterList": [
+  ],
   "navigateToEntityAfterQuickCreate": true,
   "disabledSelectList": true,
   "quickCreateOptions": {
