@@ -275,7 +275,65 @@ class ExportTypeSimple extends AbstractExportType
                     $foreignEntity = (string)$this->getMetadata()->get(['entityDefs', $item->getEntityType(), 'links', $field, 'entity']);
 
                     if ($type == "linkMultiple") {
-                        $foreignResult = $this->convertor->findLinkedEntities($zipColumn['entity'], $item->get('id'), $field, []);
+                        $params = [];
+
+                        if (!empty($sortBy)) {
+                            $asc = $this->convertor->getMetadata()->get(['clientDefs', $item->getEntityType(), 'relationshipPanels', $field, 'asc'], true);
+                            $params['sortBy'] = $sortBy;
+                            $params['asc'] = !empty($asc);
+                        }
+
+                        if (!empty($zipColumn['sortFieldRelation'])) {
+                            $params['sortBy'] = $zipColumn['sortFieldRelation'];
+                            $params['asc'] = $zipColumn['sortOrderRelation'] !== 'DESC';
+                        }
+
+                        $params['offset'] = empty($zipColumn['offsetRelation']) ? 0 : (int)$zipColumn['offsetRelation'];
+                        $params['maxSize'] = empty($zipColumn['limitRelation']) ? 20 : (int)$zipColumn['limitRelation'];
+
+                        if (!empty($zipColumn['channelId'])) {
+                            $params['exportByChannelId'] = $zipColumn['channelId'];
+                        }
+
+                        if (!empty($zipColumn['filterField']) && !empty($zipColumn['filterFieldValue'])) {
+                            switch ($this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $zipColumn['filterField'], 'type'])) {
+                                case 'bool':
+                                    switch ($zipColumn['filterFieldValue']) {
+                                        case ['+']:
+                                            $params['where'] = [['type' => 'isTrue', 'attribute' => $zipColumn['filterField']]];
+                                            break;
+                                        case ['-']:
+                                            $params['where'] = [['type' => 'isFalse', 'attribute' => $zipColumn['filterField']]];
+                                            break;
+                                    }
+                                    break;
+                                case 'enum':
+                                    $params['where'] = [
+                                        [
+                                            'type' => 'in',
+                                            'attribute' => $zipColumn['filterField'],
+                                            'value' => $zipColumn['filterFieldValue'],
+                                        ]
+                                    ];
+                                    break;
+                                case 'multiEnum':
+                                    $params['where'] = [
+                                        [
+                                            'type' => 'arrayAnyOf',
+                                            'attribute' => $zipColumn['filterField'],
+                                            'value' => $zipColumn['filterFieldValue'],
+                                        ]
+                                    ];
+                                    break;
+                            }
+                        }
+
+                        if (!empty($zipColumn['searchFilter'])) {
+                            $params['where'] = !empty($zipColumn['searchFilter']['where']) ? $zipColumn['searchFilter']['where'] : [];
+                        }
+
+
+                        $foreignResult = $this->convertor->findLinkedEntities($zipColumn['entity'], $item->get('id'), $field, $params);
                         $foreignList = [];
                         if (isset($foreignResult['collection'])) {
                             $foreignList = $foreignResult['collection']->toArray();
