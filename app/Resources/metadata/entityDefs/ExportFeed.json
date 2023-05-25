@@ -128,12 +128,10 @@
       "prohibitedEmptyValue": true
     },
     "entity": {
-      "type": "enum",
-      "options": [],
-      "required": true,
+      "type": "varchar",
+      "required": false,
       "notStorable": true,
       "dataField": true,
-      "prohibitedEmptyValue": true,
       "view": "export:views/export-feed/fields/entity"
     },
     "convertCollectionToString": {
