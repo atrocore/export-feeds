@@ -38,6 +38,9 @@
     "exportJobs": "Export Jobs"
   },
   "options": {
+    "type": {
+      "simple": "File"
+    },
     "fileType": {
       "xlsx": "XLSX (Excel)",
       "csv": "CSV",
@@ -67,7 +70,6 @@
     "Configurator": "Configurator",
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",
-    "simple": "File",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
     "Export": "Export"

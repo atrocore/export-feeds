@@ -62,6 +62,20 @@ class ExportFeed extends Base
         return $this->getEntityManager()->getRepository('ExportFeed');
     }
 
+    protected function boolFilterOnlySheets(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'type' => 'sheet'
+        ];
+    }
+
+    protected function boolFilterNotSheets(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'type!=' => 'sheet'
+        ];
+    }
+
     protected function boolFilterOnlyExportFailed24Hours(array &$result): void
     {
         $result['whereClause'][] = [
