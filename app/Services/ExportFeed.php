@@ -59,8 +59,17 @@ class ExportFeed extends Base
 
     public function exportFile(\stdClass $requestData): bool
     {
-        if (empty($exportFeed = $this->getEntity($requestData->id))) {
+        if (!property_exists($requestData, 'id')) {
             throw new Exceptions\NotFound();
+        }
+
+        $exportFeed = $this->getEntity($requestData->id);
+        if (empty($exportFeed)) {
+            throw new Exceptions\NotFound();
+        }
+
+        if ($exportFeed->get('type') === 'sheet') {
+            return false;
         }
 
         if (in_array($exportFeed->get('fileType'), ['csv', 'xlsx'])) {
