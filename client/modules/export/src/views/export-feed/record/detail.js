@@ -43,16 +43,24 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
 
         handleExportButtonDisability() {
             const $buttons = $('.additional-button');
-            if (this.model.get('isActive')) {
+            if (this.hasExportNow()) {
                 $buttons.removeClass('disabled');
             } else {
                 $buttons.addClass('disabled');
             }
         },
 
+        hasExportNow() {
+            return this.model.get('isActive') && this.model.get('type') !== 'sheet';
+        },
+
         actionExportNow() {
             if (this.validateConfigurator()) {
                 this.notify(this.translate('noConfiguratorItems', 'exceptions', 'ExportFeed'), 'error');
+                return;
+            }
+
+            if (!this.hasExportNow()) {
                 return;
             }
 

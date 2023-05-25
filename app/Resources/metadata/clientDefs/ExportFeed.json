@@ -467,13 +467,23 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "fileType",
+              "type": "or",
               "value": [
-                "csv",
-                "xlsx",
-                "json",
-                "xml"
+                {
+                  "type": "in",
+                  "attribute": "fileType",
+                  "value": [
+                    "csv",
+                    "xlsx",
+                    "json",
+                    "xml"
+                  ]
+                },
+                {
+                  "type": "equals",
+                  "attribute": "type",
+                  "value": "sheet"
+                }
               ]
             }
           ]
@@ -481,13 +491,23 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "fileType",
+              "type": "or",
               "value": [
-                "csv",
-                "xlsx",
-                "json",
-                "xml"
+                {
+                  "type": "in",
+                  "attribute": "fileType",
+                  "value": [
+                    "csv",
+                    "xlsx",
+                    "json",
+                    "xml"
+                  ]
+                },
+                {
+                  "type": "equals",
+                  "attribute": "type",
+                  "value": "sheet"
+                }
               ]
             }
           ]
@@ -521,6 +541,50 @@
                 "json",
                 "xml"
               ]
+            }
+          ]
+        }
+      },
+      "limit": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "notEquals",
+              "attribute": "type",
+              "value": "sheet"
+            }
+          ]
+        }
+      },
+      "separateJob": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "notEquals",
+              "attribute": "type",
+              "value": "sheet"
+            }
+          ]
+        }
+      },
+      "priority": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "notEquals",
+              "attribute": "type",
+              "value": "sheet"
+            }
+          ]
+        }
+      },
+      "fileType": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "notEquals",
+              "attribute": "type",
+              "value": "sheet"
             }
           ]
         }
