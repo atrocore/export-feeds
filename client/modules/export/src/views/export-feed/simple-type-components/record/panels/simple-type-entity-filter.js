@@ -75,5 +75,14 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
             });
         },
 
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            this.$el.parent().show();
+            if (!this.model.get('entity')) {
+                this.$el.parent().hide();
+            }
+        },
+
     })
 );
