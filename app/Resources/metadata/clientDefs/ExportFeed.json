@@ -83,7 +83,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             }
           ]
@@ -108,7 +109,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             }
           ]
@@ -208,7 +210,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             }
           ]
@@ -222,7 +225,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -238,7 +242,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -256,7 +261,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -272,7 +278,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -290,7 +297,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -311,7 +319,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -332,7 +341,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -353,7 +363,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -385,7 +396,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -404,7 +416,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -423,7 +436,8 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
               ]
             },
             {
@@ -442,7 +456,56 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv"
+                "csv",
+                "xlsxWithSheets"
+              ]
+            }
+          ]
+        }
+      },
+      "entity": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "csv",
+                "xlsx",
+                "json",
+                "xml"
+              ]
+            }
+          ]
+        }
+      },
+      "sortOrderField": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "csv",
+                "xlsx",
+                "json",
+                "xml"
+              ]
+            }
+          ]
+        }
+      },
+      "sortOrderDirection": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "csv",
+                "xlsx",
+                "json",
+                "xml"
               ]
             }
           ]
