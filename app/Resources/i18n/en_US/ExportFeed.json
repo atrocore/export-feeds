@@ -38,9 +38,6 @@
     "exportJobs": "Export Jobs"
   },
   "options": {
-    "type": {
-      "simple": "File"
-    },
     "fileType": {
       "xlsx": "XLSX (Excel)",
       "csv": "CSV",
@@ -49,6 +46,7 @@
     }
   },
   "labels": {
+    "simple": "File",
     "typeToSearch": "Type to search...",
     "addMissingFields": "Add all missing fields",
     "selectAttributes": "Select attribute(s)",
