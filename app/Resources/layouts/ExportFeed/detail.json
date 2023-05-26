@@ -83,12 +83,6 @@
       ],
       [
         {
-          "name": "mainExportFeed"
-        },
-        false
-      ],
-      [
-        {
           "name": "sortOrderField"
         },
         {
