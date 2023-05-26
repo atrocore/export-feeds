@@ -449,68 +449,6 @@
             }
           ]
         }
-      },
-      "entity": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "fileType",
-              "value": [
-                "csv",
-                "xlsx",
-                "json",
-                "xml"
-              ]
-            }
-          ]
-        },
-        "required": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "fileType",
-              "value": [
-                "csv",
-                "xlsx",
-                "json",
-                "xml"
-              ]
-            }
-          ]
-        }
-      },
-      "sortOrderField": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "fileType",
-              "value": [
-                "csv",
-                "xlsx",
-                "json",
-                "xml"
-              ]
-            }
-          ]
-        }
-      },
-      "sortOrderDirection": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "fileType",
-              "value": [
-                "csv",
-                "xlsx",
-                "json",
-                "xml"
-              ]
-            }
-          ]
-        }
       }
     }
   }
