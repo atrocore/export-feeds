@@ -29,13 +29,27 @@ class RangeFloatType extends FloatType
         $field = $configuration['field'];
         $fieldFrom = $field . 'From';
         $fieldTo = $field . 'To';
+        $unitField = $field . 'UnitId';
 
         $column = $configuration['column'];
 
         $valueFrom = array_key_exists($fieldFrom, $record) && $record[$fieldFrom] !== null ? (float)$record[$fieldFrom] : null;
         $valueTo = array_key_exists($fieldTo, $record) && $record[$fieldTo] !== null ? (float)$record[$fieldTo] : null;
+        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
 
-        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : null;
+        switch ($configuration['attributeValue']) {
+            case 'valueFrom':
+                $result[$column] = $valueFrom;
+                break;
+            case 'valueTo':
+                $result[$column] = $valueTo;
+                break;
+            case 'unit':
+                $result[$column] = empty($unitId) ? null : $this->getUnitName($unitId);
+                break;
+            default:
+                $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : null;
+        }
 
         $this->applyValueModifiers($configuration, $result[$column]);
     }
@@ -45,6 +59,7 @@ class RangeFloatType extends FloatType
         $field = $configuration['field'];
         $fieldFrom = $field . 'From';
         $fieldTo = $field . 'To';
+        $unitField = $field . 'UnitId';
 
         $column = $configuration['column'];
 
@@ -71,7 +86,23 @@ class RangeFloatType extends FloatType
             }
         }
 
-        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : $nullValue;
+        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
+
+        $attributeField = $configuration['attributeValue'];
+        switch ($attributeField) {
+            case 'valueFrom':
+                $result[$column] = $valueFrom;
+                break;
+            case 'valueTo':
+                $result[$column] = $valueTo;
+                break;
+            case 'unit':
+                $result[$column] = empty($unitId) ? $nullValue : $this->getUnitName($unitId);
+                break;
+            default:
+                $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : $nullValue;
+        }
+
 
         $this->applyValueModifiers($configuration, $result[$column]);
     }

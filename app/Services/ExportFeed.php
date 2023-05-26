@@ -358,6 +358,7 @@ class ExportFeed extends Base
                     'type'                      => $item->get('type'),
                     'fixedValue'                => $item->get('fixedValue'),
                     'zip'                       => !empty($item->get('zip')),
+                    'attributeValue'            => $item->get('attributeValue')
                 ];
                 if ($feed->get('type') === 'simple') {
                     $row['convertCollectionToString'] = true;
