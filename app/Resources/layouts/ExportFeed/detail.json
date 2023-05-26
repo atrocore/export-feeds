@@ -44,15 +44,6 @@
   {
     "label": "Export Data Settings",
     "style": "default",
-    "dynamicLogicVisible": {
-      "conditionGroup": [
-        {
-          "type": "notEquals",
-          "attribute": "type",
-          "value": "sheet"
-        }
-      ]
-    },
     "rows": [
       [
         {

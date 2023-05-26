@@ -51,7 +51,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         hasExportNow() {
-            return this.model.get('isActive') && this.model.get('type') !== 'sheet';
+            return this.model.get('isActive');
         },
 
         actionExportNow() {

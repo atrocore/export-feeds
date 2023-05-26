@@ -85,8 +85,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             }
           ]
@@ -111,8 +110,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             }
           ]
@@ -212,8 +210,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             }
           ]
@@ -227,8 +224,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -244,8 +240,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -263,8 +258,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -280,8 +274,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -299,8 +292,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -321,8 +313,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -343,8 +334,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -365,8 +355,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -398,8 +387,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -418,8 +406,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -438,8 +425,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             },
             {
@@ -458,8 +444,7 @@
               "attribute": "fileType",
               "value": [
                 "xlsx",
-                "csv",
-                "xlsxWithSheets"
+                "csv"
               ]
             }
           ]
@@ -469,23 +454,13 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "or",
+              "type": "in",
+              "attribute": "fileType",
               "value": [
-                {
-                  "type": "in",
-                  "attribute": "fileType",
-                  "value": [
-                    "csv",
-                    "xlsx",
-                    "json",
-                    "xml"
-                  ]
-                },
-                {
-                  "type": "equals",
-                  "attribute": "type",
-                  "value": "sheet"
-                }
+                "csv",
+                "xlsx",
+                "json",
+                "xml"
               ]
             }
           ]
@@ -493,23 +468,13 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "or",
+              "type": "in",
+              "attribute": "fileType",
               "value": [
-                {
-                  "type": "in",
-                  "attribute": "fileType",
-                  "value": [
-                    "csv",
-                    "xlsx",
-                    "json",
-                    "xml"
-                  ]
-                },
-                {
-                  "type": "equals",
-                  "attribute": "type",
-                  "value": "sheet"
-                }
+                "csv",
+                "xlsx",
+                "json",
+                "xml"
               ]
             }
           ]
@@ -543,50 +508,6 @@
                 "json",
                 "xml"
               ]
-            }
-          ]
-        }
-      },
-      "limit": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "notEquals",
-              "attribute": "type",
-              "value": "sheet"
-            }
-          ]
-        }
-      },
-      "separateJob": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "notEquals",
-              "attribute": "type",
-              "value": "sheet"
-            }
-          ]
-        }
-      },
-      "priority": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "notEquals",
-              "attribute": "type",
-              "value": "sheet"
-            }
-          ]
-        }
-      },
-      "fileType": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "notEquals",
-              "attribute": "type",
-              "value": "sheet"
             }
           ]
         }

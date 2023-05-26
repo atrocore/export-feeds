@@ -68,10 +68,6 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
-        if ($exportFeed->get('type') === 'sheet') {
-            return false;
-        }
-
         if (in_array($exportFeed->get('fileType'), ['csv', 'xlsx'])) {
             $configuratorItems = $exportFeed->get('configuratorItems');
             if (empty($configuratorItems) || count($configuratorItems) == 0) {

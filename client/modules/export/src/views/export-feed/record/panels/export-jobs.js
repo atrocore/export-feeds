@@ -60,7 +60,7 @@ Espo.define('export:views/export-feed/record/panels/export-jobs', 'views/record/
         },
 
         hasPanel() {
-            return this.model.get('type') !== 'sheet';
+            return true;
         },
 
         actionCancelExportJob(data) {
