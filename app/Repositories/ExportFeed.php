@@ -81,9 +81,9 @@ class ExportFeed extends Base
         return array_column($feeds->toArray(), 'id');
     }
 
-    public function removeConfiguratorItems(string $exportFeedId): void
+    public function removeConfiguratorItems(string $entityType, string $id): void
     {
-        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $exportFeedId])->removeCollection();
+        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where([lcfirst($entityType) . 'Id' => $id])->removeCollection();
     }
 
     protected function beforeSave(Entity $entity, array $options = [])

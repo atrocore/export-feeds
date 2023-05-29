@@ -79,7 +79,8 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                 this.notify('Saving...');
 
                 let postData = {
-                    exportFeedId: this.model.get('id')
+                    entityType: this.model.urlRoot,
+                    id: this.model.get('id')
                 };
 
                 this.ajaxPostRequest(`ExportFeed/action/addMissingFields`, postData).then(response => {
@@ -94,7 +95,8 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                 this.notify('Removing...');
 
                 let postData = {
-                    exportFeedId: this.model.get('id')
+                    entityType: this.model.urlRoot,
+                    id: this.model.get('id')
                 };
 
                 this.ajaxPostRequest(`ExportFeed/action/removeAllItems`, postData).then(response => {
@@ -121,7 +123,8 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                     this.notify('Saving...');
 
                     let postData = {
-                        exportFeedId: this.model.get('id')
+                        entityType: this.model.urlRoot,
+                        id: this.model.get('id')
                     };
                     if (!selectObj.massRelate) {
                         postData.ids = [];

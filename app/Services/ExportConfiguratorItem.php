@@ -32,6 +32,7 @@ class ExportConfiguratorItem extends Base
     protected $mandatorySelectAttributeList
         = [
             'exportFeedId',
+            'sheetId',
             'entity',
             'type',
             'columnType',
@@ -53,11 +54,17 @@ class ExportConfiguratorItem extends Base
     {
         parent::prepareEntityForOutput($entity);
 
-        if (empty($feed = $entity->get('exportFeed'))) {
+        if (empty($feed = $entity->get('exportFeed')) && empty($sheet = $entity->get('sheet'))) {
             return;
         }
 
-        $entity->set('entity', $feed->getFeedField('entity'));
+        if (!empty($sheet)) {
+            $entity->set('entity', $sheet->get('entity'));
+            $feed = $sheet->get('exportFeed');
+        } else {
+            $entity->set('entity', $feed->getFeedField('entity'));
+        }
+
         $entity->set('column', $this->prepareColumnName($entity));
         $entity->set('exportFeedLanguage', !empty($feed->get('language')) ? $feed->get('language') : null);
         $entity->set('isAttributeMultiLang', false);

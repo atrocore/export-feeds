@@ -101,16 +101,25 @@ class ExportFeed extends Base
         return $this->pushExport($data);
     }
 
-    public function addMissingFields(string $feedId): bool
+    public function addMissingFields(string $entityType, string $id): bool
     {
-        $feed = $this->readEntity($feedId);
+        switch ($entityType) {
+            case 'Sheet':
+                $sheet = $this->getEntityManager()->getEntity('Sheet', $id);
+                $entity = $sheet->get('entity');
+                $feed = $this->readEntity($sheet->get('exportFeedId'));
+                break;
+            default:
+                $feed = $this->readEntity($id);
+                $entity = $feed->get('entity');
+        }
 
         $addedFields = [];
         foreach ($feed->get('configuratorItems') as $item) {
             $addedFields[] = $item->get('name') . '_' . $item->get('language');
         }
 
-        $allFields = AbstractExportType::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
+        $allFields = AbstractExportType::getAllFieldsConfiguration($entity, $this->getMetadata(), $this->getInjection('language'));
 
         foreach ($allFields as $row) {
             if (in_array($row['field'] . '_' . $row['language'], $addedFields)) {
@@ -122,7 +131,7 @@ class ExportFeed extends Base
             $item->set('name', $row['field']);
             $item->set('language', $row['language']);
             $item->set('columnType', 'internal');
-            $item->set('exportFeedId', $feedId);
+            $item->set(lcfirst($entityType) . 'Id', $id);
             if (isset($row['exportBy'])) {
                 $item->set('exportBy', $row['exportBy']);
             }
@@ -153,10 +162,21 @@ class ExportFeed extends Base
 
     public function addAttributes(\stdClass $data): bool
     {
-        $feed = $this->readEntity($data->exportFeedId);
+        switch ($data->entityType) {
+            case 'Sheet':
+                $sheet = $this->getEntityManager()->getEntity('Sheet', $data->id);
+                $items = $sheet->get('configuratorItems');
+                $relName = 'sheetId';
+                $feed = $this->readEntity($sheet->get('exportFeedId'));
+                break;
+            default:
+                $feed = $this->readEntity($data->id);
+                $items = $feed->get('configuratorItems');
+                $relName = 'exportFeedId';
+        }
 
         $addedAttributes = [];
-        if (!empty($items = $feed->get('configuratorItems')) && count($items) > 0) {
+        if (!empty($items) && count($items) > 0) {
             foreach ($items as $item) {
                 if (!empty($item->get('attributeId')) && $item->get('language') === 'main') {
                     $addedAttributes[] = $item->get('attributeId');
@@ -205,10 +225,8 @@ class ExportFeed extends Base
             if (empty($feed->get('language'))) {
                 $post->language = 'main';
             }
-            $post->exportFeedId = $feed->get('id');
-            $post->exportFeedName = $feed->get('name');
+            $post->$relName = $data->id;
             $post->attributeId = $attribute->get('id');
-            $post->attributeName = $attribute->get('name');
 
             if (!empty($feed->get('channelId'))) {
                 $post->scope = 'Channel';
@@ -235,9 +253,9 @@ class ExportFeed extends Base
         return true;
     }
 
-    public function removeAllItems(string $feedId): bool
+    public function removeAllItems(string $entityType, string $id): bool
     {
-        $this->getRepository()->removeConfiguratorItems($feedId);
+        $this->getRepository()->removeConfiguratorItems($entityType, $id);
 
         return true;
     }
@@ -281,7 +299,7 @@ class ExportFeed extends Base
             ->order('start', 'DESC')
             ->limit(1, 0)
             ->findOne();
-        if(!empty($latestJob)){
+        if (!empty($latestJob)) {
             $entity->set('lastStatus', $latestJob->get('state'));
             $entity->set('lastTime', $latestJob->get('start'));
         }
