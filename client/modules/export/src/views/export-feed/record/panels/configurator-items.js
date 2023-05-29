@@ -54,9 +54,13 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
 
             this.prepareActionsVisibility();
 
-            this.$el.parent().hide();
-            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
-                this.$el.parent().show();
+            let fileType = this.model.get('fileType');
+
+            if (fileType) {
+                this.$el.parent().hide();
+                if (['csv', 'xlsx'].includes(fileType)) {
+                    this.$el.parent().show();
+                }
             }
         },
 
