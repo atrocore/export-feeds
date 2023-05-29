@@ -79,7 +79,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
             Dep.prototype.afterRender.call(this);
 
             this.$el.parent().show();
-            if (!this.model.get('entity')) {
+            if (!this.model.get('entity') || this.model.get('hasMultipleSheets')) {
                 this.$el.parent().hide();
             }
         },
