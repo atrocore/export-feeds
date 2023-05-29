@@ -40,9 +40,6 @@
   },
   "labels": {
     "typeToSearch": "Tippe um zu suchen...",
-    "addMissingFields": "Alle fehlenden Felder hinzufügen",
-    "selectAttributes": "Attribut(e) auswählen",
-    "removeAllItems": "Alle Regel entfernen",
     "addMissingFieldsConfirmation": " Möchten Sie wirklich alle fehlenden Felder hinzufügen?",
     "removeAllItemsConfirmation": "Möchten Sie wirklich alle Konfigurator-Regel entfernen?",
     "attributeName": "Attributname",
