@@ -237,13 +237,13 @@
     "sortOrderDirection": {
       "type": "enum",
       "required": false,
-      "options": [
+      "optionsIds": [
         "ASC",
         "DESC"
       ],
-      "optionsIds": [
-        "1",
-        "2"
+      "options": [
+        "ASC",
+        "DESC"
       ]
     },
     "template": {
