@@ -383,7 +383,7 @@ abstract class AbstractExportType extends Base
             foreach ($records as $record) {
                 $rowData = [];
                 foreach ($data['configuration'] as $row) {
-                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row), true);
+                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row));
                 }
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $count++;
