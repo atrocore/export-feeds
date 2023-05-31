@@ -9,5 +9,8 @@
     "job": {
       "ExportFeed": "Export Feed"
     }
+  },
+  "tooltips":{
+    "exportFeed": "If no Export Feed is selected, all failed Export Jobs will be retried."
   }
 }

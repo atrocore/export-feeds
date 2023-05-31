@@ -1,7 +1,17 @@
 {
   "fields": {
     "exportFeed": {
-      "type": "link"
+      "type": "link",
+      "tooltip": true
+    },
+    "exportFeeds": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true
+    },
+    "maximumHoursToLookBack": {
+      "type": "float",
+      "min": 0
     }
   },
   "links": {

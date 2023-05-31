@@ -9,5 +9,8 @@
     "job": {
       "ExportFeed": "Exportfeed"
     }
+  },
+  "tooltips": {
+    "exportFeed": "Wenn kein Export-Feed ausgewählt ist, werden alle fehlgeschlagenen Exportjobs erneut ausgeführt."
   }
 }
