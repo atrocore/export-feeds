@@ -15,8 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
@@ -83,10 +81,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         validateConfigurator() {
-            const type = this.model.get('type');
-            const configuratorTypes = this.getMetadata().get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []);
-
-            if (configuratorTypes.includes(type)) {
+            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
                 const configuratorItemsView = this.getView('bottom').getView('configuratorItems');
                 if (configuratorItemsView) {
                     const collection = configuratorItemsView.collection;

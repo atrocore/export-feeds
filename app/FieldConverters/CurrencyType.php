@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -34,16 +32,31 @@ class CurrencyType extends FloatType
         $column = $configuration['column'];
         $mask = !empty($configuration['mask']) ? $configuration['mask'] : $this->defaultMask;
 
-        $result[$column] = null;
+        $value = null;
+        $currency = null;
+        $finalValue = null;
+
         if (isset($record[$field]) && $record[$field] !== null) {
             $currency = $record[$field . 'Currency'];
             $value = (float)$record[$field];
 
             if ($mask === '{{value}}' || $mask === '{{Value}}') {
-                $result[$column] = $value;
+                $finalValue = $value;
             } else {
-                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $mask);
+                $finalValue = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $mask);
             }
+        }
+
+        $attributeField = $configuration['attributeValue'];
+        switch ($attributeField) {
+            case 'value':
+                $result[$column] = $value;
+                break;
+            case 'currency':
+                $result[$column] = $currency;
+                break;
+            default:
+                $result[$column] = $finalValue;
         }
     }
 
@@ -57,15 +70,29 @@ class CurrencyType extends FloatType
         $thousandSeparator = $configuration['thousandSeparator'];
         $mask = !empty($configuration['mask']) ? $configuration['mask'] : $this->defaultMask;
 
-        $result[$column] = $nullValue;
+        $value = $nullValue;
+        $currency = $nullValue;
+        $finalValue = $nullValue;
+
         if (isset($record[$field])) {
-            if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
-                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
+            if (empty($record[$field]) && $record[$field] != 0) {
+                $finalValue = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
                 $currency = $record[$field . 'Currency'];
                 $value = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
-                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $mask);
+                $finalValue = str_replace(['{{value}}', '{{Value}}', '{{currency}}', '{{Currency}}'], [$value, $value, $currency, $currency], $mask);
             }
+        }
+        $attributeField = $configuration['attributeValue'];
+        switch ($attributeField) {
+            case 'value':
+                $result[$column] = $value;
+                break;
+            case 'currency':
+                $result[$column] = $currency;
+                break;
+            default:
+                $result[$column] = $finalValue;
         }
     }
 }

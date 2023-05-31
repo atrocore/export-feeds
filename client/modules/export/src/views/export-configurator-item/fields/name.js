@@ -15,8 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/enum',
@@ -73,36 +71,46 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
 
             if (this.model.get('type') === 'Field') {
                 name = this.translate(name, 'fields', this.model.get('entity'));
+                if (!this.model.get('exportFeedLanguage') && this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('name')}.isMultilang`) && this.model.get('language') !== 'main') {
+                    name += ' / ' + this.model.get('language');
+                }
             }
 
             if (this.model.get('type') === 'Attribute') {
                 name = this.model.get('attributeNameValue');
-
-                if (this.model.get('isAttributeMultiLang') && this.model.get('locale') !== 'mainLocale') {
-                    name += ' / ' + this.model.get('locale');
+                if (!this.model.get('exportFeedLanguage') && this.model.get('isAttributeMultiLang') && this.model.get('language') !== 'main') {
+                    name += ' / ' + this.model.get('language');
                 }
             }
+
             if (this.model.get('type') === 'Fixed value') {
                 name = this.getLanguage().translate('fixedValue', 'fields', 'ExportConfiguratorItem');
             }
-
 
             return name;
         },
 
         getExtraInfo() {
             let extraInfo = '';
-
             let exportByTranslation = this.getExportByTranslation();
             if (exportByTranslation) {
                 extraInfo += `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
                 if (this.model.get('exportIntoSeparateColumns')) {
                     extraInfo += `<br>${this.translate('exportIntoSeparateColumns', 'fields', 'ExportConfiguratorItem')}`;
                 }
+                if (this.model.get('zip')) {
+                    extraInfo += '<br> Zip'
+                }
+                if (this.model.get('attributeId')) {
+                    extraInfo += '<br>';
+                }
             }
 
             if (this.model.get('attributeId')) {
                 extraInfo += `${this.translate('code', 'fields', 'Attribute')}: ${this.model.get('attributeCode')}`;
+                if (this.model.get('attributeValue')) {
+                    extraInfo += ', ' + this.translate(this.model.get('attributeValue'), 'attributeValue', 'ExportConfiguratorItem')
+                }
                 extraInfo += `<br>${this.translate('scope', 'fields', 'ExportConfiguratorItem')}: `;
 
                 if (this.model.get('scope') === 'Global') {
@@ -110,6 +118,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 } else {
                     extraInfo += this.model.get('channelName');
                 }
+
             }
 
             return extraInfo;
@@ -121,7 +130,21 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 if (field === 'id') {
                     translations.push(this.translate('id', 'fields', 'Global'));
                 } else {
-                    let entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+                    let entity;
+                    if (this.model.get('type') === 'Field') {
+                        entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+                        if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
+                            entity = 'ExtensibleEnumOption';
+                        }
+                    } else {
+                        if (this.model.get('attributeId')) {
+                            let attribute = this.getAttribute(this.model.get('attributeId'));
+                            if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
+                                entity = 'ExtensibleEnumOption';
+                            }
+                        }
+                    }
+
                     if (entity) {
                         let parts = field.split('.');
                         if (field.substring(field.length - 2) === 'Id') {
@@ -161,16 +184,28 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             ];
 
             if (entity) {
-                let fields = this.getMetadata().get(['entityDefs', entity, 'fields']);
+                let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || [];
                 Object.keys(fields).forEach(name => {
                     let field = fields[name];
-                    if (!notExportedType.includes(field.type) && !field.disabled && !field.exportDisabled) {
+                    if (!notExportedType.includes(field.type) && !field.disabled && !field.exportDisabled && !field.multilangField && (!field.language || field.language === 'main')) {
                         result[name] = fields[name];
                     }
                 });
             }
 
             return result;
+        },
+
+        getAttribute(attributeId) {
+            let key = `attribute_${attributeId}`;
+            if (!Espo[key]) {
+                Espo[key] = null;
+                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
+                    Espo[key] = attr;
+                });
+            }
+
+            return Espo[key];
         },
 
     })

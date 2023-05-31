@@ -1,7 +1,10 @@
 {
   "controller": "controllers/record",
   "boolFilterList": [
-    "onlyMy"
+    "onlyMy",
+    "onlyExportFailed24Hours",
+    "onlyExportFailed7Days",
+    "onlyExportFailed28Days"
   ],
   "navigateToEntityAfterQuickCreate": true,
   "disabledSelectList": true,
@@ -25,19 +28,12 @@
       }
     ]
   },
-  "optionalBottomPanels": {
-    "configuratorItems": [
-      {
-        "field": "hasConfigurator",
-        "value": true
-      }
-    ]
-  },
   "relationshipPanels": {
     "configuratorItems": {
       "select": false,
       "dragDrop": {
         "isActive": true,
+        "maxSize": 20,
         "sortField": "sortOrder"
       },
       "sortBy": "sortOrder",
@@ -65,12 +61,30 @@
           ]
         }
       },
+      "template": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "json",
+                "xml"
+              ]
+            }
+          ]
+        }
+      },
       "convertCollectionToString": {
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             }
           ]
         },
@@ -90,36 +104,16 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             }
           ]
         },
         "readOnly": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            }
-          ]
-        }
-      },
-      "fileType": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            }
-          ]
-        },
-        "required": {
           "conditionGroup": [
             {
               "type": "in",
@@ -224,8 +218,12 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "isTrue",
@@ -236,8 +234,12 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "isTrue",
@@ -250,8 +252,12 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "isTrue",
@@ -262,8 +268,12 @@
         "required": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "isTrue",
@@ -275,6 +285,14 @@
       "nullValue": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
             {
               "type": "in",
               "attribute": "type",
@@ -290,6 +308,14 @@
           "conditionGroup": [
             {
               "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
+            {
+              "type": "in",
               "attribute": "type",
               "value": [
                 "simple"
@@ -303,6 +329,14 @@
           "conditionGroup": [
             {
               "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
+            {
+              "type": "in",
               "attribute": "type",
               "value": [
                 "simple"
@@ -314,6 +348,14 @@
       "decimalMark": {
         "visible": {
           "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
             {
               "type": "in",
               "attribute": "type",
@@ -339,8 +381,12 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "equals",
@@ -354,8 +400,12 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "equals",
@@ -369,8 +419,12 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             },
             {
               "type": "equals",
@@ -384,8 +438,12 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "isTrue",
-              "attribute": "hasConfigurator"
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
             }
           ]
         }

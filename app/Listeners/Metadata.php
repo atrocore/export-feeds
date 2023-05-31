@@ -16,16 +16,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
 
 namespace Export\Listeners;
 
-use Treo\Core\EventManager\Event;
-use Treo\Listeners\AbstractListener;
+use Espo\Core\EventManager\Event;
+use Espo\Listeners\AbstractListener;
 
 class Metadata extends AbstractListener
 {
@@ -39,6 +37,18 @@ class Metadata extends AbstractListener
             $data['entityDefs']['ExportFeed']['links']['channel']['type'] = 'belongsTo';
             $data['entityDefs']['ExportFeed']['links']['channel']['entity'] = 'Channel';
         }
+
+        if (!empty($data['clientDefs']['ExportFeed']['relationshipPanels']['configuratorItems'])) {
+            $data['clientDefs']['ExportFeed']['relationshipPanels']['configuratorItems']['dragDrop']['maxSize'] = $this->getConfig()->get('recordsPerPageSmall', 20);
+        }
+
+        $data['entityDefs']['ExportFeed']['fields']['lastStatus'] = [
+            'type' => 'enum',
+            'notStorable' => true,
+            'readOnly' => true,
+            'options' => $data['entityDefs']['ExportJob']['fields']['state']['options'],
+            'optionColors' => $data['entityDefs']['ExportJob']['fields']['state']['optionColors']
+        ];
 
         $event->setArgument('data', $data);
     }

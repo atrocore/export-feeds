@@ -9,7 +9,7 @@
     "exportBy": "Поля связанных сущностей",
     "exportIntoSeparateColumns": "Разделять",
     "type": "Тип",
-    "locale": "Язык",
+    "language": "Язык",
     "scope": "Область действия",
     "channel": "Канал",
     "mask": "Маска",
@@ -20,7 +20,8 @@
     "sortFieldRelation": "Порядок сортировки (поле)",
     "sortOrderRelation": "Порядок сортировки (направление)",
     "valueModifier": "Модификатор значения",
-    "fixedValue": "Фиксированное значение"
+    "fixedValue": "Фиксированное значение",
+    "previousItem": "Предыдущий элемент"
   },
   "links": {
     "exportFeed": "Экспорт. фид",
@@ -32,7 +33,6 @@
     "custom": "Пользовательское название"
   },
   "labels": {
-    "mainLocale": "Осн. язык",
     "Field": "Поле",
     "Fixed value": "Фиксированное значение"
   },

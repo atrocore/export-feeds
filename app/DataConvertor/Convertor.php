@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -33,10 +31,6 @@ use Export\Core\ValueModifier;
 class Convertor
 {
     protected Container $container;
-
-    private array $services = [];
-
-    private array $entityItem = [];
 
     public function __construct(Container $container)
     {
@@ -78,22 +72,12 @@ class Convertor
 
     public function getEntity(string $scope, string $id)
     {
-        if (!isset($this->entityItem[$scope][$id])) {
-            $this->entityItem[$scope][$id] = $this->getService($scope)->getEntity($id);
-        }
-
-        return $this->entityItem[$scope][$id];
+        return $this->getService($scope)->getEntity($id);
     }
 
     public function findLinkedEntities(string $scope, string $id, string $field, array $params)
     {
-        $key = md5("{$id}_{$field}_" . json_encode($params));
-
-        if (!isset($this->linkedEntities[$key])) {
-            $this->linkedEntities[$key] = $this->getService($scope)->findLinkedEntities($id, $field, $params);
-        }
-
-        return $this->linkedEntities[$key];
+        return $this->getService($scope)->findLinkedEntities($id, $field, $params);
     }
 
     public function getMetadata(): Metadata
@@ -108,11 +92,7 @@ class Convertor
 
     public function getService(string $serviceName): Record
     {
-        if (!isset($this->services[$serviceName])) {
-            $this->services[$serviceName] = $this->container->get('serviceFactory')->create($serviceName);
-        }
-
-        return $this->services[$serviceName];
+        return $this->container->get('serviceFactory')->create($serviceName);
     }
 
     public function translate(string $key, string $tab, string $scope): string

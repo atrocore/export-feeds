@@ -15,8 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-feed/fields/language', 'views/fields/enum',
@@ -24,11 +22,11 @@ Espo.define('export:views/export-feed/fields/language', 'views/fields/enum',
 
         return Dep.extend({
 
-            prohibitedEmptyValue: true,
+            prohibitedEmptyValue: false,
 
             setupOptions() {
-                this.params.options = ['mainLocale'];
-                this.translatedOptions = {mainLocale: this.translate('mainLocale', 'labels', 'ExportConfiguratorItem')};
+                this.params.options = ['main'];
+                this.translatedOptions = {"main": this.getLanguage().translateOption('main', 'languageFilter', 'Global')};
 
                 (this.getConfig().get('inputLanguageList') || []).forEach(locale => {
                     this.params.options.push(locale);

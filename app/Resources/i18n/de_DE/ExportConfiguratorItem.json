@@ -9,7 +9,7 @@
     "exportBy": "Verwandte Entitätsfelder",
     "exportIntoSeparateColumns": "Trennen",
     "type": "Typ",
-    "locale": "Sprache",
+    "language": "Sprache",
     "scope": "Scope",
     "channel": "Kanal",
     "mask": "Maske",
@@ -20,7 +20,9 @@
     "sortFieldRelation": "Sortierreihenfolge (Feld)",
     "sortOrderRelation": "Sortierreihenfolge (Richtung)",
     "valueModifier": "Wertmodifikator",
-    "fixedValue": "Fester Wert"
+    "fixedValue": "Fester Wert",
+    "previousItem": "Vorheriges Item",
+    "zip": "Assets in ein ZIP-Archiv exportieren"
   },
   "links": {
     "exportFeed": "Exportfeed",
@@ -32,7 +34,6 @@
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {
-    "mainLocale": "Hauptsprache",
     "Field": "Feld",
     "Fixed value": "Fester Wert"
   },

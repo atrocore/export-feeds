@@ -21,9 +21,7 @@
         {
           "name": "description"
         },
-        {
-          "name": "jobsMax"
-        }
+        false
       ],
       [
         {
@@ -31,6 +29,14 @@
         },
         {
           "name": "separateJob"
+        }
+      ],
+      [
+        {
+          "name": "lastStatus"
+        },
+        {
+          "name": "lastTime"
         }
       ]
     ]
@@ -53,6 +59,12 @@
         },
         {
           "name": "csvTextQualifier"
+        }
+      ],
+      [
+        {
+          "name": "template",
+          "fullWidth": true
         }
       ]
     ]

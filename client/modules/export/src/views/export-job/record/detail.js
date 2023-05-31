@@ -15,16 +15,31 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-job/record/detail', 'views/record/detail', function (Dep) {
 
     return Dep.extend({
 
-        duplicateAction: false
+        duplicateAction: false,
 
+        setupActionItems: function () {
+            if (['Failed', 'Canceled'].includes(this.model.get('state'))) {
+                this.dropdownItemList.push({
+                    'name': 'tryAgainExportJob',
+                    action: 'tryAgainExportJob',
+                    label: 'tryAgain',
+                });
+            }
+            Dep.prototype.setupActionItems.call(this);
+        },
+        actionTryAgainExportJob(data) {
+            this.notify('Saving...');
+            this.model.set('state', 'Pending');
+            this.model.save().then(() => {
+                this.notify('Saved', 'success');
+            });
+        }
     });
 
 });

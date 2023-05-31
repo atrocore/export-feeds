@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -33,7 +31,7 @@ class ExportConfiguratorItem extends Base
 {
     protected function beforeSave(Entity $entity, array $options = [])
     {
-        if ($entity->isNew()) {
+        if ($entity->isNew() && !$entity->has('previousItem')) {
             $last = $this->select(['sortOrder'])->where(['exportFeedId' => $entity->get('exportFeedId')])->order('sortOrder', 'DESC')->findOne();
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
@@ -48,7 +46,57 @@ class ExportConfiguratorItem extends Base
             $this->getInjection(ValueModifier::class)->apply($this->getValueModifiers($entity));
         }
 
+        if (empty($entity->get('language'))) {
+            $entity->set('language', 'main');
+        }
+
         parent::beforeSave($entity, $options);
+    }
+
+    public function updatePosition(Entity $entity): void
+    {
+        $res = $this
+            ->getConnection()
+            ->createQueryBuilder()
+            ->select('id')
+            ->from('export_configurator_item')
+            ->where('deleted=0')
+            ->andWhere('export_feed_id=:exportFeedId')->setParameter('exportFeedId', $entity->get('exportFeedId'))
+            ->orderBy('sort_order', 'ASC')
+            ->fetchFirstColumn();
+
+        $ids = [];
+        if (empty($entity->get('previousItem'))) {
+            $ids[] = $entity->get('id');
+        }
+
+        foreach ($res as $id) {
+            if (!in_array($id, $ids)) {
+                $ids[] = $id;
+            }
+            if ($id === $entity->get('previousItem')) {
+                $ids[] = $entity->get('id');
+            }
+        }
+
+        foreach ($ids as $k => $id) {
+            $this
+                ->getConnection()
+                ->createQueryBuilder()
+                ->update('export_configurator_item')
+                ->set('sort_order', ':sortOrder')->setParameter('sortOrder', $k * 10)
+                ->where('id=:id')->setParameter('id', $id)
+                ->executeQuery();
+        }
+    }
+
+    protected function afterSave(Entity $entity, array $options = [])
+    {
+        parent::afterSave($entity, $options);
+
+        if ($entity->isAttributeChanged('previousItem')) {
+            $this->updatePosition($entity);
+        }
     }
 
     protected function getValueModifiers(Entity $entity)

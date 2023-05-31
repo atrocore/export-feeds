@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -31,7 +29,8 @@ class LinkMultipleType extends LinkType
         $field = $configuration['field'];
         $column = $configuration['column'];
         $entity = $configuration['entity'];
-        $foreignEntity = $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
+
+        $foreignEntity = $this->getForeignEntityName($entity, $field);
 
         $sortBy = $this->convertor->getMetadata()->get(['clientDefs', $entity, 'relationshipPanels', $field, 'sortBy']);
 
@@ -69,18 +68,18 @@ class LinkMultipleType extends LinkType
                 case 'enum':
                     $params['where'] = [
                         [
-                            'type'      => 'in',
+                            'type' => 'in',
                             'attribute' => $configuration['filterField'],
-                            'value'     => $configuration['filterFieldValue'],
+                            'value' => $configuration['filterFieldValue'],
                         ]
                     ];
                     break;
                 case 'multiEnum':
                     $params['where'] = [
                         [
-                            'type'      => 'arrayAnyOf',
+                            'type' => 'arrayAnyOf',
                             'attribute' => $configuration['filterField'],
-                            'value'     => $configuration['filterFieldValue'],
+                            'value' => $configuration['filterFieldValue'],
                         ]
                     ];
                     break;
@@ -92,7 +91,7 @@ class LinkMultipleType extends LinkType
         }
 
         try {
-            $foreignResult = $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
+            $foreignResult = $this->findLinkedEntities($entity, $record, $field, $params);
         } catch (\Throwable $e) {
             $GLOBALS['log']->error('Export. Can not get foreign entities: ' . $e->getMessage());
         }
@@ -101,73 +100,93 @@ class LinkMultipleType extends LinkType
             $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
         }
 
-        if (!empty($foreignResult['total'])) {
-            if (isset($foreignResult['collection'])) {
-                $foreignList = $foreignResult['collection']->toArray();
+        $foreignList = [];
+        if (isset($foreignResult['collection'])) {
+            $foreignList = $foreignResult['collection']->toArray();
+        } elseif (isset($foreignResult['list'])) {
+            $foreignList = $foreignResult['list'];
+        }
+
+        $links = [];
+        if (empty($foreignList)) {
+            $links[] = $this->needStringResult ? $configuration['nullValue'] : null;
+        }
+
+        $foreignList = array_slice($foreignList, 0, $params['maxSize']);
+
+        $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
+
+        foreach ($foreignList as $foreignData) {
+            $fieldResult = [];
+            foreach ($exportBy as $v) {
+                $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
+                if ($assetUrl !== null) {
+                    $fieldResult[$v] = $assetUrl;
+                    continue 1;
+                }
+
+                $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+
+                $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
+
+                // prepare type for product attribute value
+                if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
+                    $foreignType = $foreignData['attributeType'] === 'asset' ? 'varchar' : $foreignData['attributeType'];
+                }
+
+                $foreignConfiguration = array_merge($configuration, ['field' => $v]);
+                $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
+            }
+
+            if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
+                $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
             } else {
-                $foreignList = $foreignResult['list'];
+                $links[] = $fieldResult;
             }
+        }
 
-            $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
-
-            $links = [];
-            foreach ($foreignList as $foreignData) {
-                $fieldResult = [];
-                foreach ($exportBy as $v) {
-                    $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
-                    if ($assetUrl !== null) {
-                        $fieldResult[$v] = $assetUrl;
-                        continue 1;
-                    }
-
-                    $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
-
-                    $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
-
-                    // prepare type for product attribute value
-                    if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
-                        $foreignType = $foreignData['attributeType'] === 'asset' ? 'varchar' : $foreignData['attributeType'];
-                    }
-
-                    $foreignConfiguration = array_merge($configuration, ['field' => $v]);
-                    $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
-                }
-
-                if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
-                    $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
-                } else {
-                    $links[] = $fieldResult;
-                }
-            }
-
-            if (!empty($configuration['exportIntoSeparateColumns'])) {
-                foreach ($links as $k => $link) {
-                    $columnName = $column;
+        if (!empty($configuration['exportIntoSeparateColumns'])) {
+            $k = 0;
+            foreach ($links as $k => $link) {
+                $columnName = $column;
+                if (isset($foreignList[$k])) {
                     foreach ($foreignList[$k] as $relField => $relVal) {
                         if (is_array($relVal) || is_object($relVal)) {
                             continue 1;
                         }
                         $columnName = str_replace('{{' . $relField . '}}', (string)$relVal, $columnName);
                     }
-
-                    if ($columnName === $column) {
-                        $columnName = $column . '_' . ($k + 1);
-                    }
-
-                    $result[$columnName] = $link;
                 }
+
+                if ($columnName === $column) {
+                    $columnName = $column . '_' . ($k + 1);
+                }
+
+                $result[$columnName] = $link;
+            }
+            if (!empty($configuration['limitRelation']) && is_int($configuration['limitRelation'])) {
+                while ($k < ($configuration['limitRelation'] - 1)) {
+                    $k++;
+                    $columnName = $column . '_' . ($k + 1);
+                    $result[$columnName] = $this->needStringResult ? $configuration['nullValue'] : null;
+                }
+            }
+        } else {
+            if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
+                $preparedLinks = [];
+                foreach ($links as $link) {
+                    $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
+                }
+                $result[$column] = implode($configuration['delimiter'], $preparedLinks);
             } else {
-                if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
-                    $preparedLinks = [];
-                    foreach ($links as $link) {
-                        $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
-                    }
-                    $result[$column] = implode($configuration['delimiter'], $preparedLinks);
-                } else {
-                    $result[$column] = $links;
-                }
+                $result[$column] = $links;
             }
         }
         $this->needStringResult = false;
+    }
+
+    protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
+    {
+        return $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
     }
 }

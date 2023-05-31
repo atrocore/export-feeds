@@ -3,7 +3,10 @@
   "acl": "export:acl/export-job",
   "aclPortal": "export:acl-portal/export-job",
   "boolFilterList": [
-    "onlyMy"
+    "onlyMy",
+    "onlyExportFailed24Hours",
+    "onlyExportFailed7Days",
+    "onlyExportFailed28Days"
   ],
   "views": {
     "list": "export:views/export-job/list"

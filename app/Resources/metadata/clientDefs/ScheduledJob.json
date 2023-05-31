@@ -20,6 +20,31 @@
             }
           ]
         }
+      },
+      "exportFeeds": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "job",
+              "value": "TrialExport"
+            }
+          ]
+        }
+      },
+      "maximumHoursToLookBack": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "job",
+              "value": [
+                "TrialImport",
+                "TrialExport"
+              ]
+            }
+          ]
+        }
       }
     }
   }

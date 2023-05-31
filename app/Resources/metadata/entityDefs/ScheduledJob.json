@@ -18,6 +18,12 @@
     "exportFeed": {
       "type": "belongsTo",
       "entity": "ExportFeed"
+    },
+    "exportFeeds": {
+      "type": "hasMany",
+      "relationName": "scheduledJobExportFeed",
+      "foreign": "scheduledJobs",
+      "entity": "ExportFeed"
     }
   }
 }

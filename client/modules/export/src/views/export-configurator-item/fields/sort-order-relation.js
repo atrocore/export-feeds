@@ -15,8 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-configurator-item/fields/sort-order-relation', 'views/fields/enum',
@@ -39,11 +37,8 @@ Espo.define('export:views/export-configurator-item/fields/sort-order-relation', 
         },
 
         checkFieldVisibility() {
-            if (
-                this.model.get('type') === 'Field'
-                && this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'linkMultiple'
-                && this.model.get('sortFieldRelation') !== ''
-            ) {
+            let type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
+            if (this.model.get('type') === 'Field' && ['linkMultiple', 'extensibleMultiEnum'].includes(type) && this.model.get('sortFieldRelation') !== '') {
                 this.show();
             } else {
                 this.hide();

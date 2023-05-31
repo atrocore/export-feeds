@@ -1,5 +1,6 @@
 {
   "fields": {
+    "template": "Template",
     "sortOrderField": "Sort Order (field)",
     "sortOrderDirection": "Sort Order (direction)",
     "language": "Language",
@@ -7,6 +8,8 @@
     "entity": "Entity",
     "type": "Type",
     "isActive": "Active",
+    "lastStatus": "Last status",
+    "lastTime": "Last Run",
     "fileType": "Format",
     "isFileHeaderRow": "Header Row",
     "csvFieldDelimiter": "Field Delimiter",
@@ -21,7 +24,6 @@
     "nullValue": "Null Value",
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
-    "jobsMax": "Amount of \"Success\" Export Jobs to be stored",
     "markForNotLinkedAttribute": "Mark for a not linked attribute",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
     "limit": "Maximum Number of Records per Iteration",
@@ -34,6 +36,14 @@
   "links": {
     "configuratorItems": "Configurator",
     "exportJobs": "Export Jobs"
+  },
+  "options": {
+    "fileType": {
+      "xlsx": "XLSX (Excel)",
+      "csv": "CSV",
+      "json": "JSON",
+      "xml": "XML"
+    }
   },
   "labels": {
     "typeToSearch": "Type to search...",
@@ -58,8 +68,6 @@
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",
     "simple": "File",
-    "xlsx": "XLSX (Excel)",
-    "csv": "CSV",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
     "Export": "Export"
@@ -86,10 +94,16 @@
     "noConfiguratorItems": "Please create at least one configurator rule to be able to execute this feed."
   },
   "tooltips": {
-    "language": "This value is inherited by creating a rule for some language specific attribute and has no impact on export itself.",
+    "template": "You can use the syntax for <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig</a> template engine.",
+    "language": "Choose the language to receive the localized data.",
     "channel": "This value is inherited by creating a rule for some channel specific attribute and has no impact on export itself.",
     "convertCollectionToString": "Fields and attributes of type: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Relation fields will be separated by Field Delimiter for Relation.",
     "replaceAttributeValues": "Replace non-existing channel specific attribute values with global values."
+  },
+  "boolFilters": {
+    "onlyExportFailed24Hours": "Only Export Feeds that failed during last 24 hours",
+    "onlyExportFailed7Days": "Only Export Feeds that failed during last 7 days",
+    "onlyExportFailed28Days": "Only Export Feeds that failed during last 28 days"
   }
 }

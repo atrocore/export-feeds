@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -65,16 +63,14 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
-        if (in_array($exportFeed->get('type'), $this->getMetadata()->get(['scopes', 'ExportFeed', 'typesWithConfigurator'], []))) {
+        if (in_array($exportFeed->get('fileType'), ['csv', 'xlsx'])) {
             $configuratorItems = $exportFeed->get('configuratorItems');
-
             if (empty($configuratorItems) || count($configuratorItems) == 0) {
                 throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
             }
         }
 
-        $this->prepareFeedViaLanguage();
-        $this->prepareFeedViaChannel();
+        $this->getRepository()->removeInvalidConfiguratorItems($exportFeed->get('id'));
 
         $data = [
             'id'   => Util::generateId(),
@@ -104,24 +100,41 @@ class ExportFeed extends Base
     {
         $feed = $this->readEntity($feedId);
 
-        $addedFields = array_column($feed->get('configuratorItems')->toArray(), 'name');
+        $addedFields = [];
+        foreach ($feed->get('configuratorItems') as $item) {
+            $addedFields[] = $item->get('name') . '_' . $item->get('language');
+        }
 
         $allFields = AbstractExportType::getAllFieldsConfiguration($feed->get('entity'), $this->getMetadata(), $this->getInjection('language'));
 
         foreach ($allFields as $row) {
-            if (in_array($row['field'], $addedFields)) {
+            if (in_array($row['field'] . '_' . $row['language'], $addedFields)) {
                 continue;
             }
 
             $item = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
             $item->set('type', 'Field');
             $item->set('name', $row['field']);
+            $item->set('language', $row['language']);
+            $item->set('columnType', 'internal');
             $item->set('exportFeedId', $feedId);
             if (isset($row['exportBy'])) {
                 $item->set('exportBy', $row['exportBy']);
             }
             if (isset($row['exportIntoSeparateColumns'])) {
                 $item->set('exportIntoSeparateColumns', !empty($row['exportIntoSeparateColumns']));
+            }
+            if (isset($row['offsetRelation'])) {
+                $item->set('offsetRelation', $row['offsetRelation']);
+            }
+            if (isset($row['limitRelation'])) {
+                $item->set('limitRelation', $row['limitRelation']);
+            }
+            if (isset($row['sortFieldRelation'])) {
+                $item->set('sortFieldRelation', $row['sortFieldRelation']);
+            }
+            if (isset($row['sortOrderRelation'])) {
+                $item->set('sortOrderRelation', $row['sortOrderRelation']);
             }
             if (isset($row['mask'])) {
                 $item->set('mask', $row['mask']);
@@ -140,7 +153,7 @@ class ExportFeed extends Base
         $addedAttributes = [];
         if (!empty($items = $feed->get('configuratorItems')) && count($items) > 0) {
             foreach ($items as $item) {
-                if (!empty($item->get('attributeId')) && $item->get('locale') === 'mainLocale') {
+                if (!empty($item->get('attributeId')) && $item->get('language') === 'main') {
                     $addedAttributes[] = $item->get('attributeId');
                 }
             }
@@ -184,7 +197,9 @@ class ExportFeed extends Base
             $post = new \stdClass();
             $post->type = 'Attribute';
             $post->name = $attribute->get('name');
-            $post->locale = $feed->get('language');
+            if (empty($feed->get('language'))) {
+                $post->language = 'main';
+            }
             $post->exportFeedId = $feed->get('id');
             $post->exportFeedName = $feed->get('name');
             $post->attributeId = $attribute->get('id');
@@ -196,12 +211,17 @@ class ExportFeed extends Base
                 $post->channelName = $feed->get('channelName');
             }
 
-            if ($attribute->get('type') === 'currency') {
-                $post->mask = "{{value}} {{currency}}";
-            }
-
-            if ($attribute->get('type') === 'unit') {
-                $post->mask = "{{value}} {{unit}}";
+            switch ($attribute->get('type')) {
+                case 'currency':
+                    $post->mask = "{{value}} {{currency}}";
+                    break;
+                case 'unit':
+                    $post->mask = "{{value}} {{unit}}";
+                    break;
+                case 'extensibleEnum':
+                case 'extensibleMultiEnum':
+                    $post->exportBy = ["name"];
+                    break;
             }
 
             $exportConfiguratorItemService->createEntity($post);
@@ -219,8 +239,7 @@ class ExportFeed extends Base
 
     public function readEntity($id)
     {
-        $this->prepareFeedViaLanguage();
-        $this->prepareFeedViaChannel();
+        $this->getRepository()->removeInvalidConfiguratorItems($id);
 
         return parent::readEntity($id);
     }
@@ -228,34 +247,10 @@ class ExportFeed extends Base
     public function findLinkedEntities($id, $link, $params)
     {
         if ($link === 'configuratorItems') {
-            $this->prepareFeedViaLanguage();
-            $this->prepareFeedViaChannel();
             $this->getRepository()->removeInvalidConfiguratorItems($id);
         }
 
         return parent::findLinkedEntities($id, $link, $params);
-    }
-
-    public function prepareFeedViaLanguage(): void
-    {
-        $languages = ['mainLocale'];
-        if ($this->getConfig()->get('isMultilangActive', false)) {
-            $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
-        }
-        $languages = implode("','", $languages);
-
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_feed` SET `language`='mainLocale' WHERE `language` NOT IN ('$languages')");
-        $this->getEntityManager()->getPDO()->exec("UPDATE `export_configurator_item` SET `deleted`=1 WHERE `locale` NOT IN ('$languages')");
-    }
-
-    public function prepareFeedViaChannel(): void
-    {
-        $this->getEntityManager()->getPDO()->exec(
-            "UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
-        );
-        $this->getEntityManager()->getPDO()->exec(
-            "UPDATE `export_configurator_item` SET deleted=1 WHERE `type`='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
-        );
     }
 
     public function prepareEntityForOutput(Entity $entity)
@@ -263,7 +258,9 @@ class ExportFeed extends Base
         parent::prepareEntityForOutput($entity);
 
         foreach ($entity->getFeedFields() as $name => $value) {
-            $entity->set($name, $value);
+            if (!in_array($name, ['fileType'])) {
+                $entity->set($name, $value);
+            }
         }
 
         if ($entity->get('type') === 'simple') {
@@ -271,7 +268,19 @@ class ExportFeed extends Base
             $entity->set('convertRelationsToString', true);
         }
 
-        $entity->set('hasConfigurator', in_array($entity->get('type'), $this->getMetadata()->get('scopes.ExportFeed.typesWithConfigurator')));
+        $latestJob = $this->getEntityManager()
+            ->getRepository('ExportJob')
+            ->where([
+                'exportFeedId' => $entity->id
+            ])
+            ->order('start', 'DESC')
+            ->limit(1, 0)
+            ->findOne();
+        if(!empty($latestJob)){
+            $entity->set('lastStatus', $latestJob->get('state'));
+            $entity->set('lastTime', $latestJob->get('start'));
+        }
+
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
     }
 
@@ -310,6 +319,8 @@ class ExportFeed extends Base
             $result['data']->$name = $value;
         }
 
+        $result['fileType'] = $feed->get('fileType');
+
         $configuration = [];
         $items = $this->findLinkedEntities($feed->get('id'), 'configuratorItems', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
         if (!empty($items['total'])) {
@@ -319,9 +330,10 @@ class ExportFeed extends Base
             foreach ($items['collection'] as $item) {
                 $row = [
                     'columnType'                => $item->get('columnType'),
-                    'locale'                    => $item->get('locale'),
+                    'language'                  => $item->get('language'),
                     'column'                    => $eciService->prepareColumnName($item),
                     'entity'                    => $feed->getFeedField('entity'),
+                    'template'                  => $feed->get('template'),
                     'sortOrderField'            => $feed->get('sortOrderField'),
                     'sortOrderDirection'        => $feed->get('sortOrderDirection'),
                     'emptyValue'                => $feed->getFeedField('emptyValue'),
@@ -345,8 +357,9 @@ class ExportFeed extends Base
                     'valueModifier'             => $item->get('valueModifier'),
                     'type'                      => $item->get('type'),
                     'fixedValue'                => $item->get('fixedValue'),
+                    'zip'                       => !empty($item->get('zip')),
+                    'attributeValue'            => $item->get('attributeValue')
                 ];
-
                 if ($feed->get('type') === 'simple') {
                     $row['convertCollectionToString'] = true;
                     $row['convertRelationsToString'] = true;
@@ -440,7 +453,9 @@ class ExportFeed extends Base
 
         $md5Hash = md5(json_encode($data['feed']) . $data['offset'] . $data['limit']);
 
-        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data, 'Normal', $md5Hash);
+        $priority = empty($data['feed']['priority']) ? 'Normal' : (string)$data['feed']['priority'];
+
+        $this->getInjection('queueManager')->push($qmJobName, 'QueueManagerExport', $data, $priority, $md5Hash);
         $this->getEntityManager()->saveEntity($exportJob);
 
         return $exportJob->get('id');

@@ -1,0 +1,6 @@
+{
+  "prepareEntity": "\\Export\\TwigFilter\\PrepareEntity",
+  "isImage": "\\Export\\TwigFilter\\IsImage",
+  "escapeDoubleQuote": "\\Export\\TwigFilter\\EscapeDoubleQuote",
+  "backslashNToBr": "\\Export\\TwigFilter\\BackslashNToBr"
+}

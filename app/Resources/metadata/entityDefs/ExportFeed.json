@@ -18,12 +18,6 @@
     "separateJob": {
       "type": "bool"
     },
-    "jobsMax": {
-      "type": "int",
-      "required": true,
-      "min": 1,
-      "default": 10
-    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
@@ -59,6 +53,9 @@
     "type": {
       "type": "enum",
       "required": true,
+      "optionsIds": [
+        "simple"
+      ],
       "options": [
         "simple"
       ],
@@ -77,11 +74,17 @@
     "fileType": {
       "type": "enum",
       "required": false,
-      "notStorable": true,
-      "dataField": true,
+      "optionsIds": [
+        "csv",
+        "xlsx",
+        "json",
+        "xml"
+      ],
       "options": [
         "csv",
-        "xlsx"
+        "xlsx",
+        "json",
+        "xml"
       ],
       "prohibitedEmptyValue": false
     },
@@ -93,6 +96,11 @@
     },
     "csvFieldDelimiter": {
       "type": "enum",
+      "optionsIds": [
+        ";",
+        ",",
+        "\\t"
+      ],
       "options": [
         ";",
         ",",
@@ -106,6 +114,10 @@
     },
     "csvTextQualifier": {
       "type": "enum",
+      "optionsIds": [
+        "doubleQuote",
+        "singleQuote"
+      ],
       "options": [
         "doubleQuote",
         "singleQuote"
@@ -123,11 +135,6 @@
       "dataField": true,
       "prohibitedEmptyValue": true,
       "view": "export:views/export-feed/fields/entity"
-    },
-    "hasConfigurator": {
-      "type": "bool",
-      "notStorable": true,
-      "default": false
     },
     "convertCollectionToString": {
       "type": "bool",
@@ -218,6 +225,12 @@
       "noLoad": true,
       "importDisabled": true
     },
+    "scheduledJobs": {
+      "type": "linkMultiple",
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "noLoad": true
+    },
     "sortOrderField": {
       "type": "varchar",
       "required": false,
@@ -234,6 +247,19 @@
         "1",
         "2"
       ]
+    },
+    "template": {
+      "type": "text",
+      "useDisabledTextareaInViewMode": true,
+      "rows": 20,
+      "required": false,
+      "tooltip": true,
+      "view": "export:views/export-feed/fields/template"
+    },
+    "lastTime": {
+      "type": "datetime",
+      "readOnly": true,
+      "notStorable": true
     }
   },
   "links": {
@@ -269,6 +295,12 @@
       "type": "hasMany",
       "foreign": "exportFeed",
       "entity": "ExportJob"
+    },
+    "scheduledJobs": {
+      "type": "hasMany",
+      "relationName": "scheduledJobExportFeed",
+      "foreign": "exportFeeds",
+      "entity": "ScheduledJob"
     }
   },
   "collection": {

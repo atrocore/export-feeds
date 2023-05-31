@@ -15,8 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/record/panels/relationship',
@@ -45,12 +43,21 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
             this.listenTo(this.model, 'change:entity', () => {
                 this.prepareActionsVisibility();
             });
+
+            this.listenTo(this.model, 'change:fileType', () => {
+                this.reRender();
+            });
         },
 
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
             this.prepareActionsVisibility();
+
+            this.$el.parent().hide();
+            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
+                this.$el.parent().show();
+            }
         },
 
         prepareActionsVisibility() {
@@ -115,7 +122,7 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                     if (!selectObj.massRelate) {
                         postData.ids = [];
                         selectObj.forEach(model => {
-                            postData.ids.push(model.get('id'));
+                            postData.ids.push(model.id);
                         });
                     } else {
                         postData.where = selectObj.where;

@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -75,7 +73,7 @@ class ExportJob extends Base
         if ($entity->isAttributeChanged('state')) {
             $qmJob = $this->getExportJob($entity->get('id'));
             if (!empty($qmJob)) {
-                if ($entity->get('state') === 'Pending') {
+                if ($entity->get('state') === 'Pending' && in_array($qmJob->get('status'), ['Success', 'Failed', 'Canceled'])) {
                     $this->toPendingQmJob($qmJob);
                 }
                 if ($entity->get('state') === 'Canceled') {
@@ -85,13 +83,16 @@ class ExportJob extends Base
         }
 
         if (!empty($feed = $entity->get('exportFeed'))) {
-            $jobs = $this->where(['exportFeedId' => $feed->get('id'), 'state' => 'Success'])->order('createdAt')->find();
-            $jobsCount = count($jobs);
+            $jobs = $this
+                ->where([
+                    'exportFeedId' => $feed->get('id'),
+                    'state'        => ['Success', 'Failed', 'Canceled']
+                ])
+                ->order('createdAt', 'DESC')
+                ->limit(2000, 100)
+                ->find();
             foreach ($jobs as $job) {
-                if ($jobsCount > $feed->get('jobsMax')) {
-                    $this->getEntityManager()->removeEntity($job);
-                    $jobsCount--;
-                }
+                $this->getEntityManager()->removeEntity($job);
             }
         }
     }

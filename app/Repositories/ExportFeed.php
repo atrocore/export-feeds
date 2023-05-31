@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -34,13 +32,42 @@ class ExportFeed extends Base
 {
     public function removeInvalidConfiguratorItems(string $exportFeedId): void
     {
-        $id = $this->getPDO()->quote($exportFeedId);
+        $exportFeed = $this->get($exportFeedId);
+        if (empty($exportFeed)) {
+            return;
+        }
+
+        $languages = ['', 'main'];
+        if ($this->getConfig()->get('isMultilangActive', false)) {
+            $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
+        }
+        $languages = implode("','", $languages);
+
         try {
+            /**
+             * Prepare language configuration
+             */
             $this->getPDO()->exec(
-                "DELETE FROM `export_configurator_item` WHERE export_feed_id=$id AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
+                "UPDATE `export_feed` SET `language`='' WHERE id='{$exportFeed->get('id')}' AND `language` NOT IN ('$languages')"
+            );
+            $this->getPDO()->exec(
+                "UPDATE `export_configurator_item` SET `deleted`=1 WHERE `language` NOT IN ('$languages')"
+            );
+
+            /**
+             * Prepare scope|channel configuration
+             */
+            $this->getPDO()->exec(
+                "UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
+            );
+            $this->getPDO()->exec(
+                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
+            );
+            $this->getPDO()->exec(
+                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
             );
         } catch (\Throwable $e) {
-            $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e);
+            $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e->getMessage());
         }
     }
 
@@ -121,7 +148,7 @@ class ExportFeed extends Base
             (string)$entity->getFeedField('fieldDelimiterForRelation'),
         ];
 
-        if ($entity->getFeedField('fileType') == 'csv') {
+        if ($entity->get('fileType') == 'csv') {
             $delimiters[] = (string)$entity->getFeedField('csvFieldDelimiter');
         }
 

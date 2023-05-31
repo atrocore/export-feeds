@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -25,9 +23,9 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\Container;
-use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\FilePathBuilder;
+use Espo\Core\Services\Base;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
@@ -41,25 +39,17 @@ use Espo\Services\Record;
 use Export\DataConvertor\Convertor;
 use Export\Entities\ExportJob;
 
-abstract class AbstractExportType extends \Espo\Core\Services\Base
+abstract class AbstractExportType extends Base
 {
     protected array $data;
 
     protected Convertor $convertor;
 
-    private array $services = [];
-
-    private array $languages = [];
-
-    private array $pavs = [];
-
     private int $iteration = 0;
-
-    private array $attributes = [];
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
-        $configuration = [['field' => 'id', 'column' => 'ID']];
+        $configuration = [['field' => 'id', 'language' => 'main', 'column' => 'ID']];
 
         /** @var array $allFields */
         $allFields = $metadata->get(['entityDefs', $scope, 'fields'], []);
@@ -73,9 +63,15 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             }
 
             $row = [
-                'field'  => $field,
-                'column' => $language->translate($field, 'fields', $scope)
+                'field'    => $field,
+                'language' => 'main',
+                'column'   => $language->translate($field, 'fields', $scope)
             ];
+
+            if (!empty($data['multilangLocale'])) {
+                $row['field'] = $data['multilangField'];
+                $row['language'] = $data['multilangLocale'];
+            }
 
             if (isset($configuration[$row['column']])) {
                 continue 1;
@@ -85,8 +81,16 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 $row['exportBy'] = ['id'];
             }
 
+            if (in_array($data['type'], ['extensibleEnum', 'extensibleMultiEnum'])) {
+                $row['exportBy'] = ['name'];
+            }
+
             if ($data['type'] === 'linkMultiple') {
                 $row['exportIntoSeparateColumns'] = false;
+                $row['offsetRelation'] = 0;
+                $row['limitRelation'] = 20;
+                $row['sortFieldRelation'] = 'id';
+                $row['sortOrderRelation'] = '1'; // ASC
             }
 
             if ($data['type'] === 'currency') {
@@ -98,19 +102,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             }
 
             $configuration[$row['column']] = $row;
-
-            // push locales fields
-            if (!empty($data['isMultilang'])) {
-                foreach ($allFields as $langField => $langData) {
-                    if (!empty($langData['multilangField']) && $langData['multilangField'] == $field) {
-                        $langRow = [
-                            'field'  => $langField,
-                            'column' => $language->translate($langField, 'fields', $scope)
-                        ];
-                        $configuration[$langRow['column']] = $langRow;
-                    }
-                }
-            }
         }
 
         return array_values($configuration);
@@ -124,10 +115,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
             $result = $this->getEntityService()->findEntities($this->getSelectParams());
         }
 
-        if (empty($result['total'])) {
-            throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
-        }
-
         return $result['total'];
     }
 
@@ -135,7 +122,6 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
     {
         $this->setData($data);
         $this->convertor = $this->getDataConvertor();
-        $this->createCacheFile($exportJob);
 
         return $this->runExport($exportJob);
     }
@@ -170,7 +156,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
-        $row['nullValue'] = !empty($feedData['nullValue']) ? $feedData['nullValue'] : 'Null';
+        $row['nullValue'] = array_key_exists('nullValue', $feedData) ? $feedData['nullValue'] : 'Null';
         $row['markForNotLinkedAttribute'] = !empty($feedData['markForNotLinkedAttribute']) ? $feedData['markForNotLinkedAttribute'] : '--';
         $row['decimalMark'] = !empty($feedData['decimalMark']) ? $feedData['decimalMark'] : ',';
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
@@ -178,8 +164,9 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         $row['entity'] = $feedData['entity'];
         $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
-        if ($row['locale'] === 'mainLocale') {
-            $row['locale'] = 'main';
+        // change field name for multilingual field
+        if ($row['type'] === 'Field' && $row['language'] !== 'main' && empty($GLOBALS['languagePrism'])) {
+            $row['field'] .= ucfirst(Util::toCamelCase(strtolower($row['language'])));
         }
 
         return $row;
@@ -191,16 +178,16 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         if (!empty($row['attributeId'])) {
             $attribute = $this->getAttribute($row['attributeId']);
 
-            $locale = $row['locale'];
-            if ($locale === 'mainLocale') {
-                $locale = '';
+            $language = $row['language'];
+            if ($language === 'main') {
+                $language = '';
             }
 
             if (empty($row['columnType']) || $row['columnType'] == 'name') {
                 $name = 'name';
 
-                if (!empty($attribute->get('isMultilang')) && !empty($locale)) {
-                    $name = Util::toCamelCase(strtolower($name . '_' . $locale));
+                if (!empty($attribute->get('isMultilang')) && !empty($language)) {
+                    $name = Util::toCamelCase(strtolower($name . '_' . $language));
                 }
 
                 return (string)$attribute->get($name);
@@ -208,8 +195,8 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
             if ($row['columnType'] == 'internal') {
                 $value = (string)$attribute->get('name');
-                if (!empty($locale)) {
-                    $value .= ' / ' . $locale;
+                if (!empty($language)) {
+                    $value .= ' / ' . $language;
                 }
 
                 return $value;
@@ -222,7 +209,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
                 $originField = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangField']);
                 return $this->getLanguage($locale)->translate($originField, 'fields', $entity);
             } else {
-                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'mainLocale') {
+                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'main') {
                     return $this->getLanguage($row['channelLocales'][0])->translate($row['field'], 'fields', $entity);
                 } else {
                     return $this->translate($row['field'], 'fields', $entity);
@@ -231,15 +218,13 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         }
 
         if ($row['columnType'] == 'internal') {
-            return $this->translate($row['field'], 'fields', $entity);
+            $language = $row['language'];
+            $language = $language === 'main' ? '' : Util::toCamelCase(strtolower($language), '_', true);
+
+            return $this->translate($row['field'] . $language, 'fields', $entity);
         }
 
         return $row['column'];
-    }
-
-    protected function getContainer(): Container
-    {
-        return $this->getInjection('container');
     }
 
     protected function getDataConvertor(): Convertor
@@ -271,7 +256,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $params;
     }
 
-    protected function getRecords(): array
+    protected function getRecords(int $offset = 0): array
     {
         if (!empty($this->data['feed']['separateJob']) && !empty($this->iteration)) {
             return [];
@@ -282,7 +267,60 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         }
 
         $params = $this->getSelectParams();
-        $params['offset'] = $this->data['offset'];
+        $params['offset'] = $offset;
+        $params['maxSize'] = $this->data['limit'];
+        $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
+
+        if (!empty($this->data['feed']['sortOrderField'])) {
+            $params['sortBy'] = $this->data['feed']['sortOrderField'];
+            if ($this->getMetadata()->get(['entityDefs', $this->data['feed']['entity'], 'fields', $params['sortBy'], 'type']) === 'link') {
+                $params['sortBy'] .= 'Id';
+            }
+            $params['asc'] = true;
+            if (!empty($this->data['feed']['sortOrderDirection']) && $this->data['feed']['sortOrderDirection'] !== 'ASC') {
+                $params['asc'] = false;
+            }
+        }
+
+        /**
+         * Set language prism via prism filter
+         */
+        if (empty($GLOBALS['languagePrism']) && !empty($params['where'])) {
+            foreach ($params['where'] as $where) {
+                if (!empty($where['value'][0]) && is_string($where['value'][0]) && strpos((string)$where['value'][0], 'prismVia') !== false) {
+                    $language = str_replace('prismVia', '', $where['value'][0]);
+                    if ($language === 'Main') {
+                        $languagePrism = 'main';
+                    } else {
+                        $parts = explode("_", Util::toUnderScore($language));
+                        $languagePrism = $parts[0] . '_' . strtoupper($parts[1]);
+                    }
+                    $GLOBALS['languagePrism'] = $languagePrism;
+                }
+            }
+        }
+
+        $result = $this->getEntityService()->findEntities($params);
+
+        $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
+
+        $this->iteration++;
+
+        return $list;
+    }
+
+    public function getCollection(int $offset = null): ?EntityCollection
+    {
+        if (!$this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+            return null;
+        }
+
+        if ($offset === null) {
+            $offset = $this->data['offset'];
+        }
+
+        $params = $this->getSelectParams();
+        $params['offset'] = $offset;
         $params['maxSize'] = $this->data['limit'];
         $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
 
@@ -298,115 +336,11 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         }
 
         $result = $this->getEntityService()->findEntities($params);
-
-        $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
-
-        // caching ProductAttributeValues if Product
-        if ($this->data['feed']['entity'] === 'Product') {
-            $this->loadPavs(array_column($list, 'id'));
+        if (isset($result['collection']) && count($result['collection']) > 0) {
+            return $result['collection'];
         }
 
-        $this->data['offset'] = $this->data['offset'] + $this->data['limit'];
-        $this->iteration++;
-
-        return $list;
-    }
-
-    protected function loadPavs(array $productsIds): void
-    {
-        $this->pavs = [];
-
-        /**
-         * @deprecated This only for pim < 1.4.0
-         */
-        if (empty($this->getMetadata()->get(['entityDefs', 'ProductAttributeValue', 'fields', 'boolValue']))) {
-            foreach ($productsIds as $productId) {
-                $params = ['select' => ['id', 'productId', 'attributeId', 'attributeName', 'scope', 'channelId', 'value', 'data', 'locale', 'isLocale']];
-                if ($this->getConfig()->get('isMultilangActive', false) && !empty($locales = $this->getConfig()->get('inputLanguageList', []))) {
-                    foreach ($locales as $locale) {
-                        $params['select'][] = Util::toCamelCase('value_' . strtolower($locale));
-                    }
-                }
-                $pavs = $this->getService('Product')->findLinkedEntities($productId, 'productAttributeValues', $params);
-                $this->pavs[$productId] = [];
-                if (!empty($pavs['total'])) {
-                    if (isset($pavs['list'])) {
-                        $this->pavs[$productId] = $pavs['list'];
-                    } elseif (isset($pavs['collection'])) {
-                        $this->pavs[$productId] = $pavs['collection']->toArray();
-                    }
-                }
-            }
-            return;
-        }
-
-        $pavParams = [
-            'sortBy'  => 'id',
-            'offset'  => 0,
-            'maxSize' => \PHP_INT_MAX,
-            'where'   => [
-                [
-                    'type'      => 'equals',
-                    'attribute' => 'productId',
-                    'value'     => $productsIds
-                ]
-            ]
-        ];
-
-        $selectParams = $this->getSelectManager('ProductAttributeValue')->getSelectParams($pavParams, true, true);
-        foreach (['customJoin', 'additionalSelectColumns', 'customWhere'] as $key) {
-            if (isset($selectParams[$key])) {
-                unset($selectParams[$key]);
-            }
-        }
-
-        $selectFields = [
-            'id',
-            'productId',
-            'attributeId',
-            'scope',
-            'channelId',
-            'language',
-            'boolValue',
-            'dateValue',
-            'datetimeValue',
-            'intValue',
-            'floatValue',
-            'varcharValue',
-            'textValue',
-            'attributeType',
-            'data'
-        ];
-
-        $pavs = $this
-            ->getEntityManager()
-            ->getRepository('ProductAttributeValue')
-            ->select($selectFields)
-            ->find($selectParams)
-            ->toArray();
-
-        if (!empty($pavs)) {
-            $attrs = $this
-                ->getEntityManager()
-                ->getRepository('Attribute')
-                ->select(['id', 'name', 'code', 'type', 'isMultilang'])
-                ->where(['id' => array_column($pavs, 'attributeId')])
-                ->find()
-                ->toArray();
-            $preparedAttrs = [];
-            foreach ($attrs as $attr) {
-                $preparedAttrs[$attr['id']] = $attr;
-            }
-
-            foreach ($pavs as $pav) {
-                $row = $pav;
-                $row['attributeName'] = $preparedAttrs[$pav['attributeId']]['name'];
-                $row['attributeCode'] = $preparedAttrs[$pav['attributeId']]['code'];
-                $row['attributeType'] = $preparedAttrs[$pav['attributeId']]['type'];
-                $row['isAttributeMultiLang'] = !empty($preparedAttrs[$pav['attributeId']]['isMultilang']);
-                $this->pavs[$pav['productId']][] = $row;
-            }
-        }
+        return null;
     }
 
     protected function createCacheFile(ExportJob $exportJob): string
@@ -414,20 +348,25 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         // prepare export feed data
         $data = $this->data['feed']['data'];
 
-        $configuration = $data['configuration'];
-
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
         $filePath = $this->createPath();
         $fullFilePath = $this->getConfig()->get('filesPath', 'upload/files/') . $filePath;
         Util::createDir($fullFilePath);
 
+        /**
+         * Set language prism
+         */
+        if (!empty($this->data['feed']['language'])) {
+            $GLOBALS['languagePrism'] = $this->data['feed']['language'];
+        }
+
         $jobMetadata = [
             'configuration' => [],
             'fullFileName'  => $fullFilePath . '/' . $fileName
         ];
 
-        foreach ($configuration as $rowNumber => $row) {
+        foreach ($data['configuration'] as $rowNumber => $row) {
             $jobMetadata['configuration'][$rowNumber] = $this->prepareRow($row);
         }
 
@@ -436,17 +375,17 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
         $file = fopen($jobMetadata['fullFileName'], 'a');
 
-        $count = 0;
-        while (!empty($records = $this->getRecords())) {
-            foreach ($records as $record) {
-                if ($this->data['feed']['entity'] === 'Product') {
-                    $record['pavs'] = isset($this->pavs[$record['id']]) ? $this->pavs[$record['id']] : [];
-                    if (!empty($record['pavs'])) {
-                        $record['pavs'] = $this->preparePavsForOutput($record['pavs']);
-                    }
-                }
+        $offset = $this->data['offset'];
 
-                fwrite($file, Json::encode($record) . PHP_EOL);
+        $count = 0;
+        while (!empty($records = $this->getRecords($offset))) {
+            $offset = $offset + $this->data['limit'];
+            foreach ($records as $record) {
+                $rowData = [];
+                foreach ($data['configuration'] as $row) {
+                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row), true);
+                }
+                fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $count++;
             }
         }
@@ -459,13 +398,24 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $jobMetadata['fullFileName'];
     }
 
-    protected function getAttribute(string $id): Entity
+    protected function getDelimiter(): string
     {
-        if (!isset($this->attributes[$id])) {
-            $this->attributes[$id] = $this->getEntityManager()->getEntity('Attribute', $id);
+        $delimiter = empty($this->data['feed']['csvFieldDelimiter']) ? ';' : $this->data['feed']['csvFieldDelimiter'];
+        if ($delimiter === '\t') {
+            $delimiter = "\t";
         }
 
-        return $this->attributes[$id];
+        return $delimiter;
+    }
+
+    protected function getEnclosure(): string
+    {
+        return $this->data['feed']['csvTextQualifier'] !== 'doubleQuote' ? "'" : '"';
+    }
+
+    protected function getAttribute(string $id): Entity
+    {
+        return $this->getEntityManager()->getEntity('Attribute', $id);
     }
 
     protected function getEntityManager(): EntityManager
@@ -475,11 +425,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getService(string $serviceName): Record
     {
-        if (!isset($this->services[$serviceName])) {
-            $this->services[$serviceName] = $this->getContainer()->get('serviceFactory')->create($serviceName);
-        }
-
-        return $this->services[$serviceName];
+        return $this->getContainer()->get('serviceFactory')->create($serviceName);
     }
 
     protected function getEntityService(): Record
@@ -509,11 +455,7 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
 
     protected function getLanguage(string $locale): Language
     {
-        if (!isset($this->languages[$locale])) {
-            $this->languages[$locale] = new Language($this->getContainer(), $locale);
-        }
-
-        return $this->languages[$locale];
+        return new Language($this->getContainer(), $locale);
     }
 
     protected function createPath(): string
@@ -521,27 +463,15 @@ abstract class AbstractExportType extends \Espo\Core\Services\Base
         return $this->getContainer()->get('filePathBuilder')->createPath(FilePathBuilder::UPLOAD);
     }
 
+    protected function getContainer(): Container
+    {
+        return $this->getInjection('container');
+    }
+
     protected function init()
     {
         parent::init();
 
         $this->addDependency('container');
-    }
-
-    protected function preparePavsForOutput(array $pavs): array
-    {
-        $productService = $this->getService('Product');
-        if (!method_exists($productService, 'preparePavsForOutput')) {
-            return $pavs;
-        }
-
-        $collection = new EntityCollection();
-        foreach ($pavs as $v) {
-            $pav = $this->getEntityManager()->getEntity('ProductAttributeValue');
-            $pav->set($v);
-            $collection->append($pav);
-        }
-
-        return $productService->preparePavsForOutput($collection)->toArray();
     }
 }

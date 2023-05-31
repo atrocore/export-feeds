@@ -15,14 +15,20 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 Espo.define('export:views/export-job/record/list', 'views/record/list',
     Dep => Dep.extend({
+        rowActionsView: 'export:views/export-job/record/row-actions/export-again-and-remove',
 
-        rowActionsView: 'views/record/row-actions/remove-only'
+        actionTryAgainExportJob(data) {
+            let model = this.collection.get(data.id);
 
+            this.notify('Saving...');
+            model.set('state', 'Pending');
+            model.save().then(() => {
+                this.notify('Saved', 'success');
+            });
+        }
     })
 );

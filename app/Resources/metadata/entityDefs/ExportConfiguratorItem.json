@@ -1,5 +1,23 @@
 {
   "fields": {
+    "attributeValue": {
+      "type": "enum",
+      "required": true,
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-configurator-item/fields/attribute-value",
+      "options": [
+        "value",
+        "valueFrom",
+        "valueTo",
+        "currency",
+        "unit"
+      ],
+      "default": "value"
+    },
+    "zip": {
+      "type": "bool",
+      "view": "export:views/export-configurator-item/fields/zip"
+    },
     "name": {
       "type": "varchar",
       "view": "export:views/export-configurator-item/fields/name"
@@ -75,9 +93,23 @@
       "type": "bool",
       "notStorable": true
     },
-    "locale": {
+    "exportFeedLanguage": {
       "type": "varchar",
-      "view": "export:views/export-configurator-item/fields/locale"
+      "notStorable": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "textFilterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "emHidden": true
+    },
+    "language": {
+      "type": "varchar",
+      "view": "export:views/export-configurator-item/fields/language"
     },
     "entity": {
       "type": "varchar",
@@ -151,6 +183,16 @@
     },
     "fixedValue": {
       "type": "varchar"
+    },
+    "previousItem": {
+      "type": "enum",
+      "view": "export:views/export-configurator-item/fields/previous-item",
+      "notStorable": true,
+      "layoutMassUpdateDisabled": true,
+      "filterDisabled": true,
+      "importDisabled": true,
+      "textFilterDisabled": true,
+      "emHidden": true
     }
   },
   "links": {
@@ -172,7 +214,7 @@
     }
   },
   "collection": {
-    "sortBy": "createdAt",
+    "sortBy": "sortOrder",
     "asc": true
   },
   "indexes": {

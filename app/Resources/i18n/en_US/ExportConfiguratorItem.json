@@ -9,7 +9,7 @@
     "remove": "Remove",
     "exportIntoSeparateColumns": "Separate",
     "type": "Type",
-    "locale": "Language",
+    "language": "Language",
     "scope": "Scope",
     "channel": "Channel",
     "mask": "Mask",
@@ -20,7 +20,9 @@
     "sortFieldRelation": "Sort Order (field)",
     "sortOrderRelation": "Sort Order (direction)",
     "valueModifier": "Value Modifier",
-    "fixedValue": "Fixed value"
+    "fixedValue": "Fixed value",
+    "previousItem": "Previous Item",
+    "zip": "Export Assets to a ZIP archive"
   },
   "links": {
     "exportFeed": "Export Feed",
@@ -30,9 +32,6 @@
     "name": "Name",
     "internal": "Name / Language",
     "custom": "Custom Name"
-  },
-  "labels": {
-    "mainLocale": "Main Language"
   },
   "options": {
     "boolFilterFieldValue": {

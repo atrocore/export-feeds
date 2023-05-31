@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -41,11 +39,13 @@ class ExportConfiguratorItem extends Base
             'exportIntoSeparateColumns',
             'sortOrder',
             'attributeId',
-            'locale',
+            'language',
             'scope',
             'channelId',
             'channelName',
-            'fixedValue'
+            'fixedValue',
+            'zip',
+            'attributeValue'
         ];
 
     protected array $languages = [];
@@ -60,6 +60,7 @@ class ExportConfiguratorItem extends Base
 
         $entity->set('entity', $feed->getFeedField('entity'));
         $entity->set('column', $this->prepareColumnName($entity));
+        $entity->set('exportFeedLanguage', !empty($feed->get('language')) ? $feed->get('language') : null);
         $entity->set('isAttributeMultiLang', false);
         $entity->set('attributeNameValue', $entity->get('name'));
         $entity->set('editable', $this->getAcl()->check($feed, 'edit'));
@@ -75,14 +76,10 @@ class ExportConfiguratorItem extends Base
 
     public function updateEntity($id, $data)
     {
-        if (property_exists($data, '_sortedIds')) {
-            foreach ($data->_sortedIds as $k => $id) {
-                if (!empty($item = $this->getRepository()->get($id))) {
-                    $item->set('sortOrder', $k * 10);
-                    $this->getEntityManager()->saveEntity($item);
-                }
-            }
-            return $this->readEntity($id);
+        if (property_exists($data, '_previousItemId') && property_exists($data, '_itemId')) {
+            $data->previousItem = $data->_previousItemId;
+            unset($data->_previousItemId);
+            unset($data->_itemId);
         }
 
         return parent::updateEntity($id, $data);
@@ -119,6 +116,10 @@ class ExportConfiguratorItem extends Base
             }
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
+            $language = !empty($entity->get('language')) && $entity->get('language') !== 'main' ? $entity->get('language') : '';
+            if (!empty($language)) {
+                $column .= ' / ' . $language;
+            }
         } elseif ($entity->get('columnType') === 'custom') {
             $column = (string)$entity->get('column');
         }
@@ -132,25 +133,25 @@ class ExportConfiguratorItem extends Base
             return '-';
         }
 
-        $locale = $entity->get('locale');
+        $language = $entity->get('language');
 
-        if ($locale === 'mainLocale') {
-            $locale = '';
+        if ($language === 'main') {
+            $language = '';
         }
 
         $column = (string)$entity->get('column');
 
         if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
             $name = 'name';
-            if (!empty($locale) && !empty($attribute->get('isMultilang'))) {
-                $name .= ucfirst(Util::toCamelCase(strtolower($locale)));
+            if (!empty($language) && !empty($attribute->get('isMultilang'))) {
+                $name .= ucfirst(Util::toCamelCase(strtolower($language)));
             }
 
             $column = $attribute->get($name);
         } elseif ($entity->get('columnType') === 'internal') {
             $column = $attribute->get('name');
-            if (!empty($locale)) {
-                $column .= ' / ' . $locale;
+            if (!empty($language)) {
+                $column .= ' / ' . $language;
             }
         }
 

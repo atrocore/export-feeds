@@ -7,7 +7,9 @@
         {
           "name": "type"
         },
-        false
+        {
+          "name": "previousItem"
+        }
       ],
       [
         {
@@ -19,9 +21,13 @@
         {
           "name": "attribute"
         },
+        false
+      ],
+      [
         {
-          "name": "locale"
-        }
+          "name": "language"
+        },
+        false
       ],
       [
         {
@@ -67,7 +73,9 @@
         {
           "name": "mask"
         },
-        false
+        {
+          "name":  "attributeValue"
+        }
       ],
       [
         {
@@ -78,6 +86,12 @@
       [
         {
           "name": "fixedValue"
+        },
+        false
+      ],
+      [
+        {
+          "name": "zip"
         },
         false
       ]

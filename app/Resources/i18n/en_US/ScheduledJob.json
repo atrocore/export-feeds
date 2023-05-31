@@ -1,13 +1,17 @@
 {
   "fields": {
-    "exportFeed": "Export Feed"
+    "exportFeed": "Export Feed",
+    "exportFeeds": "Export Feeds",
+    "maximumHoursToLookBack": "Maximum hours to look back"
   },
   "links": {
-    "exportFeed": "Export Feed"
+    "exportFeed": "Export Feed",
+    "exportFeeds": "Export Feeds"
   },
   "options": {
     "job": {
-      "ExportFeed": "Export Feed"
+      "ExportFeed": "Export Feed",
+      "TrialExport": "Failed Export Job retrial"
     }
   },
   "tooltips":{

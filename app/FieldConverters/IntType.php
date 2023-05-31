@@ -16,8 +16,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
- *
- * This software is not allowed to be used in Russia and Belarus.
  */
 
 declare(strict_types=1);
@@ -30,12 +28,19 @@ class IntType extends AbstractType
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
+        $unitField = $field . 'UnitId';
 
-        $result[$column] = null;
+        $value = null;
+        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
+
         if (isset($record[$field]) && $record[$field] !== null) {
-            $result[$column] = (int)$record[$field];
-            $this->applyValueModifiers($configuration, $result[$column]);
+            $value = (int)$record[$field];
+            $this->applyValueModifiers($configuration, $value);
         }
+
+        $result[$column] = $configuration['attributeValue'] == 'unit' ?
+            (empty($unitId) ? null : $this->getUnitName($unitId)) :
+            $value;
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -46,15 +51,22 @@ class IntType extends AbstractType
         $nullValue = $configuration['nullValue'];
         $decimalMark = $configuration['decimalMark'];
         $thousandSeparator = $configuration['thousandSeparator'];
+        $unitField = $field . 'UnitId';
 
-        $result[$column] = $nullValue;
+        $value = $nullValue;
+        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
+
         if (isset($record[$field])) {
-            if (empty($record[$field]) && $record[$field] !== '0' && $record[$field] !== 0) {
-                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
+            if (empty($record[$field]) && $record[$field] != 0) {
+                $value = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
-                $result[$column] = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
-                $this->applyValueModifiers($configuration, $result[$column]);
+                $value = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
+                $this->applyValueModifiers($configuration, $value);
             }
         }
+
+        $result[$column] = $configuration['attributeValue'] == 'unit' ?
+            (empty($unitId) ? $nullValue : $this->getUnitName($unitId)) :
+            $value;
     }
 }
