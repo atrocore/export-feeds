@@ -1,7 +1,8 @@
 {
   "fields": {
     "exportFeed": {
-      "type": "link"
+      "type": "link",
+      "tooltip": true
     },
     "exportFeeds": {
       "type": "linkMultiple",
