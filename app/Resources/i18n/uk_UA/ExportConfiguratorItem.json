@@ -26,11 +26,11 @@
     "attributeValue": "Значення атрибута"
   },
   "attributeValue": {
-    "value": "вартість",
+    "value": "Значення",
     "valueFrom": "Значення від",
-    "valueTo": "Значення для",
-    "unit": "гуртувати",
-    "currency": "валюта"
+    "valueTo": "Значення до",
+    "unit": "Міра",
+    "currency": "Валюта"
   },
   "links": {
     "exportFeed": "Експорт. фід",
