@@ -22,7 +22,15 @@
     "valueModifier": "Value Modifier",
     "fixedValue": "Fixed value",
     "previousItem": "Previous Item",
-    "zip": "Export Assets to a ZIP archive"
+    "zip": "Export Assets to a ZIP archive",
+    "attributeValue": "Attribute Value"
+  },
+  "attributeValue": {
+    "value": "Value",
+    "valueFrom": "Value From",
+    "valueTo": "Value To",
+    "unit": "Unit",
+    "currency": "Currency"
   },
   "links": {
     "exportFeed": "Export Feed",

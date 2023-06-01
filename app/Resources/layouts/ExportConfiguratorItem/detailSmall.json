@@ -73,7 +73,9 @@
         {
           "name": "mask"
         },
-        false
+        {
+          "name":  "attributeValue"
+        }
       ],
       [
         {

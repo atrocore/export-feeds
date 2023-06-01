@@ -1,5 +1,19 @@
 {
   "fields": {
+    "attributeValue": {
+      "type": "enum",
+      "required": true,
+      "prohibitedEmptyValue": true,
+      "view": "export:views/export-configurator-item/fields/attribute-value",
+      "options": [
+        "value",
+        "valueFrom",
+        "valueTo",
+        "currency",
+        "unit"
+      ],
+      "default": "value"
+    },
     "zip": {
       "type": "bool",
       "view": "export:views/export-configurator-item/fields/zip"

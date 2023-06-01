@@ -43,4 +43,11 @@ abstract class AbstractType
             $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
         }
     }
+
+    public function getUnitName($unitId)
+    {
+        if (empty($unitId)) return "";
+        $unit = $this->convertor->getEntity('Unit', $unitId);
+        return $unit->get('name');
+    }
 }
