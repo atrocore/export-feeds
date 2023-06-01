@@ -22,7 +22,15 @@
     "valueModifier": "Модифікатор значення",
     "fixedValue": "Фіксоване значення",
     "previousItem": "Попередній елемент",
-    "zip": "Експорт ассетів у ZIP-архів"
+    "zip": "Експорт ассетів у ZIP-архів",
+    "attributeValue": "Значення атрибута"
+  },
+  "attributeValue": {
+    "value": "вартість",
+    "valueFrom": "Значення від",
+    "valueTo": "Значення для",
+    "unit": "гуртувати",
+    "currency": "валюта"
   },
   "links": {
     "exportFeed": "Експорт. фід",
