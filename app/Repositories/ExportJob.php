@@ -59,6 +59,7 @@ class ExportJob extends Base
                     if (empty($qmJob)) {
                         throw new BadRequest($this->getInjection('language')->translate('notExecutableJob', 'exceptions', 'ExportJob'));
                     }
+                    $entity->set('start', (new \DateTime())->format('Y-m-d H:i:s'));
                 }
             }
         }
