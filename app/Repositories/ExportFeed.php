@@ -136,6 +136,10 @@ class ExportFeed extends Base
             }
         }
 
+        if (isset($data['configuration'])) {
+            unset($data['configuration']);
+        }
+
         $entity->set('data', Json::decode(Json::encode($data)));
     }
 

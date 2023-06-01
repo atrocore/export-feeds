@@ -343,11 +343,8 @@ abstract class AbstractExportType extends Base
         return null;
     }
 
-    protected function createCacheFile(ExportJob $exportJob): string
+    protected function createCacheFile(ExportJob $exportJob, array $configuration): void
     {
-        // prepare export feed data
-        $data = $this->data['feed']['data'];
-
         // prepare full file name
         $fileName = "{$this->data['exportJobId']}.txt";
         $filePath = $this->createPath();
@@ -366,7 +363,7 @@ abstract class AbstractExportType extends Base
             'fullFileName'  => $fullFilePath . '/' . $fileName
         ];
 
-        foreach ($data['configuration'] as $rowNumber => $row) {
+        foreach ($configuration as $rowNumber => $row) {
             $jobMetadata['configuration'][$rowNumber] = $this->prepareRow($row);
         }
 
@@ -375,14 +372,15 @@ abstract class AbstractExportType extends Base
 
         $file = fopen($jobMetadata['fullFileName'], 'a');
 
+        $limit = $this->data['limit'];
         $offset = $this->data['offset'];
 
         $count = 0;
         while (!empty($records = $this->getRecords($offset))) {
-            $offset = $offset + $this->data['limit'];
+            $offset = $offset + $limit;
             foreach ($records as $record) {
                 $rowData = [];
-                foreach ($data['configuration'] as $row) {
+                foreach ($configuration as $row) {
                     $rowData[] = $this->convertor->convert($record, $this->prepareRow($row));
                 }
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
@@ -394,8 +392,6 @@ abstract class AbstractExportType extends Base
 
         $exportJob->set('count', $count);
         $exportJob->set('data', array_merge($exportJob->getData(), $jobMetadata));
-
-        return $jobMetadata['fullFileName'];
     }
 
     protected function getDelimiter(): string

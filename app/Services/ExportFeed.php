@@ -333,6 +333,100 @@ class ExportFeed extends Base
         }
     }
 
+    public function prepareFeedDataConfiguration(Entity $sheet): array
+    {
+        $items = $this->getInjection('serviceFactory')->create($sheet->getEntityType())
+            ->findLinkedEntities($sheet->get('id'), 'configuratorItems', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
+        if (empty($items['total'])) {
+            return [];
+        }
+
+        $feed = $sheet->getEntityType() === 'ExportFeed' ? $sheet : $sheet->get('exportFeed');
+
+        $configuration = [];
+
+        /** @var \Export\Services\ExportConfiguratorItem $eciService */
+        $eciService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
+
+        foreach ($items['collection'] as $item) {
+            $row = [
+                'columnType'                => $item->get('columnType'),
+                'language'                  => $item->get('language'),
+                'column'                    => $eciService->prepareColumnName($item),
+                'template'                  => $feed->get('template'),
+                'emptyValue'                => $feed->getFeedField('emptyValue'),
+                'nullValue'                 => $feed->getFeedField('nullValue'),
+                'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
+                'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
+                'decimalMark'               => $feed->getFeedField('decimalMark'),
+                'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
+                'convertCollectionToString' => !empty($feed->getFeedField('convertCollectionToString')),
+                'convertRelationsToString'  => !empty($feed->getFeedField('convertRelationsToString')),
+                'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
+                'exportBy'                  => $item->get('exportBy'),
+                'mask'                      => $item->get('mask'),
+                'searchFilter'              => $item->get('searchFilter'),
+                'filterField'               => $item->get('filterField'),
+                'filterFieldValue'          => $item->get('filterFieldValue'),
+                'offsetRelation'            => $item->get('offsetRelation'),
+                'limitRelation'             => $item->get('limitRelation'),
+                'sortFieldRelation'         => $item->get('sortFieldRelation'),
+                'sortOrderRelation'         => $item->get('sortOrderRelation'),
+                'valueModifier'             => $item->get('valueModifier'),
+                'type'                      => $item->get('type'),
+                'fixedValue'                => $item->get('fixedValue'),
+                'zip'                       => !empty($item->get('zip')),
+            ];
+            if ($feed->get('type') === 'simple') {
+                $row['convertCollectionToString'] = true;
+                $row['convertRelationsToString'] = true;
+            }
+
+            if ($sheet->getEntityType() === 'ExportFeed') {
+                $row['entity'] = $feed->getFeedField('entity');
+                $row['sortOrderField'] = $feed->get('sortOrderField');
+                $row['sortOrderDirection'] = $feed->get('sortOrderDirection');
+            } else {
+                $row['entity'] = $sheet->get('entity');
+                $row['sortOrderField'] = $sheet->get('sortOrderField');
+                $row['sortOrderDirection'] = $sheet->get('sortOrderDirection');
+            }
+
+            if ($item->get('type') === 'Field') {
+                if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {
+                    throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchField', 'exceptions', 'ExportFeed'), $item->get('name')));
+                }
+                $row['field'] = $item->get('name');
+            }
+
+            if ($item->get('type') === 'Attribute') {
+                $attribute = $this->getEntityManager()->getEntity('Attribute', $item->get('attributeId'));
+                if (empty($attribute)) {
+                    throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportFeed'), $item->get('name')));
+                }
+
+                $row['replaceAttributeValues'] = !empty($feed->getFeedField('replaceAttributeValues'));
+                $row['attributeId'] = $attribute->get('id');
+                $row['attributeName'] = $attribute->get('name');
+
+                $row['scope'] = $item->get('scope');
+                $row['channelId'] = null;
+                $row['channelLocales'] = [];
+
+                if ($row['scope'] === 'Channel') {
+                    $row['channelId'] = $item->get('channelId');
+                    if (!empty($channel = $item->get('channel'))) {
+                        $row['channelLocales'] = $channel->get('locales');
+                    }
+                }
+            }
+
+            $configuration[] = $row;
+        }
+
+        return $configuration;
+    }
+
     public function prepareFeedData(Entity $feed): array
     {
         $result = $feed->toArray();
@@ -344,83 +438,23 @@ class ExportFeed extends Base
 
         $result['fileType'] = $feed->get('fileType');
 
-        $configuration = [];
-        $items = $this->findLinkedEntities($feed->get('id'), 'configuratorItems', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
-        if (!empty($items['total'])) {
-            /** @var \Export\Services\ExportConfiguratorItem $eciService */
-            $eciService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
-
-            foreach ($items['collection'] as $item) {
-                $row = [
-                    'columnType'                => $item->get('columnType'),
-                    'language'                  => $item->get('language'),
-                    'column'                    => $eciService->prepareColumnName($item),
-                    'entity'                    => $feed->getFeedField('entity'),
-                    'template'                  => $feed->get('template'),
-                    'sortOrderField'            => $feed->get('sortOrderField'),
-                    'sortOrderDirection'        => $feed->get('sortOrderDirection'),
-                    'emptyValue'                => $feed->getFeedField('emptyValue'),
-                    'nullValue'                 => $feed->getFeedField('nullValue'),
-                    'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
-                    'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
-                    'decimalMark'               => $feed->getFeedField('decimalMark'),
-                    'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
-                    'convertCollectionToString' => !empty($feed->getFeedField('convertCollectionToString')),
-                    'convertRelationsToString'  => !empty($feed->getFeedField('convertRelationsToString')),
-                    'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
-                    'exportBy'                  => $item->get('exportBy'),
-                    'mask'                      => $item->get('mask'),
-                    'searchFilter'              => $item->get('searchFilter'),
-                    'filterField'               => $item->get('filterField'),
-                    'filterFieldValue'          => $item->get('filterFieldValue'),
-                    'offsetRelation'            => $item->get('offsetRelation'),
-                    'limitRelation'             => $item->get('limitRelation'),
-                    'sortFieldRelation'         => $item->get('sortFieldRelation'),
-                    'sortOrderRelation'         => $item->get('sortOrderRelation'),
-                    'valueModifier'             => $item->get('valueModifier'),
-                    'type'                      => $item->get('type'),
-                    'fixedValue'                => $item->get('fixedValue'),
-                    'zip'                       => !empty($item->get('zip')),
+        if (!empty($feed->get('hasMultipleSheets'))) {
+            $sheets = $this->findLinkedEntities($feed->get('id'), 'sheets', ['maxSize' => \PHP_INT_MAX, 'sortBy' => 'sortOrder']);
+            foreach ($sheets['collection'] as $sheet) {
+                if (empty($sheet->get('isActive'))) {
+                    continue;
+                }
+                $result['sheets'][] = [
+                    'name'               => $sheet->get('name'),
+                    'sortOrderField'     => $sheet->get('sortOrderField'),
+                    'sortOrderDirection' => $sheet->get('sortOrderDirection'),
+                    'data'               => $sheet->get('data'),
+                    'configuration'      => $this->prepareFeedDataConfiguration($sheet)
                 ];
-                if ($feed->get('type') === 'simple') {
-                    $row['convertCollectionToString'] = true;
-                    $row['convertRelationsToString'] = true;
-                }
-
-                if ($item->get('type') === 'Field') {
-                    if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {
-                        throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchField', 'exceptions', 'ExportFeed'), $item->get('name')));
-                    }
-                    $row['field'] = $item->get('name');
-                }
-
-                if ($item->get('type') === 'Attribute') {
-                    $attribute = $this->getEntityManager()->getEntity('Attribute', $item->get('attributeId'));
-                    if (empty($attribute)) {
-                        throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportFeed'), $item->get('name')));
-                    }
-
-                    $row['replaceAttributeValues'] = !empty($feed->getFeedField('replaceAttributeValues'));
-                    $row['attributeId'] = $attribute->get('id');
-                    $row['attributeName'] = $attribute->get('name');
-
-                    $row['scope'] = $item->get('scope');
-                    $row['channelId'] = null;
-                    $row['channelLocales'] = [];
-
-                    if ($row['scope'] === 'Channel') {
-                        $row['channelId'] = $item->get('channelId');
-                        if (!empty($channel = $item->get('channel'))) {
-                            $row['channelLocales'] = $channel->get('locales');
-                        }
-                    }
-                }
-
-                $configuration[] = $row;
             }
+        } else {
+            $result['data']->configuration = Json::decode(Json::encode($this->prepareFeedDataConfiguration($feed)));
         }
-
-        $result['data']->configuration = Json::decode(Json::encode($configuration));
 
         return $this
             ->getInjection('eventManager')

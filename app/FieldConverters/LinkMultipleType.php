@@ -24,7 +24,7 @@ namespace Export\FieldConverters;
 
 class LinkMultipleType extends LinkType
 {
-    public function convert(array &$result, array $record, array $configuration): void
+    public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
@@ -97,7 +97,7 @@ class LinkMultipleType extends LinkType
         }
 
         if (empty($configuration['exportIntoSeparateColumns'])) {
-            $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
+            $result[$column] = $configuration['nullValue'];
         }
 
         $foreignList = [];
@@ -109,7 +109,7 @@ class LinkMultipleType extends LinkType
 
         $links = [];
         if (empty($foreignList)) {
-            $links[] = $this->needStringResult ? $configuration['nullValue'] : null;
+            $links[] = $configuration['nullValue'];
         }
 
         $foreignList = array_slice($foreignList, 0, $params['maxSize']);
@@ -138,11 +138,7 @@ class LinkMultipleType extends LinkType
                 $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
             }
 
-            if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
-                $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
-            } else {
-                $links[] = $fieldResult;
-            }
+            $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
         }
 
         if (!empty($configuration['exportIntoSeparateColumns'])) {
@@ -168,21 +164,16 @@ class LinkMultipleType extends LinkType
                 while ($k < ($configuration['limitRelation'] - 1)) {
                     $k++;
                     $columnName = $column . '_' . ($k + 1);
-                    $result[$columnName] = $this->needStringResult ? $configuration['nullValue'] : null;
+                    $result[$columnName] = $configuration['nullValue'];
                 }
             }
         } else {
-            if ($this->needStringResult || !empty($configuration['convertCollectionToString'])) {
-                $preparedLinks = [];
-                foreach ($links as $link) {
-                    $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
-                }
-                $result[$column] = implode($configuration['delimiter'], $preparedLinks);
-            } else {
-                $result[$column] = $links;
+            $preparedLinks = [];
+            foreach ($links as $link) {
+                $preparedLinks[] = is_array($link) ? json_encode($link) : (string)$link;
             }
+            $result[$column] = implode($configuration['delimiter'], $preparedLinks);
         }
-        $this->needStringResult = false;
     }
 
     protected function findLinkedEntities(string $entity, array $record, string $field, array $params)

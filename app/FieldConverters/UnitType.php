@@ -26,25 +26,6 @@ class UnitType extends FloatType
 {
     protected string $defaultMask = '{{value}} {{unit}}';
 
-    public function convert(array &$result, array $record, array $configuration): void
-    {
-        $field = $configuration['field'];
-        $column = $configuration['column'];
-        $mask = !empty($configuration['mask']) ? $configuration['mask'] : $this->defaultMask;
-
-        $result[$column] = null;
-        if (isset($record[$field]) && $record[$field] !== null) {
-            $unit = $record[$field . 'Unit'];
-            $value = (float)$record[$field];
-
-            if ($mask === '{{value}}' || $mask === '{{Value}}') {
-                $result[$column] = $value;
-            } else {
-                $result[$column] = str_replace(['{{value}}', '{{Value}}', '{{unit}}', '{{Unit}}'], [$value, $value, $unit, $unit], $mask);
-            }
-        }
-    }
-
     public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];

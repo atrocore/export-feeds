@@ -24,22 +24,6 @@ namespace Export\FieldConverters;
 
 class RangeIntType extends AbstractType
 {
-    public function convert(array &$result, array $record, array $configuration): void
-    {
-        $field = $configuration['field'];
-        $fieldFrom = $field . 'From';
-        $fieldTo = $field . 'To';
-
-        $column = $configuration['column'];
-
-        $valueFrom = array_key_exists($fieldFrom, $record) && $record[$fieldFrom] !== null ? (int)$record[$fieldFrom] : null;
-        $valueTo = array_key_exists($fieldTo, $record) && $record[$fieldTo] !== null ? (int)$record[$fieldTo] : null;
-
-        $result[$column] = (array_key_exists($fieldFrom, $record) || array_key_exists($fieldTo, $record)) ? $valueFrom . ' — ' . $valueTo : null;
-
-        $this->applyValueModifiers($configuration, $result[$column]);
-    }
-
     public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];

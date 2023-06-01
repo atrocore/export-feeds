@@ -33,8 +33,6 @@ abstract class AbstractType
         $this->convertor = $convertor;
     }
 
-    abstract public function convert(array &$result, array $record, array $configuration): void;
-
     abstract public function convertToString(array &$result, array $record, array $configuration): void;
 
     public function applyValueModifiers(array $configuration, &$value): void

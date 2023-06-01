@@ -26,6 +26,7 @@ use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Exceptions\Exception;
+use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
 use Espo\ORM\EntityCollection;
 use Export\Entities\ExportJob;
@@ -182,8 +183,6 @@ class ExportTypeSimple extends AbstractExportType
 
     protected function exportCsv(ExportJob $exportJob): Attachment
     {
-        $this->createCacheFile($exportJob);
-
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
         // create attachment
@@ -197,6 +196,7 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->beforeStore($this, $attachment, 'csv');
 
+        $this->createCacheFile($exportJob, $this->data['feed']['data']['configuration']);
         $this->storeCsvFile($exportJob->getData(), $repository->getFilePath($attachment));
 
         $attachment->set('type', 'text/csv');
@@ -209,7 +209,13 @@ class ExportTypeSimple extends AbstractExportType
 
     protected function exportXlsx(ExportJob $exportJob): Attachment
     {
-        $this->createCacheFile($exportJob);
+        throw new \Error('Need to finish exportXlsx.');
+//        $sheets = $this->data['feed']['sheets'] ?? [];
+//
+//        echo '<pre>';
+//        print_r('123');
+//        die();
+
 
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
@@ -224,7 +230,32 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->beforeStore($this, $attachment, 'xlsx');
 
-        $this->storeXlsxFile($exportJob->getData(), $repository->getFilePath($attachment));
+        $this->createCacheFile($exportJob, $this->data['feed']['data']['configuration']);
+
+        // $data = $exportJob->getData();
+        // $fileName = $repository->getFilePath($attachment);
+
+//        $this->createDir($fileName);
+//
+//        $csvFileName = str_replace('.xlsx', '.csv', $fileName);
+//
+//        $this->storeCsvFile($data, $csvFileName);
+//
+//        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+//
+//        // set CSV parsing options
+//        $reader->setDelimiter($this->getDelimiter());
+//        $reader->setEnclosure($this->getEnclosure());
+//        $reader->setSheetIndex(0);
+//
+//        // load a CSV file and save as a XLS
+//        $spreadsheet = $reader->load($csvFileName);
+//        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+//        $writer->save($fileName);
+//
+//        // delete csv file
+//        unlink($csvFileName);
+
 
         $attachment->set('type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $attachment->set('size', \filesize($repository->getFilePath($attachment)));
@@ -255,7 +286,7 @@ class ExportTypeSimple extends AbstractExportType
             $this->createDir($fileName);
 
             $za = new \ZipArchive();
-            if ($za->open($fileName, \ZipArchive::CREATE) !== TRUE) {
+            if ($za->open($fileName, \ZipArchive::CREATE) !== true) {
                 throw new Exception("cannot open archive $fileName\n");
             }
             $za->addFile($attachment->getFilePath(), $attachment->get('name'));
@@ -291,9 +322,11 @@ class ExportTypeSimple extends AbstractExportType
                         if ($foreignEntity === 'Attachment') {
                             $foreign = $this->convertor->getEntity($foreignEntity, $linkId);
                             $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
-                        } else if ($foreignEntity === 'Asset') {
-                            $foreign = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
-                            $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
+                        } else {
+                            if ($foreignEntity === 'Asset') {
+                                $foreign = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
+                                $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
+                            }
                         }
                     }
                 }
@@ -327,8 +360,8 @@ class ExportTypeSimple extends AbstractExportType
                 foreach ($colData as $colName => $colValue) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
-                        'pos' => $rowNumber * 1000 + $n,
-                        'name' => $colName
+                        'pos'    => $rowNumber * 1000 + $n,
+                        'name'   => $colName
                     ];
                     $n++;
                 }
@@ -391,30 +424,6 @@ class ExportTypeSimple extends AbstractExportType
 
         rewind($fp);
         fclose($fp);
-    }
-
-    protected function storeXlsxFile(array $data, string $fileName): void
-    {
-        $this->createDir($fileName);
-
-        $csvFileName = str_replace('.xlsx', '.csv', $fileName);
-
-        $this->storeCsvFile($data, $csvFileName);
-
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
-
-        // set CSV parsing options
-        $reader->setDelimiter($this->getDelimiter());
-        $reader->setEnclosure($this->getEnclosure());
-        $reader->setSheetIndex(0);
-
-        // load a CSV file and save as a XLS
-        $spreadsheet = $reader->load($csvFileName);
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $writer->save($fileName);
-
-        // delete csv file
-        unlink($csvFileName);
     }
 
     protected function createDir(string $fileName): void

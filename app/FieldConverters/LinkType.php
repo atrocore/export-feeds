@@ -24,15 +24,13 @@ namespace Export\FieldConverters;
 
 class LinkType extends AbstractType
 {
-    protected bool $needStringResult = false;
-
-    public function convert(array &$result, array $record, array $configuration): void
+    public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
         $entity = $configuration['entity'];
 
-        $result[$column] = $this->needStringResult ? $configuration['nullValue'] : null;
+        $result[$column] = $configuration['nullValue'];
 
         $linkId = $record[$this->getFieldName($field)];
 
@@ -76,18 +74,10 @@ class LinkType extends AbstractType
                     }
 
                     if (!empty($fieldResult)) {
-                        if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
-                            $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
-                        } else {
-                            $result[$column] = $fieldResult;
-                        }
+                        $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
                     }
                 } else {
-                    if ($this->needStringResult) {
-                        $result[$column] = $configuration['emptyValue'];
-                    } else {
-                        $result[$column] = null;
-                    }
+                    $result[$column] = $configuration['emptyValue'];
                 }
             } else {
                 $fieldResult = [];
@@ -99,25 +89,14 @@ class LinkType extends AbstractType
                 }
 
                 if (!empty($fieldResult)) {
-                    if ($this->needStringResult || !empty($configuration['convertRelationsToString'])) {
-                        $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
-                    } else {
-                        $result[$column] = $fieldResult;
-                    }
+                    $result[$column] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
                 }
             }
         }
-        $this->needStringResult = false;
 
         if (is_string($result[$column])) {
             $this->applyValueModifiers($configuration, $result[$column]);
         }
-    }
-
-    public function convertToString(array &$result, array $record, array $configuration): void
-    {
-        $this->needStringResult = true;
-        $this->convert($result, $record, $configuration);
     }
 
     protected function prepareExportByField(string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
@@ -146,45 +125,33 @@ class LinkType extends AbstractType
         $column = $foreignConfiguration['column'];
 
         if ($foreignType === 'link') {
-            $fieldResult[$field] = $this->needStringResult ? $foreignConfiguration['nullValue'] : null;
+            $fieldResult[$field] = $foreignConfiguration['nullValue'];
             $fieldId = $field . 'Id';
             if (isset($record[$fieldId])) {
                 if (empty($record[$fieldId])) {
-                    if ($this->needStringResult) {
-                        $fieldResult[$field] = $record[$fieldId] === null ? $foreignConfiguration['nullValue'] : $foreignConfiguration['emptyValue'];
-                    } else {
-                        $fieldResult[$field] = null;
-                    }
+                    $fieldResult[$field] = $record[$fieldId] === null ? $foreignConfiguration['nullValue'] : $foreignConfiguration['emptyValue'];
                 } else {
                     $fieldResult[$field] = $record[$fieldId];
                 }
             }
         } elseif ($foreignType === 'linkMultiple') {
-            $fieldResult[$field] = $this->needStringResult ? $foreignConfiguration['nullValue'] : null;
+            $fieldResult[$field] = $foreignConfiguration['nullValue'];
         } elseif ($foreignType === 'image' || $foreignType === 'asset') {
-            $fieldResult[$field] = $this->needStringResult ? $foreignConfiguration['nullValue'] : null;
+            $fieldResult[$field] = $foreignConfiguration['nullValue'];
             $fieldId = $field . 'Id';
             if (isset($record[$fieldId])) {
                 if (empty($record[$fieldId])) {
-                    if ($this->needStringResult) {
-                        $fieldResult[$field] = $record[$fieldId] === null ? $foreignConfiguration['nullValue'] : $foreignConfiguration['emptyValue'];
-                    } else {
-                        $fieldResult[$field] = null;
-                    }
+                    $fieldResult[$field] = $record[$fieldId] === null ? $foreignConfiguration['nullValue'] : $foreignConfiguration['emptyValue'];
                 } else {
                     if (!empty($attachment = $this->convertor->getEntity('Attachment', $record[$fieldId]))) {
                         $fieldResult[$field] = $attachment->get('url');
                     } else {
-                        if ($this->needStringResult) {
-                            $fieldResult[$field] = $foreignConfiguration['emptyValue'];
-                        } else {
-                            $fieldResult[$field] = null;
-                        }
+                        $fieldResult[$field] = $foreignConfiguration['emptyValue'];
                     }
                 }
             }
         } else {
-            $fieldResult[$field] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration, !empty($this->needStringResult))[$column];
+            $fieldResult[$field] = $this->convertor->convertType($foreignType, $foreignData, $foreignConfiguration)[$column];
         }
     }
 
