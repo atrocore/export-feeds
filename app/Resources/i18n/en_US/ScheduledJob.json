@@ -13,5 +13,8 @@
       "ExportFeed": "Export Feed",
       "TrialExport": "Failed Export Job retrial"
     }
+  },
+  "tooltips":{
+    "exportFeed": "If no Export Feed is selected, all failed Export Jobs will be retried."
   }
 }
