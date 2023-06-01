@@ -47,13 +47,18 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
 
     setupOptions() {
         const type = this.getType()
-        console.log('type', type)
         if (['rangeFloat', 'rangeInt'].includes(type)) {
-            this.params.options = ['valueFrom', 'valueTo', 'unit']
+            this.params.options = ['valueFrom', 'valueTo']
+            if (this.hasUnit()) {
+                this.params.options.push('unit')
+            }
         } else if (type === 'currency') {
             this.params.options = ['value', 'currency']
         } else if (['float', 'int'].includes(type)) {
-            this.params.options = ['value', 'unit']
+            this.params.options = ['value']
+            if (this.hasUnit()) {
+                this.params.options.push('unit')
+            }
         }
 
         this.translatedOptions = {
@@ -79,7 +84,22 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
     isRequired() {
         return ['rangeFloat', 'rangeInt', 'int', 'float', 'currency'].includes(this.getType()) && (this.params.options || []).length;
     },
-
+    hasUnit() {
+        let hasUnit = false;
+        if (this.model.get('type') === 'Attribute') {
+            if (this.model.get('attributeId')) {
+                const attribute = this.getAttribute(this.model.get('attributeId'));
+                if (attribute.measureId) {
+                    hasUnit = true
+                }
+            }
+        } else if (this.model.get('type') === 'Field') {
+            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'measureId'])) {
+                hasUnit = true
+            }
+        }
+        return hasUnit
+    },
     getAttribute(attributeId) {
         let key = `attribute_${attributeId}`;
         if (!Espo[key]) {
