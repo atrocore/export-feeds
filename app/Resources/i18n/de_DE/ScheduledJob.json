@@ -15,6 +15,6 @@
     }
   },
   "tooltips": {
-    "exportFeed": "Wenn kein Export-Feed ausgewählt ist, werden alle fehlgeschlagenen Exportjobs erneut ausgeführt."
+    "exportFeeds": "Wenn kein Export-Feed ausgewählt ist, werden alle fehlgeschlagenen Exportjobs erneut ausgeführt."
   }
 }
