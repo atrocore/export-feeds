@@ -92,7 +92,6 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
 
         getExtraInfo() {
             let extraInfo = '';
-
             let exportByTranslation = this.getExportByTranslation();
             if (exportByTranslation) {
                 extraInfo += `${this.translate('fields', 'labels', 'ExportFeed')}: ${exportByTranslation}`;
@@ -109,6 +108,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
 
             if (this.model.get('attributeId')) {
                 extraInfo += `${this.translate('code', 'fields', 'Attribute')}: ${this.model.get('attributeCode')}`;
+                if (this.model.get('attributeValue')) {
+                    extraInfo += ', ' + this.translate(this.model.get('attributeValue'), 'attributeValue', 'ExportConfiguratorItem')
+                }
                 extraInfo += `<br>${this.translate('scope', 'fields', 'ExportConfiguratorItem')}: `;
 
                 if (this.model.get('scope') === 'Global') {
