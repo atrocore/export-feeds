@@ -97,7 +97,7 @@ class ExportTypeSimple extends AbstractExportType
         return $this->fullCollection;
     }
 
-    protected function exportJson(ExportJob $exportJob): Attachment
+    public function exportJson(ExportJob $exportJob): Attachment
     {
         if (!empty($this->data['feed']['separateJob'])) {
             $collection = $this->getCollection();
@@ -491,5 +491,48 @@ class ExportTypeSimple extends AbstractExportType
     {
         $event = new Event(['data' => $this->data, 'typeService' => $typeService, 'attachment' => $attachment, 'extension' => $format]);
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
+    }
+
+    public function rawJson(): array
+    {
+
+//        if (!empty($this->data['feed']['separateJob'])) {
+//            $collection = $this->getCollection();
+//        } else {
+//            $collection = $this->getFullCollection();
+//        }
+//
+//        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
+//        $array = [];
+//        if (!empty($contents)) {
+//            $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
+//        }
+//
+//        return $array;
+        // prepare export feed data
+        $data = $this->data['feed']['data'];
+
+        /**
+         * Set language prism
+         */
+        if (!empty($this->data['feed']['language'])) {
+            $GLOBALS['languagePrism'] = $this->data['feed']['language'];
+        }
+
+        $offset = $this->data['offset'];
+        $result = [];
+
+        while (!empty($records = $this->getRecords($offset))) {
+            $offset = $offset + $this->data['limit'];
+            foreach ($records as $record) {
+                $rowData = [];
+                foreach ($data['configuration'] as $row) {
+                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row), true);
+                }
+                $result[] = $rowData;
+            }
+        }
+
+        return $result;
     }
 }

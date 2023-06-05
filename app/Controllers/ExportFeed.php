@@ -107,4 +107,18 @@ class ExportFeed extends Base
             $params['exportEntity'] = $request->get('exportEntity');
         }
     }
+
+    public function actionGetJson($params, $data, Request $request)
+    {
+        return ["bonjour"];
+        if (!$request->isGet() || !property_exists($params, 'exportFeedCode')) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        $this->getRecordService()->getJson($params);
+    }
 }

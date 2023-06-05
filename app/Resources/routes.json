@@ -1,0 +1,11 @@
+[
+  {
+    "route": "ExportFeed/json/:exportFeedCode",
+    "method": "get",
+    "params": {
+      "controller": "ExportFeed",
+      "action": "GetJson",
+      "exportFeedCode": ":exportFeedCode"
+    }
+  }
+]
