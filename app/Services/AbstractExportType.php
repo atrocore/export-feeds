@@ -343,10 +343,10 @@ abstract class AbstractExportType extends Base
         return null;
     }
 
-    protected function createCacheFile(ExportJob $exportJob, array $configuration): void
+    protected function createCacheFile(): array
     {
         // prepare full file name
-        $fileName = "{$this->data['exportJobId']}.txt";
+        $fileName = Util::generateId() . ".txt";
         $filePath = $this->createPath();
         $fullFilePath = $this->getConfig()->get('filesPath', 'upload/files/') . $filePath;
         Util::createDir($fullFilePath);
@@ -358,40 +358,39 @@ abstract class AbstractExportType extends Base
             $GLOBALS['languagePrism'] = $this->data['feed']['language'];
         }
 
-        $jobMetadata = [
+        $res = [
             'configuration' => [],
-            'fullFileName'  => $fullFilePath . '/' . $fileName
+            'fullFileName'  => $fullFilePath . '/' . $fileName,
+            'count'         => 0
         ];
 
-        foreach ($configuration as $rowNumber => $row) {
-            $jobMetadata['configuration'][$rowNumber] = $this->prepareRow($row);
+        foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
+            $res['configuration'][$rowNumber] = $this->prepareRow($row);
         }
 
         // clearing file if it needs
-        file_put_contents($jobMetadata['fullFileName'], '');
+        file_put_contents($res['fullFileName'], '');
 
-        $file = fopen($jobMetadata['fullFileName'], 'a');
+        $file = fopen($res['fullFileName'], 'a');
 
         $limit = $this->data['limit'];
         $offset = $this->data['offset'];
 
-        $count = 0;
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $limit;
             foreach ($records as $record) {
                 $rowData = [];
-                foreach ($configuration as $row) {
-                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row));
+                foreach ($res['configuration'] as $row) {
+                    $rowData[] = $this->convertor->convert($record, $row);
                 }
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
-                $count++;
+                $res['count']++;
             }
         }
 
         fclose($file);
 
-        $exportJob->set('count', $count);
-        $exportJob->set('data', array_merge($exportJob->getData(), $jobMetadata));
+        return $res;
     }
 
     protected function getDelimiter(): string

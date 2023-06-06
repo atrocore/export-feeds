@@ -196,7 +196,10 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->beforeStore($this, $attachment, 'csv');
 
-        $this->createCacheFile($exportJob, $this->data['feed']['data']['configuration']);
+        $data = $this->createCacheFile();
+        $exportJob->set('count', $data['count']);
+        $exportJob->set('data', array_merge($exportJob->getData(), $data));
+
         $this->storeCsvFile($exportJob->getData(), $repository->getFilePath($attachment));
 
         $attachment->set('type', 'text/csv');
