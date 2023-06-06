@@ -108,10 +108,9 @@ class ExportFeed extends Base
         }
     }
 
-    public function actionGetJson($params, $data, Request $request)
+    public function actionExportFeedCode($params, $data, Request $request)
     {
-        return ["bonjour"];
-        if (!$request->isGet() || !property_exists($params, 'exportFeedCode')) {
+        if (!$request->isGet() || empty($request->get("code"))) {
             throw new Exceptions\BadRequest();
         }
 
@@ -119,6 +118,9 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        $this->getRecordService()->getJson($params);
+        return $this->getRecordService()->getJson([
+            "exportFeedCode" => $request->get("code"),
+            "offset" => $request->get('offset')
+        ]);
     }
 }

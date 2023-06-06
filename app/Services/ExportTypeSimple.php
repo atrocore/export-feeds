@@ -493,22 +493,22 @@ class ExportTypeSimple extends AbstractExportType
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 
+    public function getAssetColumns()
+    {
+        $assetFields = [];
+        $data = $this->data['feed']['data'];
+
+        foreach ($data['configuration'] as $row) {
+            if (is_array($row['exportBy']) && $row['exportBy'][0] === "url") {
+                $assetFields[] = $row['column'];
+            }
+        }
+        return $assetFields;
+    }
+
     public function rawJson(): array
     {
-
-//        if (!empty($this->data['feed']['separateJob'])) {
-//            $collection = $this->getCollection();
-//        } else {
-//            $collection = $this->getFullCollection();
-//        }
-//
-//        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
-//        $array = [];
-//        if (!empty($contents)) {
-//            $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
-//        }
-//
-//        return $array;
+        $this->convertor = $this->getDataConvertor();
         // prepare export feed data
         $data = $this->data['feed']['data'];
 
@@ -525,9 +525,9 @@ class ExportTypeSimple extends AbstractExportType
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $this->data['limit'];
             foreach ($records as $record) {
-                $rowData = [];
+                $rowData = ['atrocore_id' => $record['id']];
                 foreach ($data['configuration'] as $row) {
-                    $rowData[] = $this->convertor->convert($record, $this->prepareRow($row), true);
+                    $rowData = array_merge($rowData, $this->convertor->convert($record, $this->prepareRow($row), true));
                 }
                 $result[] = $rowData;
             }

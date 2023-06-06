@@ -548,7 +548,7 @@ class ExportFeed extends Base
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
-        $data['offset'] = empty($params['offset']) ? $params['offset'] : 0;
+        $data['offset'] = !empty($params['offset']) ? (int)$params['offset'] : 0;
         $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
 
         $exportService = $this->getExportTypeService($data['feed']['type']);
@@ -556,7 +556,8 @@ class ExportFeed extends Base
 
         return [
             "total" => $count,
-            "records" => $exportService->rawJson()
+            "assetFields" => $exportService->getAssetColumns(),
+            "records" => $exportService->rawJson(),
         ];
     }
 }
