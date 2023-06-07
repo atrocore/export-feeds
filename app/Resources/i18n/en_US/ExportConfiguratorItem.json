@@ -43,7 +43,7 @@
       "value": "Value",
       "valueFrom": "Value From",
       "valueTo": "Value To",
-      "valueUnitId": "Value Unit Id"
+      "valueUnitId": "Value Unit"
     }
   },
   "tooltips": {
