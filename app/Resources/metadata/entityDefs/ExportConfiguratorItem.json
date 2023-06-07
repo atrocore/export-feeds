@@ -9,10 +9,8 @@
         "value",
         "valueFrom",
         "valueTo",
-        "currency",
-        "unit"
-      ],
-      "default": "value"
+        "valueUnitId"
+      ]
     },
     "zip": {
       "type": "bool",

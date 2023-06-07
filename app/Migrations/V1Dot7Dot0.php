@@ -28,13 +28,21 @@ class V1Dot7Dot0 extends Base
 {
     public function up(): void
     {
-        $this->getPDO()->exec("ALTER TABLE export_configurator_item ADD attribute_value varchar(255) null ");
-        $this->getPDO()->exec("UPDATE export_feed SET sort_order_direction='ASC' WHERE sort_order_direction='1'");
-        $this->getPDO()->exec("UPDATE export_feed SET sort_order_direction='DESC' WHERE sort_order_direction='2'");
+        $this->exec("ALTER TABLE export_configurator_item ADD attribute_value VARCHAR(255) DEFAULT NULL COLLATE `utf8mb4_unicode_ci`");
+        $this->exec("UPDATE export_feed SET sort_order_direction='ASC' WHERE sort_order_direction='1'");
+        $this->exec("UPDATE export_feed SET sort_order_direction='DESC' WHERE sort_order_direction='2'");
     }
 
     public function down(): void
     {
-        throw new \Error('Downgrade is prohibited!');
+        $this->exec("ALTER TABLE export_configurator_item DROP attribute_value");
+    }
+
+    protected function exec(string $sql)
+    {
+        try {
+            $this->getPDO()->exec($sql);
+        } catch (\Throwable $e) {
+        }
     }
 }
