@@ -25,13 +25,6 @@
     "zip": "Assets in ein ZIP-Archiv exportieren",
     "attributeValue": "Attributwert"
   },
-  "attributeValue": {
-    "value": "Wert",
-    "valueFrom": "Wert von",
-    "valueTo": "Wert auf",
-    "unit": "Einheit",
-    "currency": "Währung"
-  },
   "links": {
     "exportFeed": "Exportfeed",
     "channel": "Kanal"
@@ -49,6 +42,12 @@
     "boolFilterFieldValue": {
       "+": "wahr",
       "-": "falsch"
+    },
+    "attributeValue": {
+      "value": "Wert",
+      "valueFrom": "Wert von",
+      "valueTo": "Wert auf",
+      "valueUnitId": "Einheit"
     }
   },
   "tooltips": {

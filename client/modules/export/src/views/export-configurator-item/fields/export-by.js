@@ -23,7 +23,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:name change:type change:attributeId', () => {
+            this.listenTo(this.model, 'change:name change:type change:attributeId change:attributeValue', () => {
                 this.setupOptions();
                 this.reRender();
                 this.model.set('exportBy', null);
@@ -66,6 +66,8 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                     let attribute = this.getAttribute(this.model.get('attributeId'));
                     if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
                         entity = 'ExtensibleEnumOption';
+                    } else if (this.model.get('attributeValue') === 'valueUnitId') {
+                        entity = 'Unit'
                     }
                 }
             }
@@ -121,6 +123,9 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
             } else {
                 if (this.model.get('attributeId')) {
                     type = this.getAttribute(this.model.get('attributeId')).type;
+                    if (this.model.get('attributeValue') === 'valueUnitId') {
+                        type = 'link'
+                    }
                 }
             }
 

@@ -215,8 +215,9 @@ class ExportFeed extends Base
                 case 'currency':
                     $post->mask = "{{value}} {{currency}}";
                     break;
-                case 'unit':
-                    $post->mask = "{{value}} {{unit}}";
+                case 'rangeInt':
+                case 'rangeFloat':
+                    $post->attributeValue = "valueFrom";
                     break;
                 case 'extensibleEnum':
                 case 'extensibleMultiEnum':

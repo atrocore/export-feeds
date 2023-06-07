@@ -121,12 +121,25 @@ class Convertor
         return $this->attributes[$attributeId];
     }
 
-    public function getTypeForAttribute(string $attributeId): string
+    public function getTypeForAttribute(string $attributeId, ?string $attributeValue): string
     {
         $attribute = $this->getAttributeById($attributeId);
         $type = $attribute->get('type');
-        if (!empty($attribute->get('measureId'))) {
-            $type = 'unit';
+
+        if ($attributeValue == null) {
+            $attributeValue = 'value';
+        }
+
+        if ($attributeValue === 'valueUnitId') {
+            return 'link';
+        }
+
+        if ($type === 'rangeInt') {
+            return 'int';
+        }
+
+        if ($type === 'rangeFloat') {
+            return 'float';
         }
 
         return $type;

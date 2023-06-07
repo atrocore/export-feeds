@@ -25,7 +25,7 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
         this.listenTo(this.model, 'change:name change:type change:attributeId', () => {
             this.setupOptions();
             this.reRender();
-            this.model.set('attributeValue', null);
+            this.model.set('attributeValue', this.params.options[0] ?? null);
         });
     },
 
@@ -46,59 +46,46 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
     },
 
     setupOptions() {
-        const type = this.getType()
-        if (['rangeFloat', 'rangeInt'].includes(type)) {
-            this.params.options = ['valueFrom', 'valueTo']
-            if (this.hasUnit()) {
-                this.params.options.push('unit')
-            }
-        } else if (type === 'currency') {
-            this.params.options = ['value', 'currency']
-        } else if (['float', 'int'].includes(type)) {
-            this.params.options = ['value']
-            if (this.hasUnit()) {
-                this.params.options.push('unit')
-            }
-        }
+        this.params.options = [];
+        this.translatedOptions = {};
 
-        this.translatedOptions = {
-            value: this.translate('value', 'attributeValue', 'ExportConfiguratorItem'),
-            valueFrom: this.translate('valueFrom', 'attributeValue', 'ExportConfiguratorItem'),
-            valueTo: this.translate('valueTo', 'attributeValue', 'ExportConfiguratorItem'),
-            unit: this.translate('unit', 'attributeValue', 'ExportConfiguratorItem'),
-            currency: this.translate('currency', 'attributeValue', 'ExportConfiguratorItem'),
-        };
+        if (this.isRequired()) {
+            const type = this.getType();
+            this.params.options = ['value'];
+            if (['rangeFloat', 'rangeInt'].includes(type)) {
+                this.params.options = ['valueFrom', 'valueTo']
+                if (this.hasUnit()) {
+                    this.params.options.push('valueUnitId')
+                }
+            } else if (['float', 'int'].includes(type)) {
+                if (this.hasUnit()) {
+                    this.params.options.push('valueUnitId')
+                }
+            }
+
+            this.params.options.forEach(option => {
+                this.translatedOptions[option] = this.getLanguage().translateOption(option, 'attributeValue', 'ExportConfiguratorItem');
+            });
+        }
     },
 
     getType() {
-        let type = 'varchar';
-        if (this.model.get('type') === 'Attribute') {
-            if (this.model.get('attributeId')) {
-                type = this.getAttribute(this.model.get('attributeId')).type;
-            }
-        } else if (this.model.get('type') === 'Field') {
-            type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
+        if (this.model.get('attributeId')) {
+            return this.getAttribute(this.model.get('attributeId')).type;
         }
-        return type
+        return 'varchar';
     },
     isRequired() {
-        return ['rangeFloat', 'rangeInt', 'int', 'float', 'currency'].includes(this.getType()) && (this.params.options || []).length;
+        return this.model.get('type') === 'Attribute' && this.model.get('attributeId');
     },
     hasUnit() {
-        let hasUnit = false;
-        if (this.model.get('type') === 'Attribute') {
-            if (this.model.get('attributeId')) {
-                const attribute = this.getAttribute(this.model.get('attributeId'));
-                if (attribute.measureId) {
-                    hasUnit = true
-                }
-            }
-        } else if (this.model.get('type') === 'Field') {
-            if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'measureId'])) {
-                hasUnit = true
+        if (this.model.get('attributeId')) {
+            const attribute = this.getAttribute(this.model.get('attributeId'));
+            if (attribute.measureId) {
+                return true
             }
         }
-        return hasUnit
+        return false
     },
     getAttribute(attributeId) {
         let key = `attribute_${attributeId}`;
