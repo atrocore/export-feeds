@@ -538,7 +538,7 @@ class ExportFeed extends Base
 
     public function getJson($params)
     {
-        $result = $this->getRepository()->where(['id' => $params['exportFeedCode']])->find();
+        $result = $this->getRepository()->where(['code' => $params['exportFeedCode']])->find();
         if (count($result) == 0) {
             throw new Exceptions\NotFound();
         }

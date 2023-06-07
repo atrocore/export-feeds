@@ -108,7 +108,7 @@ class ExportFeed extends Base
         }
     }
 
-    public function actionExportFeedCode($params, $data, Request $request)
+    public function actionEasyCatalog($params, $data, Request $request)
     {
         if (!$request->isGet() || empty($request->get("code"))) {
             throw new Exceptions\BadRequest();
