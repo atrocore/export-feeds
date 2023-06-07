@@ -40,9 +40,9 @@ class ExportConfiguratorItem extends Base
             if (!empty($attribute = $entity->get('attribute'))) {
                 $entity->set('name', $attribute->get('name'));
 
-                if (in_array($attribute->get('type'), ['rangeFloat', 'rangeInt'])) {
-                    throw new BadRequest('This attribute type can not be chosen for import for now. It will be possible in future version.');
-                }
+//                if (in_array($attribute->get('type'), ['rangeFloat', 'rangeInt'])) {
+//                    throw new BadRequest('This attribute type can not be chosen for import for now. It will be possible in future version.');
+//                }
             }
         }
 

@@ -109,7 +109,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             if (this.model.get('attributeId')) {
                 extraInfo += `${this.translate('code', 'fields', 'Attribute')}: ${this.model.get('attributeCode')}`;
                 if (this.model.get('attributeValue')) {
-                    extraInfo += ', ' + this.translate(this.model.get('attributeValue'), 'attributeValue', 'ExportConfiguratorItem')
+                    extraInfo += '<br>' + this.translate('attributeValue', 'fields', 'ExportConfiguratorItem') + ': ' + this.getLanguage().translateOption(this.model.get('attributeValue'), 'attributeValue', 'ExportConfiguratorItem')
                 }
                 extraInfo += `<br>${this.translate('scope', 'fields', 'ExportConfiguratorItem')}: `;
 
@@ -141,6 +141,8 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                             let attribute = this.getAttribute(this.model.get('attributeId'));
                             if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
                                 entity = 'ExtensibleEnumOption';
+                            } else if (this.model.get('attributeValue') === 'valueUnitId') {
+                                entity = 'Unit'
                             }
                         }
                     }
