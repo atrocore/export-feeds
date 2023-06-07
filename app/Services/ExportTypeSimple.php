@@ -207,18 +207,23 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return $this->exportAsZip($exportJob, $attachment);
+        return $this->exportAsZip($data['configuration'], $attachment);
     }
 
     protected function exportXlsx(ExportJob $exportJob): Attachment
     {
-        throw new \Error('Need to finish exportXlsx.');
-//        $sheets = $this->data['feed']['sheets'] ?? [];
-//
-//        echo '<pre>';
-//        print_r('123');
-//        die();
-
+        if (!empty($this->data['feed']['sheets'])) {
+            $sheets = $this->data['feed']['sheets'];
+        } else {
+            $sheets = [
+                [
+                    'name'          => 'Sheet',
+                    'configuration' => $this->data['feed']['data']['configuration'],
+                    'entity'        => $this->data['feed']['entity'],
+                    'data'          => $this->data['feed']['data'],
+                ]
+            ];
+        }
 
         $repository = $this->getEntityManager()->getRepository('Attachment');
 
@@ -233,44 +238,73 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->beforeStore($this, $attachment, 'xlsx');
 
-        $this->createCacheFile($exportJob, $this->data['feed']['data']['configuration']);
+        $fileName = $repository->getFilePath($attachment);
 
-        // $data = $exportJob->getData();
-        // $fileName = $repository->getFilePath($attachment);
+        $this->createDir($fileName);
 
-//        $this->createDir($fileName);
-//
-//        $csvFileName = str_replace('.xlsx', '.csv', $fileName);
-//
-//        $this->storeCsvFile($data, $csvFileName);
-//
-//        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
-//
-//        // set CSV parsing options
-//        $reader->setDelimiter($this->getDelimiter());
-//        $reader->setEnclosure($this->getEnclosure());
-//        $reader->setSheetIndex(0);
-//
-//        // load a CSV file and save as a XLS
-//        $spreadsheet = $reader->load($csvFileName);
-//        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-//        $writer->save($fileName);
-//
-//        // delete csv file
-//        unlink($csvFileName);
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
+        $count = 0;
+        foreach ($sheets as $k => $sheet) {
+            $this->data['feed']['data']['configuration'] = $sheet['configuration'];
+            $this->data['feed']['entity'] = $sheet['entity'];
+            $this->data['feed']['data']['where'] = $sheet['data']['where'] ?? [];
+
+            $data = $this->createCacheFile();
+
+            $count += $data['count'];
+
+            // prepare CSV filename
+            $pathParts = explode('/', $repository->getFilePath($attachment));
+            array_pop($pathParts);
+            $pathParts[] = Util::generateId() . '.csv';
+            $csvFileName = implode('/', $pathParts);
+
+            $this->storeCsvFile($data, $csvFileName);
+
+            // prepare CSV reader
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
+            $reader->setDelimiter($this->getDelimiter());
+            $reader->setEnclosure($this->getEnclosure());
+
+            $myWorkSheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, $sheet['name']);
+            $spreadsheet->addSheet($myWorkSheet, $k);
+
+            // load a CSV file and save as a XLS
+            $reader->setSheetIndex($k);
+            $reader->loadIntoExisting($csvFileName, $spreadsheet);
+
+            // delete csv file
+            unlink($csvFileName);
+        }
+
+        try {
+            // delete default sheet
+            $spreadsheet->removeSheetByIndex(count($sheets));
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save($fileName);
+
+        $exportJob->set('count', $count);
 
         $attachment->set('type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         $attachment->set('size', \filesize($repository->getFilePath($attachment)));
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return $this->exportAsZip($exportJob, $attachment);
+        if (count($sheets) > 1) {
+            $attachment = $this->exportAsZip($this->data['feed']['data']['configuration'], $attachment);
+        }
+
+        return $attachment;
     }
 
-    protected function exportAsZip(ExportJob $exportJob, Attachment $attachment): Attachment
+    protected function exportAsZip(array $configuration, Attachment $attachment): Attachment
     {
-        $zipColumns = array_filter($exportJob->get('data')['configuration'], function ($field) {
+        $zipColumns = array_filter($configuration, function ($field) {
             return $field['zip'];
         });
 
@@ -427,6 +461,9 @@ class ExportTypeSimple extends AbstractExportType
 
         rewind($fp);
         fclose($fp);
+
+        // remove cache file
+        unlink($data['fullFileName']);
     }
 
     protected function createDir(string $fileName): void

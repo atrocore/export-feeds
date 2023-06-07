@@ -446,6 +446,7 @@ class ExportFeed extends Base
                 }
                 $result['sheets'][] = [
                     'name'               => $sheet->get('name'),
+                    'entity'             => $sheet->get('entity'),
                     'sortOrderField'     => $sheet->get('sortOrderField'),
                     'sortOrderDirection' => $sheet->get('sortOrderDirection'),
                     'data'               => $sheet->get('data'),
