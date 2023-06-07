@@ -24,10 +24,6 @@ namespace Export\FieldConverters;
 
 class UnitType extends LinkType
 {
-    protected function getFieldName(string $field): string
-    {
-        return $field;
-    }
 
     protected function getForeignEntityName(string $entity, string $field): string
     {

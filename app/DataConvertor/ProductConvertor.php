@@ -94,7 +94,7 @@ class ProductConvertor extends Convertor
             if (empty($configuration['replaceAttributeValues']) && $productAttribute->get('scope') === 'Global' && !empty($configuration['channelId'])) {
                 return $result;
             }
-            $result = $this->convertType($this->getTypeForAttribute($productAttribute->get('attributeId'), $configuration['attributeValue']), $productAttribute->toArray(), array_merge($configuration, ['field' => $configuration['attributeValue'] ?? 'value']), $toString);
+            $result = $this->convertType($this->getTypeForAttribute($productAttribute->get('attributeId'), $configuration['attributeValue']), $productAttribute->toArray(), array_merge($configuration, ['field' => $this->getFieldForAttribute($configuration)]), $toString);
         }
 
         $eventPayload = [
@@ -106,6 +106,14 @@ class ProductConvertor extends Convertor
         ];
 
         return $this->container->get('eventManager')->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');
+    }
+
+    public function getFieldForAttribute($configuration)
+    {
+        if ($configuration['attributeValue'] == 'valueUnitId') {
+            return 'valueUnit';
+        }
+        return $configuration['attributeValue'] ?? 'value';
     }
 
     protected function isLanguageEquals(Entity $pav, array $configuration): bool
