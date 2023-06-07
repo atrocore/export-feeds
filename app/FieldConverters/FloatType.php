@@ -28,19 +28,12 @@ class FloatType extends AbstractType
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
-        $unitField = $field . 'UnitId';
 
-        $value = null;
-        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
-
+        $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
-            $value = (float)$record[$field];
-            $this->applyValueModifiers($configuration, $value);
+            $result[$column] = (float)$record[$field];
+            $this->applyValueModifiers($configuration, $result[$column]);
         }
-
-        $result[$column] = $configuration['attributeValue'] == 'unit' ?
-            (empty($unitId) ? null : $this->getUnitName($unitId)) :
-            $value;
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -51,23 +44,16 @@ class FloatType extends AbstractType
         $nullValue = $configuration['nullValue'];
         $decimalMark = $configuration['decimalMark'];
         $thousandSeparator = $configuration['thousandSeparator'];
-        $unitField = $field . 'UnitId';
 
-
-        $value = $nullValue;
-        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
+        $result[$column] = $nullValue;
         if (isset($record[$field])) {
             if (empty($record[$field]) && $record[$field] != 0) {
-                $value = $record[$field] === null ? $nullValue : $emptyValue;
+                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
-                $value = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
-                $this->applyValueModifiers($configuration, $value);
+                $result[$column] = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
+                $this->applyValueModifiers($configuration, $result[$column]);
             }
         }
-
-        $result[$column] = $configuration['attributeValue'] == 'unit' ?
-            (empty($unitId) ? $nullValue : $this->getUnitName($unitId)) :
-            $value;
     }
 
     protected function floatToNumber(float $value, $decimalMark, $thousandSeparator): string

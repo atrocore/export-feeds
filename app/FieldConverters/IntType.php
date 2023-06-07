@@ -28,19 +28,12 @@ class IntType extends AbstractType
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
-        $unitField = $field . 'UnitId';
 
-        $value = null;
-        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
-
+        $result[$column] = null;
         if (isset($record[$field]) && $record[$field] !== null) {
-            $value = (int)$record[$field];
-            $this->applyValueModifiers($configuration, $value);
+            $result[$column] = (int)$record[$field];
+            $this->applyValueModifiers($configuration, $result[$column]);
         }
-
-        $result[$column] = $configuration['attributeValue'] == 'unit' ?
-            (empty($unitId) ? null : $this->getUnitName($unitId)) :
-            $value;
     }
 
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -51,22 +44,15 @@ class IntType extends AbstractType
         $nullValue = $configuration['nullValue'];
         $decimalMark = $configuration['decimalMark'];
         $thousandSeparator = $configuration['thousandSeparator'];
-        $unitField = $field . 'UnitId';
 
-        $value = $nullValue;
-        $unitId = isset($record[$unitField]) ? $record[$unitField] : null;
-
+        $result[$column] = $nullValue;
         if (isset($record[$field])) {
             if (empty($record[$field]) && $record[$field] != 0) {
-                $value = $record[$field] === null ? $nullValue : $emptyValue;
+                $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
-                $value = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
-                $this->applyValueModifiers($configuration, $value);
+                $result[$column] = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
+                $this->applyValueModifiers($configuration, $result[$column]);
             }
         }
-
-        $result[$column] = $configuration['attributeValue'] == 'unit' ?
-            (empty($unitId) ? $nullValue : $this->getUnitName($unitId)) :
-            $value;
     }
 }
