@@ -126,7 +126,7 @@ class Convertor
         }
 
         if ($attributeValue === 'valueUnitId') {
-            return 'link';
+            return 'unit';
         }
 
         if ($type === 'rangeInt') {

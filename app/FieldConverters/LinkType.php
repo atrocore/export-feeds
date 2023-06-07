@@ -37,12 +37,8 @@ class LinkType extends AbstractType
         if (!empty($linkId)) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
-            if ($this->needToCallForeignEntity($exportBy, $configuration)) {
-                if ($configuration['attributeValue'] == 'valueUnitId') {
-                    $foreignEntity = 'Unit';
-                } else {
-                    $foreignEntity = $this->getForeignEntityName($entity, $field);
-                }
+            if ($this->needToCallForeignEntity($exportBy)) {
+                $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
                         $foreign = $this->convertor->getEntity((string)$foreignEntity, $linkId);
@@ -186,11 +182,10 @@ class LinkType extends AbstractType
         return $this->convertor->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
     }
 
-    protected function needToCallForeignEntity(array $exportBy, $configuration): bool
+    protected function needToCallForeignEntity(array $exportBy): bool
     {
-        $fieldsToCheck = $configuration['attributeValue'] == 'valueUnitId' ? ['id'] : ['id', 'name'];
         foreach ($exportBy as $v) {
-            if (!in_array($v, $fieldsToCheck)) {
+            if (!in_array($v, ['id', 'name'])) {
                 return true;
             }
         }

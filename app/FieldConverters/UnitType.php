@@ -22,23 +22,25 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
-use Export\DataConvertor\Convertor;
-
-abstract class AbstractType
+class UnitType extends LinkType
 {
-    protected Convertor $convertor;
-
-    public function __construct(Convertor $convertor)
+    protected function getFieldName(string $field): string
     {
-        $this->convertor = $convertor;
+        return $field;
     }
 
-    abstract public function convertToString(array &$result, array $record, array $configuration): void;
-
-    public function applyValueModifiers(array $configuration, &$value): void
+    protected function getForeignEntityName(string $entity, string $field): string
     {
-        if (!empty($configuration['valueModifier'])) {
-            $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
+        return 'Unit';
+    }
+
+    protected function needToCallForeignEntity(array $exportBy): bool
+    {
+        foreach ($exportBy as $v) {
+            if ($v != 'id') {
+                return true;
+            }
         }
+        return false;
     }
 }
