@@ -46,10 +46,8 @@
     }
   },
   "labels": {
+    "simple": "File",
     "typeToSearch": "Type to search...",
-    "addMissingFields": "Add all missing fields",
-    "selectAttributes": "Select attribute(s)",
-    "removeAllItems": "Remove all",
     "addMissingFieldsConfirmation": "Are you sure you want to add all missing fields?",
     "removeAllItemsConfirmation": "Are you sure you want to remove all configurator rules?",
     "attributeName": "Attribute Name",
@@ -67,7 +65,6 @@
     "Configurator": "Configurator",
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",
-    "simple": "File",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
     "Export": "Export"

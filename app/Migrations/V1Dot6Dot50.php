@@ -1,6 +1,6 @@
 <?php
 /*
- * Export Feeds
+ * export Feeds
  * Free Extension
  * Copyright (c) AtroCore UG (haftungsbeschränkt).
  *
@@ -20,32 +20,20 @@
 
 declare(strict_types=1);
 
-namespace Export\FieldConverters;
+namespace Export\Migrations;
 
-use Export\DataConvertor\Convertor;
+use Treo\Core\Migration\Base;
 
-abstract class AbstractType
+class V1Dot6Dot50 extends Base
 {
-    protected Convertor $convertor;
-
-    public function __construct(Convertor $convertor)
+    public function up(): void
     {
-        $this->convertor = $convertor;
+        $this->getPDO()->exec("UPDATE export_feed SET sort_order_direction='ASC' WHERE sort_order_direction='1'");
+        $this->getPDO()->exec("UPDATE export_feed SET sort_order_direction='DESC' WHERE sort_order_direction='2'");
     }
 
-    abstract public function convertToString(array &$result, array $record, array $configuration): void;
-
-    public function applyValueModifiers(array $configuration, &$value): void
+    public function down(): void
     {
-        if (!empty($configuration['valueModifier'])) {
-            $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
-        }
-    }
-
-    public function getUnitName($unitId)
-    {
-        if (empty($unitId)) return "";
-        $unit = $this->convertor->getEntity('Unit', $unitId);
-        return $unit->get('name');
+        throw new \Error('Downgrade is prohibited!');
     }
 }

@@ -30,7 +30,7 @@ Espo.define('export:views/export-feed/record/panels/export-jobs', 'views/record/
             Dep.prototype.setup.call(this);
 
             this.listenToOnce(this, 'after:render', () => {
-                if (this.collection) {
+                if (this.collection && this.hasPanel()) {
                     this.refreshInterval = window.setInterval(() => {
                         if (!this.pauseRefreshInterval && $(`div[data-name='exportJobs'] .open a[data-action='removeRelated']`).length === 0) {
                             this.actionRefresh();
@@ -48,6 +48,19 @@ Espo.define('export:views/export-feed/record/panels/export-jobs', 'views/record/
                     window.clearInterval(this.refreshInterval);
                 }
             });
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
+
+            this.$el.parent().hide();
+            if (this.hasPanel()) {
+                this.$el.parent().show();
+            }
+        },
+
+        hasPanel() {
+            return true;
         },
 
         actionCancelExportJob(data) {

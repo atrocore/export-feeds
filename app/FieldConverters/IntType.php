@@ -24,18 +24,6 @@ namespace Export\FieldConverters;
 
 class IntType extends AbstractType
 {
-    public function convert(array &$result, array $record, array $configuration): void
-    {
-        $field = $configuration['field'];
-        $column = $configuration['column'];
-
-        $result[$column] = null;
-        if (isset($record[$field]) && $record[$field] !== null) {
-            $result[$column] = (int)$record[$field];
-            $this->applyValueModifiers($configuration, $result[$column]);
-        }
-    }
-
     public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];

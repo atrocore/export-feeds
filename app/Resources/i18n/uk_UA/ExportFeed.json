@@ -39,9 +39,6 @@
   },
   "labels": {
     "typeToSearch": "Введіть для пошуку...",
-    "addMissingFields": "Додати всі відсутні поля",
-    "selectAttributes": "Вибрати атрибут(и)",
-    "removeAllItems": "Видалити всі правила",
     "addMissingFieldsConfirmation": "Ви впевнені, що хочете додати всі відсутні поля?",
     "removeAllItemsConfirmation": "Ви впевнені, що хочете видалити всі правила конфігуратора?",
     "attributeName": "Назва атрибута",

@@ -30,11 +30,18 @@ class ExportConfiguratorItem extends Base
 {
     public function checkEntity(User $user, Entity $entity, $data, $action)
     {
-        if (empty($entity->get('exportFeedId'))) {
-            return false;
+        if (!empty($entity->get('exportFeedId'))) {
+            $exportFeed = $this->getEntityManager()->getEntity('ExportFeed', $entity->get('exportFeedId'));
         }
 
-        if (empty($exportFeed = $this->getEntityManager()->getEntity('ExportFeed', $entity->get('exportFeedId')))) {
+        if (!empty($entity->get('sheetId'))) {
+            $sheet = $this->getEntityManager()->getEntity('Sheet', $entity->get('sheetId'));
+            if (!empty($sheet)) {
+                $exportFeed = $sheet->get('exportFeed');
+            }
+        }
+
+        if (empty($exportFeed)) {
             return false;
         }
 

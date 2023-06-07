@@ -83,6 +83,13 @@ class ExportFeed extends Base
         ];
     }
 
+    protected function boolFilterHasMultipleSheets(array &$result): void
+    {
+        $result['whereClause'][] = [
+            'hasMultipleSheets' => true
+        ];
+    }
+
     protected function getExportFeedFilteredIds(int $interval): array
     {
         $query = "SELECT exp.id

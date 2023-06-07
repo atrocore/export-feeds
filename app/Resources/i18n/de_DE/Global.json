@@ -13,6 +13,9 @@
     "Generate": "Generieren",
     "tryAgain": "Erneut exportieren",
     "filter": "Filter",
+    "addMissingFields": "Alle fehlenden Felder hinzufügen",
+    "selectAttributes": "Attribut(e) auswählen",
+    "removeAllItems": "Alle Regel entfernen",
     "exportErrorDuring24Hours": "Fehler beim Exportieren von Feeds/Jobs während 24 Stunden",
     "exportErrorDuring7Days": "Fehler beim Exportieren von Feeds/Jobs während 7 Tagen",
     "exportErrorDuring28Days": "Fehler beim Exportieren von Feeds/Jobs während 28 Tagen"
