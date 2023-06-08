@@ -343,7 +343,7 @@ abstract class AbstractExportType extends Base
         return null;
     }
 
-    protected function createCacheFile(): array
+    protected function createCacheFile($withMeta = false): array
     {
         // prepare full file name
         $fileName = Util::generateId() . ".txt";
@@ -379,7 +379,10 @@ abstract class AbstractExportType extends Base
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $limit;
             foreach ($records as $record) {
-                $rowData = [['__id' => $record['id']]];
+                $rowData = [];
+                if ($withMeta) {
+                    $rowData[] = ['__id' => $record['id']];
+                }
                 foreach ($res['configuration'] as $row) {
                     $rowData[] = $this->convertor->convert($record, $row);
                 }

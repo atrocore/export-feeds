@@ -436,9 +436,7 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
-    public array $metaColumns = ['__id'];
-
-    protected function prepareColumns(array $data, $withMeta = false): array
+    protected function prepareColumns(array $data): array
     {
         $columns = [];
 
@@ -455,7 +453,6 @@ class ExportTypeSimple extends AbstractExportType
             foreach ($json as $rowNumber => $colData) {
                 $n = 0;
                 foreach ($colData as $colName => $colValue) {
-                    if (!$withMeta && in_array($colName, $this->metaColumns)) continue;
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
                         'pos' => $rowNumber * 1000 + $n,
@@ -547,22 +544,22 @@ class ExportTypeSimple extends AbstractExportType
 
     public function getUrlColumns()
     {
-        $assetFields = [];
+        $urlColumns = [];
         $data = $this->data['feed']['data'];
 
         foreach ($data['configuration'] as $row) {
             if (is_array($row['exportBy']) && $row['exportBy'][0] === "url") {
-                $assetFields[] = $row['column'];
+                $urlColumns[] = $row['column'];
             }
         }
-        return $assetFields;
+        return $urlColumns;
     }
 
     public function exportEasyCatalogJson(): array
     {
         $this->convertor = $this->getDataConvertor();
-        $data = $this->createCacheFile();
-        $columns = $this->prepareColumns($data, true);
+        $data = $this->createCacheFile(true);
+        $columns = $this->prepareColumns($data);
 
         $result = [];
         $cacheFile = fopen($data['fullFileName'], "r");
