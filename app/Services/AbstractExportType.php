@@ -381,7 +381,7 @@ abstract class AbstractExportType extends Base
             foreach ($records as $record) {
                 $rowData = [];
                 if ($withMeta) {
-                    $rowData[] = ['__id' => $record['id']];
+                    $rowData[] = ['atrocore_id' => $record['id']];
                 }
                 foreach ($res['configuration'] as $row) {
                     $rowData[] = $this->convertor->convert($record, $row);
