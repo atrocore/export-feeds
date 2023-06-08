@@ -118,9 +118,6 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $this->getRecordService()->getJson([
-            "exportFeedCode" => $request->get("code"),
-            "offset" => $request->get('offset')
-        ]);
+        return $this->getRecordService()->getEasyCatalog($request->get("code"), $request->get('offset'));
     }
 }

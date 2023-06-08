@@ -217,10 +217,10 @@ class ExportTypeSimple extends AbstractExportType
         } else {
             $sheets = [
                 [
-                    'name'          => 'Sheet',
+                    'name' => 'Sheet',
                     'configuration' => $this->data['feed']['data']['configuration'],
-                    'entity'        => $this->data['feed']['entity'],
-                    'data'          => $this->data['feed']['data'],
+                    'entity' => $this->data['feed']['entity'],
+                    'data' => $this->data['feed']['data'],
                 ]
             ];
         }
@@ -436,7 +436,9 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
-    protected function prepareColumns(array $data): array
+    public array $metaColumns = ['__id'];
+
+    protected function prepareColumns(array $data, $withMeta = false): array
     {
         $columns = [];
 
@@ -453,10 +455,11 @@ class ExportTypeSimple extends AbstractExportType
             foreach ($json as $rowNumber => $colData) {
                 $n = 0;
                 foreach ($colData as $colName => $colValue) {
+                    if (!$withMeta && in_array($colName, $this->metaColumns)) continue;
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
-                        'pos'    => $rowNumber * 1000 + $n,
-                        'name'   => $colName
+                        'pos' => $rowNumber * 1000 + $n,
+                        'name' => $colName
                     ];
                     $n++;
                 }
@@ -542,7 +545,7 @@ class ExportTypeSimple extends AbstractExportType
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 
-    public function getAssetColumns()
+    public function getUrlColumns()
     {
         $assetFields = [];
         $data = $this->data['feed']['data'];
@@ -555,32 +558,32 @@ class ExportTypeSimple extends AbstractExportType
         return $assetFields;
     }
 
-    public function rawJson(): array
+    public function exportEasyCatalogJson(): array
     {
         $this->convertor = $this->getDataConvertor();
-        // prepare export feed data
-        $data = $this->data['feed']['data'];
+        $data = $this->createCacheFile();
+        $columns = $this->prepareColumns($data, true);
 
-        /**
-         * Set language prism
-         */
-        if (!empty($this->data['feed']['language'])) {
-            $GLOBALS['languagePrism'] = $this->data['feed']['language'];
-        }
-
-        $offset = $this->data['offset'];
         $result = [];
-
-        while (!empty($records = $this->getRecords($offset))) {
-            $offset = $offset + $this->data['limit'];
-            foreach ($records as $record) {
-                $rowData = ['atrocore_id' => $record['id']];
-                foreach ($data['configuration'] as $row) {
-                    $rowData = array_merge($rowData, $this->convertor->convert($record, $this->prepareRow($row), true));
-                }
-                $result[] = $rowData;
+        $cacheFile = fopen($data['fullFileName'], "r");
+        while (($line = fgets($cacheFile)) !== false) {
+            if (empty($line)) {
+                continue;
             }
+
+            $rowData = @json_decode($line, true);
+            if (!is_array($rowData)) {
+                continue;
+            }
+
+            $resultRow = [];
+            foreach ($columns as $pos => $columnData) {
+                $resultRow[$columnData['name']] = isset($rowData[$columnData['number']][$columnData['name']]) ? $rowData[$columnData['number']][$columnData['name']] : null;
+            }
+            $result[] = $resultRow;
+
         }
+        fclose($cacheFile);
 
         return $result;
     }

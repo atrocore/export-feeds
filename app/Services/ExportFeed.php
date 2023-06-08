@@ -41,7 +41,7 @@ class ExportFeed extends Base
         }
 
         $data = [
-            'id'   => Util::generateId(),
+            'id' => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
@@ -78,7 +78,7 @@ class ExportFeed extends Base
         $this->getRepository()->removeInvalidConfiguratorItems($exportFeed->get('id'));
 
         $data = [
-            'id'   => Util::generateId(),
+            'id' => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
@@ -91,9 +91,9 @@ class ExportFeed extends Base
                 $data['feed']['data']->where = array_merge($data['feed']['data']->where, $requestData->entityFilterData->where);
             } else {
                 $data['feed']['data']->where[] = [
-                    'type'      => 'in',
+                    'type' => 'in',
                     'attribute' => 'id',
-                    'value'     => $requestData->entityFilterData->ids
+                    'value' => $requestData->entityFilterData->ids
                 ];
             }
         }
@@ -187,9 +187,9 @@ class ExportFeed extends Base
         if (property_exists($data, 'ids')) {
             $params['where'] = [
                 [
-                    'type'      => 'equals',
+                    'type' => 'equals',
                     'attribute' => 'id',
-                    'value'     => $data->ids,
+                    'value' => $data->ids,
                 ]
             ];
         }
@@ -351,33 +351,33 @@ class ExportFeed extends Base
 
         foreach ($items['collection'] as $item) {
             $row = [
-                'columnType'                => $item->get('columnType'),
-                'language'                  => $item->get('language'),
-                'column'                    => $eciService->prepareColumnName($item),
-                'template'                  => $feed->get('template'),
-                'emptyValue'                => $feed->getFeedField('emptyValue'),
-                'nullValue'                 => $feed->getFeedField('nullValue'),
+                'columnType' => $item->get('columnType'),
+                'language' => $item->get('language'),
+                'column' => $eciService->prepareColumnName($item),
+                'template' => $feed->get('template'),
+                'emptyValue' => $feed->getFeedField('emptyValue'),
+                'nullValue' => $feed->getFeedField('nullValue'),
                 'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
-                'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
-                'decimalMark'               => $feed->getFeedField('decimalMark'),
+                'thousandSeparator' => $feed->getFeedField('thousandSeparator'),
+                'decimalMark' => $feed->getFeedField('decimalMark'),
                 'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
                 'convertCollectionToString' => !empty($feed->getFeedField('convertCollectionToString')),
-                'convertRelationsToString'  => !empty($feed->getFeedField('convertRelationsToString')),
+                'convertRelationsToString' => !empty($feed->getFeedField('convertRelationsToString')),
                 'exportIntoSeparateColumns' => $item->get('exportIntoSeparateColumns'),
-                'exportBy'                  => $item->get('exportBy'),
-                'mask'                      => $item->get('mask'),
-                'searchFilter'              => $item->get('searchFilter'),
-                'filterField'               => $item->get('filterField'),
-                'filterFieldValue'          => $item->get('filterFieldValue'),
-                'offsetRelation'            => $item->get('offsetRelation'),
-                'limitRelation'             => $item->get('limitRelation'),
-                'sortFieldRelation'         => $item->get('sortFieldRelation'),
-                'sortOrderRelation'         => $item->get('sortOrderRelation'),
-                'valueModifier'             => $item->get('valueModifier'),
-                'type'                      => $item->get('type'),
-                'fixedValue'                => $item->get('fixedValue'),
-                'zip'                       => !empty($item->get('zip')),
-                'attributeValue'            => $item->get('attributeValue')
+                'exportBy' => $item->get('exportBy'),
+                'mask' => $item->get('mask'),
+                'searchFilter' => $item->get('searchFilter'),
+                'filterField' => $item->get('filterField'),
+                'filterFieldValue' => $item->get('filterFieldValue'),
+                'offsetRelation' => $item->get('offsetRelation'),
+                'limitRelation' => $item->get('limitRelation'),
+                'sortFieldRelation' => $item->get('sortFieldRelation'),
+                'sortOrderRelation' => $item->get('sortOrderRelation'),
+                'valueModifier' => $item->get('valueModifier'),
+                'type' => $item->get('type'),
+                'fixedValue' => $item->get('fixedValue'),
+                'zip' => !empty($item->get('zip')),
+                'attributeValue' => $item->get('attributeValue')
             ];
             if ($feed->get('type') === 'simple') {
                 $row['convertCollectionToString'] = true;
@@ -447,12 +447,12 @@ class ExportFeed extends Base
                     continue;
                 }
                 $result['sheets'][] = [
-                    'name'               => $sheet->get('name'),
-                    'entity'             => $sheet->get('entity'),
-                    'sortOrderField'     => $sheet->get('sortOrderField'),
+                    'name' => $sheet->get('name'),
+                    'entity' => $sheet->get('entity'),
+                    'sortOrderField' => $sheet->get('sortOrderField'),
                     'sortOrderDirection' => $sheet->get('sortOrderDirection'),
-                    'data'               => $sheet->get('data'),
-                    'configuration'      => $this->prepareFeedDataConfiguration($sheet)
+                    'data' => $sheet->get('data'),
+                    'configuration' => $this->prepareFeedDataConfiguration($sheet)
                 ];
             }
         } else {
@@ -595,28 +595,26 @@ class ExportFeed extends Base
         }
     }
 
-    public function getJson($params)
+    public function getEasyCatalog($exportFeedCode, $offset)
     {
-        $result = $this->getRepository()->where(['code' => $params['exportFeedCode']])->find();
-        if (count($result) == 0) {
+        $exportFeed = $this->getRepository()->where(['code' => $exportFeedCode])->findOne();
+        if (empty($exportFeed)) {
             throw new Exceptions\NotFound();
         }
-        $exportFeed = $result[0];
         $data = [
             'id' => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
-        $data['offset'] = !empty($params['offset']) ? (int)$params['offset'] : 0;
+        $data['offset'] = !empty($offset) ? (int)$offset : 0;
         $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
 
         $exportService = $this->getExportTypeService($data['feed']['type']);
-        $count = $exportService->getCount($data);
 
         return [
-            "total" => $count,
-            "assetFields" => $exportService->getAssetColumns(),
-            "records" => $exportService->rawJson(),
+            "total" => $exportService->getCount($data),
+            "urlColumns" => $exportService->getUrlColumns(),
+            "records" => $exportService->exportEasyCatalogJson(),
         ];
     }
 }

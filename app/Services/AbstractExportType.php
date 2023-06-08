@@ -360,8 +360,8 @@ abstract class AbstractExportType extends Base
 
         $res = [
             'configuration' => [],
-            'fullFileName'  => $fullFilePath . '/' . $fileName,
-            'count'         => 0
+            'fullFileName' => $fullFilePath . '/' . $fileName,
+            'count' => 0
         ];
 
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
@@ -379,7 +379,7 @@ abstract class AbstractExportType extends Base
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $limit;
             foreach ($records as $record) {
-                $rowData = [];
+                $rowData = [['__id' => $record['id']]];
                 foreach ($res['configuration'] as $row) {
                     $rowData[] = $this->convertor->convert($record, $row);
                 }
