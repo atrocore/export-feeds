@@ -33,7 +33,7 @@ class ExportFeed extends Base
 {
     public function actionAddMissingFields($params, $data, Request $request): bool
     {
-        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
+        if (!$request->isPost() || !property_exists($data, 'entityType') || !property_exists($data, 'id')) {
             throw new Exceptions\BadRequest();
         }
 
@@ -41,12 +41,12 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $this->getRecordService()->addMissingFields((string)$data->exportFeedId);
+        return $this->getRecordService()->addMissingFields((string)$data->entityType, (string)$data->id);
     }
 
     public function actionAddAttributes($params, $data, Request $request): bool
     {
-        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
+        if (!$request->isPost() || !property_exists($data, 'entityType') || !property_exists($data, 'id')) {
             throw new Exceptions\BadRequest();
         }
 
@@ -59,7 +59,7 @@ class ExportFeed extends Base
 
     public function actionRemoveAllItems($params, $data, Request $request): bool
     {
-        if (!$request->isPost() || !property_exists($data, 'exportFeedId')) {
+        if (!$request->isPost() || !property_exists($data, 'entityType') || !property_exists($data, 'id')) {
             throw new Exceptions\BadRequest();
         }
 
@@ -67,7 +67,7 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $this->getRecordService()->removeAllItems((string)$data->exportFeedId);
+        return $this->getRecordService()->removeAllItems((string)$data->entityType, (string)$data->id);
     }
 
     public function actionExportFile($params, $data, Request $request): bool

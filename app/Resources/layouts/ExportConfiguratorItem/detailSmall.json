@@ -21,7 +21,9 @@
         {
           "name": "attribute"
         },
-        false
+        {
+          "name": "attributeValue"
+        }
       ],
       [
         {
@@ -73,9 +75,7 @@
         {
           "name": "mask"
         },
-        {
-          "name":  "attributeValue"
-        }
+        false
       ],
       [
         {

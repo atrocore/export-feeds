@@ -47,7 +47,7 @@
       "value": "Wert",
       "valueFrom": "Wert von",
       "valueTo": "Wert auf",
-      "valueUnitId": "Einheit"
+      "valueUnitId": "Wert Einheit"
     }
   },
   "tooltips": {

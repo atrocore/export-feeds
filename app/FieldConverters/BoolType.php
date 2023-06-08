@@ -24,14 +24,6 @@ namespace Export\FieldConverters;
 
 class BoolType extends AbstractType
 {
-    public function convert(array &$result, array $record, array $configuration): void
-    {
-        $field = $configuration['field'];
-        $column = $configuration['column'];
-
-        $result[$column] = !empty($record[$field]);
-    }
-
     public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];

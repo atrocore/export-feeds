@@ -20,25 +20,41 @@
 
 declare(strict_types=1);
 
-namespace Export\FieldConverters;
+namespace Export\TwigFunction;
 
-use Export\DataConvertor\Convertor;
+use Espo\Core\ServiceFactory;
 
-abstract class AbstractType
+class GetEntity extends AbstractTwigFunction
 {
-    protected Convertor $convertor;
-
-    public function __construct(Convertor $convertor)
+    public function __construct()
     {
-        $this->convertor = $convertor;
+        $this->addDependency('serviceFactory');
     }
 
-    abstract public function convertToString(array &$result, array $record, array $configuration): void;
-
-    public function applyValueModifiers(array $configuration, &$value): void
+    public function run(string $entityType, string $id)
     {
-        if (!empty($configuration['valueModifier'])) {
-            $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
+        if (empty($entityType) || empty($id)) {
+            return null;
         }
+
+        if (!$this->getServiceFactory()->checkExists($entityType)) {
+            return null;
+        }
+
+        try {
+            $entity = $this->getServiceFactory()->create($entityType)->getEntity($id);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        return $entity;
+    }
+
+    /**
+     * @return ServiceFactory
+     */
+    protected function getServiceFactory(): ServiceFactory
+    {
+        return $this->getInjection('serviceFactory');
     }
 }

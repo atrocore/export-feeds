@@ -24,17 +24,25 @@ namespace Export\Migrations;
 
 use Treo\Core\Migration\Base;
 
-class V1Dot6Dot49 extends Base
+class V1Dot7Dot0 extends Base
 {
     public function up(): void
     {
-        $this->getPDO()->exec("ALTER TABLE export_configurator_item ADD attribute_value varchar(255) null ");
+        $this->exec("ALTER TABLE export_configurator_item ADD attribute_value VARCHAR(255) DEFAULT NULL COLLATE `utf8mb4_unicode_ci`");
+        $this->exec("UPDATE export_feed SET sort_order_direction='ASC' WHERE sort_order_direction='1'");
+        $this->exec("UPDATE export_feed SET sort_order_direction='DESC' WHERE sort_order_direction='2'");
     }
 
     public function down(): void
     {
-        $this->getPDO()->exec("ALTER TABLE export_configurator_item drop column attribute_value");
-
+        $this->exec("ALTER TABLE export_configurator_item DROP attribute_value");
     }
 
+    protected function exec(string $sql)
+    {
+        try {
+            $this->getPDO()->exec($sql);
+        } catch (\Throwable $e) {
+        }
+    }
 }

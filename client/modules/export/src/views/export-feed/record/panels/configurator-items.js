@@ -54,9 +54,16 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
 
             this.prepareActionsVisibility();
 
-            this.$el.parent().hide();
-            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
-                this.$el.parent().show();
+            this.$el.parent().show();
+
+            let fileType = this.model.get('fileType');
+            if (fileType) {
+                if (!['csv', 'xlsx'].includes(fileType)) {
+                    this.$el.parent().hide();
+                }
+            }
+            if (this.model.get('hasMultipleSheets')) {
+                this.$el.parent().hide();
             }
         },
 
@@ -75,7 +82,8 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                 this.notify('Saving...');
 
                 let postData = {
-                    exportFeedId: this.model.get('id')
+                    entityType: this.model.urlRoot,
+                    id: this.model.get('id')
                 };
 
                 this.ajaxPostRequest(`ExportFeed/action/addMissingFields`, postData).then(response => {
@@ -90,7 +98,8 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                 this.notify('Removing...');
 
                 let postData = {
-                    exportFeedId: this.model.get('id')
+                    entityType: this.model.urlRoot,
+                    id: this.model.get('id')
                 };
 
                 this.ajaxPostRequest(`ExportFeed/action/removeAllItems`, postData).then(response => {
@@ -117,7 +126,8 @@ Espo.define('export:views/export-feed/record/panels/configurator-items', 'views/
                     this.notify('Saving...');
 
                     let postData = {
-                        exportFeedId: this.model.get('id')
+                        entityType: this.model.urlRoot,
+                        id: this.model.get('id')
                     };
                     if (!selectObj.massRelate) {
                         postData.ids = [];

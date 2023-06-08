@@ -40,7 +40,7 @@ class Convertor
         $this->container = $container;
     }
 
-    public function convert(array $record, array $configuration, bool $toString = false): array
+    public function convert(array $record, array $configuration): array
     {
         if ($configuration['type'] == 'Fixed value' && isset($configuration['fixedValue'])) {
             $column = $configuration['column'];
@@ -54,10 +54,10 @@ class Convertor
             $type = 'unit';
         }
 
-        return $this->convertType($type, $record, $configuration, $toString);
+        return $this->convertType($type, $record, $configuration);
     }
 
-    public function convertType(string $type, array $record, array $configuration, bool $toString = false): array
+    public function convertType(string $type, array $record, array $configuration): array
     {
         $result = [];
 
@@ -67,12 +67,7 @@ class Convertor
         }
 
         $fieldConverter = new $fieldConverterClass($this);
-
-        if ($toString) {
-            $fieldConverter->convertToString($result, $record, $configuration);
-        } else {
-            $fieldConverter->convert($result, $record, $configuration);
-        }
+        $fieldConverter->convertToString($result, $record, $configuration);
 
         return $result;
     }
@@ -131,7 +126,7 @@ class Convertor
         }
 
         if ($attributeValue === 'valueUnitId') {
-            return 'link';
+            return 'unit';
         }
 
         if ($type === 'rangeInt') {
