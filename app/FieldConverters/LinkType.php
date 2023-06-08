@@ -37,7 +37,7 @@ class LinkType extends AbstractType
         if (!empty($linkId)) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
-            if ($this->needToCallForeignEntity($exportBy)) {
+            if ($this->needToCallForeignEntity($exportBy) || $configuration['zip']) {
                 $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
@@ -52,7 +52,11 @@ class LinkType extends AbstractType
                      * For main image
                      */
                     if ($field === 'mainImage' || in_array($entity, ['Category', 'Product']) && $field === 'image') {
+                        $path = $foreign->getFilePath();
                         $foreign = $foreign->getAsset();
+                        if ($configuration['zip']) {
+                            $result['__assetPaths'] = [[$foreign->get('name'), $path]];
+                        }
                         $this->convertor->getService('Asset')->prepareEntityForOutput($foreign);
                     }
 

@@ -63,9 +63,9 @@ abstract class AbstractExportType extends Base
             }
 
             $row = [
-                'field'    => $field,
+                'field' => $field,
                 'language' => 'main',
-                'column'   => $language->translate($field, 'fields', $scope)
+                'column' => $language->translate($field, 'fields', $scope)
             ];
 
             if (!empty($data['multilangLocale'])) {
@@ -245,11 +245,11 @@ abstract class AbstractExportType extends Base
     protected function getSelectParams(): array
     {
         $params = [
-            'sortBy'      => 'id',
-            'asc'         => true,
-            'offset'      => 0,
-            'maxSize'     => 1,
-            'where'       => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : [],
+            'sortBy' => 'id',
+            'asc' => true,
+            'offset' => 0,
+            'maxSize' => 1,
+            'where' => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : [],
             'withDeleted' => !empty($this->data['feed']['data']['withDeleted']),
         ];
 
@@ -360,12 +360,16 @@ abstract class AbstractExportType extends Base
 
         $res = [
             'configuration' => [],
-            'fullFileName'  => $fullFilePath . '/' . $fileName,
-            'count'         => 0
+            'fullFileName' => $fullFilePath . '/' . $fileName,
+            'count' => 0,
+            'assetPaths' => []
         ];
 
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
             $res['configuration'][$rowNumber] = $this->prepareRow($row);
+            if ($row['zip']) {
+                $res['assetPaths'][$row['column']] = [];
+            }
         }
 
         // clearing file if it needs
@@ -381,7 +385,14 @@ abstract class AbstractExportType extends Base
             foreach ($records as $record) {
                 $rowData = [];
                 foreach ($res['configuration'] as $row) {
-                    $rowData[] = $this->convertor->convert($record, $row);
+                    $result = $this->convertor->convert($record, $row);
+                    if ($row['zip'] && isset($result['__assetPaths'])) {
+                        if (!empty($result['__assetPaths'])) {
+                            $res['assetPaths'][$row['column']] = array_merge($res['assetPaths'][$row['column']], $result['__assetPaths']);
+                        }
+                        unset($result['__assetPaths']);
+                    }
+                    $rowData[] = $result;
                 }
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $res['count']++;

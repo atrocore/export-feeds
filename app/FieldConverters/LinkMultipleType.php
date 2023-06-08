@@ -116,6 +116,14 @@ class LinkMultipleType extends LinkType
 
         $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
+        if ($configuration['zip'] && $foreignEntity === 'Asset') {
+            $result['__assetPaths'] = [];
+            foreach ($foreignList as $foreignData) {
+                $attachment = $this->convertor->getEntity('Attachment', $foreignData['fileId']);
+                $result['__assetPaths'][] = [$foreignData['name'], $attachment->getFilePath()];
+            }
+        }
+
         foreach ($foreignList as $foreignData) {
             $fieldResult = [];
             foreach ($exportBy as $v) {
