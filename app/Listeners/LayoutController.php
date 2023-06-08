@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace Export\Listeners;
 
 use Espo\Core\Utils\Json;
-use Treo\Core\EventManager\Event;
-use Treo\Listeners\AbstractListener;
+use Espo\Core\EventManager\Event;
+use Espo\Listeners\AbstractListener;
 
 class LayoutController extends AbstractListener
 {
