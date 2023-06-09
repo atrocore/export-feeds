@@ -594,4 +594,27 @@ class ExportFeed extends Base
             $this->getEntityManager()->saveEntity($newHeader);
         }
     }
+
+    public function getEasyCatalog($exportFeedCode, $offset)
+    {
+        $exportFeed = $this->getRepository()->where(['code' => $exportFeedCode])->findOne();
+        if (empty($exportFeed)) {
+            throw new Exceptions\NotFound();
+        }
+        $data = [
+            'id' => Util::generateId(),
+            'feed' => $this->prepareFeedData($exportFeed)
+        ];
+
+        $data['offset'] = !empty($offset) ? (int)$offset : 0;
+        $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
+
+        $exportService = $this->getExportTypeService($data['feed']['type']);
+
+        return [
+            "total" => $exportService->getCount($data),
+            "urlColumns" => $exportService->getUrlColumns(),
+            "records" => $exportService->exportEasyCatalogJson(),
+        ];
+    }
 }
