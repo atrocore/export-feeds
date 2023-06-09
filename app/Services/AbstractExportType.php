@@ -63,9 +63,9 @@ abstract class AbstractExportType extends Base
             }
 
             $row = [
-                'field' => $field,
+                'field'    => $field,
                 'language' => 'main',
-                'column' => $language->translate($field, 'fields', $scope)
+                'column'   => $language->translate($field, 'fields', $scope)
             ];
 
             if (!empty($data['multilangLocale'])) {
@@ -245,11 +245,11 @@ abstract class AbstractExportType extends Base
     protected function getSelectParams(): array
     {
         $params = [
-            'sortBy' => 'id',
-            'asc' => true,
-            'offset' => 0,
-            'maxSize' => 1,
-            'where' => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : [],
+            'sortBy'      => 'id',
+            'asc'         => true,
+            'offset'      => 0,
+            'maxSize'     => 1,
+            'where'       => !empty($this->data['feed']['data']['where']) ? $this->data['feed']['data']['where'] : [],
             'withDeleted' => !empty($this->data['feed']['data']['withDeleted']),
         ];
 
@@ -360,8 +360,8 @@ abstract class AbstractExportType extends Base
 
         $res = [
             'configuration' => [],
-            'fullFileName' => $fullFilePath . '/' . $fileName,
-            'count' => 0
+            'fullFileName'  => $fullFilePath . '/' . $fileName,
+            'count'         => 0
         ];
 
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
