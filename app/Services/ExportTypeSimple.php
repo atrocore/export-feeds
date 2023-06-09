@@ -196,6 +196,8 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->beforeStore($this, $attachment, 'csv');
 
+        $this->initZipArchive([$this->data['feed']['data']['configuration']]);
+
         $data = $this->createCacheFile();
         $exportJob->set('count', $data['count']);
         $exportJob->set('data', array_merge($exportJob->getData(), $data));
@@ -207,7 +209,41 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return $this->exportAsZip([$data], $attachment);
+        return $this->exportAsZip($attachment);
+    }
+
+
+    protected function canBuildZipArchive(array $configurations)
+    {
+        foreach ($configurations as $configuration) {
+            foreach ($configuration as $field) {
+                if ($field['zip']) return true;
+            }
+        }
+        return false;
+    }
+
+    protected function initZipArchive(array $configurations)
+    {
+        if (!$this->canBuildZipArchive($configurations)) return false;
+        $repository = $this->getEntityManager()->getRepository('Attachment');
+        $zipAttachment = $repository->get();
+        $zipAttachment->set('name', $this->getExportFileName('zip'));
+        $zipAttachment->set('role', 'Export');
+        $zipAttachment->set('relatedType', 'ExportJob');
+        $zipAttachment->set('relatedId', $this->data['exportJobId']);
+        $zipAttachment->set('storage', 'UploadDir');
+        $zipAttachment->set('storageFilePath', $this->createPath());
+        $zipAttachment->set('type', 'application/zip');
+        $fileName = $repository->getFilePath($zipAttachment);
+        $this->createDir($fileName);
+
+        $this->zipArchive = new \ZipArchive();
+        if ($this->zipArchive->open($fileName, \ZipArchive::CREATE) !== true) {
+            throw new Exception("cannot open archive $fileName\n");
+        }
+        $this->zipAttachment = $zipAttachment;
+        return true;
     }
 
     protected function exportXlsx(ExportJob $exportJob): Attachment
@@ -236,6 +272,10 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $this->initZipArchive(array_map(function ($sheet) {
+            return $sheet['configuration'];
+        }, $sheets));
+
         $this->beforeStore($this, $attachment, 'xlsx');
 
         $fileName = $repository->getFilePath($attachment);
@@ -245,16 +285,15 @@ class ExportTypeSimple extends AbstractExportType
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
         $count = 0;
-        $dataParts = [];
         foreach ($sheets as $k => $sheet) {
             $this->data['feed']['data']['configuration'] = $sheet['configuration'];
             $this->data['feed']['entity'] = $sheet['entity'];
             $this->data['feed']['data']['where'] = $sheet['data']['where'] ?? [];
+            if (count($sheets) > 1) {
+                $this->data['zipPath'] = $sheet['name'] . '/';
+            }
 
             $data = $this->createCacheFile();
-            $data['name'] = $sheet['name'];
-            $dataParts[] = $data;
-
             $count += $data['count'];
 
             // prepare CSV filename
@@ -298,69 +337,19 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return $this->exportAsZip($dataParts, $attachment);
+        return $this->exportAsZip($attachment);
     }
 
-
-    public function hasZip($dataParts)
+    protected function exportAsZip(Attachment $attachment): Attachment
     {
-        foreach ($dataParts as $data) {
-            foreach ($data['configuration'] as $field) {
-                if ($field['zip']) return true;
-            }
-        }
-        return false;
-    }
-
-    protected function exportAsZip(array $dataParts, Attachment $attachment): Attachment
-    {
-        $zip = $this->hasZip($dataParts);
-
-        if ($zip) {
+        if (!empty($this->zipArchive)) {
             $repository = $this->getEntityManager()->getRepository('Attachment');
-
-            $zipAttachment = $repository->get();
-            $zipAttachment->set('name', $this->getExportFileName('zip'));
-            $zipAttachment->set('role', 'Export');
-            $zipAttachment->set('relatedType', 'ExportJob');
-            $zipAttachment->set('relatedId', $this->data['exportJobId']);
-            $zipAttachment->set('storage', 'UploadDir');
-            $zipAttachment->set('storageFilePath', $this->createPath());
-            $zipAttachment->set('type', 'application/zip');
-            $fileName = $repository->getFilePath($zipAttachment);
-            $this->createDir($fileName);
-
-            $za = new \ZipArchive();
-            if ($za->open($fileName, \ZipArchive::CREATE) !== true) {
-                throw new Exception("cannot open archive $fileName\n");
-            }
-            $za->addFile($attachment->getFilePath(), $attachment->get('name'));
-
-            $hasMultipleSheets = count($dataParts) > 1;
-            foreach ($dataParts as $data) {
-                $sheetDir = '';
-                if ($hasMultipleSheets) {
-                    $sheetDir = $data['name'] ?? '';
-                    if (!empty($sheetDir)) {
-                        $za->addEmptyDir($sheetDir);
-                    }
-                }
-                foreach ($data['assetPaths'] as $dir => $paths) {
-                    if (!empty($sheetDir)) {
-                        $dir = $sheetDir . '/' . $dir;
-                    }
-                    $za->addEmptyDir($dir);
-                    foreach ($paths as $dataPath) {
-                        $za->addFile($dataPath[1], $dir . '/' . $dataPath[0]);
-                    }
-                }
-            }
-
-            $za->close();
-            $zipAttachment->set('size', \filesize($repository->getFilePath($zipAttachment)));
-            $this->getEntityManager()->saveEntity($zipAttachment);
+            $this->zipArchive->addFile($attachment->getFilePath(), $attachment->get('name'));
+            $this->zipArchive->close();
+            $this->zipAttachment->set('size', \filesize($repository->getFilePath($this->zipAttachment)));
+            $this->getEntityManager()->saveEntity($this->zipAttachment);
             $this->getEntityManager()->removeEntity($attachment);
-            return $zipAttachment;
+            return $this->zipAttachment;
         }
 
         return $attachment;
@@ -472,7 +461,7 @@ class ExportTypeSimple extends AbstractExportType
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 
-    public function getUrlColumns() :array
+    public function getUrlColumns(): array
     {
         $urlColumns = [];
         $data = $this->data['feed']['data'];

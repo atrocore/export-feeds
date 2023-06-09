@@ -46,6 +46,8 @@ abstract class AbstractExportType extends Base
     protected Convertor $convertor;
 
     private int $iteration = 0;
+    protected $zipArchive = null;
+    protected $zipAttachment = null;
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -362,14 +364,10 @@ abstract class AbstractExportType extends Base
             'configuration' => [],
             'fullFileName'  => $fullFilePath . '/' . $fileName,
             'count'         => 0,
-            'assetPaths'    => []
         ];
 
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
             $res['configuration'][$rowNumber] = $this->prepareRow($row);
-            if ($row['zip']) {
-                $res['assetPaths'][$row['column']] = [];
-            }
         }
 
         // clearing file if it needs
@@ -390,16 +388,17 @@ abstract class AbstractExportType extends Base
                 foreach ($res['configuration'] as $row) {
                     $result = $this->convertor->convert($record, $row);
                     if ($row['zip'] && isset($result['__assetPaths'])) {
-                        if (!empty($result['__assetPaths'])) {
-                            $res['assetPaths'][$row['column']] = array_merge($res['assetPaths'][$row['column']], $result['__assetPaths']);
+                        foreach ($result['__assetPaths'] as $path) {
+                            $base_dir = ($this->data['zipPath'] ?? '') . $row['name'];
+                            $this->zipArchive->addFile($path, $base_dir . basename($path));
                         }
                         unset($result['__assetPaths']);
                     }
-                    $rowData[] = $result;
                 }
-                fwrite($file, Json::encode($rowData) . PHP_EOL);
-                $res['count']++;
+                $rowData[] = $result;
             }
+            fwrite($file, Json::encode($rowData) . PHP_EOL);
+            $res['count']++;
         }
 
         fclose($file);
