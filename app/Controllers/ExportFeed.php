@@ -107,5 +107,4 @@ class ExportFeed extends Base
             $params['exportEntity'] = $request->get('exportEntity');
         }
     }
-
 }
