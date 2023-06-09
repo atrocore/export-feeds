@@ -217,10 +217,10 @@ class ExportTypeSimple extends AbstractExportType
         } else {
             $sheets = [
                 [
-                    'name' => 'Sheet',
+                    'name'          => 'Sheet',
                     'configuration' => $this->data['feed']['data']['configuration'],
-                    'entity' => $this->data['feed']['entity'],
-                    'data' => $this->data['feed']['data'],
+                    'entity'        => $this->data['feed']['entity'],
+                    'data'          => $this->data['feed']['data'],
                 ]
             ];
         }
@@ -385,8 +385,8 @@ class ExportTypeSimple extends AbstractExportType
                 foreach ($colData as $colName => $colValue) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
-                        'pos' => $rowNumber * 1000 + $n,
-                        'name' => $colName
+                        'pos'    => $rowNumber * 1000 + $n,
+                        'name'   => $colName
                     ];
                     $n++;
                 }
