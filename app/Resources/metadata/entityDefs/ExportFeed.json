@@ -5,6 +5,11 @@
       "required": true,
       "trim": true
     },
+    "code": {
+      "type": "varchar",
+      "unique": true,
+      "trim": true
+    },
     "description": {
       "type": "text"
     },

@@ -107,4 +107,18 @@ class ExportFeed extends Base
             $params['exportEntity'] = $request->get('exportEntity');
         }
     }
+
+
+    public function actionEasyCatalog($params, $data, Request $request)
+    {
+        if (!$request->isGet() || empty($request->get("code"))) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return $this->getRecordService()->getEasyCatalog($request->get("code"), $request->get('offset'));
+    }
 }

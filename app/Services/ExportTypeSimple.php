@@ -541,4 +541,47 @@ class ExportTypeSimple extends AbstractExportType
         $event = new Event(['data' => $this->data, 'typeService' => $typeService, 'attachment' => $attachment, 'extension' => $format]);
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
+
+    public function getUrlColumns() :array
+    {
+        $urlColumns = [];
+        $data = $this->data['feed']['data'];
+
+        foreach ($data['configuration'] as $row) {
+            if (is_array($row['exportBy']) && $row['exportBy'][0] === "url") {
+                $urlColumns[] = $row['column'];
+            }
+        }
+        return $urlColumns;
+    }
+
+    public function exportEasyCatalogJson(): array
+    {
+        $this->convertor = $this->getDataConvertor();
+        $data = $this->createCacheFile(true);
+        $columns = $this->prepareColumns($data);
+
+        $result = [];
+        $cacheFile = fopen($data['fullFileName'], "r");
+        while (($line = fgets($cacheFile)) !== false) {
+            if (empty($line)) {
+                continue;
+            }
+
+            $rowData = @json_decode($line, true);
+            if (!is_array($rowData)) {
+                continue;
+            }
+
+            $resultRow = [];
+            foreach ($columns as $pos => $columnData) {
+                $resultRow[$columnData['name']] = isset($rowData[$columnData['number']][$columnData['name']]) ? $rowData[$columnData['number']][$columnData['name']] : null;
+            }
+            $result[] = $resultRow;
+
+        }
+        fclose($cacheFile);
+
+        return $result;
+    }
 }
