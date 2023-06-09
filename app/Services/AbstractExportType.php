@@ -360,9 +360,9 @@ abstract class AbstractExportType extends Base
 
         $res = [
             'configuration' => [],
-            'fullFileName' => $fullFilePath . '/' . $fileName,
-            'count' => 0,
-            'assetPaths' => []
+            'fullFileName'  => $fullFilePath . '/' . $fileName,
+            'count'         => 0,
+            'assetPaths'    => []
         ];
 
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
