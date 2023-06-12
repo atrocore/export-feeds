@@ -96,6 +96,11 @@ class ExportFeed extends Base
             $this->isDelimiterValid($entity);
         }
 
+        if($entity->isNew()){
+            $entity->set('lastStatus', null);
+            $entity->set('lastTime', null);
+        }
+
         parent::beforeSave($entity, $options);
 
         if ($entity->get('type') === 'simple') {
