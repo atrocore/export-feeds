@@ -68,18 +68,18 @@ class LinkMultipleType extends LinkType
                 case 'enum':
                     $params['where'] = [
                         [
-                            'type' => 'in',
+                            'type'      => 'in',
                             'attribute' => $configuration['filterField'],
-                            'value' => $configuration['filterFieldValue'],
+                            'value'     => $configuration['filterFieldValue'],
                         ]
                     ];
                     break;
                 case 'multiEnum':
                     $params['where'] = [
                         [
-                            'type' => 'arrayAnyOf',
+                            'type'      => 'arrayAnyOf',
                             'attribute' => $configuration['filterField'],
-                            'value' => $configuration['filterFieldValue'],
+                            'value'     => $configuration['filterFieldValue'],
                         ]
                     ];
                     break;
@@ -116,12 +116,23 @@ class LinkMultipleType extends LinkType
 
         $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
+        if ($configuration['zip'] && $foreignEntity === 'Asset') {
+            $result['__assetPaths'] = [];
+            foreach ($foreignList as $foreignData) {
+                $attachment = $this->convertor->getEntity('Attachment', $foreignData['fileId']);
+                $result['__assetPaths'][] = $attachment->getFilePath();
+            }
+        }
+
         foreach ($foreignList as $foreignData) {
             $fieldResult = [];
             foreach ($exportBy as $v) {
                 $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
                 if ($assetUrl !== null) {
                     $fieldResult[$v] = $assetUrl;
+                    if ($configuration['zip']) {
+                        $result['__assetPaths'][] = str_replace(rtrim($this->convertor->getConfig()->get('siteUrl'), '/') . '/', '', $assetUrl);
+                    }
                     continue 1;
                 }
 

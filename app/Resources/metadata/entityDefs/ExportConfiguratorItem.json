@@ -2,7 +2,7 @@
   "fields": {
     "attributeValue": {
       "type": "enum",
-      "required": true,
+      "required": false,
       "prohibitedEmptyValue": true,
       "view": "export:views/export-configurator-item/fields/attribute-value",
       "options": [

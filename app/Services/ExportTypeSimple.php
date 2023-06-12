@@ -196,6 +196,8 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->beforeStore($this, $attachment, 'csv');
 
+        $this->initZipArchive([$this->data['feed']['data']['configuration']]);
+
         $data = $this->createCacheFile();
         $exportJob->set('count', $data['count']);
         $exportJob->set('data', array_merge($exportJob->getData(), $data));
@@ -207,7 +209,41 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        return $this->exportAsZip($data['configuration'], $attachment);
+        return $this->exportAsZip($attachment);
+    }
+
+
+    protected function canBuildZipArchive(array $configurations)
+    {
+        foreach ($configurations as $configuration) {
+            foreach ($configuration as $field) {
+                if ($field['zip']) return true;
+            }
+        }
+        return false;
+    }
+
+    protected function initZipArchive(array $configurations)
+    {
+        if (!$this->canBuildZipArchive($configurations)) return false;
+        $repository = $this->getEntityManager()->getRepository('Attachment');
+        $zipAttachment = $repository->get();
+        $zipAttachment->set('name', $this->getExportFileName('zip'));
+        $zipAttachment->set('role', 'Export');
+        $zipAttachment->set('relatedType', 'ExportJob');
+        $zipAttachment->set('relatedId', $this->data['exportJobId']);
+        $zipAttachment->set('storage', 'UploadDir');
+        $zipAttachment->set('storageFilePath', $this->createPath());
+        $zipAttachment->set('type', 'application/zip');
+        $fileName = $repository->getFilePath($zipAttachment);
+        $this->createDir($fileName);
+
+        $this->zipArchive = new \ZipArchive();
+        if ($this->zipArchive->open($fileName, \ZipArchive::CREATE) !== true) {
+            throw new Exception("cannot open archive $fileName\n");
+        }
+        $this->zipAttachment = $zipAttachment;
+        return true;
     }
 
     protected function exportXlsx(ExportJob $exportJob): Attachment
@@ -236,6 +272,10 @@ class ExportTypeSimple extends AbstractExportType
         $attachment->set('storage', 'UploadDir');
         $attachment->set('storageFilePath', $this->createPath());
 
+        $this->initZipArchive(array_map(function ($sheet) {
+            return $sheet['configuration'];
+        }, $sheets));
+
         $this->beforeStore($this, $attachment, 'xlsx');
 
         $fileName = $repository->getFilePath($attachment);
@@ -249,9 +289,15 @@ class ExportTypeSimple extends AbstractExportType
             $this->data['feed']['data']['configuration'] = $sheet['configuration'];
             $this->data['feed']['entity'] = $sheet['entity'];
             $this->data['feed']['data']['where'] = $sheet['data']['where'] ?? [];
+            if (count($sheets) > 1 && !empty($this->zipArchive)) {
+                $base_dir = $sheet['name'] . '/';
+                $this->data['zipPath'] = $base_dir;
+                if (!$this->zipArchive->locateName($base_dir)) {
+                    $this->zipArchive->addEmptyDir($base_dir);
+                }
+            }
 
             $data = $this->createCacheFile();
-
             $count += $data['count'];
 
             // prepare CSV filename
@@ -295,142 +341,19 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
-        if (count($sheets) > 1) {
-            $attachment = $this->exportAsZip($this->data['feed']['data']['configuration'], $attachment);
-        }
-
-        return $attachment;
+        return $this->exportAsZip($attachment);
     }
 
-    protected function exportAsZip(array $configuration, Attachment $attachment): Attachment
+    protected function exportAsZip(Attachment $attachment): Attachment
     {
-        $zipColumns = array_filter($configuration, function ($field) {
-            return $field['zip'];
-        });
-
-        if (count($zipColumns) > 0) {
+        if (!empty($this->zipArchive)) {
             $repository = $this->getEntityManager()->getRepository('Attachment');
-
-            $zipAttachment = $repository->get();
-            $zipAttachment->set('name', $this->getExportFileName('zip'));
-            $zipAttachment->set('role', 'Export');
-            $zipAttachment->set('relatedType', 'ExportJob');
-            $zipAttachment->set('relatedId', $this->data['exportJobId']);
-            $zipAttachment->set('storage', 'UploadDir');
-            $zipAttachment->set('storageFilePath', $this->createPath());
-            $zipAttachment->set('type', 'application/zip');
-            $fileName = $repository->getFilePath($zipAttachment);
-            $this->createDir($fileName);
-
-            $za = new \ZipArchive();
-            if ($za->open($fileName, \ZipArchive::CREATE) !== true) {
-                throw new Exception("cannot open archive $fileName\n");
-            }
-            $za->addFile($attachment->getFilePath(), $attachment->get('name'));
-
-            if (!empty($this->data['feed']['separateJob'])) {
-                $collection = $this->getCollection();
-            } else {
-                $collection = $this->getFullCollection();
-            }
-
-            foreach ($zipColumns as $zipColumn) {
-                $dir = $zipColumn['column'];
-                $za->addEmptyDir($dir);
-                foreach ($collection as $item) {
-                    $field = $zipColumn['field'];
-                    $type = $this->getMetadata()->get(['entityDefs', $item->getEntityType(), 'fields', $field, 'type']);
-                    $foreignEntity = (string)$this->getMetadata()->get(['entityDefs', $item->getEntityType(), 'links', $field, 'entity']);
-
-                    if ($type == "linkMultiple") {
-                        $params = [];
-
-                        if (!empty($sortBy)) {
-                            $asc = $this->convertor->getMetadata()->get(['clientDefs', $item->getEntityType(), 'relationshipPanels', $field, 'asc'], true);
-                            $params['sortBy'] = $sortBy;
-                            $params['asc'] = !empty($asc);
-                        }
-
-                        if (!empty($zipColumn['sortFieldRelation'])) {
-                            $params['sortBy'] = $zipColumn['sortFieldRelation'];
-                            $params['asc'] = $zipColumn['sortOrderRelation'] !== 'DESC';
-                        }
-
-                        $params['offset'] = empty($zipColumn['offsetRelation']) ? 0 : (int)$zipColumn['offsetRelation'];
-                        $params['maxSize'] = empty($zipColumn['limitRelation']) ? 20 : (int)$zipColumn['limitRelation'];
-
-                        if (!empty($zipColumn['channelId'])) {
-                            $params['exportByChannelId'] = $zipColumn['channelId'];
-                        }
-
-                        if (!empty($zipColumn['filterField']) && !empty($zipColumn['filterFieldValue'])) {
-                            switch ($this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $zipColumn['filterField'], 'type'])) {
-                                case 'bool':
-                                    switch ($zipColumn['filterFieldValue']) {
-                                        case ['+']:
-                                            $params['where'] = [['type' => 'isTrue', 'attribute' => $zipColumn['filterField']]];
-                                            break;
-                                        case ['-']:
-                                            $params['where'] = [['type' => 'isFalse', 'attribute' => $zipColumn['filterField']]];
-                                            break;
-                                    }
-                                    break;
-                                case 'enum':
-                                    $params['where'] = [
-                                        [
-                                            'type' => 'in',
-                                            'attribute' => $zipColumn['filterField'],
-                                            'value' => $zipColumn['filterFieldValue'],
-                                        ]
-                                    ];
-                                    break;
-                                case 'multiEnum':
-                                    $params['where'] = [
-                                        [
-                                            'type' => 'arrayAnyOf',
-                                            'attribute' => $zipColumn['filterField'],
-                                            'value' => $zipColumn['filterFieldValue'],
-                                        ]
-                                    ];
-                                    break;
-                            }
-                        }
-
-                        if (!empty($zipColumn['searchFilter'])) {
-                            $params['where'] = !empty($zipColumn['searchFilter']['where']) ? $zipColumn['searchFilter']['where'] : [];
-                        }
-
-
-                        $foreignResult = $this->convertor->findLinkedEntities($zipColumn['entity'], $item->get('id'), $field, $params);
-                        $foreignList = [];
-                        if (isset($foreignResult['collection'])) {
-                            $foreignList = $foreignResult['collection']->toArray();
-                        } elseif (isset($foreignResult['list'])) {
-                            $foreignList = $foreignResult['list'];
-                        }
-                        foreach ($foreignList as $fe) {
-                            $foreign = $this->convertor->getEntity('Attachment', $fe['fileId']);
-                            $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
-                        }
-                    } else {
-                        $linkId = $item->get($field . 'Id');
-                        if ($foreignEntity === 'Attachment') {
-                            $foreign = $this->convertor->getEntity($foreignEntity, $linkId);
-                            $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
-                        } else {
-                            if ($foreignEntity === 'Asset') {
-                                $foreign = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
-                                $za->addFile($repository->getFilePath($foreign), $dir . '/' . $foreign->get('name'));
-                            }
-                        }
-                    }
-                }
-            }
-            $za->close();
-            $zipAttachment->set('size', \filesize($repository->getFilePath($zipAttachment)));
-            $this->getEntityManager()->saveEntity($zipAttachment);
+            $this->zipArchive->addFile($attachment->getFilePath(), $attachment->get('name'));
+            $this->zipArchive->close();
+            $this->zipAttachment->set('size', \filesize($repository->getFilePath($this->zipAttachment)));
+            $this->getEntityManager()->saveEntity($this->zipAttachment);
             $this->getEntityManager()->removeEntity($attachment);
-            return $zipAttachment;
+            return $this->zipAttachment;
         }
 
         return $attachment;
@@ -542,7 +465,7 @@ class ExportTypeSimple extends AbstractExportType
         $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 
-    public function getUrlColumns() :array
+    public function getUrlColumns(): array
     {
         $urlColumns = [];
         $data = $this->data['feed']['data'];

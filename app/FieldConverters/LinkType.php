@@ -37,7 +37,7 @@ class LinkType extends AbstractType
         if (!empty($linkId)) {
             $exportBy = isset($configuration['exportBy']) ? $configuration['exportBy'] : ['id'];
 
-            if ($this->needToCallForeignEntity($exportBy)) {
+            if ($this->needToCallForeignEntity($exportBy) || $configuration['zip']) {
                 $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
@@ -48,11 +48,18 @@ class LinkType extends AbstractType
                 }
 
                 if (!empty($foreign)) {
+                    if ($configuration['zip']) {
+                        $result['__assetPaths'] = [];
+                    }
                     /**
                      * For main image
                      */
-                    if ($field === 'mainImage' || in_array($entity, ['Category', 'Product']) && $field === 'image') {
+                    if ($field === 'mainImage' || (in_array($entity, ['Category', 'Product']) && $field === 'image') || $foreignEntity == 'Attachment') {
+                        $path = $foreign->getFilePath();
                         $foreign = $foreign->getAsset();
+                        if ($configuration['zip']) {
+                            $result['__assetPaths'][] = $path;
+                        }
                         $this->convertor->getService('Asset')->prepareEntityForOutput($foreign);
                     }
 
@@ -62,6 +69,9 @@ class LinkType extends AbstractType
                         $assetUrl = $this->prepareAssetUrl($v, $foreignEntity, $foreignData);
                         if ($assetUrl !== null) {
                             $fieldResult[$v] = $assetUrl;
+                            if ($configuration['zip']) {
+                                $result['__assetPaths'][] = str_replace(rtrim($this->convertor->getConfig()->get('siteUrl'), '/') . '/', '', $assetUrl);
+                            }
                             continue 1;
                         }
 

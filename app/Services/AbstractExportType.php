@@ -46,6 +46,8 @@ abstract class AbstractExportType extends Base
     protected Convertor $convertor;
 
     private int $iteration = 0;
+    protected $zipArchive = null;
+    protected $zipAttachment = null;
 
     public static function getAllFieldsConfiguration(string $scope, Metadata $metadata, Language $language): array
     {
@@ -361,7 +363,7 @@ abstract class AbstractExportType extends Base
         $res = [
             'configuration' => [],
             'fullFileName'  => $fullFilePath . '/' . $fileName,
-            'count'         => 0
+            'count'         => 0,
         ];
 
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
@@ -384,11 +386,26 @@ abstract class AbstractExportType extends Base
                     $rowData[] = ['atrocore_id' => $record['id']];
                 }
                 foreach ($res['configuration'] as $row) {
-                    $rowData[] = $this->convertor->convert($record, $row);
+                    $result = $this->convertor->convert($record, $row);
+
+                    if ($row['zip'] && isset($result['__assetPaths'])) {
+                        $base_dir = ($this->data['zipPath'] ?? '') . $row['column'] . '/';
+                        if (!$this->zipArchive->locateName($base_dir)) {
+                            $this->zipArchive->addEmptyDir($base_dir);
+                        }
+                        foreach ($result['__assetPaths'] as $path) {
+                            $this->zipArchive->addFile($path, $base_dir . basename($path));
+                        }
+                        unset($result['__assetPaths']);
+                    }
+
+                    $rowData[] = $result;
                 }
+
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $res['count']++;
             }
+
         }
 
         fclose($file);
