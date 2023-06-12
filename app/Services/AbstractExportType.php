@@ -387,18 +387,25 @@ abstract class AbstractExportType extends Base
                 }
                 foreach ($res['configuration'] as $row) {
                     $result = $this->convertor->convert($record, $row);
+
                     if ($row['zip'] && isset($result['__assetPaths'])) {
+                        $base_dir = ($this->data['zipPath'] ?? '') . $row['column'] . '/';
+                        if (!$this->zipArchive->locateName($base_dir)) {
+                            $this->zipArchive->addEmptyDir($base_dir);
+                        }
                         foreach ($result['__assetPaths'] as $path) {
-                            $base_dir = ($this->data['zipPath'] ?? '') . $row['name'];
                             $this->zipArchive->addFile($path, $base_dir . basename($path));
                         }
                         unset($result['__assetPaths']);
                     }
+
+                    $rowData[] = $result;
                 }
-                $rowData[] = $result;
+
+                fwrite($file, Json::encode($rowData) . PHP_EOL);
+                $res['count']++;
             }
-            fwrite($file, Json::encode($rowData) . PHP_EOL);
-            $res['count']++;
+
         }
 
         fclose($file);
