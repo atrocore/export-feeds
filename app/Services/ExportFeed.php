@@ -490,7 +490,7 @@ class ExportFeed extends Base
 
         $count = $this->getExportTypeService($data['feed']['type'])->getCount($data);
 
-        if (!empty($data['feed']['separateJob'])) {
+        if (!empty($data['feed']['separateJob']) && $count !== null) {
             $i = 1;
             while ($data['offset'] < $count) {
                 $jobName = $data['feed']['name'];
