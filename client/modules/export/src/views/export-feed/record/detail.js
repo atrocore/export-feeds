@@ -55,11 +55,6 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         actionExportNow() {
-            if (this.validateConfigurator()) {
-                this.notify(this.translate('noConfiguratorItems', 'exceptions', 'ExportFeed'), 'error');
-                return;
-            }
-
             if (!this.hasExportNow()) {
                 return;
             }
@@ -87,20 +82,5 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
 
             Dep.prototype.save.call(this, callback, skipExit);
         },
-
-        validateConfigurator() {
-            if (['csv', 'xlsx'].includes(this.model.get('fileType'))) {
-                const configuratorItemsView = this.getView('bottom').getView('configuratorItems');
-                if (configuratorItemsView) {
-                    const collection = configuratorItemsView.collection;
-
-                    if (collection && collection.length === 0) {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
     })
 );

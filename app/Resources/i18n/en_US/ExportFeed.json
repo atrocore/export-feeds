@@ -88,7 +88,8 @@
     "lastRecordIsRequired": "Last record in the configurator cannot be removed.",
     "noFieldLabel": "Label for the field '%s' for the language '%s' ist not set.",
     "noAttributeLabel": "Label for the attribute '%s' for the language '%s' ist not set.",
-    "noConfiguratorItems": "Please create at least one configurator rule to be able to execute this feed."
+    "noConfiguratorItems": "Please create at least one configurator rule to be able to execute this feed.",
+    "noSheets": "Please create at least one sheet to be able to execute this feed."
   },
   "tooltips": {
     "template": "You can use the syntax for <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig</a> template engine.",

@@ -68,11 +68,30 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
-        if (in_array($exportFeed->get('fileType'), ['csv', 'xlsx'])) {
-            $configuratorItems = $exportFeed->get('configuratorItems');
-            if (empty($configuratorItems) || count($configuratorItems) == 0) {
-                throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
-            }
+        switch ($exportFeed->get('fileType')) {
+            case 'csv':
+                $configuratorItems = $exportFeed->get('configuratorItems');
+                if (empty($configuratorItems[0])) {
+                    throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
+                }
+                break;
+            case 'xlsx':
+                if (!empty($exportFeed->get('hasMultipleSheets'))) {
+                    if (!empty($sheets = $exportFeed->get('sheets'))) {
+                        foreach ($sheets as $sheet) {
+                            if (!empty($sheet->get('isActive'))) {
+                                break 2;
+                            }
+                        }
+                    }
+                    throw new Exceptions\BadRequest($this->getInjection('language')->translate('noSheets', 'exceptions', 'ExportFeed'));
+                } else {
+                    $configuratorItems = $exportFeed->get('configuratorItems');
+                    if (empty($configuratorItems[0])) {
+                        throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
+                    }
+                }
+                break;
         }
 
         $this->getRepository()->removeInvalidConfiguratorItems($exportFeed->get('id'));
@@ -602,7 +621,7 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
         $data = [
-            'id' => Util::generateId(),
+            'id'   => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
@@ -612,9 +631,9 @@ class ExportFeed extends Base
         $exportService = $this->getExportTypeService($data['feed']['type']);
 
         return [
-            "total" => $exportService->getCount($data),
+            "total"      => $exportService->getCount($data),
             "urlColumns" => $exportService->getUrlColumns(),
-            "records" => $exportService->exportEasyCatalogJson(),
+            "records"    => $exportService->exportEasyCatalogJson(),
         ];
     }
 }
