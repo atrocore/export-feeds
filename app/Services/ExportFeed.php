@@ -254,9 +254,9 @@ class ExportFeed extends Base
         return true;
     }
 
-    public function removeAllItems(string $id): bool
+    public function removeAllItems(string $entityType, string $id): bool
     {
-        $this->getRepository()->removeConfiguratorItems($id);
+        $this->getRepository()->removeConfiguratorItems($entityType, $id);
 
         return true;
     }
@@ -602,7 +602,7 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
         $data = [
-            'id' => Util::generateId(),
+            'id'   => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
@@ -612,9 +612,9 @@ class ExportFeed extends Base
         $exportService = $this->getExportTypeService($data['feed']['type']);
 
         return [
-            "total" => $exportService->getCount($data),
+            "total"      => $exportService->getCount($data),
             "urlColumns" => $exportService->getUrlColumns(),
-            "records" => $exportService->exportEasyCatalogJson(),
+            "records"    => $exportService->exportEasyCatalogJson(),
         ];
     }
 }

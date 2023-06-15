@@ -81,9 +81,9 @@ class ExportFeed extends Base
         return array_column($feeds->toArray(), 'id');
     }
 
-    public function removeConfiguratorItems(string $id): void
+    public function removeConfiguratorItems(string $entityType, string $id): void
     {
-        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $id])->removeCollection();
+        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where([lcfirst($entityType) . 'Id' => $id])->removeCollection();
     }
 
     protected function beforeSave(Entity $entity, array $options = [])
@@ -109,7 +109,7 @@ class ExportFeed extends Base
 
             // remove configurator items on Entity change
             if (!$entity->isNew() && $entity->has('entity') && $fetchedEntity !== $entity->get('entity')) {
-                $this->removeConfiguratorItems($entity->get('id'));
+                $this->removeConfiguratorItems($entity->getEntityType(),$entity->get('id'));
             }
         }
     }
@@ -118,7 +118,7 @@ class ExportFeed extends Base
     {
         parent::beforeRemove($entity, $options);
 
-        $this->removeConfiguratorItems($entity->get('id'));
+        $this->removeConfiguratorItems($entity->getEntityType(),$entity->get('id'));
     }
 
     protected function init()
