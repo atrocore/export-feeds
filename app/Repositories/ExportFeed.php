@@ -81,9 +81,9 @@ class ExportFeed extends Base
         return array_column($feeds->toArray(), 'id');
     }
 
-    public function removeConfiguratorItems(string $entityType, string $id): void
+    public function removeConfiguratorItems(string $id): void
     {
-        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where([lcfirst($entityType) . 'Id' => $id])->removeCollection();
+        $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where(['exportFeedId' => $id])->removeCollection();
     }
 
     protected function beforeSave(Entity $entity, array $options = [])
@@ -96,7 +96,7 @@ class ExportFeed extends Base
             $this->isDelimiterValid($entity);
         }
 
-        if($entity->isNew()){
+        if ($entity->isNew()) {
             $entity->set('lastStatus', null);
             $entity->set('lastTime', null);
         }
