@@ -67,7 +67,7 @@ class ExportFeed extends Base
             throw new Exceptions\Forbidden();
         }
 
-        return $this->getRecordService()->removeAllItems((string)$data->entityType, (string)$data->id);
+        return $this->getRecordService()->removeAllItems((string)$data->id);
     }
 
     public function actionExportFile($params, $data, Request $request): bool

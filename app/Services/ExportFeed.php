@@ -254,9 +254,9 @@ class ExportFeed extends Base
         return true;
     }
 
-    public function removeAllItems(string $entityType, string $id): bool
+    public function removeAllItems(string $id): bool
     {
-        $this->getRepository()->removeConfiguratorItems($entityType, $id);
+        $this->getRepository()->removeConfiguratorItems($id);
 
         return true;
     }
