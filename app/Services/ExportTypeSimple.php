@@ -178,7 +178,74 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
+        $this->validateXml($fileName, $exportJob);
+
         return $attachment;
+    }
+
+    protected function validateXml($filename, ExportJob $exportJob)
+    {
+        $dom = new \DOMDocument();
+        $dom->load($filename);
+        libxml_use_internal_errors(true);
+        $sxe = new \SimpleXMLElement($filename, 0, true);
+        $schemaLocation = $sxe->attributes('xsi', true)->schemaLocation;
+        $regex = '/https?\:\/\/[^\" ]+/i';
+        preg_match($regex, (string)$schemaLocation, $matches);
+        if (empty($matches[0])) return;
+
+        $path = tempnam(sys_get_temp_dir(), "xsd");
+
+        if ($this->downloadXsd($matches[0], $path) != "200") return;
+
+        if (!$dom->schemaValidate($path)) {
+            $errors = array_map(function ($error) {
+                return $this->buildXmlError($error);
+            }, libxml_get_errors());
+            libxml_clear_errors();
+            $exportJob->set('stateMessage', join("<br>", $errors));
+        }
+        unlink($path);
+    }
+
+    protected function downloadXsd($url, $path)
+    {
+        $options = array(
+            CURLOPT_FILE           => fopen($path, 'w'),
+            CURLOPT_TIMEOUT        => 28800, // set this to 8 hours so we dont timeout on big files
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_URL            => $url
+        );
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
+        curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return $code;
+    }
+
+    function buildXmlError($error): string
+    {
+        $return = "";
+        switch ($error->level) {
+            case LIBXML_ERR_WARNING:
+                $return .= "<b>Warning $error->code</b>: ";
+                break;
+            case LIBXML_ERR_ERROR:
+                $return .= "<b>Error $error->code</b>: ";
+                break;
+            case LIBXML_ERR_FATAL:
+                $return .= "<b>Fatal Error $error->code</b>: ";
+                break;
+        }
+        $return .= trim($error->message);
+        if ($error->file) {
+            $return .= " in <b>$error->file</b>";
+        }
+        $return .= " on line <b>$error->line</b>\n";
+
+        return $return;
     }
 
     protected function exportCsv(ExportJob $exportJob): Attachment
