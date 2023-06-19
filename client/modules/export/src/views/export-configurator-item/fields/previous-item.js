@@ -24,7 +24,12 @@ Espo.define('export:views/export-configurator-item/fields/previous-item', 'views
             this.params.options = [""];
             this.translatedOptions = {"": ""};
 
-            this.ajaxGetRequest(`ExportFeed/${this.model.get('exportFeedId')}/configuratorItems`, {
+            let url = `ExportFeed/${this.model.get('exportFeedId')}/configuratorItems`;
+            if (this.model.get('sheetId')) {
+                url = `Sheet/${this.model.get('sheetId')}/configuratorItems`;
+            }
+
+            this.ajaxGetRequest(url, {
                 offset: 0,
                 maxSize: 9999,
                 sortBy: "sortOrder",
