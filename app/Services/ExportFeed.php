@@ -439,6 +439,17 @@ class ExportFeed extends Base
                         $row['channelLocales'] = $channel->get('locales');
                     }
                 }
+
+                if (empty($row['attributeValue'])) {
+                    switch ($attribute->get('type')) {
+                        case 'rangeInt':
+                        case 'rangeFloat':
+                            $row['attributeValue'] = "valueFrom";
+                            break;
+                        default:
+                            $row['attributeValue'] = 'value';
+                    }
+                }
             }
 
             $configuration[] = $row;
