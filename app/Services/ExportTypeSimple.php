@@ -253,10 +253,10 @@ class ExportTypeSimple extends AbstractExportType
         } else {
             $sheets = [
                 [
-                    'name'          => 'Sheet',
+                    'name' => 'Sheet',
                     'configuration' => $this->data['feed']['data']['configuration'],
-                    'entity'        => $this->data['feed']['entity'],
-                    'data'          => $this->data['feed']['data'],
+                    'entity' => $this->data['feed']['entity'],
+                    'data' => $this->data['feed']['data'],
                 ]
             ];
         }
@@ -289,7 +289,7 @@ class ExportTypeSimple extends AbstractExportType
             $this->data['feed']['data']['configuration'] = $sheet['configuration'];
             $this->data['feed']['entity'] = $sheet['entity'];
             $this->data['feed']['data']['where'] = $sheet['data']['where'] ?? [];
-            if (count($sheets) > 1 && !empty($this->zipArchive)) {
+            if (count($sheets) > 1 && !empty($this->zipArchive) && $this->canBuildZipArchive([$sheet['configuration']])) {
                 $base_dir = $sheet['name'] . '/';
                 $this->data['zipPath'] = $base_dir;
                 if (!$this->zipArchive->locateName($base_dir)) {
@@ -378,8 +378,8 @@ class ExportTypeSimple extends AbstractExportType
                 foreach ($colData as $colName => $colValue) {
                     $columns[$rowNumber . '_' . $colName] = [
                         'number' => $rowNumber,
-                        'pos'    => $rowNumber * 1000 + $n,
-                        'name'   => $colName
+                        'pos' => $rowNumber * 1000 + $n,
+                        'name' => $colName
                     ];
                     $n++;
                 }
