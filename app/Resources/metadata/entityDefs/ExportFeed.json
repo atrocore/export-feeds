@@ -78,7 +78,7 @@
     },
     "fileType": {
       "type": "enum",
-      "required": false,
+      "required": true,
       "optionsIds": [
         "csv",
         "xlsx",
