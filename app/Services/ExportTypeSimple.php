@@ -199,11 +199,21 @@ class ExportTypeSimple extends AbstractExportType
         if ($this->downloadXsd($matches[0], $path) != "200") return;
 
         if (!$dom->schemaValidate($path)) {
-            $errors = array_map(function ($error) {
-                return $this->buildXmlError($error);
-            }, libxml_get_errors());
+            $logs = [];
+            $validationFailed = false;
+
+            foreach (libxml_get_errors() as $error) {
+                $logs[] = $this->buildXmlLog($error);
+                if ($error->level == LIBXML_ERR_ERROR || $error->level == LIBXML_ERR_FATAL) {
+                    $validationFailed = true;
+                }
+            }
             libxml_clear_errors();
-            $exportJob->set('stateMessage', join("<br>", $errors));
+
+            $exportJob->set('stateMessage', join("\n", $logs));
+            if ($validationFailed) {
+                $exportJob->set('state', 'Failed');
+            }
         }
         unlink($path);
     }
@@ -212,7 +222,7 @@ class ExportTypeSimple extends AbstractExportType
     {
         $options = array(
             CURLOPT_FILE           => fopen($path, 'w'),
-            CURLOPT_TIMEOUT        => 28800, // set this to 8 hours so we dont timeout on big files
+            CURLOPT_TIMEOUT        => 28800,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_URL            => $url
         );
@@ -225,27 +235,23 @@ class ExportTypeSimple extends AbstractExportType
         return $code;
     }
 
-    function buildXmlError($error): string
+    function buildXmlLog($error): string
     {
-        $return = "";
+        $log = "";
         switch ($error->level) {
             case LIBXML_ERR_WARNING:
-                $return .= "<b>Warning $error->code</b>: ";
+                $log .= "Warning $error->code: ";
                 break;
             case LIBXML_ERR_ERROR:
-                $return .= "<b>Error $error->code</b>: ";
+                $log .= "Error $error->code: ";
                 break;
             case LIBXML_ERR_FATAL:
-                $return .= "<b>Fatal Error $error->code</b>: ";
+                $log .= "Fatal Error $error->code: ";
                 break;
         }
-        $return .= trim($error->message);
-        if ($error->file) {
-            $return .= " in <b>$error->file</b>";
-        }
-        $return .= " on line <b>$error->line</b>\n";
+        $log .= trim($error->message) . " on line $error->line";
 
-        return $return;
+        return $log;
     }
 
     protected function exportCsv(ExportJob $exportJob): Attachment
