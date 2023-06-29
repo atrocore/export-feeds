@@ -68,11 +68,30 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
-        if (in_array($exportFeed->get('fileType'), ['csv', 'xlsx'])) {
-            $configuratorItems = $exportFeed->get('configuratorItems');
-            if (empty($configuratorItems) || count($configuratorItems) == 0) {
-                throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
-            }
+        switch ($exportFeed->get('fileType')) {
+            case 'csv':
+                $configuratorItems = $exportFeed->get('configuratorItems');
+                if (empty($configuratorItems[0])) {
+                    throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
+                }
+                break;
+            case 'xlsx':
+                if (!empty($exportFeed->get('hasMultipleSheets'))) {
+                    if (!empty($sheets = $exportFeed->get('sheets'))) {
+                        foreach ($sheets as $sheet) {
+                            if (!empty($sheet->get('isActive'))) {
+                                break 2;
+                            }
+                        }
+                    }
+                    throw new Exceptions\BadRequest($this->getInjection('language')->translate('noSheets', 'exceptions', 'ExportFeed'));
+                } else {
+                    $configuratorItems = $exportFeed->get('configuratorItems');
+                    if (empty($configuratorItems[0])) {
+                        throw new Exceptions\BadRequest($this->getInjection('language')->translate('noConfiguratorItems', 'exceptions', 'ExportFeed'));
+                    }
+                }
+                break;
         }
 
         $this->getRepository()->removeInvalidConfiguratorItems($exportFeed->get('id'));
@@ -342,7 +361,13 @@ class ExportFeed extends Base
             return [];
         }
 
-        $feed = $sheet->getEntityType() === 'ExportFeed' ? $sheet : $sheet->get('exportFeed');
+        if ($sheet->getEntityType() === 'ExportFeed') {
+            $feed = $sheet;
+            $entityName = $sheet->getFeedField('entity');
+        } else {
+            $feed = $sheet->get('exportFeed');
+            $entityName = $sheet->get('entity');
+        }
 
         $configuration = [];
 
@@ -377,25 +402,18 @@ class ExportFeed extends Base
                 'type'                      => $item->get('type'),
                 'fixedValue'                => $item->get('fixedValue'),
                 'zip'                       => !empty($item->get('zip')),
-                'attributeValue'            => $item->get('attributeValue')
+                'attributeValue'            => $item->get('attributeValue'),
+                'entity'                    => $entityName,
+                'sortOrderField'            => $sheet->get('sortOrderField'),
+                'sortOrderDirection'        => $sheet->get('sortOrderDirection'),
             ];
             if ($feed->get('type') === 'simple') {
                 $row['convertCollectionToString'] = true;
                 $row['convertRelationsToString'] = true;
             }
 
-            if ($sheet->getEntityType() === 'ExportFeed') {
-                $row['entity'] = $feed->getFeedField('entity');
-                $row['sortOrderField'] = $feed->get('sortOrderField');
-                $row['sortOrderDirection'] = $feed->get('sortOrderDirection');
-            } else {
-                $row['entity'] = $sheet->get('entity');
-                $row['sortOrderField'] = $sheet->get('sortOrderField');
-                $row['sortOrderDirection'] = $sheet->get('sortOrderDirection');
-            }
-
             if ($item->get('type') === 'Field') {
-                if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $feed->getFeedField('entity'), 'fields', $item->get('name')]))) {
+                if ($item->get('name') !== 'id' && empty($this->getMetadata()->get(['entityDefs', $row['entity'], 'fields', $item->get('name')]))) {
                     throw new Exceptions\BadRequest(sprintf($this->getInjection('language')->translate('noSuchField', 'exceptions', 'ExportFeed'), $item->get('name')));
                 }
                 $row['field'] = $item->get('name');
@@ -419,6 +437,17 @@ class ExportFeed extends Base
                     $row['channelId'] = $item->get('channelId');
                     if (!empty($channel = $item->get('channel'))) {
                         $row['channelLocales'] = $channel->get('locales');
+                    }
+                }
+
+                if (empty($row['attributeValue'])) {
+                    switch ($attribute->get('type')) {
+                        case 'rangeInt':
+                        case 'rangeFloat':
+                            $row['attributeValue'] = "valueFrom";
+                            break;
+                        default:
+                            $row['attributeValue'] = 'value';
                     }
                 }
             }
@@ -472,7 +501,7 @@ class ExportFeed extends Base
 
         $count = $this->getExportTypeService($data['feed']['type'])->getCount($data);
 
-        if (!empty($data['feed']['separateJob'])) {
+        if (!empty($data['feed']['separateJob']) && $count !== null) {
             $i = 1;
             while ($data['offset'] < $count) {
                 $jobName = $data['feed']['name'];
@@ -602,7 +631,7 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
         $data = [
-            'id' => Util::generateId(),
+            'id'   => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
         ];
 
@@ -612,9 +641,9 @@ class ExportFeed extends Base
         $exportService = $this->getExportTypeService($data['feed']['type']);
 
         return [
-            "total" => $exportService->getCount($data),
+            "total"      => $exportService->getCount($data),
             "urlColumns" => $exportService->getUrlColumns(),
-            "records" => $exportService->exportEasyCatalogJson(),
+            "records"    => $exportService->exportEasyCatalogJson(),
         ];
     }
 }

@@ -109,7 +109,7 @@ class ExportFeed extends Base
 
             // remove configurator items on Entity change
             if (!$entity->isNew() && $entity->has('entity') && $fetchedEntity !== $entity->get('entity')) {
-                $this->removeConfiguratorItems($entity->get('id'));
+                $this->removeConfiguratorItems('ExportFeed', $entity->get('id'));
             }
         }
     }
@@ -118,7 +118,7 @@ class ExportFeed extends Base
     {
         parent::beforeRemove($entity, $options);
 
-        $this->removeConfiguratorItems($entity->get('id'));
+        $this->removeConfiguratorItems('ExportFeed', $entity->get('id'));
     }
 
     protected function init()

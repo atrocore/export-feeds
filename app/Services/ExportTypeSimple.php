@@ -356,7 +356,7 @@ class ExportTypeSimple extends AbstractExportType
             $this->data['feed']['data']['configuration'] = $sheet['configuration'];
             $this->data['feed']['entity'] = $sheet['entity'];
             $this->data['feed']['data']['where'] = $sheet['data']['where'] ?? [];
-            if (count($sheets) > 1 && !empty($this->zipArchive)) {
+            if (count($sheets) > 1 && !empty($this->zipArchive) && $this->canBuildZipArchive([$sheet['configuration']])) {
                 $base_dir = $sheet['name'] . '/';
                 $this->data['zipPath'] = $base_dir;
                 if (!$this->zipArchive->locateName($base_dir)) {
