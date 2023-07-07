@@ -210,7 +210,7 @@ class ExportTypeSimple extends AbstractExportType
             }
             libxml_clear_errors();
 
-            $exportJob->set('stateMessage', join("\n", $logs));
+            $exportJob->set('stateMessage', $this->translate('xmlValidationFailed', 'messages', 'ExportJob') . "\n" . join("\n", $logs));
             if ($validationFailed) {
                 $exportJob->set('state', 'Failed');
             }
