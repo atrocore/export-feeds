@@ -27,6 +27,10 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
                 {
                     "action": "exportNow",
                     "label": this.translate('Export', 'labels', 'ExportFeed')
+                },
+                {
+                    "action": "duplicateAsImport",
+                    "label": this.translate('Export', 'labels', 'DuplicateAsImport')
                 }
             ];
 
@@ -62,6 +66,25 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             this.ajaxPostRequest('ExportFeed/action/exportFile', {id: this.model.id}).then(response => {
                 this.notify(this.translate(response ? 'jobCreated' : 'jobNotCreated', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
                 $('.action[data-action="refresh"][data-panel="exportJobs"]').click();
+            });
+        },
+
+        actionDuplicateAsImport() {
+            if ($('.action[data-action=runImport]').hasClass('disabled')) {
+                return;
+            }
+
+            this.confirm(this.translate('duplicateAsImport', 'messages', 'ImportFeed'), () => {
+                const data = {
+                    exportFeedId: this.model.get('id')
+                };
+                this.notify(this.translate('duplicate', 'labels', 'ImportFeed'));
+                this.ajaxPostRequest('ImportFeed/action/createFromExport', data).then(response => {
+                    if (response) {
+                        this.notify('Created', 'success');
+                        this.navigate('/ImportFeed/' + response.id)
+                    }
+                });
             });
         },
 
