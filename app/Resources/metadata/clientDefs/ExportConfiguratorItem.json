@@ -106,15 +106,6 @@
               "value": "Fixed value"
             }
           ]
-        },
-        "required": {
-          "conditionGroup": [
-            {
-              "type": "equals",
-              "attribute": "type",
-              "value": "Fixed value"
-            }
-          ]
         }
       }
     }
