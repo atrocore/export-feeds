@@ -59,12 +59,14 @@
     "simple": "Файл",
     "doubleQuote": "Подвійні лапки",
     "singleQuote": "Одинарна лапка",
-    "Export": "Експорт"
+    "Export": "Експорт",
+    "DuplicateAsImport": "Створити дублікат як імпортний фід"
   },
   "messages": {
     "delimitersMustBeDifferent": "Усі параметри фіду повинні мати унікальні значення.",
     "noExportFeedSelected": "Експортний фід не обрано.",
-    "columnAlreadyExist": "Колонка з такою назвою вже існує."
+    "columnAlreadyExist": "Колонка з такою назвою вже існує.",
+    "duplicateAsImport": "Ви впевнені, що хочете створити канал імпорту з цього каналу експорту?"
   },
   "additionalTranslates": {
     "exportName": "Експорт: %s",

@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Controllers;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
@@ -108,6 +109,30 @@ class ExportFeed extends Base
         }
     }
 
+    public function actionEasyCatalogVerifyCode($params, $data, $request)
+    {
+        if (!$request->isGet() || empty($request->get("code"))) {
+            throw new BadRequest();
+        }
+        $exportFeed = $this->getEntityManager()->getRepository('ExportFeed')->where(['code' => $request->get("code")])->findOne();
+        if (empty($exportFeed)) {
+            return 'Export Feed code is invalid';
+        }
+
+        $hasIdColumn = false;
+        foreach ($exportFeed->configuratorItems as $configuratorItem) {
+            if ($configuratorItem->get('column') == 'ID') {
+                $hasIdColumn = true;
+                break;
+            }
+        }
+
+        if (!$hasIdColumn) {
+            return 'This export feed has no ID column';
+        }
+
+        return 'Export feed is correctly configured';
+    }
 
     public function actionEasyCatalog($params, $data, Request $request)
     {

@@ -27,12 +27,16 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
                 {
                     "action": "exportNow",
                     "label": this.translate('Export', 'labels', 'ExportFeed')
-                },
-                {
-                    "action": "duplicateAsImport",
-                    "label": this.translate('Export', 'labels', 'DuplicateAsImport')
                 }
             ];
+
+            // Check if import-feed module is installed
+            if (this.getMetadata('entityDefs.ImportFeed') && this.model.get('type') === 'simple') {
+                this.additionalButtons.push({
+                    "action": "duplicateAsImport",
+                    "label": this.translate('DuplicateAsImport', 'labels', 'ExportFeed')
+                })
+            }
 
             this.listenTo(this.model, 'after:save', () => {
                 this.handleExportButtonDisability();
@@ -46,7 +50,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         handleExportButtonDisability() {
-            const $buttons = $('.additional-button');
+            const $buttons = $('.additional-button[data-action="exportNow"]');
             if (this.hasExportNow()) {
                 $buttons.removeClass('disabled');
             } else {
@@ -74,7 +78,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
                 return;
             }
 
-            this.confirm(this.translate('duplicateAsImport', 'messages', 'ImportFeed'), () => {
+            this.confirm(this.translate('duplicateAsImport', 'messages', 'ExportFeed'), () => {
                 const data = {
                     exportFeedId: this.model.get('id')
                 };
@@ -82,7 +86,10 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
                 this.ajaxPostRequest('ImportFeed/action/createFromExport', data).then(response => {
                     if (response) {
                         this.notify('Created', 'success');
-                        this.navigate('/ImportFeed/' + response.id)
+                        this.getRouter().navigate('#ImportFeed/view/' + response.id, {trigger: false});
+                        this.getRouter().dispatch('ImportFeed', 'view', {
+                            id: response.id,
+                        })
                     }
                 });
             });
