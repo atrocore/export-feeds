@@ -30,7 +30,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
                 }
             ];
 
-            // Check if import-feed module is installed
+            // Check if import module is installed
             if (this.getMetadata('entityDefs.ImportFeed') && this.model.get('type') === 'simple') {
                 this.additionalButtons.push({
                     "action": "duplicateAsImport",
@@ -74,10 +74,6 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         },
 
         actionDuplicateAsImport() {
-            if ($('.action[data-action=runImport]').hasClass('disabled')) {
-                return;
-            }
-
             this.confirm(this.translate('duplicateAsImport', 'messages', 'ExportFeed'), () => {
                 const data = {
                     exportFeedId: this.model.get('id')
