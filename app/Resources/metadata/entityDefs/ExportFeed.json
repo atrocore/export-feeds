@@ -97,7 +97,8 @@
       "type": "bool",
       "notStorable": true,
       "dataField": true,
-      "default": true
+      "default": true,
+      "filterDisabled": true
     },
     "csvFieldDelimiter": {
       "type": "enum",
@@ -115,7 +116,8 @@
       "notStorable": true,
       "dataField": true,
       "view": "export:views/export-feed/fields/field-delimiter",
-      "prohibitedEmptyValue": true
+      "prohibitedEmptyValue": true,
+      "filterDisabled": true
     },
     "csvTextQualifier": {
       "type": "enum",
@@ -130,83 +132,95 @@
       "default": "doubleQuote",
       "notStorable": true,
       "dataField": true,
-      "prohibitedEmptyValue": true
+      "prohibitedEmptyValue": true,
+      "filterDisabled": true
     },
     "entity": {
       "type": "varchar",
       "required": false,
       "notStorable": true,
       "dataField": true,
-      "view": "export:views/export-feed/fields/entity"
+      "view": "export:views/export-feed/fields/entity",
+      "filterDisabled": true
     },
     "convertCollectionToString": {
       "type": "bool",
       "notStorable": true,
       "default": true,
       "dataField": true,
-      "tooltip": true
+      "tooltip": true,
+      "filterDisabled": true
     },
     "delimiter": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": "~"
+      "default": "~",
+      "filterDisabled": true
     },
     "replaceAttributeValues": {
       "type": "bool",
       "notStorable": true,
       "default": true,
       "dataField": true,
-      "tooltip": true
+      "tooltip": true,
+      "filterDisabled": true
     },
     "convertRelationsToString": {
       "type": "bool",
       "notStorable": true,
       "default": true,
       "dataField": true,
-      "tooltip": true
+      "tooltip": true,
+      "filterDisabled": true
     },
     "fieldDelimiterForRelation": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": "|"
+      "default": "|",
+      "filterDisabled": true
     },
     "emptyValue": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": ""
+      "default": "",
+      "filterDisabled": true
     },
     "nullValue": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": "Null"
+      "default": "Null",
+      "filterDisabled": true
     },
     "markForNotLinkedAttribute": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": "--"
+      "default": "--",
+      "filterDisabled": true
     },
     "decimalMark": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": ","
+      "default": ",",
+      "filterDisabled": true
     },
     "thousandSeparator": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
-      "required": false
+      "required": false,
+      "filterDisabled": true
     },
     "data": {
       "type": "jsonObject",
@@ -262,7 +276,8 @@
     "lastTime": {
       "type": "datetime",
       "readOnly": true,
-      "notStorable": true
+      "notStorable": true,
+      "filterDisabled": true
     }
   },
   "links": {
