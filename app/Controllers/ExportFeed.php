@@ -114,24 +114,7 @@ class ExportFeed extends Base
         if (!$request->isGet() || empty($request->get("code"))) {
             throw new BadRequest();
         }
-        $exportFeed = $this->getEntityManager()->getRepository('ExportFeed')->where(['code' => $request->get("code")])->findOne();
-        if (empty($exportFeed)) {
-            return 'Export Feed code is invalid';
-        }
-
-        $hasIdColumn = false;
-        foreach ($exportFeed->configuratorItems as $configuratorItem) {
-            if ($configuratorItem->get('column') == 'ID') {
-                $hasIdColumn = true;
-                break;
-            }
-        }
-
-        if (!$hasIdColumn) {
-            return 'This export feed has no ID column';
-        }
-
-        return 'Export feed is correctly configured';
+        return $this->getRecordService()->verifyCodeEasyCatalog($request->get("code"));
     }
 
     public function actionEasyCatalog($params, $data, Request $request)
