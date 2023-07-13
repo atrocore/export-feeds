@@ -97,10 +97,6 @@ class Convertor
         return $this->container->get('serviceFactory')->create($serviceName);
     }
 
-    public function getEntityManager()
-    {
-        return $this->container->get('entityManager');
-    }
 
     public function translate(string $key, string $tab, string $scope): string
     {
