@@ -30,16 +30,16 @@ class ProductConvertor extends Convertor
 {
     protected array $rowPavs = ['hash' => null, 'pavs' => null];
 
-    public function convert(array $record, array $configuration, bool $toString = false): array
+    public function convert(array $record, array $configuration): array
     {
         if (isset($configuration['attributeId'])) {
-            return $this->convertAttributeValue($record, $configuration, $toString);
+            return $this->convertAttributeValue($record, $configuration);
         }
 
-        return parent::convert($record, $configuration, $toString);
+        return parent::convert($record, $configuration);
     }
 
-    protected function convertAttributeValue(array $record, array $configuration, bool $toString = false): array
+    protected function convertAttributeValue(array $record, array $configuration): array
     {
         /**
          * Get from DB only for different row
@@ -62,9 +62,7 @@ class ProductConvertor extends Convertor
 
         $result = [];
 
-        if ($toString) {
-            $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
-        }
+        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
 
         $productAttribute = null;
 
@@ -101,8 +99,7 @@ class ProductConvertor extends Convertor
             'result' => $result,
             'productAttribute' => $productAttribute,
             'record' => $record,
-            'configuration' => $configuration,
-            'toString' => $toString
+            'configuration' => $configuration
         ];
 
         return $this->container->get('eventManager')->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');

@@ -28,5 +28,8 @@
     "onlyExportFailed24Hours": "Nur Exportaufträge, die in den letzten 24 Stunden fehlgeschlagen sind",
     "onlyExportFailed7Days": "Nur Exportaufträge, die in den letzten 7 Tagen fehlgeschlagen sind",
     "onlyExportFailed28Days": "Nur Exportaufträge, die in den letzten 28 Tagen fehlgeschlagen sind"
+  },
+  "messages": {
+    "xmlValidationFailed": "Validierung des XML-Schemas fehlgeschlagen:"
   }
 }

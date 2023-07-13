@@ -78,7 +78,7 @@
     },
     "fileType": {
       "type": "enum",
-      "required": false,
+      "required": true,
       "optionsIds": [
         "csv",
         "xlsx",
@@ -91,7 +91,8 @@
         "json",
         "xml"
       ],
-      "prohibitedEmptyValue": false
+      "prohibitedEmptyValue": false,
+      "default": "csv"
     },
     "isFileHeaderRow": {
       "type": "bool",
@@ -141,7 +142,8 @@
       "notStorable": true,
       "dataField": true,
       "view": "export:views/export-feed/fields/entity",
-      "filterDisabled": true
+      "filterDisabled": true,
+      "default": "Product"
     },
     "convertCollectionToString": {
       "type": "bool",

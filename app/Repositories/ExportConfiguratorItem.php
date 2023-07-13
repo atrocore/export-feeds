@@ -32,7 +32,11 @@ class ExportConfiguratorItem extends Base
     protected function beforeSave(Entity $entity, array $options = [])
     {
         if ($entity->isNew() && !$entity->has('previousItem')) {
-            $last = $this->select(['sortOrder'])->where(['exportFeedId' => $entity->get('exportFeedId')])->order('sortOrder', 'DESC')->findOne();
+            $where = ['exportFeedId' => $entity->get('exportFeedId')];
+            if (!empty($entity->get('sheetId'))) {
+                $where = ['sheetId' => $entity->get('sheetId')];
+            }
+            $last = $this->select(['sortOrder'])->where($where)->order('sortOrder', 'DESC')->findOne();
             $entity->set('sortOrder', empty($last) ? 0 : $last->get('sortOrder') + 10);
         }
 
@@ -55,15 +59,20 @@ class ExportConfiguratorItem extends Base
 
     public function updatePosition(Entity $entity): void
     {
-        $res = $this
+        $qb = $this
             ->getConnection()
             ->createQueryBuilder()
             ->select('id')
             ->from('export_configurator_item')
-            ->where('deleted=0')
-            ->andWhere('export_feed_id=:exportFeedId')->setParameter('exportFeedId', $entity->get('exportFeedId'))
-            ->orderBy('sort_order', 'ASC')
-            ->fetchFirstColumn();
+            ->where('deleted=0');
+
+        if (!empty($entity->get('sheetId'))) {
+            $qb->andWhere('sheet_id=:sheetId')->setParameter('sheetId', $entity->get('sheetId'));
+        } else {
+            $qb->andWhere('export_feed_id=:exportFeedId')->setParameter('exportFeedId', $entity->get('exportFeedId'));
+        }
+
+        $res = $qb->orderBy('sort_order', 'ASC')->fetchFirstColumn();
 
         $ids = [];
         if (empty($entity->get('previousItem'))) {

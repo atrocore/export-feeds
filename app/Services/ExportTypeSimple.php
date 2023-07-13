@@ -178,7 +178,80 @@ class ExportTypeSimple extends AbstractExportType
 
         $this->getEntityManager()->saveEntity($attachment);
 
+        $this->validateXml($fileName, $exportJob);
+
         return $attachment;
+    }
+
+    protected function validateXml($filename, ExportJob $exportJob)
+    {
+        $dom = new \DOMDocument();
+        $dom->load($filename);
+        libxml_use_internal_errors(true);
+        $sxe = new \SimpleXMLElement($filename, 0, true);
+        $schemaLocation = $sxe->attributes('xsi', true)->schemaLocation;
+        $regex = '/https?\:\/\/[^\" ]+/i';
+        preg_match($regex, (string)$schemaLocation, $matches);
+        if (empty($matches[0])) return;
+
+        $path = tempnam(sys_get_temp_dir(), "xsd");
+
+        if ($this->downloadXsd($matches[0], $path) != "200") return;
+
+        if (!$dom->schemaValidate($path)) {
+            $logs = [];
+            $validationFailed = false;
+
+            foreach (libxml_get_errors() as $error) {
+                $logs[] = $this->buildXmlLog($error);
+                if ($error->level == LIBXML_ERR_ERROR || $error->level == LIBXML_ERR_FATAL) {
+                    $validationFailed = true;
+                }
+            }
+            libxml_clear_errors();
+
+            $exportJob->set('stateMessage', $this->translate('xmlValidationFailed', 'messages', 'ExportJob') . "\n" . join("\n", $logs));
+            if ($validationFailed) {
+                $exportJob->set('state', 'Failed');
+            }
+        }
+        unlink($path);
+    }
+
+    protected function downloadXsd($url, $path)
+    {
+        $options = array(
+            CURLOPT_FILE           => fopen($path, 'w'),
+            CURLOPT_TIMEOUT        => 28800,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_URL            => $url
+        );
+
+        $ch = curl_init();
+        curl_setopt_array($ch, $options);
+        curl_exec($ch);
+        $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        return $code;
+    }
+
+    function buildXmlLog($error): string
+    {
+        $log = "";
+        switch ($error->level) {
+            case LIBXML_ERR_WARNING:
+                $log .= "Warning $error->code: ";
+                break;
+            case LIBXML_ERR_ERROR:
+                $log .= "Error $error->code: ";
+                break;
+            case LIBXML_ERR_FATAL:
+                $log .= "Fatal Error $error->code: ";
+                break;
+        }
+        $log .= trim($error->message) . " on line $error->line";
+
+        return $log;
     }
 
     protected function exportCsv(ExportJob $exportJob): Attachment
@@ -289,7 +362,7 @@ class ExportTypeSimple extends AbstractExportType
             $this->data['feed']['data']['configuration'] = $sheet['configuration'];
             $this->data['feed']['entity'] = $sheet['entity'];
             $this->data['feed']['data']['where'] = $sheet['data']['where'] ?? [];
-            if (count($sheets) > 1 && !empty($this->zipArchive)) {
+            if (count($sheets) > 1 && !empty($this->zipArchive) && $this->canBuildZipArchive([$sheet['configuration']])) {
                 $base_dir = $sheet['name'] . '/';
                 $this->data['zipPath'] = $base_dir;
                 if (!$this->zipArchive->locateName($base_dir)) {

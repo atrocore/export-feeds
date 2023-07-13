@@ -109,15 +109,18 @@ abstract class AbstractExportType extends Base
         return array_values($configuration);
     }
 
-    public function getCount(array $data): int
+    public function getCount(array $data): ?int
     {
         $this->setData($data);
 
-        if ($this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+        if (!empty($this->data['feed']['entity']) && $this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
             $result = $this->getEntityService()->findEntities($this->getSelectParams());
+            if (array_key_exists('total', $result) && $result['total'] > 0) {
+                return $result['total'];
+            }
         }
 
-        return $result['total'];
+        return null;
     }
 
     public function export(array $data, ExportJob $exportJob): Attachment

@@ -27,7 +27,7 @@ class ProductAttributeValueConvertor extends Convertor
     /**
      * @inheritDoc
      */
-    public function convert(array $record, array $configuration, bool $toString = false): array
+    public function convert(array $record, array $configuration): array
     {
         if ($configuration['field'] === 'value') {
             // prepare valueModifiers
@@ -41,9 +41,9 @@ class ProductAttributeValueConvertor extends Convertor
             }
             $configuration['valueModifier'] = $valueModifiers;
 
-            return $this->convertType($this->getTypeForAttribute($record['attributeId']), $record, $configuration, $toString);
+            return $this->convertType($this->getTypeForAttribute($record['attributeId'], 'value'), $record, $configuration);
         }
 
-        return parent::convert($record, $configuration, $toString);
+        return parent::convert($record, $configuration);
     }
 }

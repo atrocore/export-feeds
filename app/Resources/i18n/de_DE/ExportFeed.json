@@ -81,7 +81,8 @@
     "lastRecordIsRequired": "Der letzte Datensatz im Konfigurator kann nicht entfernt werden.",
     "noFieldLabel": "Die Bezeichnung für das Feld '%s' für die Sprache '%s' ist nicht gesetzt.",
     "noAttributeLabel": "Die Bezeichnung für das Attribut '%s' für die Sprache '%s' ist nicht gesetzt.",
-    "noConfiguratorItems": "Bitte erstellen Sie mindestens eine Konfigurator-Regel, um diesen Feed ausführen zu können."
+    "noConfiguratorItems": "Bitte erstellen Sie mindestens eine Konfigurator-Regel, um diesen Feed ausführen zu können.",
+    "noSheets": "Bitte erstellen Sie mindestens eine Tabelle, um diesen Feed ausführen zu können."
   },
   "tooltips": {
     "template": "Sie können die Syntax von <a href=\"https://twig.symfony.com\" target=\"_blank\">Twig-Template-Engine</a> verwenden.",
