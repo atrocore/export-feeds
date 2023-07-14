@@ -45,6 +45,7 @@ class Metadata extends AbstractListener
         $data['entityDefs']['ExportFeed']['fields']['lastStatus'] = [
             'type' => 'enum',
             'notStorable' => true,
+            'filterDisabled' => true,
             'readOnly' => true,
             'options' => $data['entityDefs']['ExportJob']['fields']['state']['options'],
             'optionColors' => $data['entityDefs']['ExportJob']['fields']['state']['optionColors']
