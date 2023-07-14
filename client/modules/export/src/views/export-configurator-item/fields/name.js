@@ -180,7 +180,6 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             let notExportedType = [
                 'linkParent',
                 'currencyConverted',
-                'available-currency',
                 'file',
                 'attachmentMultiple'
             ];
