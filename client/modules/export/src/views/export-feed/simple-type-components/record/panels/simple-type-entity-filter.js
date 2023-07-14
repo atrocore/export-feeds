@@ -33,7 +33,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
 
             this.setupSearchPanel();
 
-            this.listenTo(this.model, 'change:entity', function () {
+            this.listenTo(this.model, 'change:entity change:data', function () {
                 this.scope = this.model.get('entity');
 
                 let data = _.extend({}, this.model.get('data'));
