@@ -60,12 +60,14 @@
     "simple": "Datei",
     "doubleQuote": "Doppel-Anführungszeichen",
     "singleQuote": "Anführungszeichen",
-    "Export": "Export"
+    "Export": "Export",
+    "DuplicateAsImport": "Als Import-Feed duplizieren"
   },
   "messages": {
     "delimitersMustBeDifferent": "Alle Feedparameter sollten eindeutige Werte haben.",
     "noExportFeedSelected": "Kein Exportfeed ausgewählt.",
-    "columnAlreadyExist": "Eine Spalte mit diesem Namen existiert bereits."
+    "columnAlreadyExist": "Eine Spalte mit diesem Namen existiert bereits.",
+    "duplicateAsImport": "Sind Sie sicher, dass Sie aus diesem Export-Feed einen Import-Feed erstellen möchten?"
   },
   "additionalTranslates": {
     "exportName": "Datenexport im Feed %s",

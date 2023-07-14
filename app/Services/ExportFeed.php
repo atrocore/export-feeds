@@ -624,6 +624,27 @@ class ExportFeed extends Base
         }
     }
 
+    public function verifyCodeEasyCatalog(string $code){
+        $exportFeed = $this->getRepository()->where(['code' => $code])->findOne();
+        if (empty($exportFeed)) {
+            return 'Export Feed code is invalid';
+        }
+
+        $hasIdColumn = false;
+        foreach ($exportFeed->configuratorItems as $configuratorItem) {
+            if ($configuratorItem->get('column') == 'ID') {
+                $hasIdColumn = true;
+                break;
+            }
+        }
+
+        if (!$hasIdColumn) {
+            return 'This export feed has no ID column';
+        }
+
+        return 'Export feed is correctly configured';
+    }
+
     public function getEasyCatalog($exportFeedCode, $offset)
     {
         $exportFeed = $this->getRepository()->where(['code' => $exportFeedCode])->findOne();

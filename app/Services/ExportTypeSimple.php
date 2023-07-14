@@ -554,7 +554,7 @@ class ExportTypeSimple extends AbstractExportType
     public function exportEasyCatalogJson(): array
     {
         $this->convertor = $this->getDataConvertor();
-        $data = $this->createCacheFile(true);
+        $data = $this->createCacheFile();
         $columns = $this->prepareColumns($data);
 
         $result = [];

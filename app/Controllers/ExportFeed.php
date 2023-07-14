@@ -22,6 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Controllers;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Controllers\Base;
 use Espo\Core\Exceptions;
 use Slim\Http\Request;
@@ -108,6 +109,13 @@ class ExportFeed extends Base
         }
     }
 
+    public function actionEasyCatalogVerifyCode($params, $data, $request)
+    {
+        if (!$request->isGet() || empty($request->get("code"))) {
+            throw new BadRequest();
+        }
+        return $this->getRecordService()->verifyCodeEasyCatalog($request->get("code"));
+    }
 
     public function actionEasyCatalog($params, $data, Request $request)
     {

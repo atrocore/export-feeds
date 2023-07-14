@@ -12,7 +12,8 @@
     "ext-curl": "*"
   },
   "conflict": {
-    "atrocore/pim": "<1.9.0 || >=1.10.0"
+    "atrocore/pim": "<1.9.0 || >=1.10.0",
+    "atrocore/import-feed": "<1.5.10"
   },
   "autoload": {
     "psr-4": {

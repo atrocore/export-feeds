@@ -67,12 +67,14 @@
     "addProductAttribute": "Add Product Attribute",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
-    "Export": "Export"
+    "Export": "Export",
+    "DuplicateAsImport": "Duplicate As Import"
   },
   "messages": {
     "delimitersMustBeDifferent": "All feed parameters should have unique values.",
     "noExportFeedSelected": "No ExportFeed selected.",
-    "columnAlreadyExist": "A column with such name already exists."
+    "columnAlreadyExist": "A column with such name already exists.",
+    "duplicateAsImport": "Are you sure you want to create an import feed from this export feed ?"
   },
   "additionalTranslates": {
     "exportName": "Export: %s",
