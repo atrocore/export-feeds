@@ -29,7 +29,7 @@ class ProductAttributeValueConvertor extends Convertor
      */
     public function convert(array $record, array $configuration): array
     {
-        if ($configuration['field'] === 'value') {
+        if ($configuration['field'] === 'value' && !empty($record['attributeId'])) {
             // prepare valueModifiers
             $valueModifiers = [];
             if (!empty($configuration['valueModifier'])) {
