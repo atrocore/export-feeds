@@ -116,7 +116,7 @@ class Convertor
         return $this->attributes[$attributeId];
     }
 
-    public function getTypeForAttribute(string $attributeId, ?string $attributeValue): string
+    public function getTypeForAttribute($attributeId, ?string $attributeValue): string
     {
         $attribute = $this->getAttributeById($attributeId);
         $type = $attribute->get('type');
