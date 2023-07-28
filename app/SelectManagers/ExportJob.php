@@ -24,8 +24,13 @@ use Espo\Core\SelectManagers\Base;
 
 class ExportJob extends Base
 {
-    protected function accessOnlyOwn(&$result)
+    protected function access(&$result)
     {
+        $exportFeeds = $this->getEntityManager()->getRepository('ExportFeed')
+            ->select(['id'])
+            ->find($this->createSelectManager('ExportFeed')->getSelectParams([], true, true));
+
+        $result['whereClause'][] = ['OR' => ['exportFeedId' => array_column($exportFeeds->toArray(), 'id')]];
     }
 
     protected function boolFilterOnlyExportFailed24Hours(array &$result): void

@@ -28,6 +28,11 @@ use Espo\ORM\Entity;
 
 class ExportJob extends Base
 {
+    public function checkScope(User $user, $data, $action = null, Entity $entity = null, $entityAccessData = array())
+    {
+        return $this->getAclManager()->checkScope($user, 'ExportFeed', $action);
+    }
+
     public function checkEntity(User $user, Entity $entity, $data, $action)
     {
         if (empty($entity->get('exportFeedId'))) {
