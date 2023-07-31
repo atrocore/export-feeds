@@ -43,31 +43,21 @@ Espo.define('export:views/export-feed/record/panels/entity-filter-result', 'view
             }
 
             Dep.prototype.setup.call(this);
+
+            this.actionList.push({
+                label: 'showFullList',
+                action: 'showFullList'
+            });
+        },
+
+        actionShowFullList(data) {
+            this.getStorage().set('listSearch', this.scope, this.model.get('data').whereData || {});
+            window.open(`#${this.scope}`, '_blank');
         },
 
         setFilter(filter) {
             this.collection.where = this.model.get('data').where || [];
         },
-
-        // actionRefresh: function () {
-        //     let extensibleEnumId = this.model.attributeModel.get('extensibleEnumId') || 'no-such-id';
-        //
-        //     console.log('11233')
-        //
-        //     this.collection.url = `Product`;
-        //     this.collection.urlRoot = `Product`;
-        //
-        //     this.collection.fetch();
-        // },
-
-        // afterRender() {
-        //     Dep.prototype.setup.call(this);
-        //
-        //     // this.$el.parent().hide();
-        //     // if (['extensibleEnum', 'extensibleMultiEnum'].includes(this.model.attributeModel.get('type'))) {
-        //     //     this.$el.parent().show();
-        //     // }
-        // },
 
     })
 );
