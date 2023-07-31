@@ -48,6 +48,16 @@ Espo.define('export:views/export-feed/record/panels/entity-filter-result', 'view
                 label: 'showFullList',
                 action: 'showFullList'
             });
+
+            this.listenTo(Backbone.Events, 'search', searchView => {
+                if (searchView.searchManager.type === 'exportSimpleType') {
+                    this.model.set('data', _.extend({}, this.model.get('data'), {
+                        where: Espo.Utils.cloneDeep(searchView.searchManager.getWhere()),
+                        whereData: Espo.Utils.cloneDeep(searchView.searchManager.get()),
+                        whereScope: this.model.get('entity'),
+                    }));
+                }
+            });
         },
 
         actionShowFullList(data) {

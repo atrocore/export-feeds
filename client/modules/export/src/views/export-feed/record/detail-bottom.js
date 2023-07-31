@@ -23,7 +23,7 @@ Espo.define('export:views/export-feed/record/detail-bottom', 'views/record/detai
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'after:save', () => {
+            this.listenTo(this.model, 'change:data change:entity after:save', () => {
                 (this.getMetadata().get(['clientDefs', 'ExportFeed', 'bottomPanels', 'detail']) || []).forEach(row => {
                     if (row.name === 'entityFilterResult') {
                         this.createPanelView(row, view => {
