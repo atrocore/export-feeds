@@ -20,6 +20,8 @@
 Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
     Dep => Dep.extend({
 
+        bottomView: 'export:views/export-feed/record/detail-bottom',
+
         setup() {
             Dep.prototype.setup.call(this);
 

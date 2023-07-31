@@ -62,6 +62,7 @@
     "Export Data Settings": "Export Data Settings",
     "Feed Settings": "Feed Settings",
     "entityFilter": "Filter",
+    "entityFilterResult": "Filter Result",
     "Configurator": "Configurator",
     "addEntityField": "Add Entity Field",
     "addProductAttribute": "Add Product Attribute",

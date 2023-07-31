@@ -3,6 +3,9 @@
     "name": "simpleTypeEntityFilter"
   },
   {
+    "name": "entityFilterResult"
+  },
+  {
     "name": "channels"
   },
   {

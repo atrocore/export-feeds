@@ -53,6 +53,7 @@
     "Export Data Settings": "Налаштування експорту даних",
     "Feed Settings": "Налаштування фіду",
     "entityFilter": "Фільтр",
+    "entityFilterResult": "Результат фільтрації",
     "Configurator": "Конфігуратор",
     "addEntityField": "Створити сутність поле",
     "addProductAttribute": "Додати атрибут продукту",
