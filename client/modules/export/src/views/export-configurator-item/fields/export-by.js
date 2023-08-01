@@ -81,7 +81,10 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 }
 
                 let fields = this.getMetadata().get(['entityDefs', entity, 'fields']) || {};
-                $.each(fields, (field, fieldData) => {
+                let sortedFields = Object.keys(fields).sort((v1, v2) => this.translate(v1, 'fields', entity).localeCompare(this.translate(v2, 'fields', entity)));
+
+                sortedFields.forEach(field => {
+                    let fieldData = fields[field];
                     if (!fieldData.disabled && !fieldData.exportDisabled && !['jsonObject', 'linkMultiple'].includes(fieldData.type)) {
                         if (fieldData.type === 'link') {
                             result = this.pushLinkFields(result, entity, field);
