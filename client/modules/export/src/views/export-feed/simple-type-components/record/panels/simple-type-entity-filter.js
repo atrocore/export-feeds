@@ -65,6 +65,7 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
                     el: `${this.options.el} .search-container`,
                     searchManager: this.searchManager,
                     scope: this.scope,
+                    entityType: this.model.name,
                     viewMode: 'list',
                     hiddenBoolFilterList: this.getMetadata().get(`clientDefs.${this.scope}.hiddenBoolFilterList`) || [],
                     feedModel: this.model,

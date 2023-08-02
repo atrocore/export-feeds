@@ -37,7 +37,7 @@ Espo.define('export:views/export-feed/record/panels/entity-filter-result', 'view
             if (!this.panelVisible()) {
                 return;
             }
-            
+
             this.scope = this.model.get('entity');
             this.url = this.model.get('entity');
 
@@ -70,7 +70,8 @@ Espo.define('export:views/export-feed/record/panels/entity-filter-result', 'view
         },
 
         setFilter(filter) {
-            this.collection.where = this.model.get('data').where || [];
+            let data = this.model.get('data') || {};
+            this.collection.where = data.where || [];
         },
 
         afterRender() {
