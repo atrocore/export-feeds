@@ -43,6 +43,8 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             this.listenTo(this.model, 'after:save', () => {
                 this.handleExportButtonDisability();
             });
+
+            this.getStorage().set('mode', 'ExportFeed', null);
         },
 
         afterRender() {
@@ -96,12 +98,14 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
         setDetailMode() {
             Dep.prototype.setDetailMode.call(this);
 
+            this.getStorage().set('mode', 'ExportFeed', 'detail');
             this.model.trigger('change:export-feed-mode');
         },
 
         setEditMode() {
             Dep.prototype.setEditMode.call(this);
 
+            this.getStorage().set('mode', 'ExportFeed', 'edit');
             this.model.trigger('change:export-feed-mode');
         },
 
