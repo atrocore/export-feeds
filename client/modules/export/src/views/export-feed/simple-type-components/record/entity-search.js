@@ -83,8 +83,8 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
         },
 
         setFilterMode() {
-            let detailView = this.getDetailView();
-            if (detailView && detailView.mode === 'edit') {
+            let mode = this.getStorage().get('mode', 'ExportFeed') || 'detail';
+            if (mode === 'edit') {
                 this.$el.find('select, input, button, .selectize-input,[data-action="clearLinkSubQuery"],.link-subquery').removeClass('disabled').removeAttr('disabled');
                 this.$el.find('.remove-filter, .remove-attribute-filter').show();
                 $('.selectized').each(function () {
@@ -97,14 +97,6 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
                     this.selectize.disable();
                 });
             }
-        },
-
-        getDetailView() {
-            if (this.getParentView() && this.getParentView().getParentView() && this.getParentView().getParentView().getParentView()) {
-                return this.getParentView().getParentView().getParentView();
-            }
-
-            return null;
         },
 
     })

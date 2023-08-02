@@ -63,10 +63,6 @@ Espo.define('export:views/export-feed/simple-type-components/record/product-sear
                 return Filter.prototype.setFilterMode.call(this);
             },
 
-            getDetailView() {
-                return Filter.prototype.getDetailView.call(this);
-            },
-
             getFilterData() {
                 return Filter.prototype.getFilterData.call(this);
             },
