@@ -92,7 +92,7 @@ class ProductConvertor extends Convertor
             if (empty($configuration['replaceAttributeValues']) && $productAttribute->get('scope') === 'Global' && !empty($configuration['channelId'])) {
                 return $result;
             }
-            $result = $this->convertType($this->getTypeForAttribute($productAttribute->get('attributeId'), $configuration['attributeValue']), $productAttribute->toArray(), array_merge($configuration, ['field' => $this->getFieldForAttribute($configuration)]), $toString);
+            $result = $this->convertType($this->getTypeForAttribute($productAttribute->get('attributeId'), $configuration['attributeValue']), $productAttribute->toArray(), array_merge($configuration, ['field' => $this->getFieldForAttribute($configuration)]));
         }
 
         $eventPayload = [
