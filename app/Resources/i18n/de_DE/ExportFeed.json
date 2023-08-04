@@ -60,7 +60,12 @@
     "simple": "Datei",
     "doubleQuote": "Doppel-Anführungszeichen",
     "singleQuote": "Anführungszeichen",
-    "Export": "Export"
+    "Export": "Export",
+    "Pending": "Steht aus",
+    "Success": "Erfolg",
+    "Running": "In Arbeit",
+    "Failed": "Fehlgeschlagen",
+    "Canceled": "Abgebrochen"
   },
   "messages": {
     "delimitersMustBeDifferent": "Alle Feedparameter sollten eindeutige Werte haben.",

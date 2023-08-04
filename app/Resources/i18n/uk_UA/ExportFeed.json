@@ -59,7 +59,12 @@
     "simple": "Файл",
     "doubleQuote": "Подвійні лапки",
     "singleQuote": "Одинарна лапка",
-    "Export": "Експорт"
+    "Export": "Експорт",
+    "Pending": "В очікуванні",
+    "Success": "Успішно",
+    "Running": "Виконується",
+    "Failed": "Не виконано",
+    "Canceled": "Скасовано"
   },
   "messages": {
     "delimitersMustBeDifferent": "Усі параметри фіду повинні мати унікальні значення.",

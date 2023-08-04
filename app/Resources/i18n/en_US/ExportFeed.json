@@ -67,7 +67,12 @@
     "addProductAttribute": "Add Product Attribute",
     "doubleQuote": "Double Quote",
     "singleQuote": "Single Quote",
-    "Export": "Export"
+    "Export": "Export",
+    "Pending": "Pending",
+    "Success": "Success",
+    "Running": "Running",
+    "Failed": "Failed",
+    "Canceled": "Canceled"
   },
   "messages": {
     "delimitersMustBeDifferent": "All feed parameters should have unique values.",
