@@ -58,7 +58,12 @@
     "simple": "Файл",
     "doubleQuote": "Двойные кавычки",
     "singleQuote": "Одинарная кавычка",
-    "Export": "Экспорт"
+    "Export": "Экспорт",
+    "Pending": "В ожидании",
+    "Success": "Успешно",
+    "Running": "Выполняется",
+    "Failed": "Не выполнено",
+    "Canceled": "Отменено"
   },
   "messages": {
     "delimitersMustBeDifferent": "Все параметры фида должны иметь уникальные значения.",
