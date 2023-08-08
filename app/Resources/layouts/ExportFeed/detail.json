@@ -131,7 +131,7 @@
       ],
       [
         {
-          "name": "markForNotLinkedAttribute"
+          "name": "markForNoRelation"
         },
         false
       ]

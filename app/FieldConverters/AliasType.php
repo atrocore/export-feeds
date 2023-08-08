@@ -44,7 +44,7 @@ class AliasType extends AbstractType
                 }
 
                 $subResult = $this->convertor->convert(["id" => $record['productId']], $aliasConfiguration);
-                if (isset($subResult[$column]) && $subResult[$column] != $aliasConfiguration['markForNotLinkedAttribute']) {
+                if (isset($subResult[$column]) && $subResult[$column] != $aliasConfiguration['markForNoRelation']) {
                     $pavResults[] = $subResult[$column];
                 }
             }

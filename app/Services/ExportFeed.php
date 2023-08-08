@@ -382,7 +382,7 @@ class ExportFeed extends Base
                 'template'                  => $feed->get('template'),
                 'emptyValue'                => $feed->getFeedField('emptyValue'),
                 'nullValue'                 => $feed->getFeedField('nullValue'),
-                'markForNotLinkedAttribute' => $feed->getFeedField('markForNotLinkedAttribute'),
+                'markForNoRelation' => $feed->getFeedField('markForNoRelation'),
                 'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
                 'decimalMark'               => $feed->getFeedField('decimalMark'),
                 'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),

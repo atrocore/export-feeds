@@ -25,7 +25,7 @@
     "nullValue": "Nullwert",
     "thousandSeparator": "Tausendertrennzeichen",
     "decimalMark": "Dezimaltrennzeichen",
-    "markForNotLinkedAttribute": "Markierung für ein nicht verknüpftes Attribut",
+    "markForNoRelation": "Markierung für fehlende Relationen",
     "fieldDelimiterForRelation": "Feldtrennzeichen für Relation",
     "limit": "Maximale Datensatzanzahl pro Iteration",
     "separateJob": "Separater Auftrag pro Iteration",

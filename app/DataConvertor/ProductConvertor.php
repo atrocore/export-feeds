@@ -62,7 +62,7 @@ class ProductConvertor extends Convertor
 
         $result = [];
 
-        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+        $result[$configuration['column']] = $configuration['markForNoRelation'];
 
         $productAttribute = null;
 

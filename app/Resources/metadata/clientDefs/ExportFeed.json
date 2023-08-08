@@ -403,7 +403,7 @@
           ]
         }
       },
-      "markForNotLinkedAttribute": {
+      "markForNoRelation": {
         "visible": {
           "conditionGroup": [
             {

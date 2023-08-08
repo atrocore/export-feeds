@@ -24,7 +24,7 @@
     "nullValue": "Нульове значення",
     "thousandSeparator": "Тисячний роздільник",
     "decimalMark": "Десятковий роздільник",
-    "markForNotLinkedAttribute": "Позначка неприв'язаного атрибута",
+    "markForNoRelation": "Маркування відсутніх зв'язків",
     "fieldDelimiterForRelation": "Роздільник полів для зв'язку",
     "limit": "Максимальне число записів для ітерації",
     "separateJob": "Окреме завдання для ітерації",

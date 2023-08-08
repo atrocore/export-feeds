@@ -201,12 +201,12 @@
       "default": "Null",
       "filterDisabled": true
     },
-    "markForNotLinkedAttribute": {
+    "markForNoRelation": {
       "type": "varchar",
       "notStorable": true,
       "dataField": true,
       "required": false,
-      "default": "--",
+      "default": "Null",
       "filterDisabled": true
     },
     "decimalMark": {
