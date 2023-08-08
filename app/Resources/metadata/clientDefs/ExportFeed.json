@@ -413,11 +413,6 @@
                 "xlsx",
                 "csv"
               ]
-            },
-            {
-              "type": "equals",
-              "attribute": "entity",
-              "value": "Product"
             }
           ]
         }
