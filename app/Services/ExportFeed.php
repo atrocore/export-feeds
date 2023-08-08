@@ -382,7 +382,7 @@ class ExportFeed extends Base
                 'template'                  => $feed->get('template'),
                 'emptyValue'                => $feed->getFeedField('emptyValue'),
                 'nullValue'                 => $feed->getFeedField('nullValue'),
-                'markForNoRelation' => $feed->getFeedField('markForNoRelation'),
+                'markForNoRelation'         => $feed->getFeedField('markForNoRelation'),
                 'thousandSeparator'         => $feed->getFeedField('thousandSeparator'),
                 'decimalMark'               => $feed->getFeedField('decimalMark'),
                 'fieldDelimiterForRelation' => $feed->getFeedField('fieldDelimiterForRelation'),
@@ -624,7 +624,8 @@ class ExportFeed extends Base
         }
     }
 
-    public function verifyCodeEasyCatalog(string $code){
+    public function verifyCodeEasyCatalog(string $code)
+    {
         $exportFeed = $this->getRepository()->where(['code' => $code])->findOne();
         if (empty($exportFeed)) {
             return 'Export Feed code is invalid';
