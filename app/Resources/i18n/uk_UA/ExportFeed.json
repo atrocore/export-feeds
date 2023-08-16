@@ -31,7 +31,8 @@
     "configuratorItems": "Конфігуратор",
     "convertCollectionToString": "Конвертувати список у рядок",
     "convertRelationsToString": "Конвертувати поля зв'язку в рядок",
-    "replaceAttributeValues": "Замінювати значення атрибутів"
+    "replaceAttributeValues": "Замінювати значення атрибутів",
+    "exportByMaxDepth": "Показати максимальну глибину відносин"
   },
   "links": {
     "exportJobs": "Завдання експорту",

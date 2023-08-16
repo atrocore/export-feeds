@@ -42,7 +42,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
             }
 
             if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
-                this.$el.append('<span style="color: #999; font-size: 12px">This is only for Attribute of type extensibleEnum or extensibleMultiEnum</span>')
+                this.$el.append(`<span style="color: #999; font-size: 12px">${this.translate('exportByForAttributeValue', 'labels', 'ExportConfiguratorItem')}</span>`)
             }
         },
 
@@ -158,10 +158,16 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         },
 
         getAttribute(attributeId) {
-            let key = `attribute_${attributeId}`;
+            let key = `
+                attribute_$
+                {
+                    attributeId
+                }
+                `;
             if (!Espo[key]) {
                 Espo[key] = null;
-                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
+                this.ajaxGetRequest(`
+                Attribute /${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
                     Espo[key] = attr;
                 });
             }

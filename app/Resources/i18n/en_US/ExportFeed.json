@@ -31,7 +31,8 @@
     "configuratorItems": "Configurator",
     "convertCollectionToString": "Convert collection to string",
     "convertRelationsToString": "Convert relations to string",
-    "replaceAttributeValues": "Replace attribute values"
+    "replaceAttributeValues": "Replace attribute values",
+    "exportByMaxDepth": "Maximum depth of relations to show"
   },
   "links": {
     "configuratorItems": "Configurator",
