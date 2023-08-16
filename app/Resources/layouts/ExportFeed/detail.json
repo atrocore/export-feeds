@@ -133,7 +133,9 @@
         {
           "name": "markForNotLinkedAttribute"
         },
-        false
+        {
+          "name": "exportByMaxDepth"
+        }
       ]
     ]
   }

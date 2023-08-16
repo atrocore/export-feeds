@@ -280,6 +280,23 @@
       "readOnly": true,
       "notStorable": true,
       "filterDisabled": true
+    },
+    "exportByMaxDepth": {
+      "type": "enum",
+      "required": false,
+      "filterDisabled": true,
+      "default": "1",
+      "notStorable": true,
+      "dataField": true,
+      "prohibitedEmptyValue": true,
+      "optionsIds": [
+        "1",
+        "2"
+      ],
+      "options": [
+        "1",
+        "2"
+      ]
     }
   },
   "links": {
