@@ -29,6 +29,9 @@
     "exportFeed": "Export Feed",
     "channel": "Channel"
   },
+  "labels": {
+    "exportByForAttributeValue": "This is only for Attribute of type extensibleEnum or extensibleMultiEnum"
+  },
   "columnType": {
     "name": "Name",
     "internal": "Name / Language",

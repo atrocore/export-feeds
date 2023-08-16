@@ -112,7 +112,8 @@ class LinkType extends AbstractType
     protected function prepareExportByField(string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
     {
         $exportByFieldParts = explode(".", $configuratorField);
-        if (count($exportByFieldParts) !== 2) {
+        $parts = count($exportByFieldParts);
+        if ($parts !== 2 && $parts !== 3) {
             return;
         }
 
@@ -122,12 +123,21 @@ class LinkType extends AbstractType
             return;
         }
 
-        $foreignData[$configuratorField] = $foreignLinkData['collection'][0]->get($exportByFieldParts[1]);
+        if ($parts === 3) {
+            $foreignLinkData = $this->convertor->findLinkedEntities($foreignLinkData['collection'][0]->getEntityType(), $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], []);
+            if (empty($foreignLinkData['total'])) {
+                $foreignData[$configuratorField] = null;
+                return;
+            }
+        }
+
+        $foreignData[$configuratorField] = $foreignLinkData['collection'][0]->get($exportByFieldParts[$parts - 1]);
 
         $foreignType = $this
             ->convertor
             ->getMetadata()
-            ->get(['entityDefs', $foreignLinkData['collection'][0]->getEntityType(), 'fields', $exportByFieldParts[1], 'type'], 'varchar');
+            ->get(['entityDefs', $foreignLinkData['collection'][0]->getEntityType(), 'fields', $exportByFieldParts[$parts - 1], 'type'], 'varchar');
+
     }
 
     protected function convertForeignType(array &$fieldResult, string $foreignType, array $foreignConfiguration, array $foreignData, string $field, array $record)

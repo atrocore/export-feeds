@@ -30,11 +30,19 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
             });
         },
 
+        getMaxDepth() {
+            return parseInt($('.field[data-name="exportByMaxDepth"]>span').text()) || 1
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
             if (this.mode !== 'list') {
                 this.checkFieldVisibility();
+            }
+
+            if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
+                this.$el.append(`<span style="color: #999; font-size: 12px">${this.translate('exportByForAttributeValue', 'labels', 'ExportConfiguratorItem')}</span>`)
             }
         },
 
@@ -60,6 +68,9 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 entity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
                 if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
                     entity = 'ExtensibleEnumOption';
+                }
+                if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
+                    entity = 'ExtensibleEnumOption'
                 }
             } else {
                 if (this.model.get('attributeId')) {
@@ -101,16 +112,23 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
             return result;
         },
 
-        pushLinkFields(result, entity, field) {
+        pushLinkFields(result, entity, field, depth = 1, fieldPrefix = "", translationPrefix = "") {
+            if (depth > this.getMaxDepth()) {
+                return result
+            }
+
             let linkEntity = this.getMetadata().get(['entityDefs', entity, 'links', field, 'entity']);
             if (linkEntity) {
-                result[field + 'Id'] = this.translate(field, 'fields', entity) + ': ID';
+                result[fieldPrefix + field + 'Id'] = translationPrefix + this.translate(field, 'fields', entity) + ': ID';
                 $.each(this.getMetadata().get(['entityDefs', linkEntity, 'fields']), (linkField, linkFieldDefs) => {
-                    if (!linkFieldDefs.disabled && !linkFieldDefs.exportDisabled && !['jsonObject', 'linkMultiple', 'link'].includes(linkFieldDefs.type)) {
+                    if (!linkFieldDefs.disabled && !linkFieldDefs.exportDisabled && !['jsonObject', 'linkMultiple'].includes(linkFieldDefs.type)) {
+                        if (linkFieldDefs.type === 'link') {
+                            this.pushLinkFields(result, linkEntity, linkField, depth + 1, fieldPrefix + field + '.', translationPrefix + this.translate(field, 'fields', entity) + ': ')
+                        }
                         if (linkField === 'name') {
-                            result[field + 'Name'] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                            result[fieldPrefix + field + 'Name'] = translationPrefix + this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
                         } else {
-                            result[field + '.' + linkField] = this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
+                            result[fieldPrefix + field + '.' + linkField] = translationPrefix + this.translate(field, 'fields', entity) + ': ' + this.translate(linkField, 'fields', linkEntity);
                         }
                     }
                 });
@@ -120,6 +138,10 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         },
 
         isRequired() {
+            if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
+                return true;
+            }
+
             let type = 'varchar';
             if (this.model.get('type') === 'Field') {
                 type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);

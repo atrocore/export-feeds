@@ -36,7 +36,8 @@
   },
   "labels": {
     "Field": "Feld",
-    "Fixed value": "Fester Wert"
+    "Fixed value": "Fester Wert",
+    "exportByForAttributeValue": "Dies gilt nur für Attribute vom Typ extensibleEnum oder extensibleMultiEnum"
   },
   "options": {
     "boolFilterFieldValue": {
