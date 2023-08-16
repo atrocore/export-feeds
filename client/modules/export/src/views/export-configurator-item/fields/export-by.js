@@ -158,16 +158,10 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         },
 
         getAttribute(attributeId) {
-            let key = `
-                attribute_$
-                {
-                    attributeId
-                }
-                `;
+            let key = `attribute_${attributeId}`;
             if (!Espo[key]) {
                 Espo[key] = null;
-                this.ajaxGetRequest(`
-                Attribute /${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
+                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
                     Espo[key] = attr;
                 });
             }
