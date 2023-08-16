@@ -123,17 +123,15 @@ class LinkType extends AbstractType
             return;
         }
 
-        if ($parts === 2) {
-            $foreignData[$configuratorField] = $foreignLinkData['collection'][0]->get($exportByFieldParts[1]);
-        } else {
-            $foreignData = $this->convertor->findLinkedEntities($foreignLinkData['collection'][0]->getEntityType(), $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], []);
+        if ($parts === 3) {
+            $foreignLinkData = $this->convertor->findLinkedEntities($foreignLinkData['collection'][0]->getEntityType(), $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], []);
             if (empty($foreignLinkData['total'])) {
                 $foreignData[$configuratorField] = null;
                 return;
             }
-
-            $foreignData[$configuratorField] = $foreignLinkData['collection'][0]->get($exportByFieldParts[2]);
         }
+
+        $foreignData[$configuratorField] = $foreignLinkData['collection'][0]->get($exportByFieldParts[$parts - 1]);
 
         $foreignType = $this
             ->convertor
