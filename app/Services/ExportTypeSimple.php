@@ -372,6 +372,7 @@ class ExportTypeSimple extends AbstractExportType
                 }
             }
 
+            $this->convertor = $this->getDataConvertor();
             $data = $this->createCacheFile();
             $count += $data['count'];
 
