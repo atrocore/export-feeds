@@ -42,10 +42,11 @@ class Convertor
 
     public function convert(array $record, array $configuration): array
     {
-        if ($configuration['type'] == 'Fixed value' && isset($configuration['fixedValue'])) {
-            $column = $configuration['column'];
-
-            return [$column => (string)$configuration['fixedValue']];
+        if ($configuration['type'] == 'Fixed value') {
+            if (isset($configuration['fixedValue'])) {
+                return [$configuration['column'] => (string)$configuration['fixedValue']];
+            }
+            return [];
         }
 
         $fieldDefs = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field']]);
