@@ -46,7 +46,7 @@ class Convertor
             if (isset($configuration['fixedValue'])) {
                 return [$configuration['column'] => (string)$configuration['fixedValue']];
             }
-            return [];
+            return [$configuration['column'] => ""];
         }
 
         $fieldDefs = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field']]);
