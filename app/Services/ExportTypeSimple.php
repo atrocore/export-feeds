@@ -106,7 +106,7 @@ class ExportTypeSimple extends AbstractExportType
             $collection = $this->getFullCollection();
         }
 
-        $exportJob->set('count', count($collection));
+        $exportJob->set('count', $collection instanceof EntityCollection ? count($collection) : 0);
 
         $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
 
@@ -151,7 +151,7 @@ class ExportTypeSimple extends AbstractExportType
             $collection = $this->getFullCollection();
         }
 
-        $exportJob->set('count', count($collection));
+        $exportJob->set('count', $collection instanceof EntityCollection ? count($collection) : 0);
 
         $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
 
