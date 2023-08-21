@@ -22,7 +22,42 @@ declare(strict_types=1);
 
 namespace Export\Entities;
 
-class ExportConfiguratorItem extends \Espo\Core\Templates\Entities\Base
+use Espo\Core\Templates\Entities\Base;
+
+class ExportConfiguratorItem extends Base
 {
     protected $entityType = "ExportConfiguratorItem";
+
+    public function _hasFileNameTemplate(): bool
+    {
+        return true;
+    }
+
+    public function _getFileNameTemplate()
+    {
+        return $this->getVirtualField('fileNameTemplate');
+    }
+
+    public function _setFileNameTemplate(?string $fileNameTemplate): void
+    {
+        $this->setVirtualField('fileNameTemplate', $fileNameTemplate);
+    }
+
+    public function getVirtualField(string $name)
+    {
+        if ($this->get('virtualFields') !== null && property_exists($this->get('virtualFields'), $name)) {
+            return $this->get('virtualFields')->$name;
+        }
+
+        return null;
+    }
+
+    public function setVirtualField(string $name, $value): void
+    {
+        if (empty($this->get('virtualFields'))) {
+            $this->set('virtualFields', new \stdClass());
+        }
+
+        $this->get('virtualFields')->$name = $value;
+    }
 }

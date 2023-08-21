@@ -93,7 +93,9 @@
         {
           "name": "zip"
         },
-        false
+        {
+          "name": "fileNameTemplate"
+        }
       ]
     ]
   },

@@ -23,7 +23,8 @@
     "fixedValue": "Fester Wert",
     "previousItem": "Vorheriges Item",
     "zip": "Assets in ein ZIP-Archiv exportieren",
-    "attributeValue": "Attributwert"
+    "attributeValue": "Attributwert",
+    "fileNameTemplate": "Dateinamenvorlage"
   },
   "links": {
     "exportFeed": "Exportfeed",
