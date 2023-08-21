@@ -42,13 +42,26 @@ Espo.define('export:views/export-configurator-item/fields/zip', 'views/fields/bo
         },
 
         checkFieldVisibility() {
-            let type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
-            let foreignEntity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
-            if (this.model.get('type') === 'Field' && ['linkMultiple', 'link', 'image','asset'].includes(type) && ['Asset', 'Attachment', 'ProductAsset'].includes(foreignEntity)) {
+            if (this.hasZip()) {
                 this.show();
             } else {
                 this.hide();
             }
+        },
+
+        hasZip() {
+            if (this.model.get('type') !== 'Field') {
+                return false;
+            }
+
+            let type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
+            if (!['linkMultiple', 'link', 'image', 'asset'].includes(type)) {
+                return false;
+            }
+
+            let foreignEntity = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'links', this.model.get('name'), 'entity']);
+
+            return ['Asset', 'Attachment', 'ProductAsset'].includes(foreignEntity);
         },
 
     })

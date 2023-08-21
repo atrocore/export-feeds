@@ -26,6 +26,7 @@ use Espo\Core\Container;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\FilePathBuilder;
 use Espo\Core\Services\Base;
+use Espo\Core\Twig\Twig;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Language;
@@ -307,7 +308,14 @@ abstract class AbstractExportType extends Base
 
         $result = $this->getEntityService()->findEntities($params);
 
-        $list = isset($result['collection']) ? $result['collection']->toArray() : $result['list'];
+        if (isset($result['collection'])) {
+            $list = [];
+            foreach ($result['collection'] as $entity) {
+                $list[] = array_merge($entity->toArray(), ['_entity' => $entity]);
+            }
+        } else {
+            $list = $result['list'];
+        }
 
         $this->iteration++;
 
@@ -393,8 +401,32 @@ abstract class AbstractExportType extends Base
                         if (!$this->zipArchive->locateName($base_dir)) {
                             $this->zipArchive->addEmptyDir($base_dir);
                         }
+                        $fileNumber = 0;
                         foreach ($result['__assetPaths'] as $path) {
-                            $this->zipArchive->addFile($path, $base_dir . basename($path));
+                            $fileNumber++;
+                            $preparedFileName = $fileName = basename($path);
+
+                            if (!empty($row['fileNameTemplate'])) {
+                                $parts = explode('.', $fileName);
+                                $ext = array_pop($parts);
+
+                                $newFileName = $this->getTwig()->renderTemplate((string)$row['fileNameTemplate'], [
+                                    'currentNumber' => $fileNumber,
+                                    'fileName'      => implode('.', $parts),
+                                    'entity'        => $record['_entity']
+                                ]);
+
+                                if (!empty($newFileName)) {
+                                    $preparedFileName = $newFileName . '.' . $ext;
+                                }
+                            }
+
+                            try {
+                                $this->zipArchive->addFile($path, $base_dir . $preparedFileName);
+                            } catch (\Throwable $e) {
+                                $GLOBALS['log']->error('Export ZIP Error: ' . $e->getMessage());
+                                $this->zipArchive->addFile($path, $base_dir . $fileName);
+                            }
                         }
                         unset($result['__assetPaths']);
                     }
@@ -481,6 +513,11 @@ abstract class AbstractExportType extends Base
     protected function getContainer(): Container
     {
         return $this->getInjection('container');
+    }
+
+    protected function getTwig(): Twig
+    {
+        return $this->getContainer()->get('twig');
     }
 
     protected function init()

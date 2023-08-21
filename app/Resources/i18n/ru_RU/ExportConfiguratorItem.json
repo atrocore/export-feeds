@@ -21,7 +21,8 @@
     "sortOrderRelation": "Порядок сортировки (направление)",
     "valueModifier": "Модификатор значения",
     "fixedValue": "Фиксированное значение",
-    "previousItem": "Предыдущий элемент"
+    "previousItem": "Предыдущий элемент",
+    "fileNameTemplate": "Шаблон имени файла"
   },
   "links": {
     "exportFeed": "Экспорт. фид",

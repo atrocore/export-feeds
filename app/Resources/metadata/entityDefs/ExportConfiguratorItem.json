@@ -16,6 +16,12 @@
       "type": "bool",
       "view": "export:views/export-configurator-item/fields/zip"
     },
+    "fileNameTemplate": {
+      "type": "wysiwyg",
+      "view": "export:views/export-configurator-item/fields/file-name-template",
+      "notStorable": true,
+      "filterDisabled": true
+    },
     "name": {
       "type": "varchar",
       "view": "export:views/export-configurator-item/fields/name"
@@ -190,6 +196,18 @@
       "filterDisabled": true,
       "importDisabled": true,
       "textFilterDisabled": true,
+      "emHidden": true
+    },
+    "virtualFields": {
+      "type": "jsonObject",
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
       "emHidden": true
     }
   },
