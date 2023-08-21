@@ -24,15 +24,21 @@ Espo.define('export:views/export-configurator-item/fields/file-name-template', [
             Dep.prototype.setup.call(this);
 
             this.listenTo(this.model, 'change:name change:type change:zip', () => {
+                this.setDefaultVal();
                 this.reRender();
             });
+        },
+
+        setDefaultVal() {
+            if (ZipField.prototype.hasZip.call(this) && (!this.model.get('fileNameTemplate') || this.model.get('fileNameTemplate') === '')) {
+                this.model.set('fileNameTemplate', '{{ fileName }}');
+            }
         },
 
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            let hasZip = ZipField.prototype.hasZip.call(this);
-            if (hasZip && this.model.get('zip')) {
+            if (ZipField.prototype.hasZip.call(this) && this.model.get('zip')) {
                 this.show();
             } else {
                 this.hide();
