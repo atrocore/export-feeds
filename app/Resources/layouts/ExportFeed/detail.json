@@ -133,7 +133,9 @@
         {
           "name": "markForNoRelation"
         },
-        false
+        {
+          "name": "exportByMaxDepth"
+        }
       ]
     ]
   }

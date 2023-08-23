@@ -23,7 +23,8 @@
     "fixedValue": "Fester Wert",
     "previousItem": "Vorheriges Item",
     "zip": "Assets in ein ZIP-Archiv exportieren",
-    "attributeValue": "Attributwert"
+    "attributeValue": "Attributwert",
+    "fileNameTemplate": "Dateinamenvorlage"
   },
   "links": {
     "exportFeed": "Exportfeed",
@@ -36,7 +37,8 @@
   },
   "labels": {
     "Field": "Feld",
-    "Fixed value": "Fester Wert"
+    "Fixed value": "Fester Wert",
+    "exportByForAttributeValue": "Dies gilt nur für Attribute vom Typ extensibleEnum oder extensibleMultiEnum"
   },
   "options": {
     "boolFilterFieldValue": {

@@ -46,7 +46,8 @@ class ExportConfiguratorItem extends Base
             'channelName',
             'fixedValue',
             'zip',
-            'attributeValue'
+            'attributeValue',
+            'virtualFields'
         ];
 
     protected array $languages = [];
@@ -71,6 +72,8 @@ class ExportConfiguratorItem extends Base
         $entity->set('isAttributeMultiLang', false);
         $entity->set('attributeNameValue', $entity->get('name'));
         $entity->set('editable', $this->getAcl()->check($feed, 'edit'));
+
+        $entity->set('fileNameTemplate', $entity->getVirtualField('fileNameTemplate'));
 
         if ($entity->get('type') === 'Attribute') {
             if (!empty($attribute = $entity->get('attribute'))) {

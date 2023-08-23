@@ -1,6 +1,6 @@
 <?php
 /*
- * Export Feeds
+ * export Feeds
  * Free Extension
  * Copyright (c) AtroCore UG (haftungsbeschränkt).
  *
@@ -20,30 +20,19 @@
 
 declare(strict_types=1);
 
-namespace Export\TwigFilter;
+namespace Export\Migrations;
 
-use Espo\ORM\Entity;
+use Treo\Core\Migration\Base;
 
-class PrepareEntity extends AbstractTwigFilter
+class V1Dot7Dot19 extends Base
 {
-    public function __construct()
+    public function up(): void
     {
-        $this->addDependency('serviceFactory');
+        $this->getPDO()->exec("ALTER TABLE export_configurator_item ADD virtual_fields LONGTEXT DEFAULT NULL COLLATE `utf8mb4_unicode_ci` COMMENT '(DC2Type:jsonObject)'");
     }
 
-    public function filter($value)
+    public function down(): void
     {
-        if (empty($value) || !is_object($value) || !($value instanceof Entity)) {
-            return null;
-        }
-
-        $service = $this->getInjection('serviceFactory')->create($value->getEntityType());
-        if ($value->getEntityType() === 'ProductAttributeValue' && method_exists($service, 'prepareEntity')) {
-            $service->prepareEntity($value, false);
-        } else {
-            $service->prepareEntityForOutput($value);
-        }
-
-        return $value;
+        $this->getPDO()->exec("ALTER TABLE export_configurator_item DROP virtual_fields");
     }
 }

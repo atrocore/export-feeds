@@ -402,6 +402,7 @@ class ExportFeed extends Base
                 'type'                      => $item->get('type'),
                 'fixedValue'                => $item->get('fixedValue'),
                 'zip'                       => !empty($item->get('zip')),
+                'fileNameTemplate'          => $item->get('fileNameTemplate'),
                 'attributeValue'            => $item->get('attributeValue'),
                 'entity'                    => $entityName,
                 'sortOrderField'            => $sheet->get('sortOrderField'),

@@ -41,6 +41,12 @@ class ProductAttributeValueConvertor extends Convertor
             }
             $configuration['valueModifier'] = $valueModifiers;
 
+            $attribute = $this->getAttributeById($record['attributeId']);
+            $type = $attribute->get('type');
+            if ($type === 'rangeFloat' || $type === "rangeInt") {
+                $configuration['field'] = 'valueFrom';
+            }
+
             return $this->convertType($this->getTypeForAttribute($record['attributeId'], 'value'), $record, $configuration);
         }
 

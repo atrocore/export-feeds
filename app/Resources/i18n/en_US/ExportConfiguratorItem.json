@@ -23,11 +23,15 @@
     "fixedValue": "Fixed value",
     "previousItem": "Previous Item",
     "zip": "Export Assets to a ZIP archive",
-    "attributeValue": "Attribute Value"
+    "attributeValue": "Attribute Value",
+    "fileNameTemplate": "File Name Template"
   },
   "links": {
     "exportFeed": "Export Feed",
     "channel": "Channel"
+  },
+  "labels": {
+    "exportByForAttributeValue": "This is only for Attribute of type extensibleEnum or extensibleMultiEnum"
   },
   "columnType": {
     "name": "Name",
