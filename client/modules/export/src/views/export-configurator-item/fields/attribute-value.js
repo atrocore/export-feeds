@@ -55,13 +55,14 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
             if (['rangeFloat', 'rangeInt'].includes(type)) {
                 this.params.options = ['valueFrom', 'valueTo']
                 if (this.hasUnit()) {
-                    this.params.options.push('valueUnitId')
+                    this.params.options.push('valueUnit', 'valueWithUnit')
                 }
             } else if (['float', 'int'].includes(type)) {
                 if (this.hasUnit()) {
-                    this.params.options.push('valueUnitId')
+                    this.params.options.push('valueUnit', 'valueWithUnit')
                 }
             }
+            this.params.options.push('id')
 
             this.params.options.forEach(option => {
                 this.translatedOptions[option] = this.getLanguage().translateOption(option, 'attributeValue', 'ExportConfiguratorItem');

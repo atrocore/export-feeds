@@ -96,10 +96,10 @@ class ProductConvertor extends Convertor
         }
 
         $eventPayload = [
-            'result' => $result,
+            'result'           => $result,
             'productAttribute' => $productAttribute,
-            'record' => $record,
-            'configuration' => $configuration
+            'record'           => $record,
+            'configuration'    => $configuration
         ];
 
         return $this->container->get('eventManager')->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');
@@ -107,9 +107,6 @@ class ProductConvertor extends Convertor
 
     public function getFieldForAttribute($configuration)
     {
-        if ($configuration['attributeValue'] == 'valueUnitId') {
-            return 'valueUnit';
-        }
         return $configuration['attributeValue'] ?? 'value';
     }
 
