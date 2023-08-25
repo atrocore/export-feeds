@@ -9,7 +9,9 @@
         "value",
         "valueFrom",
         "valueTo",
-        "valueUnitId"
+        "valueUnit",
+        "id",
+        "valueWithUnit"
       ]
     },
     "zip": {

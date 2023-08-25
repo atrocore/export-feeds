@@ -126,7 +126,15 @@ class Convertor
             $attributeValue = 'value';
         }
 
-        if ($attributeValue === 'valueUnitId') {
+        if ($attributeValue === 'id') {
+            return 'varchar';
+        }
+
+        if ($attributeValue === 'valueWithUnit') {
+            return 'valueWithUnit';
+        }
+
+        if ($attributeValue === 'valueUnit') {
             return 'unit';
         }
 
