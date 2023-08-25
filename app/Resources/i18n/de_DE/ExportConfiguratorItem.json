@@ -49,7 +49,9 @@
       "value": "Wert",
       "valueFrom": "Wert von",
       "valueTo": "Wert auf",
-      "valueUnitId": "Wert Einheit"
+      "valueUnit": "Werteihheit",
+      "id": "Wert (roh)",
+      "valueWithUnit": "Vollwert"
     }
   },
   "tooltips": {

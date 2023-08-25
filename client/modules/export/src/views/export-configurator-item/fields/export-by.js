@@ -77,7 +77,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                     let attribute = this.getAttribute(this.model.get('attributeId'));
                     if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
                         entity = 'ExtensibleEnumOption';
-                    } else if (this.model.get('attributeValue') === 'valueUnitId') {
+                    } else if (this.model.get('attributeValue') === 'valueUnit') {
                         entity = 'Unit'
                     }
                 }
@@ -147,9 +147,14 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);
             } else {
                 if (this.model.get('attributeId')) {
-                    type = this.getAttribute(this.model.get('attributeId')).type;
-                    if (this.model.get('attributeValue') === 'valueUnitId') {
-                        type = 'link'
+                    switch (this.model.get('attributeValue')) {
+                        case 'value':
+                            type = this.getAttribute(this.model.get('attributeId')).type;
+                            break
+                        case 'valueUnit':
+                            type = 'link'
+                            break
+                        default:
                     }
                 }
             }

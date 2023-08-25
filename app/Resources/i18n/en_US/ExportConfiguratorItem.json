@@ -47,7 +47,9 @@
       "value": "Value",
       "valueFrom": "Value From",
       "valueTo": "Value To",
-      "valueUnitId": "Value Unit"
+      "valueUnit": "Value Unit",
+      "id": "Value (raw)",
+      "valueWithUnit": "Full Value"
     }
   },
   "tooltips": {
