@@ -136,13 +136,6 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            },
-            {
               "type": "equals",
               "attribute": "fileType",
               "value": "csv"
@@ -151,13 +144,6 @@
         },
         "required": {
           "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            },
             {
               "type": "equals",
               "attribute": "fileType",
@@ -170,13 +156,6 @@
         "visible": {
           "conditionGroup": [
             {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            },
-            {
               "type": "equals",
               "attribute": "fileType",
               "value": "csv"
@@ -185,13 +164,6 @@
         },
         "required": {
           "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            },
             {
               "type": "equals",
               "attribute": "fileType",
@@ -203,13 +175,6 @@
       "isFileHeaderRow": {
         "visible": {
           "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "type",
-              "value": [
-                "simple"
-              ]
-            },
             {
               "type": "in",
               "attribute": "fileType",
