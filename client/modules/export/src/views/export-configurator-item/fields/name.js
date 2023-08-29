@@ -138,9 +138,8 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                             entity = 'ExtensibleEnumOption';
                         }
                     } else {
-                        if (this.model.get('attributeId')) {
-                            let attribute = this.getAttribute(this.model.get('attributeId'));
-                            if (['extensibleEnum', 'extensibleMultiEnum'].includes(attribute.type)) {
+                        if (this.model.get('attributeId') && this.model.get('attributeType')) {
+                            if (['extensibleEnum', 'extensibleMultiEnum'].includes(this.model.get('attributeType'))) {
                                 entity = 'ExtensibleEnumOption';
                             } else if (this.model.get('attributeValue') === 'valueUnit') {
                                 entity = 'Unit'
@@ -196,18 +195,6 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             }
 
             return result;
-        },
-
-        getAttribute(attributeId) {
-            let key = `attribute_${attributeId}`;
-            if (!Espo[key]) {
-                Espo[key] = null;
-                this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`, null, {async: false}).success(attr => {
-                    Espo[key] = attr;
-                });
-            }
-
-            return Espo[key];
         },
 
     })
