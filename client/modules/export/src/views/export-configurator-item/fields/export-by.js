@@ -24,9 +24,9 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
             Dep.prototype.setup.call(this);
 
             this.listenTo(this.model, 'change:name change:type change:attributeId change:attributeValue', () => {
+                this.model.set('exportBy', null);
                 this.setupOptions();
                 this.reRender();
-                this.model.set('exportBy', null);
             });
         },
 
@@ -107,6 +107,10 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                         }
                     }
                 });
+            }
+
+            if (entity === 'ExtensibleEnumOption' || entity === 'Unit') {
+                this.model.set('exportBy', ['name'])
             }
 
             return result;
