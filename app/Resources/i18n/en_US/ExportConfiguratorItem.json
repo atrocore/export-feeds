@@ -48,8 +48,8 @@
       "valueFrom": "Value From",
       "valueTo": "Value To",
       "valueUnit": "Value Unit",
-      "id": "Value (raw)",
-      "valueWithUnit": "Full Value"
+      "id": "ID (Product Attribute Value)",
+      "valueNumeric": "Value (numerical)"
     }
   },
   "tooltips": {

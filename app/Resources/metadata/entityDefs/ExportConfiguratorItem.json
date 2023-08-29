@@ -11,7 +11,7 @@
         "valueTo",
         "valueUnit",
         "id",
-        "valueWithUnit"
+        "valueNumeric"
       ]
     },
     "zip": {

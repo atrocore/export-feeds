@@ -50,8 +50,8 @@
       "valueFrom": "Wert von",
       "valueTo": "Wert auf",
       "valueUnit": "Werteihheit",
-      "id": "Wert (roh)",
-      "valueWithUnit": "Vollwert"
+      "id": "ID (Produktattributwert)",
+      "valueNumeric": "Wert (numerisch)"
     }
   },
   "tooltips": {
