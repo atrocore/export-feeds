@@ -51,18 +51,18 @@ class ProductConvertor extends Convertor
             $this->rowPavs['pavs'] = array_key_exists('collection', $productPavs) ? $productPavs['collection'] : new EntityCollection();
         }
 
+        $result = [];
+
+        $result[$configuration['column']] = $configuration['markForNotLinkedAttribute'];
+
         /**
          * Exit if empty
          */
         if (empty($this->rowPavs['pavs']) || count($this->rowPavs['pavs']) === 0) {
-            return [];
+            return $result;
         }
 
         $pavs = $this->rowPavs['pavs'];
-
-        $result = [];
-
-        $result[$configuration['column']] = $configuration['markForNoRelation'];
 
         $productAttribute = null;
 
@@ -107,6 +107,9 @@ class ProductConvertor extends Convertor
 
     public function getFieldForAttribute($configuration)
     {
+        if ($configuration['attributeValue'] === 'valueNumeric') {
+            return 'value';
+        }
         return $configuration['attributeValue'] ?? 'value';
     }
 

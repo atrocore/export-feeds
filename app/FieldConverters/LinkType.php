@@ -62,6 +62,11 @@ class LinkType extends AbstractType
                             $result['__assetPaths'][] = $path;
                         }
                         $this->convertor->getService('Asset')->prepareEntityForOutput($foreign);
+                    } else if ($foreignEntity === 'Asset') {
+                        if ($configuration['zip']) {
+                            $attachment = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
+                            $result['__assetPaths'][] = $attachment->getFilePath();
+                        }
                     }
 
                     $foreignData = $foreign->toArray();

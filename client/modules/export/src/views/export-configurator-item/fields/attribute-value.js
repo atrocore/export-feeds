@@ -53,13 +53,15 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
             const type = this.getType();
             this.params.options = ['value'];
             if (['rangeFloat', 'rangeInt'].includes(type)) {
-                this.params.options = ['valueFrom', 'valueTo']
+                this.params.options.push('valueFrom', 'valueTo')
                 if (this.hasUnit()) {
-                    this.params.options.push('valueUnit', 'valueWithUnit')
+                    this.params.options.push('valueUnit')
                 }
             } else if (['float', 'int'].includes(type)) {
                 if (this.hasUnit()) {
-                    this.params.options.push('valueUnit', 'valueWithUnit')
+                    this.params.options.push('valueNumeric', 'valueUnit')
+                } else {
+                    this.params.options = ['valueNumeric']
                 }
             }
             this.params.options.push('id')

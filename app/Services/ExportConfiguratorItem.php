@@ -75,10 +75,12 @@ class ExportConfiguratorItem extends Base
 
         $entity->set('fileNameTemplate', $entity->getVirtualField('fileNameTemplate'));
 
-        if ($entity->get('type') === 'Attribute') {
-            if (!empty($attribute = $entity->get('attribute'))) {
+        if ($entity->get('type') === 'Attribute' && !empty($entity->get('attributeId'))) {
+            $attribute = $this->getEntityManager()->getRepository('Attribute')->get($entity->get('attributeId'));
+            if (!empty($attribute)) {
                 $entity->set('attributeNameValue', $attribute->get('name'));
                 $entity->set('isAttributeMultiLang', !empty($attribute->get('isMultilang')));
+                $entity->set('attributeType', $attribute->get('type'));
                 $entity->set('attributeCode', $attribute->get('code'));
             }
         }

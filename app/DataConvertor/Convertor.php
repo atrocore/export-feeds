@@ -130,7 +130,7 @@ class Convertor
             return 'varchar';
         }
 
-        if ($attributeValue === 'valueWithUnit') {
+        if ($attributeValue === 'value' && in_array($type, ['int', 'float', 'rangeInt', 'rangeFloat'])) {
             return 'valueWithUnit';
         }
 

@@ -11,7 +11,7 @@
         "valueTo",
         "valueUnit",
         "id",
-        "valueWithUnit"
+        "valueNumeric"
       ]
     },
     "zip": {
@@ -91,9 +91,31 @@
       "type": "varchar",
       "notStorable": true
     },
+    "attributeType": {
+      "type": "varchar",
+      "notStorable": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "emHidden": true
+    },
     "attributeCode": {
       "type": "varchar",
-      "notStorable": true
+      "notStorable": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "emHidden": true
     },
     "isAttributeMultiLang": {
       "type": "bool",
