@@ -161,10 +161,6 @@ class ExportFeed extends Base
             $delimiters[] = (string)$entity->getFeedField('csvFieldDelimiter');
         }
 
-        if ($entity->getFeedField('entity') === 'Product') {
-            $delimiters[] = (string)$entity->getFeedField('markForNotLinkedAttribute');
-        }
-
         if (count(array_unique($delimiters)) !== count($delimiters)) {
             throw new BadRequest($this->getInjection('language')->translate('delimitersMustBeDifferent', 'messages', 'ExportFeed'));
         }

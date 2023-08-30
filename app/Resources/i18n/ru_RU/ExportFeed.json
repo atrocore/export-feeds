@@ -22,7 +22,7 @@
     "nullValue": "Нулевое значение",
     "thousandSeparator": "Тысячный разделитель",
     "decimalMark": "Десятичный разделитель",
-    "markForNotLinkedAttribute": "Пометка непривязанного атрибута",
+    "markForNoRelation": "Отметка об отсутствии отношений",
     "fieldDelimiterForRelation": "Разделитель полей для связи",
     "limit": "Максимальное число записей для итерации",
     "separateJob": "Отдельное задание для итерации",

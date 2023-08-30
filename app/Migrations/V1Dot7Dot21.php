@@ -30,10 +30,32 @@ class V1Dot7Dot21 extends Base
     {
         $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueUnit' WHERE attribute_value='valueUnitId'");
         $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='value' WHERE attribute_value='valueWithUnit'");
+
+        $feeds = $this->getPDO()->query("SELECT * FROM export_feed WHERE deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($feeds as $feed) {
+            $data = @json_decode($feed['data'], true);
+            if (is_array($data) && isset($data['feedFields']['markForNotLinkedAttribute'])) {
+                $data['feedFields']['markForNoRelation'] = $data['feedFields']['markForNotLinkedAttribute'];
+                unset($data['feedFields']['markForNotLinkedAttribute']);
+                $newData = $this->getPDO()->quote(json_encode($data));
+                $this->getPDO()->exec("UPDATE export_feed SET data=$newData WHERE id='{$feed['id']}'");
+            }
+        }
     }
 
     public function down(): void
     {
         $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueUnitId' WHERE attribute_value='valueUnit'");
+
+        $feeds = $this->getPDO()->query("SELECT * FROM export_feed WHERE deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($feeds as $feed) {
+            $data = @json_decode($feed['data'], true);
+            if (is_array($data) && isset($data['feedFields']['markForNoRelation'])) {
+                $data['feedFields']['markForNotLinkedAttribute'] = $data['feedFields']['markForNoRelation'];
+                unset($data['feedFields']['markForNoRelation']);
+                $newData = $this->getPDO()->quote(json_encode($data));
+                $this->getPDO()->exec("UPDATE export_feed SET data=$newData WHERE id='{$feed['id']}'");
+            }
+        }
     }
 }

@@ -97,7 +97,7 @@ class LinkMultipleType extends LinkType
         }
 
         if (empty($configuration['exportIntoSeparateColumns'])) {
-            $result[$column] = $configuration['nullValue'];
+            $result[$column] = $configuration['markForNoRelation'];
         }
 
         $foreignList = [];
@@ -109,7 +109,7 @@ class LinkMultipleType extends LinkType
 
         $links = [];
         if (empty($foreignList)) {
-            $links[] = $configuration['nullValue'];
+            $links[] = $configuration['markForNoRelation'];
         }
 
         $foreignList = array_slice($foreignList, 0, $params['maxSize']);
@@ -175,7 +175,7 @@ class LinkMultipleType extends LinkType
                 while ($k < ($configuration['limitRelation'] - 1)) {
                     $k++;
                     $columnName = $column . '_' . ($k + 1);
-                    $result[$columnName] = $configuration['nullValue'];
+                    $result[$columnName] = $configuration['markForNoRelation'];
                 }
             }
         } else {

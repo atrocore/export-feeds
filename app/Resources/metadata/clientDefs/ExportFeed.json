@@ -368,7 +368,7 @@
           ]
         }
       },
-      "markForNotLinkedAttribute": {
+      "markForNoRelation": {
         "visible": {
           "conditionGroup": [
             {
@@ -378,11 +378,6 @@
                 "xlsx",
                 "csv"
               ]
-            },
-            {
-              "type": "equals",
-              "attribute": "entity",
-              "value": "Product"
             }
           ]
         }

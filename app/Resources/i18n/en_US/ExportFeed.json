@@ -24,7 +24,7 @@
     "nullValue": "Null Value",
     "thousandSeparator": "Thousand Separator",
     "decimalMark": "Decimal Mark",
-    "markForNotLinkedAttribute": "Mark for a not linked attribute",
+    "markForNoRelation": "Marking for no relation",
     "fieldDelimiterForRelation": "Field Delimiter for Relation",
     "limit": "Maximum Number of Records per Iteration",
     "separateJob": "Separate Job per Iteration",
