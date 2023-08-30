@@ -29,6 +29,7 @@ class V1Dot7Dot21 extends Base
     public function up(): void
     {
         $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueUnit' WHERE attribute_value='valueUnitId'");
+        $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='value' WHERE attribute_value='valueWithUnit'");
 
         $feeds = $this->getPDO()->query("SELECT * FROM export_feed WHERE deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($feeds as $feed) {
