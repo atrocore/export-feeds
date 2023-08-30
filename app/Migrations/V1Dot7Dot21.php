@@ -41,6 +41,14 @@ class V1Dot7Dot21 extends Base
                 $this->getPDO()->exec("UPDATE export_feed SET data=$newData WHERE id='{$feed['id']}'");
             }
         }
+
+        $items = $this->getPDO()->query("SELECT export_configurator_item.id as id FROM export_configurator_item inner join attribute on export_configurator_item.attribute_id = attribute.id where attribute_value='value' and attribute.type in ('int','float') and export_configurator_item.deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
+        $ids = [];
+        foreach ($items as $item) {
+            $ids[] = $item['id'];
+        }
+        $search = "('" . join("','", $ids) . "')";
+        $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueNumeric' WHERE id in $search");
     }
 
     public function down(): void
@@ -57,5 +65,13 @@ class V1Dot7Dot21 extends Base
                 $this->getPDO()->exec("UPDATE export_feed SET data=$newData WHERE id='{$feed['id']}'");
             }
         }
+
+        $items = $this->getPDO()->query("SELECT export_configurator_item.id as id FROM export_configurator_item inner join attribute on export_configurator_item.attribute_id = attribute.id where attribute_value='valueNumeric' and attribute.type in ('int','float') and export_configurator_item.deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
+        $ids = [];
+        foreach ($items as $item) {
+            $ids[] = $item['id'];
+        }
+        $search = "('" . join("','", $ids) . "')";
+        $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='value' WHERE id in $search");
     }
 }
