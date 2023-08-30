@@ -31,26 +31,18 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
 
             this.scope = this.model.get('entity');
 
-            this.setupSearchPanel();
-
-            this.listenTo(this.model, 'change:entity change:data', function () {
-                this.scope = this.model.get('entity');
-
-                let data = _.extend({}, this.model.get('data'));
-                if (typeof data.whereScope === 'undefined' || data.whereScope !== this.scope) {
-                    data = _.extend(data, {
-                        where: null,
-                        whereData: null,
-                        whereScope: this.scope,
-                    });
-                    this.model.set({data: data});
-                }
-                this.setupSearchPanel();
-            });
+            let data = _.extend({}, this.model.get('data'));
+            if (typeof data.whereScope === 'undefined' || data.whereScope !== this.scope) {
+                data = _.extend(data, {
+                    where: [],
+                    whereData: {},
+                    whereScope: this.scope,
+                });
+                this.model.set({data: data});
+            }
         },
 
         setupSearchPanel() {
-            this.wait(true);
             this.getCollectionFactory().create(this.scope, collection => {
                 this.collection = collection;
                 this.searchManager = new SearchManager(this.collection, `exportSimpleType`, null, this.getDateTime(), (this.model.get('data') || {}).whereData || [], true);
@@ -71,7 +63,6 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
                     feedModel: this.model,
                 }, view => {
                     view.render();
-                    this.wait(false);
                 });
             });
         },
@@ -83,6 +74,8 @@ Espo.define('export:views/export-feed/simple-type-components/record/panels/simpl
             if (!this.model.get('entity') || this.model.get('hasMultipleSheets')) {
                 this.$el.parent().hide();
             }
+
+            this.setupSearchPanel()
         },
 
     })
