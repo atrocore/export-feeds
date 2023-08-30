@@ -47,8 +47,10 @@ class V1Dot7Dot21 extends Base
         foreach ($items as $item) {
             $ids[] = $item['id'];
         }
-        $search = "('" . join("','", $ids) . "')";
-        $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueNumeric' WHERE id in $search");
+        if (!empty($ids)) {
+            $search = "('" . join("','", $ids) . "')";
+            $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueNumeric' WHERE id in $search");
+        }
     }
 
     public function down(): void
@@ -71,7 +73,10 @@ class V1Dot7Dot21 extends Base
         foreach ($items as $item) {
             $ids[] = $item['id'];
         }
-        $search = "('" . join("','", $ids) . "')";
-        $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='value' WHERE id in $search");
+        if (!empty($ids)) {
+            $search = "('" . join("','", $ids) . "')";
+            $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='value' WHERE id in $search");
+        }
+
     }
 }
