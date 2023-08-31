@@ -253,13 +253,17 @@ class ExportFeed extends Base
                 $post->channelName = $feed->get('channelName');
             }
 
+            $post->attributeValue = 'value';
+
             switch ($attribute->get('type')) {
                 case 'currency':
                     $post->mask = "{{value}} {{currency}}";
                     break;
-                case 'rangeInt':
-                case 'rangeFloat':
-                    $post->attributeValue = "valueFrom";
+                case 'float':
+                case 'int':
+                    if (!$attribute->get('measureId')) {
+                        $post->attributeValue = 'valueNumeric';
+                    }
                     break;
                 case 'extensibleEnum':
                 case 'extensibleMultiEnum':
