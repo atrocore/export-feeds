@@ -68,10 +68,10 @@ Espo.define('export:views/export-feed/simple-type-components/record/entity-searc
 
         resetFilters() {
             if (this.getParentView().getParentView().getParentView().mode !== 'edit') {
-                return false;
+                return;
             }
-
-            return Dep.prototype.resetFilters.call(this);
+            Dep.prototype.resetFilters.call(this);
+            this.options.feedModel.set('data', _.extend({}, this.options.feedModel.get('data'), this.getFilterData() || {}))
         },
 
         refresh() {

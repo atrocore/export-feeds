@@ -32,6 +32,16 @@ Espo.define('export:views/export-feed/record/detail-bottom', 'views/record/detai
                     }
                 });
             });
+
+            this.listenTo(this.model, 'change:data', () => {
+                (this.getMetadata().get(['clientDefs', 'ExportFeed', 'bottomPanels', 'detail']) || []).forEach(row => {
+                    if (row.name === 'entityFilterResult') {
+                        this.createPanelView(row, view => {
+                            view.render();
+                        });
+                    }
+                });
+            });
         },
 
     })
