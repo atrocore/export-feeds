@@ -117,23 +117,35 @@ class ExportConfiguratorItem extends Base
 
     protected function prepareFieldColumnName(Entity $entity): string
     {
-        $column = '-';
+        $columnType = $entity->get('columnType') ?? 'name';
 
-        if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
-            $fieldData = $this->getMetadata()->get(['entityDefs', $entity->get('entity'), 'fields', $entity->get('name')]);
-            if (!empty($fieldData['multilangLocale'])) {
-                $column = $this->getLanguage($fieldData['multilangLocale'])->translate($fieldData['multilangField'], 'fields', $entity->get('entity'));
-            } else {
-                $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
-            }
-        } elseif ($entity->get('columnType') === 'internal') {
-            $column = $this->getInjection('language')->translate($entity->get('name'), 'fields', $entity->get('entity'));
-            $language = !empty($entity->get('language')) && $entity->get('language') !== 'main' ? $entity->get('language') : '';
-            if (!empty($language)) {
-                $column .= ' / ' . $language;
-            }
-        } elseif ($entity->get('columnType') === 'custom') {
-            $column = (string)$entity->get('column');
+        $language = !empty($entity->get('language')) && $entity->get('language') !== 'main' ? $entity->get('language') : 'main';
+        $mainLanguage = $this->getConfig()->get('mainLanguage');
+
+        switch ($columnType) {
+            case 'name':
+                if ($language === 'main') {
+                    $lang = $mainLanguage;
+                    if (!empty($exportFeed = $entity->get('exportFeed')) && !empty($exportFeed->get('language')) && $exportFeed->get('language') !== 'main') {
+                        $lang = $exportFeed->get('language');
+                    }
+                    $column = $this->getLanguage($lang)->translate($entity->get('name'), 'fields', $entity->get('entity'));
+                } else {
+                    $column = $this->getLanguage($language)->translate($entity->get('name'), 'fields', $entity->get('entity'));
+                }
+                break;
+            case 'internal':
+                $column = $this->getLanguage($mainLanguage)->translate($entity->get('name'), 'fields', $entity->get('entity'));
+                $language = !empty($entity->get('language')) && $entity->get('language') !== 'main' ? $entity->get('language') : '';
+                if (!empty($language)) {
+                    $column .= ' / ' . $language;
+                }
+                break;
+            case 'custom':
+                $column = (string)$entity->get('column');
+                break;
+            default:
+                $column = '-';
         }
 
         return $column;
@@ -145,22 +157,22 @@ class ExportConfiguratorItem extends Base
             return '-';
         }
 
+        $columnType = $entity->get('columnType') ?? 'name';
+
         $language = $entity->get('language');
 
         if ($language === 'main') {
             $language = '';
+            if (!empty($exportFeed = $entity->get('exportFeed')) && !empty($exportFeed->get('language')) && $exportFeed->get('language') !== 'main') {
+                $language = $exportFeed->get('language');
+            }
         }
 
         $column = (string)$entity->get('column');
 
-        if (empty($entity->get('columnType')) || $entity->get('columnType') === 'name') {
-            $name = 'name';
-            if (!empty($language) && !empty($attribute->get('isMultilang'))) {
-                $name .= ucfirst(Util::toCamelCase(strtolower($language)));
-            }
-
-            $column = $attribute->get($name);
-        } elseif ($entity->get('columnType') === 'internal') {
+        if ($columnType === 'name') {
+            $column = $attribute->get('name' . ucfirst(Util::toCamelCase(strtolower($language))));
+        } elseif ($columnType === 'internal') {
             $column = $attribute->get('name');
             if (!empty($language)) {
                 $column .= ' / ' . $language;

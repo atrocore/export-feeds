@@ -168,7 +168,6 @@ abstract class AbstractExportType extends Base
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
         $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : '|';
         $row['entity'] = $feedData['entity'];
-        $row['column'] = $this->getColumnName($row, $feedData['entity']);
 
         // change field name for multilingual field
         if ($row['type'] === 'Field' && $row['language'] !== 'main' && empty($GLOBALS['languagePrism'])) {
@@ -176,61 +175,6 @@ abstract class AbstractExportType extends Base
         }
 
         return $row;
-    }
-
-    protected function getColumnName(array $row, string $entity): string
-    {
-        // for attributes
-        if (!empty($row['attributeId'])) {
-            $attribute = $this->getAttribute($row['attributeId']);
-
-            $language = $row['language'];
-            if ($language === 'main') {
-                $language = '';
-            }
-
-            if (empty($row['columnType']) || $row['columnType'] == 'name') {
-                $name = 'name';
-
-                if (!empty($attribute->get('isMultilang')) && !empty($language)) {
-                    $name = Util::toCamelCase(strtolower($name . '_' . $language));
-                }
-
-                return (string)$attribute->get($name);
-            }
-
-            if ($row['columnType'] == 'internal') {
-                $value = (string)$attribute->get('name');
-                if (!empty($language)) {
-                    $value .= ' / ' . $language;
-                }
-
-                return $value;
-            }
-        }
-
-        if (empty($row['columnType']) || $row['columnType'] == 'name') {
-            $locale = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangLocale']);
-            if ($locale) {
-                $originField = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $row['field'], 'multilangField']);
-                return $this->getLanguage($locale)->translate($originField, 'fields', $entity);
-            } else {
-                if (!empty($row['channelLocales'][0]) && $row['channelLocales'][0] !== 'main') {
-                    return $this->getLanguage($row['channelLocales'][0])->translate($row['field'], 'fields', $entity);
-                } else {
-                    return $this->translate($row['field'], 'fields', $entity);
-                }
-            }
-        }
-
-        if ($row['columnType'] == 'internal') {
-            $language = $row['language'];
-            $language = $language === 'main' ? '' : Util::toCamelCase(strtolower($language), '_', true);
-
-            return $this->translate($row['field'] . $language, 'fields', $entity);
-        }
-
-        return $row['column'];
     }
 
     protected function getDataConvertor(): Convertor
