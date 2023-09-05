@@ -35,7 +35,7 @@
   },
   "columnType": {
     "name": "Name",
-    "internal": "Name / Language",
+    "internal": "Name (not translated) / Language",
     "custom": "Custom Name"
   },
   "options": {
