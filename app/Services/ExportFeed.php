@@ -24,7 +24,7 @@ use Espo\Core\EventManager\Event;
 
 class ExportFeed extends Base
 {
-    public function runExport(string $feedId, string $payload = null): bool
+    public function runExport(string $feedId, string $payload = null, ?string $priority = null): bool
     {
         $exportFeed = $this->getEntity($feedId);
         if (empty($exportFeed)) {
@@ -43,6 +43,10 @@ class ExportFeed extends Base
                     $data['feed']['data']->{$key} = $value;
                 }
             }
+        }
+
+        if (!empty($priority)) {
+            $data['feed']['priority'] = $priority;
         }
 
         return $this->pushExport($data);
