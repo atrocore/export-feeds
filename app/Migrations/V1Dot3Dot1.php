@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Migrations;
 
-use Treo\Core\Migration\Base;
+use Atro\Core\Migration\Base;
 
 class V1Dot3Dot1 extends Base
 {
@@ -42,7 +42,7 @@ class V1Dot3Dot1 extends Base
 
         try {
             /** @var \Espo\ORM\EntityManager $em */
-            $em = (new \Treo\Core\Application())->getContainer()->get('entityManager');
+            $em = (new \Atro\Core\Application())->getContainer()->get('entityManager');
             $em->getRepository('ExportJob')->removeCollection();
         } catch (\Throwable $e) {
             // ignore

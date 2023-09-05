@@ -22,7 +22,7 @@ declare(strict_types=1);
 
 namespace Export\Migrations;
 
-use Treo\Core\Migration\Base;
+use Atro\Core\Migration\Base;
 
 class V1Dot6Dot36 extends Base
 {

@@ -24,7 +24,7 @@ namespace Export\Migrations;
 
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Util;
-use Treo\Core\Migration\Base;
+use Atro\Core\Migration\Base;
 
 class V1Dot6Dot20 extends Base
 {

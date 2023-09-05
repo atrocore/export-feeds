@@ -23,8 +23,8 @@ declare(strict_types=1);
 namespace Export\Listeners;
 
 use Espo\ORM\Entity;
-use Espo\Listeners\AbstractListener;
-use Espo\Core\EventManager\Event;
+use Atro\Listeners\AbstractListener;
+use Atro\Core\EventManager\Event;
 
 /**
  * Class QueueItemEntity

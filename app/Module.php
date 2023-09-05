@@ -22,8 +22,8 @@ declare(strict_types=1);
 
 namespace Export;
 
-use Espo\Core\OpenApiGenerator;
-use Treo\Core\ModuleManager\AbstractModule;
+use Atro\Core\OpenApiGenerator;
+use Atro\Core\ModuleManager\AbstractModule;
 
 /**
  * Class Module
