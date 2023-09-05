@@ -32,7 +32,7 @@
   },
   "columnType": {
     "name": "Name",
-    "internal": "Name (Nicht übersetzt) / Sprache",
+    "internal": "Name (unübersetzt) / Gebietsschema",
     "custom": "Benutzerdefinierter Name"
   },
   "labels": {

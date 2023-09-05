@@ -284,8 +284,15 @@ class ExportFeed extends Base
 
     public function findLinkedEntities($id, $link, $params)
     {
-        if ($link === 'configuratorItems') {
-            $this->getRepository()->removeInvalidConfiguratorItems($id);
+        if ($link === 'configuratorItems' && !empty($exportFeed = $this->getEntity($id))) {
+            $this->getRepository()->removeInvalidConfiguratorItems($exportFeed->get('id'));
+            if (!empty($exportFeed->get('language'))) {
+                $params['where'][] = [
+                    'type'      => 'equals',
+                    'attribute' => 'language',
+                    'value'     => 'main'
+                ];
+            }
         }
 
         return parent::findLinkedEntities($id, $link, $params);
