@@ -63,7 +63,7 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             }
 
             this.ajaxPostRequest('ExportFeed/action/exportFile', {id: this.model.id}).then(response => {
-                this.notify(this.translate(response ? 'jobCreated' : 'jobNotCreated', 'additionalTranslates', 'ExportFeed'), response ? 'success' : 'danger');
+                this.notify('Created', 'success');
                 $('.action[data-action="refresh"][data-panel="exportJobs"]').click();
             });
         },

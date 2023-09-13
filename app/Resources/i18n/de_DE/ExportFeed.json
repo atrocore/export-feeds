@@ -77,9 +77,7 @@
     "duplicateAsImport": "Sind Sie sicher, dass Sie aus diesem Export-Feed einen Import-Feed erstellen möchten?"
   },
   "additionalTranslates": {
-    "exportName": "Datenexport im Feed %s",
-    "jobCreated": "Exportjob erfolgreich erstellt",
-    "jobNotCreated": "Exportjoberstellung fehlgeschlagen"
+    "exportName": "Datenexport im Feed %s"
   },
   "exceptions": {
     "toManyAttributesSelected": "Die maximale Anzahl ausgewählter Attribute sollte unter 2000 Datensätzen liegen.",

@@ -71,9 +71,7 @@
     "columnAlreadyExist": "Колонка с таким названием уже существует."
   },
   "additionalTranslates": {
-    "exportName": "Экспорт: %s",
-    "jobCreated": "Задание на экспорт успешно создано",
-    "jobNotCreated": "Не удалось создать задание экспорта"
+    "exportName": "Экспорт: %s"
   },
   "exceptions": {
     "toManyAttributesSelected": "Максимальное количество выбранных атрибутов не может быть больше 2000.",

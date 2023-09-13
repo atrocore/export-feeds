@@ -76,9 +76,7 @@
     "duplicateAsImport": "Ви впевнені, що хочете створити канал імпорту з цього каналу експорту?"
   },
   "additionalTranslates": {
-    "exportName": "Експорт: %s",
-    "jobCreated": "Завдання на експорт успішно створено",
-    "jobNotCreated": "Не вдалося створити завдання експорту"
+    "exportName": "Експорт: %s"
   },
   "exceptions": {
     "toManyAttributesSelected": "Максимальна кількість обраних атрибутів не може бути більшою за 2000.",
