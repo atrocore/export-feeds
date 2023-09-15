@@ -42,7 +42,12 @@ class V1Dot7Dot21 extends Base
             }
         }
 
-        $items = $this->getPDO()->query("SELECT export_configurator_item.id as id FROM export_configurator_item inner join attribute on export_configurator_item.attribute_id = attribute.id where attribute_value='value' and attribute.type in ('int','float') and export_configurator_item.deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
+        try {
+            $items = $this->getPDO()->query("SELECT export_configurator_item.id as id FROM export_configurator_item inner join attribute on export_configurator_item.attribute_id = attribute.id where attribute_value='value' and attribute.type in ('int','float') and export_configurator_item.deleted=0")->fetchAll(\PDO::FETCH_ASSOC);    
+        }catch (\Throwable $e){
+            $items = [];
+        }
+
         $ids = [];
         foreach ($items as $item) {
             $ids[] = $item['id'];
