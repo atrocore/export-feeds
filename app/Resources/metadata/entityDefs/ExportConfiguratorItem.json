@@ -79,9 +79,6 @@
       ],
       "default": "Field"
     },
-    "attribute": {
-      "type": "link"
-    },
     "valueModifier": {
       "type": "array",
       "view": "export:views/export-configurator-item/fields/value-modifier",
@@ -162,9 +159,6 @@
       ],
       "default": "Global"
     },
-    "channel": {
-      "type": "link"
-    },
     "createdAt": {
       "type": "datetime",
       "readOnly": true
@@ -240,16 +234,6 @@
       "type": "belongsTo",
       "foreign": "configuratorItems",
       "entity": "ExportFeed",
-      "audited": false
-    },
-    "attribute": {
-      "type": "belongsTo",
-      "entity": "Attribute",
-      "audited": false
-    },
-    "channel": {
-      "type": "belongsTo",
-      "entity": "Channel",
       "audited": false
     }
   },

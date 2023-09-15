@@ -22,11 +22,25 @@ class Metadata extends AbstractListener
     {
         $data = $event->getArgument('data');
 
-        if (!empty($data['scopes']['Channel']['entity'])) {
-            $data['entityDefs']['ExportFeed']['fields']['channel']['type'] = 'link';
-            $data['entityDefs']['ExportFeed']['fields']['channel']['tooltip'] = true;
-            $data['entityDefs']['ExportFeed']['links']['channel']['type'] = 'belongsTo';
-            $data['entityDefs']['ExportFeed']['links']['channel']['entity'] = 'Channel';
+        if (isset($data['entityDefs']['Attribute'])) {
+            $data['entityDefs']['ExportConfiguratorItem']['fields']['attribute'] = [
+                'type' => 'link'
+            ];
+            $data['entityDefs']['ExportConfiguratorItem']['links']['attribute'] = [
+                'type' => 'belongsTo',
+                'entity' => 'Attribute'
+            ];
+        }
+
+        if (isset($data['entityDefs']['Channel'])) {
+            $data['entityDefs']['ExportConfiguratorItem']['fields']['channel'] = [
+                'type' => 'link',
+                'tooltip' => true
+            ];
+            $data['entityDefs']['ExportConfiguratorItem']['links']['channel'] = [
+                'type' => 'belongsTo',
+                'entity' => 'Channel'
+            ];
         }
 
         if (!empty($data['clientDefs']['ExportFeed']['relationshipPanels']['configuratorItems'])) {
