@@ -57,7 +57,7 @@ class ExportTypeSimple extends AbstractExportType
         foreach ($this->getMetadata()->get(['app', 'twigFilters'], []) as $alias => $className) {
             $filter = $this->getContainer()->get($className);
             if ($filter instanceof AbstractTwigFilter) {
-                $filter->setFeedData($this->data['feed']);
+                $filter->setTemplateData($templateData);
                 $twig->addFilter(new TwigFilter($alias, [$filter, 'filter']));
             }
         }
@@ -65,7 +65,7 @@ class ExportTypeSimple extends AbstractExportType
         foreach ($this->getMetadata()->get(['app', 'twigFunctions'], []) as $alias => $className) {
             $twigFunction = $this->getContainer()->get($className);
             if ($twigFunction instanceof AbstractTwigFunction && method_exists($twigFunction, 'run')) {
-                $twigFunction->setFeedData($this->data['feed']);
+                $twigFunction->setTemplateData($templateData);
                 $twig->addFunction(new TwigFunction($alias, [$twigFunction, 'run']));
             }
         }

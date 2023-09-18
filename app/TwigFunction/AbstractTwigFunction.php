@@ -17,15 +17,8 @@ use Espo\Core\Injectable;
 
 abstract class AbstractTwigFunction extends \Atro\Core\Twig\AbstractTwigFunction
 {
-    protected array $feedData;
-
-    public function setFeedData(array $feedData): void
-    {
-        $this->feedData = $feedData;
-    }
-
     public function getFeedData(): array
     {
-        return $this->feedData;
+        return $this->getTemplateData('feedData');
     }
 }
