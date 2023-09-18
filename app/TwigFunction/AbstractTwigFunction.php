@@ -15,7 +15,7 @@ namespace Export\TwigFunction;
 
 use Espo\Core\Injectable;
 
-abstract class AbstractTwigFunction extends Injectable
+abstract class AbstractTwigFunction extends \Atro\Core\Twig\AbstractTwigFunction
 {
     protected array $feedData;
 

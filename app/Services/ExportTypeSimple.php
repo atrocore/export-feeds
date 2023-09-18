@@ -53,6 +53,8 @@ class ExportTypeSimple extends AbstractExportType
         $templateData['config'] = $this->getConfig()->getData();
         $templateData['feedData'] = $this->data['feed'];
 
+        $this->getContainer()->get('twig')->renderTemplate($template, $templateData, 'text');
+
         $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => $template]));
         foreach ($this->getMetadata()->get(['app', 'twigFilters'], []) as $alias => $className) {
             $filter = $this->getContainer()->get($className);
