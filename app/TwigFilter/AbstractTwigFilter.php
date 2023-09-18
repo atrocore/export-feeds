@@ -13,21 +13,10 @@ declare(strict_types=1);
 
 namespace Export\TwigFilter;
 
-use Espo\Core\Injectable;
-
-abstract class AbstractTwigFilter extends Injectable
+abstract class AbstractTwigFilter extends \Atro\Core\Twig\AbstractTwigFilter
 {
-    protected array $feedData;
-
-    abstract public function filter($value);
-
-    public function setFeedData(array $feedData): void
-    {
-        $this->feedData = $feedData;
-    }
-
     public function getFeedData(): array
     {
-        return $this->feedData;
+        return $this->getTemplateData('feedData');
     }
 }
