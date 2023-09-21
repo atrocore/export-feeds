@@ -105,7 +105,7 @@ abstract class AbstractExportType extends Base
     {
         $this->setData($data);
 
-        if (!empty($this->data['feed']['entity']) && $this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+        if (!empty($this->data['feed']['entity']) && $this->getAcl()->check($this->data['feed']['entity'], 'read')) {
             $result = $this->getEntityService()->findEntities($this->getSelectParams());
             if (array_key_exists('total', $result) && $result['total'] > 0) {
                 return $result['total'];
@@ -203,7 +203,7 @@ abstract class AbstractExportType extends Base
             return [];
         }
 
-        if (!$this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+        if (!$this->getAcl()->check($this->data['feed']['entity'], 'read')) {
             return [];
         }
 
@@ -259,7 +259,7 @@ abstract class AbstractExportType extends Base
 
     public function getCollection(int $offset = null): ?EntityCollection
     {
-        if (!$this->getContainer()->get('acl')->check($this->data['feed']['entity'], 'read')) {
+        if (!$this->getAcl()->check($this->data['feed']['entity'], 'read')) {
             return null;
         }
 
@@ -398,6 +398,11 @@ abstract class AbstractExportType extends Base
     protected function getAttribute(string $id): Entity
     {
         return $this->getEntityManager()->getEntity('Attribute', $id);
+    }
+
+    protected function getAcl(): \Espo\Core\Acl
+    {
+        return $this->getContainer()->get('acl');
     }
 
     protected function getEntityManager(): EntityManager
