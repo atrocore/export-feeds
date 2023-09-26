@@ -506,7 +506,9 @@ class ExportFeed extends Base
         $name = $this->getInjection('language')->translate('createExportJobs', 'additionalTranslates', 'ExportFeed');
         $name = sprintf($name, $data['feed']['name']);
 
-        $this->getInjection('queueManager')->push($name, 'ExportJobCreator', $data);
+        $priority = empty($data['feed']['priority']) ? 'Normal' : (string)$data['feed']['priority'];
+
+        $this->getInjection('queueManager')->push($name, 'ExportJobCreator', $data, $priority);
 
         return true;
     }
