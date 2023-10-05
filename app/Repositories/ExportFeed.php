@@ -87,12 +87,27 @@ class ExportFeed extends Base
             $this->isDelimiterValid($entity);
         }
 
-        if($entity->isNew()){
+        if ($entity->isNew()) {
             $entity->set('lastStatus', null);
             $entity->set('lastTime', null);
         }
 
         parent::beforeSave($entity, $options);
+
+        if (!$entity->isNew() && $entity->isAttributeChanged('language') && !empty($entity->get('language'))) {
+            // Fix column type when global language is set on export Feed
+            $qb = $this->getConnection()->createQueryBuilder();
+            $qb->update('export_configurator_item')
+                ->set('column_type', ':newColumnType')
+                ->where('column_type = :columnType and export_feed_id= :exportFeedId')
+                ->setParameters([
+                    'newColumnType' => 'name',
+                    'columnType'    => 'internal',
+                    'exportFeedId'  => $entity->get('id')
+                ])
+                ->andWhere($qb->expr()->eq('deleted', 0))
+                ->executeQuery();
+        }
 
         if ($entity->get('type') === 'simple') {
             $entity->set('convertCollectionToString', true);

@@ -29,7 +29,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
                         this.ajaxGetRequest(`Attribute/${this.model.get('attributeId')}`).then(attribute => {
                             let name = 'name';
                             if (this.model.get('columnType') === 'name') {
-                                let language = this.model.get('language');
+                                let language = this.model.get('exportFeedLanguage') || this.model.get('language');
                                 if (language === 'main') {
                                     language = '';
                                 }
@@ -46,7 +46,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
                 }
             });
 
-            this.listenTo(this.model, 'change:name change:attributeNameValue change:columnType change:exportIntoSeparateColumns', () => {
+            this.listenTo(this.model, 'change:name change:language change:attributeNameValue change:columnType change:exportIntoSeparateColumns', () => {
                 this.prepareValue();
                 this.reRender();
             });
@@ -89,9 +89,9 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
 
         prepareFieldValue() {
             if (this.model.get('columnType') === 'name') {
-                let locale = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('name')}.multilangLocale`);
-                if (locale) {
-                    let originField = this.getMetadata().get(`entityDefs.${this.model.get('entity')}.fields.${this.model.get('name')}.multilangField`);
+                let locale = this.model.get('exportFeedLanguage') || this.model.get('language');
+                if (locale !== 'main') {
+                    const originField = this.model.get('name')
                     this.getTranslates(locale, translates => {
                         let columnName = originField;
                         if (translates[this.model.get('entity')] && translates[this.model.get('entity')]['fields'][originField]) {
@@ -123,7 +123,7 @@ Espo.define('export:views/export-configurator-item/fields/column', 'views/fields
         },
 
         prepareAttributeValue() {
-            let language = this.model.get('language');
+            let language = this.model.get('exportFeedLanguage') || this.model.get('language');
 
             if (language === 'main') {
                 language = '';
