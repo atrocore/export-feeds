@@ -49,7 +49,7 @@ class ExportFeed extends Base
              * Prepare scope|channel configuration
              */
             $this->getPDO()->exec(
-                "UPDATE `export_feed` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
+                "UPDATE `export_configurator_item` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
             );
             $this->getPDO()->exec(
                 "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
