@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\Repositories;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ParameterType;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
 use Espo\Core\Utils\Json;
@@ -38,25 +40,60 @@ class ExportFeed extends Base
             /**
              * Prepare language configuration
              */
-            $this->getPDO()->exec(
-                "UPDATE `export_feed` SET `language`='' WHERE id='{$exportFeed->get('id')}' AND `language` NOT IN ('$languages')"
-            );
-            $this->getPDO()->exec(
-                "UPDATE `export_configurator_item` SET `deleted`=1 WHERE `language` NOT IN ('$languages')"
-            );
+            $this->getConnection()->createQueryBuilder()
+                ->update('export_feed', 't')
+                ->set($this->getConnection()->quoteIdentifier('language'), ':language')
+                ->where('t.id = :id')
+                ->andWhere('t.language NOT IN (:languages)')
+                ->setParameter('language', '')
+                ->setParameter('id', $exportFeed->get('id'))
+                ->setParameter('languages', $languages, Connection::PARAM_STR_ARRAY)
+                ->executeQuery();
+
+            $this->getConnection()->createQueryBuilder()
+                ->update('export_configurator_item', 't')
+                ->set($this->getConnection()->quoteIdentifier('deleted'), ':true')
+                ->where('t.language NOT IN (:languages)')
+                ->setParameter('true', true, ParameterType::BOOLEAN)
+                ->setParameter('languages', $languages, Connection::PARAM_STR_ARRAY)
+                ->executeQuery();
 
             /**
              * Prepare scope|channel configuration
              */
-            $this->getPDO()->exec(
-                "UPDATE `export_configurator_item` SET channel_id=null WHERE channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
-            );
-            $this->getPDO()->exec(
-                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND channel_id IS NOT NULL AND channel_id NOT IN (SELECT id FROM `channel` WHERE deleted=0)"
-            );
-            $this->getPDO()->exec(
-                "UPDATE `export_configurator_item` SET deleted=1 WHERE export_feed_id='{$exportFeed->get('id')}' AND type='Attribute' AND attribute_id NOT IN (SELECT id FROM attribute WHERE deleted=0)"
-            );
+            $this->getConnection()->createQueryBuilder()
+                ->update('export_configurator_item', 't')
+                ->set('channel_id', ':null')
+                ->where('t.channel_id IS NOT NULL')
+                ->andWhere("t.channel_id NOT IN (SELECT c.id FROM {$this->getConnection()->quoteIdentifier('channel')} c WHERE c.deleted=:false)")
+                ->setParameter('null', null)
+                ->setParameter('false', false, ParameterType::BOOLEAN)
+                ->executeQuery();
+
+            $this->getConnection()->createQueryBuilder()
+                ->update('export_configurator_item', 't')
+                ->set('deleted', ':true')
+                ->where('t.export_feed_id = :id')
+                ->andWhere('t.type = :type')
+                ->andWhere('t.channel_id IS NOT NULL')
+                ->andWhere("t.channel_id NOT IN (SELECT c.id FROM {$this->getConnection()->quoteIdentifier('channel')} c WHERE c.deleted=:false)")
+                ->setParameter('true', true, ParameterType::BOOLEAN)
+                ->setParameter('id', $exportFeed->get('id'))
+                ->setParameter('type', 'Attribute')
+                ->setParameter('false', false, ParameterType::BOOLEAN)
+                ->executeQuery();
+
+            $this->getConnection()->createQueryBuilder()
+                ->update('export_configurator_item', 't')
+                ->set('deleted', ':true')
+                ->where('t.export_feed_id = :id')
+                ->andWhere('t.type = :type')
+                ->andWhere("t.attribute_id NOT IN (SELECT a.id FROM {$this->getConnection()->quoteIdentifier('attribute')} a WHERE a.deleted=:false)")
+                ->setParameter('true', true, ParameterType::BOOLEAN)
+                ->setParameter('id', $exportFeed->get('id'))
+                ->setParameter('type', 'Attribute')
+                ->setParameter('false', false, ParameterType::BOOLEAN)
+                ->executeQuery();
         } catch (\Throwable $e) {
             $GLOBALS['log']->error('Remove invalid configurator items failed: ' . $e->getMessage());
         }
