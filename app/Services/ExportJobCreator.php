@@ -69,7 +69,10 @@ class ExportJobCreator extends QueueManagerBase
 
         $priority = empty($data['feed']['priority']) ? 'Normal' : (string)$data['feed']['priority'];
 
-        $this->getQM()->push($qmJobName, 'QueueManagerExport', $data, $priority, $md5Hash);
+        $qmId = $this->getQM()->createQueueItem($qmJobName, 'QueueManagerExport', $data, $priority, $md5Hash);
+
+        $exportJob->set('queueItemId', $qmId);
+
         $this->getEntityManager()->saveEntity($exportJob);
 
         return $exportJob->get('id');

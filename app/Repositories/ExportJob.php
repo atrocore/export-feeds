@@ -19,9 +19,13 @@ use Espo\ORM\Entity;
 
 class ExportJob extends Base
 {
-    public function getExportJob(string $exportJobId): ?Entity
+    public function getExportJob(Entity $exportJob): ?Entity
     {
-        return $this->getEntityManager()->getRepository('QueueItem')->where(['data*' => '%"exportJobId":"' . $exportJobId . '"%'])->findOne();
+        if (empty($exportJob->get('queueItemId'))) {
+            return null;
+        }
+
+        return $this->getEntityManager()->getRepository('QueueItem')->get($exportJob->get('queueItemId'));
     }
 
     protected function init()
@@ -46,7 +50,7 @@ class ExportJob extends Base
                     if ($entity->getFetched('state') === 'Running') {
                         throw new BadRequest($this->getInjection('language')->translate('wrongJobState', 'exceptions', 'ExportJob'));
                     }
-                    $qmJob = $this->getExportJob($entity->get('id'));
+                    $qmJob = $this->getExportJob($entity);
                     if (empty($qmJob)) {
                         throw new BadRequest($this->getInjection('language')->translate('notExecutableJob', 'exceptions', 'ExportJob'));
                     }
@@ -63,7 +67,7 @@ class ExportJob extends Base
         parent::afterSave($entity, $options);
 
         if ($entity->isAttributeChanged('state')) {
-            $qmJob = $this->getExportJob($entity->get('id'));
+            $qmJob = $this->getExportJob($entity);
             if (!empty($qmJob)) {
                 if ($entity->get('state') === 'Pending' && in_array($qmJob->get('status'), ['Success', 'Failed', 'Canceled'])) {
                     $this->toPendingQmJob($qmJob);
@@ -100,7 +104,7 @@ class ExportJob extends Base
             unlink($data['fullFileName']);
         }
 
-        $qmJob = $this->getExportJob($entity->get('id'));
+        $qmJob = $this->getExportJob($entity);
         if (!empty($qmJob)) {
             $this->cancelQmJob($qmJob);
             $this->getEntityManager()->removeEntity($qmJob);
