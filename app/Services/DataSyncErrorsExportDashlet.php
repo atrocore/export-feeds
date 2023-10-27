@@ -48,8 +48,8 @@ class DataSyncErrorsExportDashlet extends AbstractDashletService
             $list[] = [
                 'id'        => $this->getInjection('language')->translate($type['name']),
                 'name'        => $this->getInjection('language')->translate($type['name']),
-                'feeds'      => $data[0]['feeds'],
-                'jobs'      => $data[0]['jobs'],
+                'feeds'      => $data['feeds'],
+                'jobs'      => $data['jobs'],
                 'interval'     => $type['interval']
             ];
         }
@@ -59,12 +59,18 @@ class DataSyncErrorsExportDashlet extends AbstractDashletService
 
     protected function getExportData(int $interval): array
     {
-        $query = "SELECT COUNT(*) AS jobs, COUNT(DISTINCT ef.id) as feeds
-            FROM `export_feed` ef
-            JOIN export_job ej ON ej.export_feed_id = ef.id
-            WHERE ej.state = 'Failed'
-            AND ej.start >= DATE_SUB(NOW(), INTERVAL $interval DAY)";
+        $connection = $this->getEntityManager()->getConnection();
 
-        return $this->getPDO()->query($query)->fetchAll(\PDO::FETCH_ASSOC);
+        $res = $connection->createQueryBuilder()
+            ->select('COUNT(ej.id) AS jobs, COUNT(DISTINCT ef.id) as feeds')
+            ->from($connection->quoteIdentifier('export_feed'), 'ef')
+            ->innerJoin('ef', $connection->quoteIdentifier('export_job'), 'ej', 'ej.export_feed_id = ef.id')
+            ->where('ej.state = :state')
+            ->andWhere('ej.start >= :start')
+            ->setParameter('state', 'Failed')
+            ->setParameter('start', (new \DateTime())->modify("-{$interval} days")->format('Y-m-d H:i:s'))
+            ->fetchAssociative();
+
+        return empty($res) ? ['jobs' => 0, 'feeds' => 0] : $res;
     }
 }

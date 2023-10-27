@@ -83,15 +83,18 @@ class ExportFeed extends Base
 
     protected function getExportFeedFilteredIds(int $interval): array
     {
-        $query = "SELECT exp.id
-            FROM `export_feed` exp
-            JOIN export_job exj ON exj.export_feed_id = exp.id
-            WHERE exj.state = 'Failed'
-            AND exj.start >= DATE_SUB(NOW(), INTERVAL $interval DAY)";
+        $connection = $this->getEntityManager()->getConnection();
 
-        return array_column(
-            $this->getEntityManager()->getPDO()->query($query)->fetchAll(\PDO::FETCH_ASSOC),
-            'id'
-        );
+        $res = $connection->createQueryBuilder()
+            ->select('exp.id')
+            ->from($connection->quoteIdentifier('export_feed'), 'exp')
+            ->innerJoin('exp', $connection->quoteIdentifier('export_job'), 'exj', 'exj.export_feed_id = exp.id')
+            ->where('exj.state = :state')
+            ->andWhere('exj.start >= :start')
+            ->setParameter('state', 'Failed')
+            ->setParameter('start', (new \DateTime())->modify("-{$interval} days")->format('Y-m-d H:i:s'))
+            ->fetchAllAssociative();
+
+        return array_column($res, 'id');
     }
 }

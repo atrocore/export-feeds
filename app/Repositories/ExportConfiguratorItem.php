@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Export\Repositories;
 
+use Doctrine\DBAL\ParameterType;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
 use Espo\ORM\Entity;
@@ -55,7 +56,8 @@ class ExportConfiguratorItem extends Base
             ->createQueryBuilder()
             ->select('id')
             ->from('export_configurator_item')
-            ->where('deleted=0');
+            ->where('deleted=:false')
+            ->setParameter('false', false, ParameterType::BOOLEAN);
 
         if (!empty($entity->get('sheetId'))) {
             $qb->andWhere('sheet_id=:sheetId')->setParameter('sheetId', $entity->get('sheetId'));

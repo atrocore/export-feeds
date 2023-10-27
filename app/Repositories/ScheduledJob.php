@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Export\Repositories;
 
+use Doctrine\DBAL\ParameterType;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Repositories\Base;
 use Espo\ORM\Entity;
@@ -52,8 +53,10 @@ class ScheduledJob extends Base
             ->createQueryBuilder()
             ->select('id')
             ->from('export_configurator_item')
-            ->where('deleted=0')
-            ->andWhere('export_feed_id=:exportFeedId')->setParameter('exportFeedId', $entity->get('exportFeedId'))
+            ->where('deleted=:false')
+            ->andWhere('export_feed_id=:exportFeedId')
+            ->setParameter('exportFeedId', $entity->get('exportFeedId'))
+            ->setParameter('false', false, ParameterType::BOOLEAN)
             ->orderBy('sort_order', 'ASC')
             ->fetchFirstColumn();
 
