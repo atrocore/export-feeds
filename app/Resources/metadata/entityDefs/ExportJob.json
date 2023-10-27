@@ -31,6 +31,10 @@
       "type": "link",
       "readOnly": true
     },
+    "queueItem": {
+      "type": "link",
+      "readOnly": true
+    },
     "file": {
       "type": "file",
       "readOnly": true
@@ -111,6 +115,10 @@
       "type": "belongsTo",
       "foreign": "exportJobs",
       "entity": "ExportFeed"
+    },
+    "queueItem": {
+      "type": "belongsTo",
+      "entity": "QueueItem"
     },
     "file": {
       "type": "belongsTo",
