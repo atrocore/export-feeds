@@ -34,7 +34,6 @@ class ExportFeed extends Base
         if ($this->getConfig()->get('isMultilangActive', false)) {
             $languages = array_merge($languages, $this->getConfig()->get('inputLanguageList', []));
         }
-        $languages = implode("','", $languages);
 
         try {
             /**
