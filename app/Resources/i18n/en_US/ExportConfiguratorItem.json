@@ -49,7 +49,8 @@
       "valueTo": "Value To",
       "valueUnit": "Value Unit",
       "id": "ID (Product Attribute Value)",
-      "valueNumeric": "Value (numerical)"
+      "valueNumeric": "Value (numerical)",
+      "valueString": "Value (String)"
     }
   },
   "tooltips": {

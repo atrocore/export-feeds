@@ -51,7 +51,8 @@
       "valueTo": "Wert auf",
       "valueUnit": "Werteihheit",
       "id": "ID (Produktattributwert)",
-      "valueNumeric": "Wert (numerisch)"
+      "valueNumeric": "Wert (numerisch)",
+      "valueString": "Wert (String)"
     }
   },
   "tooltips": {
