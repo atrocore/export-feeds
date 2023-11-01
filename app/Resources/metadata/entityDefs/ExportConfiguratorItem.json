@@ -11,7 +11,8 @@
         "valueTo",
         "valueUnit",
         "id",
-        "valueNumeric"
+        "valueNumeric",
+        "valueString"
       ]
     },
     "zip": {

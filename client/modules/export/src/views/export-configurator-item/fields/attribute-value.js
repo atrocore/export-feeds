@@ -54,6 +54,12 @@ Espo.define('export:views/export-configurator-item/fields/attribute-value', 'vie
                 } else {
                     this.params.options = ['valueNumeric']
                 }
+            } else if (type === 'varchar') {
+                if (this.hasUnit()) {
+                    this.params.options.push('valueString', 'valueUnit')
+                } else {
+                    this.params.options = ['valueString']
+                }
             }
             this.params.options.push('id')
 

@@ -260,6 +260,11 @@ class ExportFeed extends Base
                         $post->attributeValue = 'valueNumeric';
                     }
                     break;
+                case 'varchar':
+                    if (!$attribute->get('measureId')) {
+                        $post->attributeValue = 'valueString';
+                    }
+                    break;
                 case 'extensibleEnum':
                 case 'extensibleMultiEnum':
                     $post->exportBy = ["name"];

@@ -98,7 +98,7 @@ class ProductConvertor extends Convertor
 
     public function getFieldForAttribute($configuration)
     {
-        if ($configuration['attributeValue'] === 'valueNumeric') {
+        if (in_array($configuration['attributeValue'], ['valueNumeric', 'valueString'])) {
             return 'value';
         }
         return $configuration['attributeValue'] ?? 'value';
