@@ -14,18 +14,27 @@ declare(strict_types=1);
 namespace Export\Migrations;
 
 use Atro\Core\Migration\Base;
+use Atro\ORM\DB\RDB\Mapper;
 
 class V1Dot7Dot31 extends Base
 {
     public function up(): void
     {
-        $this->exec('ALTER TABLE export_job ADD queue_item_id VARCHAR(24) DEFAULT NULL');
-        $this->exec('CREATE INDEX IDX_EXPORT_JOB_QUEUE_ITEM_ID ON export_job (queue_item_id)');
-        $this->exec('CREATE INDEX IDX_EXPORT_JOB_QUEUE_ITEM_ID_DELETED ON export_job (queue_item_id, deleted)');
+//        $this->exec('ALTER TABLE export_job ADD queue_item_id VARCHAR(24) DEFAULT NULL');
+//        $this->exec('CREATE INDEX IDX_EXPORT_JOB_QUEUE_ITEM_ID ON export_job (queue_item_id)');
+//        $this->exec('CREATE INDEX IDX_EXPORT_JOB_QUEUE_ITEM_ID_DELETED ON export_job (queue_item_id, deleted)');
 
         try {
-            $items = $this->getPDO()->query("SELECT export_configurator_item.id as id FROM export_configurator_item inner join attribute on export_configurator_item.attribute_id = attribute.id where attribute_value='value' and attribute.type = 'varchar' and export_configurator_item.deleted=0")->fetchAll(\PDO::FETCH_ASSOC);
-        }catch (\Throwable $e){
+            $items = $this->getSchema()->getConnection()->createQueryBuilder()
+                ->select('id')
+                ->from('attribute')
+                ->where('type = :type')
+                ->andWhere('deleted = :false')
+                ->setParameter('type', 'varchar')
+                ->setParameter('false', false, Mapper::getParameterType(false))
+                ->fetchAllAssociative();
+
+        } catch (\Throwable $e) {
             $items = [];
         }
 
@@ -35,7 +44,18 @@ class V1Dot7Dot31 extends Base
         }
         if (!empty($ids)) {
             $search = "('" . join("','", $ids) . "')";
-            $this->getPDO()->exec("UPDATE export_configurator_item SET attribute_value='valueString' WHERE id in $search");
+
+            $this->getSchema()->getConnection()->createQueryBuilder()
+                ->update('export_configurator_item')
+                ->set('attribute_value', ':value')
+                ->where('attribute_value = :oldValue')
+                ->andWhere('attribute_id in :ids')
+                ->andWhere('deleted = :false')
+                ->setParameter('value', 'valueString')
+                ->setParameter('oldValue', 'value')
+                ->setParameter('ids', $search)
+                ->setParameter('false', false, Mapper::getParameterType(false))
+                ->executeQuery();
         }
     }
 

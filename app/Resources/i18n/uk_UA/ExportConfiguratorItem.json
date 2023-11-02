@@ -24,7 +24,8 @@
     "previousItem": "Попередній елемент",
     "zip": "Експорт ассетів у ZIP-архів",
     "attributeValue": "Значення атрибута",
-    "fileNameTemplate": "Шаблон імені файлу"
+    "fileNameTemplate": "Шаблон імені файлу",
+    "exportByForListAttribute": "Пов’язані поля сутності для списків"
   },
   "links": {
     "exportFeed": "Експорт. фід",
@@ -49,7 +50,7 @@
   "labels": {
     "Field": "Поле",
     "Fixed value": "Фіксоване значення",
-    "exportByForAttributeValue": "Це лише для атрибутів типу extensibleEnum або extensibleMultiEnum"
+    "exportByForAttributeValue": "Це лише для атрибутів типу List або Multi-value list"
   },
   "tooltips": {
     "valueModifier": "Можна використовувати кілька модифікаторів, натиснувши клавішу Enter. У разі значень атрибутів коди атрибутів із двокрапкою можна використовувати як застосовуваний фільтр. Приклад: «shoes_color:trim».",
