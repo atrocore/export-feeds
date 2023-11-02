@@ -34,10 +34,18 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
 
             if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
                 this.$el.append(`<span style="color: #999; font-size: 12px">${this.translate('exportByForAttributeValue', 'labels', 'ExportConfiguratorItem')}</span>`)
+                this.$el.closest('.cell').find('.label-text').text(this.translate('exportByForListAttribute', 'fields', 'ExportConfiguratorItem'))
+            } else {
+                this.$el.closest('.cell').find('.label-text').text(this.translate('exportBy', 'fields', 'ExportConfiguratorItem'))
             }
         },
 
         checkFieldVisibility() {
+            if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
+                this.show();
+                return
+            }
+
             if (this.isRequired()) {
                 this.show();
             } else {
@@ -102,7 +110,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 });
             }
 
-            if (entity === 'ExtensibleEnumOption' || entity === 'Unit') {
+            if ((entity === 'ExtensibleEnumOption' || entity === 'Unit') && this.model.get('exportBy') == null) {
                 this.model.set('exportBy', ['name'])
             }
 
@@ -135,10 +143,6 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
         },
 
         isRequired() {
-            if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
-                return true;
-            }
-
             let type = 'varchar';
             if (this.model.get('type') === 'Field') {
                 type = this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']);

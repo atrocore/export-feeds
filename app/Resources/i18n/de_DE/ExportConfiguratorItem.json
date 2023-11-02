@@ -24,7 +24,8 @@
     "previousItem": "Vorheriges Item",
     "zip": "Assets in ein ZIP-Archiv exportieren",
     "attributeValue": "Attributwert",
-    "fileNameTemplate": "Dateinamenvorlage"
+    "fileNameTemplate": "Dateinamenvorlage",
+    "exportByForListAttribute": "Verwandte Entitätsfelder für Listen"
   },
   "links": {
     "exportFeed": "Exportfeed",
@@ -38,7 +39,7 @@
   "labels": {
     "Field": "Feld",
     "Fixed value": "Fester Wert",
-    "exportByForAttributeValue": "Dies gilt nur für Attribute vom Typ extensibleEnum oder extensibleMultiEnum"
+    "exportByForAttributeValue": "Dies gilt nur für Attribute vom Typ Liste oder Mehrwertliste"
   },
   "options": {
     "boolFilterFieldValue": {
