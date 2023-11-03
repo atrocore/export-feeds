@@ -19,7 +19,7 @@ class V1Dot7Dot33 extends Base
 {
     public function up(): void
     {
-        $fromSchema = $this->getSchema()->getCurrentSchema();
+        $fromSchema = $this->getCurrentSchema();
         $toSchema = clone $fromSchema;
 
         $this->dropColumn($toSchema, 'export_configurator_item', 'value_modifier');
@@ -31,7 +31,7 @@ class V1Dot7Dot33 extends Base
 
     public function down(): void
     {
-        $fromSchema = $this->getSchema()->getCurrentSchema();
+        $fromSchema = $this->getCurrentSchema();
         $toSchema = clone $fromSchema;
 
         $this->addColumn($toSchema, 'export_configurator_item', 'value_modifier', ['type' => 'array']);

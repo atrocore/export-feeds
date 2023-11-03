@@ -20,11 +20,11 @@ class V1Dot6Dot0 extends Base
 {
     public function up(): void
     {
-        $fromSchema = $this->getSchema()->getCurrentSchema();
+        $fromSchema = $this->getCurrentSchema();
         $toSchema = clone $fromSchema;
 
         try {
-            $toSchema->getTable('export_feed')->dropColumn('jobs_max');
+            $this->dropColumn($toSchema, 'export_feed', 'jobs_max');
             $this->addColumn($toSchema, 'export_feed', 'template', ['type' => 'text']);
             $this->addColumn($toSchema, 'export_feed', 'file_type', ['type' => 'varchar']);
         } catch (\Throwable $e) {
@@ -35,7 +35,6 @@ class V1Dot6Dot0 extends Base
         }
 
         $records = $this
-            ->getSchema()
             ->getConnection()
             ->createQueryBuilder()
             ->select('*')
@@ -54,7 +53,6 @@ class V1Dot6Dot0 extends Base
 
             if (!empty($data['feedFields']['fileType'])) {
                 $this
-                    ->getSchema()
                     ->getConnection()
                     ->createQueryBuilder()
                     ->update('export_feed')
