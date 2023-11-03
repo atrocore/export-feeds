@@ -25,12 +25,14 @@ class V1Dot6Dot0 extends Base
 
         try {
             $toSchema->getTable('export_feed')->dropColumn('jobs_max');
-            $toSchema->getTable('export_feed')->addColumn('template', 'text', $this->getDbFieldParams([]));
-            $toSchema->getTable('export_feed')->addColumn('file_type', 'varchar', $this->getDbFieldParams([]));
+            $this->addColumn($toSchema, 'export_feed', 'template', ['type' => 'text']);
+            $this->addColumn($toSchema, 'export_feed', 'file_type', ['type' => 'varchar']);
         } catch (\Throwable $e) {
         }
 
-        $this->migrateSchema($fromSchema, $toSchema);
+        foreach ($this->schemasDiffToSql($fromSchema, $toSchema) as $sql) {
+            $this->getPDO()->exec($sql);
+        }
 
         $records = $this
             ->getSchema()
