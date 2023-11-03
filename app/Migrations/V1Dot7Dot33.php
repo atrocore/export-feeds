@@ -22,7 +22,7 @@ class V1Dot7Dot33 extends Base
         $fromSchema = $this->getSchema()->getCurrentSchema();
         $toSchema = clone $fromSchema;
 
-        $toSchema->getTable('export_configurator_item')->dropColumn('value_modifier');
+        $this->dropColumn($toSchema, 'export_configurator_item', 'value_modifier');
 
         foreach ($this->schemasDiffToSql($fromSchema, $toSchema) as $sql) {
             $this->getPDO()->exec($sql);
