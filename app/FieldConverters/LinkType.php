@@ -100,10 +100,6 @@ class LinkType extends AbstractType
                 }
             }
         }
-
-        if (is_string($result[$column])) {
-            $this->applyValueModifiers($configuration, $result[$column]);
-        }
     }
 
     protected function prepareExportByField(string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void

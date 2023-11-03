@@ -80,11 +80,6 @@
       ],
       "default": "Field"
     },
-    "valueModifier": {
-      "type": "array",
-      "view": "export:views/export-configurator-item/fields/value-modifier",
-      "tooltip": true
-    },
     "attributeNameValue": {
       "type": "varchar",
       "notStorable": true

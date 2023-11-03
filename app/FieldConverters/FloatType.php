@@ -30,7 +30,6 @@ class FloatType extends AbstractType
                 $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
                 $result[$column] = $this->floatToNumber((float)$record[$field], $decimalMark, $thousandSeparator);
-                $this->applyValueModifiers($configuration, $result[$column]);
             }
         }
     }

@@ -26,7 +26,6 @@ class VarcharType extends AbstractType
                 $result[$column] = $record[$field] === null ? $configuration['nullValue'] : $configuration['emptyValue'];
             } else {
                 $result[$column] = $record[$field];
-                $this->applyValueModifiers($configuration, $result[$column]);
             }
         }
     }

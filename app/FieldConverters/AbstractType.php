@@ -25,11 +25,4 @@ abstract class AbstractType
     }
 
     abstract public function convertToString(array &$result, array $record, array $configuration): void;
-
-    public function applyValueModifiers(array $configuration, &$value): void
-    {
-        if (!empty($configuration['valueModifier'])) {
-            $this->convertor->getValueModifier()->apply($configuration['valueModifier'], $value);
-        }
-    }
 }

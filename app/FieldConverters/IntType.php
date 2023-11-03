@@ -30,7 +30,6 @@ class IntType extends AbstractType
                 $result[$column] = $record[$field] === null ? $nullValue : $emptyValue;
             } else {
                 $result[$column] = number_format((float)$record[$field], 0, $decimalMark, $thousandSeparator);
-                $this->applyValueModifiers($configuration, $result[$column]);
             }
         }
     }

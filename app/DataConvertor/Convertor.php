@@ -18,7 +18,6 @@ use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
 use Espo\Services\Record;
-use Export\Core\ValueModifier;
 
 class Convertor
 {
@@ -92,11 +91,6 @@ class Convertor
     public function translate(string $key, string $tab, string $scope): string
     {
         return $this->container->get('language')->translate($key, $tab, $scope);
-    }
-
-    public function getValueModifier(): ValueModifier
-    {
-        return $this->container->get(ValueModifier::class);
     }
 
     public function getAttributeById(string $attributeId): ?Entity
