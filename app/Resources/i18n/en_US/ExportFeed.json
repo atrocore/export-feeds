@@ -43,7 +43,8 @@
       "xlsx": "XLSX (Excel)",
       "csv": "CSV",
       "json": "JSON",
-      "xml": "XML"
+      "xml": "XML",
+      "sql": "SQL"
     }
   },
   "labels": {
