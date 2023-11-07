@@ -83,13 +83,15 @@
         "csv",
         "xlsx",
         "json",
-        "xml"
+        "xml",
+        "sql"
       ],
       "options": [
         "csv",
         "xlsx",
         "json",
-        "xml"
+        "xml",
+        "sql"
       ],
       "prohibitedEmptyValue": false,
       "default": "csv"
