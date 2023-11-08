@@ -53,12 +53,13 @@ class Convertor
     {
         $result = [];
 
-        if (isset($configuration['script'])) {
+        if ($configuration['type'] === 'script') {
+            $template = $configuration['script'] ?? '';
             $templateData = [
                 'record'        => $record,
                 'configuration' => $configuration
             ];
-            $result[$configuration['column']] = $this->container->get('twig')->renderTemplate((string)$configuration['script'], $templateData);
+            $result[$configuration['column']] = $this->container->get('twig')->renderTemplate((string)$template, $templateData);
             return $result;
         }
 
