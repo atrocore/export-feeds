@@ -23,7 +23,7 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
                 });
 
                 this.listenTo(this.model, 'change:type', () => {
-                    if (this.model.get('type') === 'Fixed value') {
+                    if (this.model.get('type') === 'Fixed value' || this.model.get('type') === 'script') {
                         this.model.set(this.name, 'custom');
                     } else {
                         this.model.set(this.name, 'name');
@@ -59,7 +59,7 @@ Espo.define('export:views/export-configurator-item/fields/column-type', 'views/f
             },
 
             checkFieldDisability() {
-                if (this.model.get('type') === 'Fixed value') {
+                if (this.model.get('type') === 'Fixed value' || this.model.get('type') === 'script') {
                     this.$el.find('select').attr('disabled', 'disabled');
                 } else {
                     this.$el.find('select').removeAttr('disabled');

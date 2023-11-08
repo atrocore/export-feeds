@@ -69,6 +69,10 @@ Espo.define('export:views/export-configurator-item/fields/previous-item', 'views
                 name = this.getLanguage().translate('fixedValue', 'fields', 'ExportConfiguratorItem');
             }
 
+            if (object.type === 'script') {
+                name = this.getLanguage().translate('script', 'fields', 'ExportConfiguratorItem');
+            }
+
             return name;
         },
 
