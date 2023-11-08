@@ -76,7 +76,8 @@
               "attribute": "fileType",
               "value": [
                 "json",
-                "xml"
+                "xml",
+                "sql"
               ]
             }
           ]

@@ -134,6 +134,48 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
+    protected function exportSql(ExportJob $exportJob): Attachment
+    {
+        if (!empty($this->data['feed']['separateJob'])) {
+            $collection = $this->getCollection();
+        } else {
+            $collection = $this->getFullCollection();
+        }
+
+        $exportJob->set('count', $collection instanceof EntityCollection ? count($collection) : 0);
+
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
+
+        $contents = join("\n", array_map(function ($query) {
+            return trim($query);
+        }, \SqlFormatter::splitQuery($contents)));
+
+        $repository = $this->getEntityManager()->getRepository('Attachment');
+
+        // create attachment
+        $attachment = $repository->get();
+        $attachment->set('name', $this->getExportFileName('sql'));
+        $attachment->set('role', 'Export');
+        $attachment->set('relatedType', 'ExportJob');
+        $attachment->set('relatedId', $this->data['exportJobId']);
+        $attachment->set('storage', 'UploadDir');
+        $attachment->set('storageFilePath', $this->createPath());
+
+        $this->beforeStore($this, $attachment, 'sql');
+
+        $fileName = $repository->getFilePath($attachment);
+
+        $this->createDir($fileName);
+        file_put_contents($fileName, $contents);
+
+        $attachment->set('type', 'application/sql');
+        $attachment->set('size', \filesize($fileName));
+
+        $this->getEntityManager()->saveEntity($attachment);
+
+        return $attachment;
+    }
+
     protected function exportXml(ExportJob $exportJob): Attachment
     {
         if (!empty($this->data['feed']['separateJob'])) {
