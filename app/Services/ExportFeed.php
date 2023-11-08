@@ -445,7 +445,6 @@ class ExportFeed extends Base
                 'limitRelation'             => $item->get('limitRelation'),
                 'sortFieldRelation'         => $item->get('sortFieldRelation'),
                 'sortOrderRelation'         => $item->get('sortOrderRelation'),
-                'valueModifier'             => $item->get('valueModifier'),
                 'type'                      => $item->get('type'),
                 'fixedValue'                => $item->get('fixedValue'),
                 'zip'                       => !empty($item->get('zip')),
@@ -454,6 +453,7 @@ class ExportFeed extends Base
                 'entity'                    => $entityName,
                 'sortOrderField'            => $sheet->get('sortOrderField'),
                 'sortOrderDirection'        => $sheet->get('sortOrderDirection'),
+                'script'                    => $item->get('script') ?? null,
             ];
             if ($feed->get('type') === 'simple') {
                 $row['convertCollectionToString'] = true;

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Export\Services;
 
+use Atro\Core\EventManager\Manager;
 use Espo\Core\EventManager\Event;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
@@ -571,7 +572,7 @@ class ExportTypeSimple extends AbstractExportType
     protected function beforeStore(ExportTypeSimple $typeService, Attachment $attachment, string $format)
     {
         $event = new Event(['data' => $this->data, 'typeService' => $typeService, 'attachment' => $attachment, 'extension' => $format]);
-        $this->getContainer()->get('eventManager')->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
+        $this->getEventManager()->dispatch('ExportTypeSimpleService', 'beforeStore', $event);
     }
 
     public function getUrlColumns(): array
@@ -615,5 +616,10 @@ class ExportTypeSimple extends AbstractExportType
         fclose($cacheFile);
 
         return $result;
+    }
+
+    protected function getEventManager(): Manager
+    {
+        return $this->getContainer()->get('eventManager');
     }
 }

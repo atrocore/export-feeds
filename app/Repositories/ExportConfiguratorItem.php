@@ -38,10 +38,6 @@ class ExportConfiguratorItem extends Base
             }
         }
 
-        if ($entity->isAttributeChanged('valueModifier') && !empty($entity->get('valueModifier'))) {
-            $this->getInjection(ValueModifier::class)->apply($this->getValueModifiers($entity));
-        }
-
         if (empty($entity->get('language'))) {
             $entity->set('language', 'main');
         }
@@ -101,44 +97,10 @@ class ExportConfiguratorItem extends Base
         }
     }
 
-    protected function getValueModifiers(Entity $entity)
-    {
-        $valueModifiers = $entity->get('valueModifier');
-        if ($entity->get('name') !== 'value') {
-            return $valueModifiers;
-        }
-
-        $exportFeed = $this->getEntityManager()->getRepository('ExportFeed')->get($entity->get('exportFeedId'));
-        if ($exportFeed->getFeedField('entity') !== 'ProductAttributeValue') {
-            return $valueModifiers;
-        }
-
-        $preparedValueModifiers = [];
-        foreach ($valueModifiers as $modifier) {
-            $parts = explode(':', $modifier);
-            $attributeCode = array_shift($parts);
-
-            $attribute = $this
-                ->getEntityManager()
-                ->getRepository('Attribute')
-                ->select(['id'])
-                ->where(['code' => $attributeCode])
-                ->findOne();
-
-            if (empty($attribute)) {
-                throw new BadRequest(sprintf($this->getInjection('language')->translate('noSuchAttribute', 'exceptions', 'ExportConfiguratorItem'), $attributeCode));
-            }
-            $preparedValueModifiers[] = implode(':', $parts);
-        }
-
-        return $preparedValueModifiers;
-    }
-
     protected function init()
     {
         parent::init();
 
-        $this->addDependency(ValueModifier::class);
         $this->addDependency('language');
     }
 }

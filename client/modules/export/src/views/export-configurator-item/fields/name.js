@@ -34,7 +34,7 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
             }
 
             this.listenTo(this.model, 'change:type', () => {
-                if (this.model.get('type') === 'Fixed value') {
+                if (this.model.get('type') === 'Fixed value' || this.model.get('type') === 'script') {
                     this.model.set(this.name, null);
                 }
                 this.reRender();
@@ -77,6 +77,10 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
 
             if (this.model.get('type') === 'Fixed value') {
                 name = this.getLanguage().translate('fixedValue', 'fields', 'ExportConfiguratorItem');
+            }
+
+            if (this.model.get('type') === 'script') {
+                name = this.getLanguage().translate('script', 'fields', 'ExportConfiguratorItem');
             }
 
             return name;

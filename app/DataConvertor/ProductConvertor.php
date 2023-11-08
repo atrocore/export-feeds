@@ -93,7 +93,7 @@ class ProductConvertor extends Convertor
             'configuration'    => $configuration
         ];
 
-        return $this->container->get('eventManager')->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');
+        return $this->getEventManager()->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');
     }
 
     public function getFieldForAttribute($configuration)

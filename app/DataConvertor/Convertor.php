@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Atro\Core\EventManager\Manager;
 use Espo\Core\Container;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
 use Espo\Services\Record;
-use Export\Core\ValueModifier;
 
 class Convertor
 {
@@ -52,6 +52,16 @@ class Convertor
     public function convertType(string $type, array $record, array $configuration): array
     {
         $result = [];
+
+        if ($configuration['type'] === 'script') {
+            $template = $configuration['script'] ?? '';
+            $templateData = [
+                'record'        => $record,
+                'configuration' => $configuration
+            ];
+            $result[$configuration['column']] = $this->container->get('twig')->renderTemplate((string)$template, $templateData);
+            return $result;
+        }
 
         $fieldConverterClass = '\Export\FieldConverters\\' . ucfirst($type) . 'Type';
         if (!class_exists($fieldConverterClass) || !is_a($fieldConverterClass, \Export\FieldConverters\AbstractType::class, true)) {
@@ -89,14 +99,14 @@ class Convertor
         return $this->container->get('serviceFactory')->create($serviceName);
     }
 
+    public function getEventManager(): Manager
+    {
+        return $this->container->get('eventManager');
+    }
+
     public function translate(string $key, string $tab, string $scope): string
     {
         return $this->container->get('language')->translate($key, $tab, $scope);
-    }
-
-    public function getValueModifier(): ValueModifier
-    {
-        return $this->container->get(ValueModifier::class);
     }
 
     public function getAttributeById(string $attributeId): ?Entity

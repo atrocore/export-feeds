@@ -21,7 +21,6 @@ class V1Dot6Dot4 extends Base
     public function up(): void
     {
         $records = $this
-            ->getSchema()
             ->getConnection()
             ->createQueryBuilder()
             ->select('*')
@@ -41,7 +40,6 @@ class V1Dot6Dot4 extends Base
 
             if (!empty($data['feedFields']['fileType'])) {
                 $this
-                    ->getSchema()
                     ->getConnection()
                     ->createQueryBuilder()
                     ->update('export_feed')
