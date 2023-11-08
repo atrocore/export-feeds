@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Export\DataConvertor;
 
+use Atro\Core\EventManager\Manager;
 use Espo\Core\Container;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
@@ -52,6 +53,15 @@ class Convertor
     {
         $result = [];
 
+        if (isset($configuration['script'])) {
+            $templateData = [
+                'record'        => $record,
+                'configuration' => $configuration
+            ];
+            $result[$configuration['column']] = $this->container->get('twig')->renderTemplate((string)$configuration['script'], $templateData);
+            return $result;
+        }
+
         $fieldConverterClass = '\Export\FieldConverters\\' . ucfirst($type) . 'Type';
         if (!class_exists($fieldConverterClass) || !is_a($fieldConverterClass, \Export\FieldConverters\AbstractType::class, true)) {
             $fieldConverterClass = '\Export\FieldConverters\VarcharType';
@@ -86,6 +96,11 @@ class Convertor
     public function getService(string $serviceName): Record
     {
         return $this->container->get('serviceFactory')->create($serviceName);
+    }
+
+    public function getEventManager(): Manager
+    {
+        return $this->container->get('eventManager');
     }
 
     public function translate(string $key, string $tab, string $scope): string

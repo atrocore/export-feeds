@@ -453,6 +453,7 @@ class ExportFeed extends Base
                 'entity'                    => $entityName,
                 'sortOrderField'            => $sheet->get('sortOrderField'),
                 'sortOrderDirection'        => $sheet->get('sortOrderDirection'),
+                'script'                    => $item->get('script') ?? null,
             ];
             if ($feed->get('type') === 'simple') {
                 $row['convertCollectionToString'] = true;
