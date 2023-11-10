@@ -28,7 +28,7 @@ class ValueWithUnitType extends AbstractType
         $attribute = $this->convertor->getAttributeById($record['attributeId']);
         $attributeType = $attribute->get('type');
 
-        $unitResult = $this->convertor->convertType('unit', $record, array_merge($configuration, ['field' => 'valueUnit', 'exportBy' => ['name']]))[$column];
+        $unitResult = $this->convertor->convertType('unit', $record, array_merge($configuration, ['field' => 'valueUnit', 'exportBy' => ['name'], 'markForNoRelation' => '']))[$column];
 
         if (in_array($attributeType, ['rangeFloat', 'rangeInt'])) {
             $type = $attributeType === 'rangeFloat' ? 'float' : 'int';
@@ -43,11 +43,13 @@ class ValueWithUnitType extends AbstractType
             } else if (!$this->isNullorEmptyResult($valueToResult)) {
                 $result[$column] = "<= $valueToResult";
             }
-
-            $result[$column] .= " $unitResult";
         } else {
             $valueResult = $this->convertor->convertType($attributeType, $record, array_merge($configuration, ['field' => 'value']))[$column];
-            $result[$column] = "$valueResult $unitResult";
+            $result[$column] = "$valueResult";
+        }
+
+        if (!empty($unitResult)) {
+            $result[$column] .= " $unitResult";
         }
     }
 
