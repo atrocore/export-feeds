@@ -326,6 +326,7 @@ abstract class AbstractExportType extends Base
 
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $limit;
+            $this->putProductAttributeValues($res['configuration'], $records);
             foreach ($records as $record) {
                 $rowData = [];
                 foreach ($res['configuration'] as $row) {
@@ -378,6 +379,35 @@ abstract class AbstractExportType extends Base
         fclose($file);
 
         return $res;
+    }
+
+    protected function putProductAttributeValues(array $configuration, array &$records): void
+    {
+        $attributesIds = [];
+        foreach ($configuration as $row) {
+            if (!empty($row['attributeId']) && $row['entity'] === 'Product') {
+                $attributesIds[] = $row['attributeId'];
+            }
+        }
+
+        if (!empty($attributesIds)) {
+            $pavWhere = [
+                [
+                    'type'      => 'in',
+                    'attribute' => 'productId',
+                    'value'     => array_column($records, 'id')
+                ],
+                [
+                    'type'      => 'in',
+                    'attribute' => 'attributeId',
+                    'value'     => $attributesIds
+                ]
+            ];
+            $res = $this->getService('ProductAttributeValue')->findEntities(['where' => $pavWhere, 'disableCount' => true]);
+            foreach ($records as $k => $record) {
+                $records[$k]['_pavCollection'] = $res['collection'];
+            }
+        }
     }
 
     protected function getDelimiter(): string
