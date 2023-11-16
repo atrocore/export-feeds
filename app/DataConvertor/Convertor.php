@@ -18,11 +18,13 @@ use Espo\Core\Container;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
+use Espo\ORM\EntityManager;
 use Espo\Services\Record;
 
 class Convertor
 {
     protected Container $container;
+    private array $cache = [];
 
     public function __construct(Container $container)
     {
@@ -97,6 +99,11 @@ class Convertor
         return $this->container->get('serviceFactory')->create($serviceName);
     }
 
+    public function getEntityManager(): EntityManager
+    {
+        return $this->container->get('entityManager');
+    }
+
     public function getEventManager(): Manager
     {
         return $this->container->get('eventManager');
@@ -109,7 +116,7 @@ class Convertor
 
     public function getAttributeById(string $attributeId): ?Entity
     {
-        return $this->container->get('entityManager')->getEntity('Attribute', $attributeId);
+        return $this->getEntityManager()->getEntity('Attribute', $attributeId);
     }
 
     public function getTypeForAttribute(string $attributeType, ?string $attributeValue): string
@@ -139,5 +146,15 @@ class Convertor
         }
 
         return $attributeType;
+    }
+
+    public function putCache(string $name, $value): void
+    {
+        $this->cache[$name] = $value;
+    }
+
+    public function getCache(string $name)
+    {
+        return $this->cache[$name] ?? null;
     }
 }
