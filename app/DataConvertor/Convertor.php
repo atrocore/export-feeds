@@ -118,11 +118,8 @@ class Convertor
         return $this->attributes[$attributeId];
     }
 
-    public function getTypeForAttribute(string $attributeId, ?string $attributeValue): string
+    public function getTypeForAttribute(string $attributeType, ?string $attributeValue): string
     {
-        $attribute = $this->getAttributeById($attributeId);
-        $type = $attribute->get('type');
-
         if ($attributeValue == null) {
             $attributeValue = 'value';
         }
@@ -131,7 +128,7 @@ class Convertor
             return 'varchar';
         }
 
-        if ($attributeValue === 'value' && in_array($type, ['int', 'float', 'rangeInt', 'rangeFloat', 'varchar'])) {
+        if ($attributeValue === 'value' && in_array($attributeType, ['int', 'float', 'rangeInt', 'rangeFloat', 'varchar'])) {
             return 'valueWithUnit';
         }
 
@@ -139,14 +136,14 @@ class Convertor
             return 'unit';
         }
 
-        if ($type === 'rangeInt') {
+        if ($attributeType === 'rangeInt') {
             return 'int';
         }
 
-        if ($type === 'rangeFloat') {
+        if ($attributeType === 'rangeFloat') {
             return 'float';
         }
 
-        return $type;
+        return $attributeType;
     }
 }
