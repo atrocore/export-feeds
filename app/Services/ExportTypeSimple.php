@@ -45,7 +45,6 @@ class ExportTypeSimple extends AbstractExportType
             throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
 
-
         return $attachment;
     }
 
