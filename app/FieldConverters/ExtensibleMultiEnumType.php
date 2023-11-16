@@ -37,7 +37,7 @@ class ExtensibleMultiEnumType extends LinkMultipleType
                     ->where(['extensibleEnumId' => $option->get('extensibleEnumId')])
                     ->count();
 
-                if ($count > $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
+                if ($count <= $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
                     $params['where'] = [['type' => 'equals', 'attribute' => 'extensibleEnumId', 'value' => $option->get('extensibleEnumId')]];
                     $options = $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
                 } else {
@@ -48,12 +48,12 @@ class ExtensibleMultiEnumType extends LinkMultipleType
                 foreach ($options['collection'] as $option) {
                     $cache[$option->get('id')] = $option;
                 }
+
+                $this->convertor->putCache('extensibleEnumOptions', $cache);
             }
 
             $result[] = $cache[$id];
         }
-
-        $this->convertor->putCache('extensibleEnumOptions', $cache);
 
         return ['collection' => new EntityCollection($result, 'ExtensibleEnumOption'), 'total' => -2];
     }
