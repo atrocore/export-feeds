@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Espo\ORM\EntityCollection;
+
 class ExtensibleMultiEnumType extends LinkMultipleType
 {
     protected function getForeignEntityName(string $entity, string $field): string
@@ -22,14 +24,37 @@ class ExtensibleMultiEnumType extends LinkMultipleType
 
     protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
     {
-        $params['where'] = [
-            [
-                'type'      => 'in',
-                'attribute' => 'id',
-                'value'     => $record[$field]
-            ]
-        ];
+        $cache = $this->convertor->getCache('extensibleEnumOptions') ?? [];
 
-        return $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
+        $result = [];
+
+        foreach ($record[$field] as $id) {
+            if (!isset($cache[$id])) {
+                $option = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->get($id);
+
+                $count = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')
+                    ->select(['id'])
+                    ->where(['extensibleEnumId' => $option->get('extensibleEnumId')])
+                    ->count();
+
+                if ($count > $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
+                    $params['where'] = [['type' => 'equals', 'attribute' => 'extensibleEnumId', 'value' => $option->get('extensibleEnumId')]];
+                    $options = $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
+                } else {
+                    $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $record[$field]]];
+                    $options = $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
+                }
+
+                foreach ($options['collection'] as $option) {
+                    $cache[$option->get('id')] = $option;
+                }
+            }
+
+            $result[] = $cache[$id];
+        }
+
+        $this->convertor->putCache('extensibleEnumOptions', $cache);
+
+        return ['collection' => new EntityCollection($result, 'ExtensibleEnumOption'), 'total' => -2];
     }
 }
