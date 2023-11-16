@@ -15,12 +15,9 @@ namespace Export\DataConvertor;
 
 use Espo\Core\EventManager\Event;
 use Espo\ORM\Entity;
-use Espo\ORM\EntityCollection;
 
 class ProductConvertor extends Convertor
 {
-    protected array $rowPavs = ['hash' => null, 'pavs' => null];
-
     public function convert(array $record, array $configuration): array
     {
         if (isset($configuration['attributeId'])) {
@@ -32,16 +29,6 @@ class ProductConvertor extends Convertor
 
     protected function convertAttributeValue(array $record, array $configuration): array
     {
-        /**
-         * Get from DB only for different row
-         */
-        $hash = md5(json_encode($record));
-        if ($this->rowPavs['hash'] !== $hash) {
-            $this->rowPavs['hash'] = $hash;
-            $productPavs = $this->getService('Product')->findLinkedEntities($record['id'], 'productAttributeValues', []);
-            $this->rowPavs['pavs'] = array_key_exists('collection', $productPavs) ? $productPavs['collection'] : new EntityCollection();
-        }
-
         $result = [];
 
         $result[$configuration['column']] = $configuration['markForNoRelation'];
@@ -49,25 +36,24 @@ class ProductConvertor extends Convertor
         /**
          * Exit if empty
          */
-        if (empty($this->rowPavs['pavs']) || count($this->rowPavs['pavs']) === 0) {
+        if (!isset($record['_pavCollection'])) {
             return $result;
         }
 
-        $pavs = $this->rowPavs['pavs'];
-
         $productAttribute = null;
 
-        foreach ($pavs as $pav) {
-            if ($this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
+        foreach ($record['_pavCollection'] as $pav) {
+            if ($pav->get('productId') === $record['id'] && $this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
                 $productAttribute = $pav;
                 break 1;
             }
         }
 
         if (!empty($configuration['channelId'])) {
-            foreach ($pavs as $pav) {
+            foreach ($record['_pavCollection'] as $pav) {
                 if (
-                    $this->isLanguageEquals($pav, $configuration)
+                    $pav->get('productId') === $record['id']
+                    && $this->isLanguageEquals($pav, $configuration)
                     && $pav->get('attributeId') == $configuration['attributeId']
                     && $pav->get('scope') == 'Channel'
                     && $pav->get('channelId') == $configuration['channelId']
