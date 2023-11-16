@@ -24,8 +24,6 @@ class Convertor
 {
     protected Container $container;
 
-    protected array $attributes = [];
-
     public function __construct(Container $container)
     {
         $this->container = $container;
@@ -111,11 +109,7 @@ class Convertor
 
     public function getAttributeById(string $attributeId): ?Entity
     {
-        if (!isset($this->attributes[$attributeId])) {
-            $this->attributes[$attributeId] = $this->container->get('entityManager')->getEntity('Attribute', $attributeId);
-        }
-
-        return $this->attributes[$attributeId];
+        return $this->container->get('entityManager')->getEntity('Attribute', $attributeId);
     }
 
     public function getTypeForAttribute(string $attributeType, ?string $attributeValue): string
