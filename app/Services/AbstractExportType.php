@@ -208,6 +208,7 @@ abstract class AbstractExportType extends Base
         }
 
         $params = $this->getSelectParams();
+        $params['disableCount'] = true;
         $params['offset'] = $offset;
         $params['maxSize'] = $this->data['limit'];
         $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
@@ -403,7 +404,11 @@ abstract class AbstractExportType extends Base
                     'value'     => $attributesIds
                 ]
             ];
-            $res = $this->getService('ProductAttributeValue')->findEntities(['where' => $pavWhere, 'disableCount' => true]);
+
+            $service = $this->getService('ProductAttributeValue');
+            $service->isExport = true;
+
+            $res = $service->findEntities(['where' => $pavWhere, 'disableCount' => true]);
             foreach ($records as $k => $record) {
                 $records[$k]['_pavCollection'] = $res['collection'];
             }
@@ -447,7 +452,10 @@ abstract class AbstractExportType extends Base
 
     protected function getEntityService(): Record
     {
-        return $this->getService($this->data['feed']['entity']);
+        $service = $this->getService($this->data['feed']['entity']);
+        $service->isExport = true;
+
+        return $service;
     }
 
     protected function getConfig(): Config
