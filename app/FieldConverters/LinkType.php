@@ -33,7 +33,7 @@ class LinkType extends AbstractType
                 $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
-                        $foreign = $this->convertor->getEntity((string)$foreignEntity, $linkId);
+                        $foreign = $this->getEntity($foreignEntity, $linkId);
                     } catch (\Throwable $e) {
                         $GLOBALS['log']->error('Export. Can not get foreign entity: ' . $e->getMessage());
                     }
@@ -204,5 +204,10 @@ class LinkType extends AbstractType
         }
 
         return false;
+    }
+
+    protected function getEntity(string $scope, string $id)
+    {
+        return $this->convertor->getEntity($scope, $id);
     }
 }
