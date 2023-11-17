@@ -30,6 +30,9 @@ class ExtensibleMultiEnumType extends LinkMultipleType
 
         foreach ($record[$field] as $id) {
             if (!isset($cache[$id])) {
+                $service = $this->convertor->getService('ExtensibleEnumOption');
+                $service->isExport = true;
+
                 $option = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->get($id);
 
                 $count = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')
@@ -39,10 +42,10 @@ class ExtensibleMultiEnumType extends LinkMultipleType
 
                 if ($count <= $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
                     $params['where'] = [['type' => 'equals', 'attribute' => 'extensibleEnumId', 'value' => $option->get('extensibleEnumId')]];
-                    $options = $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
+                    $options = $service->findEntities($params);
                 } else {
                     $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $record[$field]]];
-                    $options = $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
+                    $options = $service->findEntities($params);
                 }
 
                 foreach ($options['collection'] as $option) {
