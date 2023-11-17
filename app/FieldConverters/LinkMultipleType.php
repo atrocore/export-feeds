@@ -81,6 +81,8 @@ class LinkMultipleType extends LinkType
             $params['where'] = !empty($configuration['searchFilter']['where']) ? $configuration['searchFilter']['where'] : [];
         }
 
+        $params['disableCount'] = true;
+
         try {
             $foreignResult = $this->findLinkedEntities($entity, $record, $field, $params);
         } catch (\Throwable $e) {

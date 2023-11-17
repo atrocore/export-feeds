@@ -208,6 +208,7 @@ abstract class AbstractExportType extends Base
         }
 
         $params = $this->getSelectParams();
+        $params['disableCount'] = true;
         $params['offset'] = $offset;
         $params['maxSize'] = $this->data['limit'];
         $params['withDeleted'] = !empty($this->data['feed']['data']['withDeleted']);
@@ -326,6 +327,7 @@ abstract class AbstractExportType extends Base
 
         while (!empty($records = $this->getRecords($offset))) {
             $offset = $offset + $limit;
+            $this->putProductAttributeValues($res['configuration'], $records);
             foreach ($records as $record) {
                 $rowData = [];
                 foreach ($res['configuration'] as $row) {
@@ -380,6 +382,39 @@ abstract class AbstractExportType extends Base
         return $res;
     }
 
+    protected function putProductAttributeValues(array $configuration, array &$records): void
+    {
+        $attributesIds = [];
+        foreach ($configuration as $row) {
+            if (!empty($row['attributeId']) && $row['entity'] === 'Product') {
+                $attributesIds[] = $row['attributeId'];
+            }
+        }
+
+        if (!empty($attributesIds)) {
+            $pavWhere = [
+                [
+                    'type'      => 'in',
+                    'attribute' => 'productId',
+                    'value'     => array_column($records, 'id')
+                ],
+                [
+                    'type'      => 'in',
+                    'attribute' => 'attributeId',
+                    'value'     => $attributesIds
+                ]
+            ];
+
+            $service = $this->getService('ProductAttributeValue');
+            $service->isExport = true;
+
+            $res = $service->findEntities(['where' => $pavWhere, 'disableCount' => true]);
+            foreach ($records as $k => $record) {
+                $records[$k]['_pavCollection'] = $res['collection'];
+            }
+        }
+    }
+
     protected function getDelimiter(): string
     {
         $delimiter = empty($this->data['feed']['csvFieldDelimiter']) ? ';' : $this->data['feed']['csvFieldDelimiter'];
@@ -417,7 +452,10 @@ abstract class AbstractExportType extends Base
 
     protected function getEntityService(): Record
     {
-        return $this->getService($this->data['feed']['entity']);
+        $service = $this->getService($this->data['feed']['entity']);
+        $service->isExport = true;
+
+        return $service;
     }
 
     protected function getConfig(): Config

@@ -29,4 +29,35 @@ class ExtensibleEnumType extends LinkType
     {
         return true;
     }
+
+    public function getEntity(string $scope, string $id)
+    {
+        $cache = $this->convertor->getCache('extensibleEnumOptions') ?? [];
+
+        if (!isset($cache[$id])) {
+            $service = $this->convertor->getService('ExtensibleEnumOption');
+            $service->isExport = true;
+
+            $option = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->get($id);
+
+            $count = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')
+                ->select(['id'])
+                ->where(['extensibleEnumId' => $option->get('extensibleEnumId')])
+                ->count();
+
+            if ($count <= $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
+                $params['where'] = [['type' => 'equals', 'attribute' => 'extensibleEnumId', 'value' => $option->get('extensibleEnumId')]];
+                $options = $service->findEntities($params);
+                foreach ($options['collection'] as $option) {
+                    $cache[$option->get('id')] = $option;
+                }
+            } else {
+                $cache[$id] = $service->getEntity($id);
+            }
+
+            $this->convertor->putCache('extensibleEnumOptions', $cache);
+        }
+
+        return $cache[$id];
+    }
 }

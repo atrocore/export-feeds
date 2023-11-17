@@ -18,13 +18,13 @@ use Espo\Core\Container;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
+use Espo\ORM\EntityManager;
 use Espo\Services\Record;
 
 class Convertor
 {
     protected Container $container;
-
-    protected array $attributes = [];
+    private array $cache = [];
 
     public function __construct(Container $container)
     {
@@ -99,6 +99,11 @@ class Convertor
         return $this->container->get('serviceFactory')->create($serviceName);
     }
 
+    public function getEntityManager(): EntityManager
+    {
+        return $this->container->get('entityManager');
+    }
+
     public function getEventManager(): Manager
     {
         return $this->container->get('eventManager');
@@ -111,18 +116,11 @@ class Convertor
 
     public function getAttributeById(string $attributeId): ?Entity
     {
-        if (!isset($this->attributes[$attributeId])) {
-            $this->attributes[$attributeId] = $this->container->get('entityManager')->getEntity('Attribute', $attributeId);
-        }
-
-        return $this->attributes[$attributeId];
+        return $this->getEntityManager()->getEntity('Attribute', $attributeId);
     }
 
-    public function getTypeForAttribute(string $attributeId, ?string $attributeValue): string
+    public function getTypeForAttribute(string $attributeType, ?string $attributeValue): string
     {
-        $attribute = $this->getAttributeById($attributeId);
-        $type = $attribute->get('type');
-
         if ($attributeValue == null) {
             $attributeValue = 'value';
         }
@@ -131,7 +129,7 @@ class Convertor
             return 'varchar';
         }
 
-        if ($attributeValue === 'value' && in_array($type, ['int', 'float', 'rangeInt', 'rangeFloat', 'varchar'])) {
+        if ($attributeValue === 'value' && in_array($attributeType, ['int', 'float', 'rangeInt', 'rangeFloat', 'varchar'])) {
             return 'valueWithUnit';
         }
 
@@ -139,14 +137,24 @@ class Convertor
             return 'unit';
         }
 
-        if ($type === 'rangeInt') {
+        if ($attributeType === 'rangeInt') {
             return 'int';
         }
 
-        if ($type === 'rangeFloat') {
+        if ($attributeType === 'rangeFloat') {
             return 'float';
         }
 
-        return $type;
+        return $attributeType;
+    }
+
+    public function putCache(string $name, $value): void
+    {
+        $this->cache[$name] = $value;
+    }
+
+    public function getCache(string $name)
+    {
+        return $this->cache[$name] ?? null;
     }
 }
