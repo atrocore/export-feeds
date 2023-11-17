@@ -55,17 +55,22 @@ class ExportTypeSimple extends AbstractExportType
         $templateData['feedData'] = $this->data['feed'];
 
         $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => $template]));
-        foreach ($this->getMetadata()->get(['app', 'twigFilters'], []) as $alias => $className) {
+
+        // Merge basic filters/functions with export filters/functions
+        $filters = array_merge($this->getMetadata()->get(['twig', 'filters'], []), $this->getMetadata()->get(['app', 'twigFilters'], []));
+        $functions = array_merge($this->getMetadata()->get(['twig', 'functions'], []), $this->getMetadata()->get(['app', 'twigFunctions'], []));
+
+        foreach ($filters as $alias => $className) {
             $filter = $this->getContainer()->get($className);
-            if ($filter instanceof AbstractTwigFilter) {
+            if ($filter instanceof \Atro\Core\Twig\AbstractTwigFilter) {
                 $filter->setTemplateData($templateData);
                 $twig->addFilter(new TwigFilter($alias, [$filter, 'filter']));
             }
         }
 
-        foreach ($this->getMetadata()->get(['app', 'twigFunctions'], []) as $alias => $className) {
+        foreach ($functions as $alias => $className) {
             $twigFunction = $this->getContainer()->get($className);
-            if ($twigFunction instanceof AbstractTwigFunction && method_exists($twigFunction, 'run')) {
+            if ($twigFunction instanceof \Atro\Core\Twig\AbstractTwigFunction && method_exists($twigFunction, 'run')) {
                 $twigFunction->setTemplateData($templateData);
                 $twig->addFunction(new TwigFunction($alias, [$twigFunction, 'run']));
             }
