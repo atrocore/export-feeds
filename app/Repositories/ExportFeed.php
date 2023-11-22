@@ -113,6 +113,27 @@ class ExportFeed extends Base
         $this->getEntityManager()->getRepository('ExportConfiguratorItem')->where([lcfirst($entityType) . 'Id' => $id])->removeCollection();
     }
 
+    public function countRelated(Entity $entity, $relationName, array $params = []): int
+    {
+        if ($relationName == 'exportJobs') {
+            $connection = $this->getConnection();
+            $qb = $connection->createQueryBuilder();
+
+            $res = $qb
+                ->select('COUNT(id) AS count')
+                ->from($connection->quoteIdentifier('export_job'))
+                ->where('export_feed_id = :export_feed_id')
+                ->andWhere('deleted = :false')
+                ->setParameter('export_feed_id', $entity->id)
+                ->setParameter('false', false, ParameterType::BOOLEAN)
+                ->fetchAssociative();
+
+            return (int)($res['count'] ?? 0);
+        }
+
+        return parent::countRelated($entity, $relationName, $params);
+    }
+
     protected function beforeSave(Entity $entity, array $options = [])
     {
         $fetchedEntity = $entity->getFeedField('entity');
