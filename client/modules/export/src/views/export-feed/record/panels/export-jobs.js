@@ -41,6 +41,11 @@ Espo.define('export:views/export-feed/record/panels/export-jobs', 'views/record/
             });
         },
 
+        actionRefresh() {
+            this.pauseRefreshInterval = true;
+            this.collection.fetch().then(() => this.pauseRefreshInterval = false);
+        },
+
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
