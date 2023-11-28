@@ -11,39 +11,20 @@
 Espo.define('export:views/export-feed/record/panels/export-jobs', 'views/record/panels/relationship',
     Dep => Dep.extend({
 
-        refreshIntervalGap: 3000,
-
-        refreshInterval: null,
-
-        pauseRefreshInterval: false,
-
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenToOnce(this, 'after:render', () => {
-                if (this.collection && this.hasPanel()) {
-                    this.refreshInterval = window.setInterval(() => {
-                        if (!this.pauseRefreshInterval && $(`div[data-name='exportJobs'] .open a[data-action='removeRelated']`).length === 0) {
-                            this.actionRefresh();
-                        }
-                    }, this.refreshIntervalGap);
-
-                    this.listenTo(this.collection, 'pauseRefreshInterval', value => {
-                        this.pauseRefreshInterval = value;
-                    });
+            let timeout = null;
+            this.listenTo(this.collection, 'sync', () => {
+                if (timeout !== null) {
+                    clearTimeout(timeout);
                 }
+                timeout = setTimeout(() => {
+                    if (this.hasPanel()) {
+                        this.collection.fetch();
+                    }
+                }, 5000);
             });
-
-            this.listenToOnce(this, 'remove', () => {
-                if (this.refreshInterval) {
-                    window.clearInterval(this.refreshInterval);
-                }
-            });
-        },
-
-        actionRefresh() {
-            this.pauseRefreshInterval = true;
-            this.collection.fetch().then(() => this.pauseRefreshInterval = false);
         },
 
         afterRender() {
