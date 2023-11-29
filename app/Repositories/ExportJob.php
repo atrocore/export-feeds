@@ -19,6 +19,8 @@ use Espo\ORM\Entity;
 
 class ExportJob extends Base
 {
+    protected bool $cacheable = false;
+
     public function getExportJob(Entity $exportJob): ?Entity
     {
         if (empty($exportJob->get('queueItemId'))) {
