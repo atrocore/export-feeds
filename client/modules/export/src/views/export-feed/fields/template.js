@@ -8,7 +8,7 @@
  * @license    GPLv3 (https://www.gnu.org/licenses/)
  */
 
-Espo.define('export:views/export-feed/fields/template', 'views/fields/text', Dep => {
+Espo.define('export:views/export-feed/fields/template', 'views/fields/script', Dep => {
 
     return Dep.extend({
 
