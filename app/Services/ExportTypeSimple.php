@@ -33,6 +33,8 @@ class ExportTypeSimple extends AbstractExportType
 
     public function runExport(ExportJob $exportJob): Attachment
     {
+        $this->getMemoryStorage()->set('exportJobId', $exportJob->get('id'));
+
         $attachmentCreatorName = 'export' . ucfirst($this->data['feed']['fileType']);
         if (!method_exists($this, $attachmentCreatorName)) {
             throw new Error('Unsupported file type.');

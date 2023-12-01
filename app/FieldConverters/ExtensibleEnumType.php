@@ -36,7 +36,6 @@ class ExtensibleEnumType extends LinkType
 
         if (!isset($cache[$id])) {
             $service = $this->convertor->getService('ExtensibleEnumOption');
-            $service->isExport = true;
 
             $option = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->get($id);
 

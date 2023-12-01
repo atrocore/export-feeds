@@ -406,7 +406,6 @@ abstract class AbstractExportType extends Base
             ];
 
             $service = $this->getService('ProductAttributeValue');
-            $service->isExport = true;
 
             $res = $service->findEntities(['where' => $pavWhere, 'disableCount' => true]);
             foreach ($records as $k => $record) {
@@ -453,7 +452,6 @@ abstract class AbstractExportType extends Base
     protected function getEntityService(): Record
     {
         $service = $this->getService($this->data['feed']['entity']);
-        $service->isExport = true;
 
         return $service;
     }
