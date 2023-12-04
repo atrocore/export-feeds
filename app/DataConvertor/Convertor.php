@@ -14,10 +14,12 @@ declare(strict_types=1);
 namespace Export\DataConvertor;
 
 use Atro\Core\EventManager\Manager;
+use Atro\Core\KeyValueStorages\StorageInterface;
 use Espo\Core\Container;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
+use Espo\ORM\EntityCollection;
 use Espo\ORM\EntityManager;
 use Espo\Services\Record;
 
@@ -25,6 +27,7 @@ class Convertor
 {
     protected Container $container;
     private array $cache = [];
+    protected string $keyName = 'linked_entities_keys';
 
     public function __construct(Container $container)
     {
@@ -79,9 +82,121 @@ class Convertor
         return $this->getService($scope)->getEntity($id);
     }
 
-    public function findLinkedEntities(string $scope, string $id, string $field, array $params)
+    public function findLinkedEntities(array $records, string $scope, string $id, string $field, array $params)
     {
-        return $this->getService($scope)->findLinkedEntities($id, $field, $params);
+        $relEntityType = $this->getMetadata()->get(['entityDefs', $scope, 'links', $field, 'entity']);
+
+        $collection = new EntityCollection([], $relEntityType);
+
+        // load to memory
+        $this->loadToMemory($records, $scope, $field, $params);
+
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->keyName) ?? [];
+
+        if (!isset($linkedEntitiesKeys[$scope][$field])) {
+            return ['collection' => $collection];
+        }
+
+        // find current record
+        $record = null;
+        foreach ($records as $v) {
+            if ($id === $v['id']) {
+                $record = $v;
+                break;
+            }
+        }
+
+        if (empty($record)) {
+            throw new \Error("Cannot find $scope by id $id.");
+        }
+
+        $entityRepository = $this->getEntityManager()->getRepository($scope);
+        $keySet = $entityRepository->getMapper()->getKeys($entityRepository->get(), $field);
+
+        $nearKey = $keySet['nearKey'] ?? $keySet['foreignKey'];
+
+        $number = 0;
+
+        foreach ($linkedEntitiesKeys[$scope][$field] as $key) {
+            $relEntity = $this->getMemoryStorage()->get($key);
+            if ($relEntity->get($nearKey) !== $record[$keySet['key']]) {
+                continue;
+            }
+
+            if (isset($params['offset']) && $number < $params['offset']) {
+                $number++;
+                continue;
+            }
+
+            if (isset($params['maxSize']) && $collection->count() >= $params['maxSize']) {
+                break;
+            }
+
+            $collection->append($relEntity);
+        }
+
+        return ['collection' => $collection];
+    }
+
+    protected function loadToMemory(array $records, string $entityType, string $relationName, array $params): void
+    {
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->keyName) ?? [];
+        if (isset($linkedEntitiesKeys[$entityType][$relationName])) {
+            return;
+        }
+
+        $params['offset'] = 0;
+        $params['maxSize'] = $this->getConfig()->get('exportMemoryItemsCount', 10000);
+
+        $linkDefs = $this->getMetadata()->get(['entityDefs', $entityType, 'links', $relationName]);
+
+        if (!isset($linkDefs['entity'])) {
+            throw new \Error("Metadata error. No 'entity' parameter for '$relationName' relation.");
+        }
+
+        if ($linkDefs['type'] === 'belongsTo') {
+            $params['where'][] = [
+                'type'      => 'in',
+                'attribute' => 'id',
+                'value'     => array_column($records, lcfirst($linkDefs['entity']) . 'Id')
+            ];
+        } else {
+            if (empty($linkDefs['foreign'])) {
+                throw new \Error("Metadata error. No 'foreign' parameter for '$relationName' relation.");
+            }
+            $params['where'][] = [
+                'type'      => 'linkedWith',
+                'attribute' => $linkDefs['foreign'],
+                'value'     => array_column($records, 'id')
+            ];
+        }
+
+        $res = $this->getService($linkDefs['entity'])->findEntities($params);
+
+        foreach ($res['collection'] as $re) {
+            $itemKey = $this->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
+            $this->getMemoryStorage()->set($itemKey, $re);
+            $linkedEntitiesKeys[$entityType][$relationName][] = $itemKey;
+        }
+        $this->getMemoryStorage()->set($this->keyName, $linkedEntitiesKeys);
+    }
+
+    public function clearMemoryOfLoadedEntities(): void
+    {
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->keyName) ?? [];
+        foreach ($linkedEntitiesKeys as $entityType => $relations) {
+            foreach ($relations as $relation => $keys) {
+                foreach ($keys as $key) {
+                    $this->getMemoryStorage()->delete($key);
+                }
+            }
+        }
+        $this->getMemoryStorage()->delete($this->keyName);
+    }
+
+    public function getMemoryStorage(): StorageInterface
+    {
+        return $this->container->get('memoryStorage');
     }
 
     public function getMetadata(): Metadata
