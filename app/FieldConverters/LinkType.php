@@ -74,7 +74,7 @@ class LinkType extends AbstractType
 
                         $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
 
-                        $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
+                        $this->prepareExportByField($this->getMemoryStorage()->get('exportRecordsPart') ?? [], $foreignEntity, $v, $foreignType, $foreignData);
 
                         $foreignConfiguration = array_merge($configuration, ['field' => $v]);
                         $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
@@ -102,7 +102,7 @@ class LinkType extends AbstractType
         }
     }
 
-    protected function prepareExportByField(string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
+    protected function prepareExportByField(array $records, string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
     {
         $exportByFieldParts = explode(".", $configuratorField);
         $parts = count($exportByFieldParts);
@@ -110,14 +110,14 @@ class LinkType extends AbstractType
             return;
         }
 
-        $foreignLinkData = $this->convertor->findLinkedEntities($foreignEntity, $foreignData['id'], $exportByFieldParts[0], []);
-        if (empty($foreignLinkData['total'])) {
+        $foreignLinkData = $this->convertor->findLinkedEntities($records, $foreignEntity, $foreignData['id'], $exportByFieldParts[0], ['disableCount' => true]);
+        if (empty($foreignLinkData['collection'][0])) {
             $foreignData[$configuratorField] = null;
             return;
         }
 
         if ($parts === 3) {
-            $foreignLinkData = $this->convertor->findLinkedEntities($foreignLinkData['collection'][0]->getEntityType(), $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], []);
+            $foreignLinkData = $this->convertor->getService($foreignLinkData['collection'][0]->getEntityType())->findLinkedEntities($foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], ['disableCount' => true]);
             if (empty($foreignLinkData['total'])) {
                 $foreignData[$configuratorField] = null;
                 return;
