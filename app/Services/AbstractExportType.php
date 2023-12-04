@@ -326,6 +326,7 @@ abstract class AbstractExportType extends Base
         $offset = $this->data['offset'];
 
         while (!empty($records = $this->getRecords($offset))) {
+            $this->getMemoryStorage()->set('exportRecordsPart', $records);
             $offset = $offset + $limit;
             $this->putProductAttributeValues($res['configuration'], $records);
             foreach ($records as $record) {
@@ -374,7 +375,7 @@ abstract class AbstractExportType extends Base
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $res['count']++;
             }
-
+            $this->convertor->clearMemoryOfLoadedEntities();
         }
 
         fclose($file);
