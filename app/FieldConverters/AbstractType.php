@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Atro\Core\KeyValueStorages\StorageInterface;
+use Espo\Core\Utils\Metadata;
 use Export\DataConvertor\Convertor;
 
 abstract class AbstractType
@@ -25,4 +27,14 @@ abstract class AbstractType
     }
 
     abstract public function convertToString(array &$result, array $record, array $configuration): void;
+
+    protected function getMemoryStorage(): StorageInterface
+    {
+        return $this->convertor->getEntityManager()->getMemoryStorage();
+    }
+
+    protected function getMetadata(): Metadata
+    {
+        return $this->convertor->getMetadata();
+    }
 }
