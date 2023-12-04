@@ -131,7 +131,7 @@ class LinkMultipleType extends LinkType
 
                 $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
 
-                $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
+                $this->prepareExportByField($foreignList, $foreignEntity, $v, $foreignType, $foreignData);
 
                 // prepare type for product attribute value
                 if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
@@ -182,6 +182,6 @@ class LinkMultipleType extends LinkType
 
     protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
     {
-        return $this->convertor->findLinkedEntities($entity, $record['id'], $field, $params);
+        return $this->convertor->findLinkedEntities($this->getMemoryStorage()->get('exportRecordsPart') ?? [], $entity, $record['id'], $field, $params);
     }
 }
