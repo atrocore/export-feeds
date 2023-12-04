@@ -41,6 +41,7 @@ class ExtensibleMultiEnumType extends LinkMultipleType
 
                 if ($count <= $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
                     $params['where'] = [['type' => 'equals', 'attribute' => 'extensibleEnumId', 'value' => $option->get('extensibleEnumId')]];
+                    $params['maxSize'] = $count;
                     $options = $service->findEntities($params);
                 } else {
                     $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $record[$field]]];
