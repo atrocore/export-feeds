@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Espo\ORM\Entity;
+
 class LinkType extends AbstractType
 {
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -53,10 +55,12 @@ class LinkType extends AbstractType
                             $result['__assetPaths'][] = $path;
                         }
                         $this->convertor->getService('Asset')->prepareEntityForOutput($foreign);
-                    } else if ($foreignEntity === 'Asset') {
-                        if ($configuration['zip']) {
-                            $attachment = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
-                            $result['__assetPaths'][] = $attachment->getFilePath();
+                    } else {
+                        if ($foreignEntity === 'Asset') {
+                            if ($configuration['zip']) {
+                                $attachment = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
+                                $result['__assetPaths'][] = $attachment->getFilePath();
+                            }
                         }
                     }
 
@@ -117,7 +121,9 @@ class LinkType extends AbstractType
         }
 
         if ($parts === 3) {
-            $foreignLinkData = $this->convertor->getService($foreignLinkData['collection'][0]->getEntityType())->findLinkedEntities($foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], ['disableCount' => true]);
+            $foreignLinkData = $this->convertor->getService($foreignLinkData['collection'][0]->getEntityType())->findLinkedEntities(
+                $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], ['disableCount' => true]
+            );
             if (empty($foreignLinkData['total'])) {
                 $foreignData[$configuratorField] = null;
                 return;
@@ -206,7 +212,7 @@ class LinkType extends AbstractType
         return false;
     }
 
-    protected function getEntity(string $scope, string $id)
+    protected function getEntity(string $scope, string $id): ?Entity
     {
         return $this->convertor->getEntity($scope, $id);
     }
