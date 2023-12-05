@@ -393,6 +393,16 @@ abstract class AbstractExportType extends Base
         }
 
         if (!empty($attributesIds)) {
+            // load attributes to memory
+            if (empty($this->getMemoryStorage()->get('attributesLoaded'))) {
+                $attributeRepository = $this->getEntityManager()->getRepository('Attribute');
+                $attributes = $attributeRepository->where(['id' => $attributesIds])->find();
+                foreach ($attributes as $attribute) {
+                    $attributeRepository->putToCache($attribute->get('id'), $attribute);
+                }
+                $this->getMemoryStorage()->set('attributesLoaded', true);
+            }
+
             $pavWhere = [
                 [
                     'type'      => 'in',
@@ -406,9 +416,7 @@ abstract class AbstractExportType extends Base
                 ]
             ];
 
-            $service = $this->getService('ProductAttributeValue');
-
-            $res = $service->findEntities(['where' => $pavWhere, 'disableCount' => true]);
+            $res = $this->getService('ProductAttributeValue')->findEntities(['where' => $pavWhere, 'disableCount' => true]);
             $this->getMemoryStorage()->set('pavCollection', $res['collection']);
         }
     }
