@@ -182,6 +182,8 @@ class LinkMultipleType extends LinkType
 
     protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
     {
-        return $this->convertor->findLinkedEntities($this->getMemoryStorage()->get('exportRecordsPart') ?? [], $entity, $record['id'], $field, $params);
+        $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
+
+        return $this->convertor->findLinkedEntities($records, $entity, $record['id'], $field, $params);
     }
 }
