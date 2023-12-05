@@ -34,6 +34,8 @@ class ExtensibleEnumType extends LinkType
 
     public function getEntity(string $scope, string $id): ?Entity
     {
-        return $this->convertor->getService('ExtensibleEnumOption')->getEntity($id);
+        $itemKey = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->getCacheKey($id);
+
+        return $this->getMemoryStorage()->get($itemKey);
     }
 }
