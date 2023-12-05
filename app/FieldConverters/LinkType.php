@@ -35,6 +35,7 @@ class LinkType extends AbstractType
                 $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
+                        $this->loadLinkDataToMemory($record, $entity, $field);
                         $foreign = $this->getEntity($foreignEntity, $linkId);
                     } catch (\Throwable $e) {
                         $GLOBALS['log']->error('Export. Can not get foreign entity: ' . $e->getMessage());
@@ -212,8 +213,65 @@ class LinkType extends AbstractType
         return false;
     }
 
+    protected function loadLinkDataToMemory(array $record, string $entity, string $field): string
+    {
+        $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
+
+        $fieldName = $this->getFieldName($field);
+
+        $key = $field;
+
+        // if PAV
+        if (!empty($record['attributeType'])) {
+            $records = [];
+            foreach ($this->getMemoryStorage()->get('pavCollection') as $pav) {
+                if ($pav->get('attributeId') === $record['attributeId']) {
+                    $records[] = $pav->toArray();
+                }
+            }
+
+            $key .= '_' . $record['attributeId'];
+        }
+
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+
+        if (isset($linkedEntitiesKeys[$entity][$key])) {
+            return $key;
+        }
+
+        $foreignEntity = $this->getForeignEntityName($entity, $field);
+
+        $ids = [];
+        foreach ($records as $v) {
+            $val = $v[$fieldName];
+            if (is_array($val)) {
+                $ids = array_merge($ids, $val);
+            } else {
+                $ids[] = $val;
+            }
+        }
+
+        $params['offset'] = 0;
+        $params['maxSize'] = $this->convertor->getConfig()->get('exportMemoryItemsCount', 10000);
+        $params['disableCount'] = true;
+        $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $ids]];
+
+        $res = $this->convertor->getService($foreignEntity)->findEntities($params);
+
+        foreach ($res['collection'] as $re) {
+            $itemKey = $this->convertor->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
+            $this->getMemoryStorage()->set($itemKey, $re);
+            $linkedEntitiesKeys[$entity][$key][] = $itemKey;
+        }
+        $this->getMemoryStorage()->set($this->convertor->keyName, $linkedEntitiesKeys);
+
+        return $key;
+    }
+
     protected function getEntity(string $scope, string $id): ?Entity
     {
-        return $this->convertor->getEntity($scope, $id);
+        $itemKey = $this->convertor->getEntityManager()->getRepository($scope)->getCacheKey($id);
+
+        return $this->getMemoryStorage()->get($itemKey);
     }
 }
