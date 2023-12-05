@@ -33,6 +33,8 @@ class ExportTypeSimple extends AbstractExportType
 
     public function runExport(ExportJob $exportJob): Attachment
     {
+        $GLOBALS['debugSQL'] = [];
+
         $this->getMemoryStorage()->set('exportJobId', $exportJob->get('id'));
 
         $attachmentCreatorName = 'export' . ucfirst($this->data['feed']['fileType']);
@@ -46,6 +48,13 @@ class ExportTypeSimple extends AbstractExportType
             $this->getEntityManager()->removeEntity($attachment);
             throw new BadRequest($this->translate('noDataFound', 'exceptions', 'ExportFeed'));
         }
+
+        // count of queries 70
+        // count of queries 57 (1)
+        // count of queries 10 (2)
+
+        $qqq = $GLOBALS['debugSQL'];
+        $www = $this->getMemoryStorage()->getKeys();
 
         return $attachment;
     }

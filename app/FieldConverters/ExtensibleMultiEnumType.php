@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
-use Espo\ORM\EntityCollection;
-
 class ExtensibleMultiEnumType extends LinkMultipleType
 {
     protected function getForeignEntityName(string $entity, string $field): string
@@ -24,6 +22,10 @@ class ExtensibleMultiEnumType extends LinkMultipleType
 
     protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
     {
+        echo '<pre>';
+        print_r('findLinkedEntities');
+        die();
+
         $cache = $this->convertor->getCache('extensibleEnumOptions') ?? [];
 
         $result = [];

@@ -409,9 +409,7 @@ abstract class AbstractExportType extends Base
             $service = $this->getService('ProductAttributeValue');
 
             $res = $service->findEntities(['where' => $pavWhere, 'disableCount' => true]);
-            foreach ($records as $k => $record) {
-                $records[$k]['_pavCollection'] = $res['collection'];
-            }
+            $this->getMemoryStorage()->set('pavCollection', $res['collection']);
         }
     }
 

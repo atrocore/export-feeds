@@ -32,6 +32,10 @@ class ExtensibleEnumType extends LinkType
 
     public function getEntity(string $scope, string $id)
     {
+        echo '<pre>';
+        print_r('getEntity');
+        die();
+
         $cache = $this->convertor->getCache('extensibleEnumOptions') ?? [];
 
         if (!isset($cache[$id])) {
