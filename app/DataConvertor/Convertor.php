@@ -26,7 +26,6 @@ use Espo\Services\Record;
 class Convertor
 {
     protected Container $container;
-    private array $cache = [];
     protected string $keyName = 'linked_entities_keys';
 
     public function __construct(Container $container)
@@ -261,15 +260,5 @@ class Convertor
         }
 
         return $attributeType;
-    }
-
-    public function putCache(string $name, $value): void
-    {
-        $this->cache[$name] = $value;
-    }
-
-    public function getCache(string $name)
-    {
-        return $this->cache[$name] ?? null;
     }
 }
