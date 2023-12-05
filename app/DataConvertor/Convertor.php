@@ -26,7 +26,7 @@ use Espo\Services\Record;
 class Convertor
 {
     protected Container $container;
-    protected string $keyName = 'linked_entities_keys';
+    public string $keyName = 'linked_entities_keys';
 
     public function __construct(Container $container)
     {

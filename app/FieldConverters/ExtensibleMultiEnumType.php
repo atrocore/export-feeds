@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Espo\ORM\EntityCollection;
+
 class ExtensibleMultiEnumType extends LinkMultipleType
 {
     protected function getForeignEntityName(string $entity, string $field): string
@@ -20,46 +22,67 @@ class ExtensibleMultiEnumType extends LinkMultipleType
         return 'ExtensibleEnumOption';
     }
 
-    protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
+    protected function findLinkedEntities(string $entity, array $record, string $field, array $params): array
     {
-        echo '<pre>';
-        print_r('findLinkedEntities');
-        die();
+        $collection = new EntityCollection([], 'ExtensibleEnumOption');
 
-        $cache = $this->convertor->getCache('extensibleEnumOptions') ?? [];
+        $key = 'extensibleEnumOptions';
 
-        $result = [];
+        // load to memory
+        $this->loadToMemory($entity, $record, $field, $params, $key);
 
-        foreach ($record[$field] as $id) {
-            if (!isset($cache[$id])) {
-                $service = $this->convertor->getService('ExtensibleEnumOption');
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
 
-                $option = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->get($id);
-
-                $count = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')
-                    ->select(['id'])
-                    ->where(['extensibleEnumId' => $option->get('extensibleEnumId')])
-                    ->count();
-
-                if ($count <= $this->convertor->getConfig()->get('maxCountOfCachedListOptions', 2000)) {
-                    $params['where'] = [['type' => 'equals', 'attribute' => 'extensibleEnumId', 'value' => $option->get('extensibleEnumId')]];
-                    $params['maxSize'] = $count;
-                    $options = $service->findEntities($params);
-                } else {
-                    $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $record[$field]]];
-                    $options = $service->findEntities($params);
-                }
-
-                foreach ($options['collection'] as $option) {
-                    $cache[$option->get('id')] = $option;
-                }
-
-                $this->convertor->putCache('extensibleEnumOptions', $cache);
-            }
-
-            $result[] = $cache[$id];
+        if (!isset($linkedEntitiesKeys[$entity][$key])) {
+            return ['collection' => $collection];
         }
 
-        return ['collection' => new EntityCollection($result, 'ExtensibleEnumOption'), 'total' => -2];
+        foreach ($linkedEntitiesKeys[$entity][$key] as $v) {
+            $option = $this->getMemoryStorage()->get($v);
+            foreach ($record[$field] as $id) {
+                if ($id === $option->get('id')) {
+                    $collection->append($option);
+                }
+            }
+        }
+
+        return ['collection' => $collection];
+    }
+
+    protected function loadToMemory(string $entity, array $record, string $field, array $params, string &$key): void
+    {
+        $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
+
+        // if PAV
+        if (!empty($record['attributeType'])) {
+            $records = [];
+            foreach ($this->getMemoryStorage()->get('pavCollection') as $pav) {
+                if ($pav->get('attributeId') === $record['attributeId']) {
+                    $records[] = $pav->toArray();
+                }
+            }
+            $key .= '_' . $record['attributeId'];
+        } else {
+            $key .= '_' . $field;
+        }
+
+        $optionsIds = [];
+        foreach ($records as $v) {
+            $optionsIds = array_merge($optionsIds, $v[$field]);
+        }
+
+        $params['offset'] = 0;
+        $params['maxSize'] = $this->convertor->getConfig()->get('exportMemoryItemsCount', 10000);
+        $params['disableCount'] = true;
+        $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $record[$field]]];
+
+        $res = $this->convertor->getService('ExtensibleEnumOption')->findEntities($params);
+
+        foreach ($res['collection'] as $re) {
+            $itemKey = $this->convertor->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
+            $this->getMemoryStorage()->set($itemKey, $re);
+            $linkedEntitiesKeys[$entity][$key][] = $itemKey;
+        }
+        $this->getMemoryStorage()->set($this->convertor->keyName, $linkedEntitiesKeys);
     }
 }

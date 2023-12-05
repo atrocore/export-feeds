@@ -180,7 +180,7 @@ class LinkMultipleType extends LinkType
         }
     }
 
-    protected function findLinkedEntities(string $entity, array $record, string $field, array $params)
+    protected function findLinkedEntities(string $entity, array $record, string $field, array $params): array
     {
         $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
 
