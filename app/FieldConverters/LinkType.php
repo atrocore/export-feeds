@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Espo\ORM\Entity;
+
 class LinkType extends AbstractType
 {
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -33,6 +35,7 @@ class LinkType extends AbstractType
                 $foreignEntity = $this->getForeignEntityName($entity, $field);
                 if (!empty($foreignEntity)) {
                     try {
+                        $this->loadLinkDataToMemory($record, $entity, $field);
                         $foreign = $this->getEntity($foreignEntity, $linkId);
                     } catch (\Throwable $e) {
                         $GLOBALS['log']->error('Export. Can not get foreign entity: ' . $e->getMessage());
@@ -53,10 +56,12 @@ class LinkType extends AbstractType
                             $result['__assetPaths'][] = $path;
                         }
                         $this->convertor->getService('Asset')->prepareEntityForOutput($foreign);
-                    } else if ($foreignEntity === 'Asset') {
-                        if ($configuration['zip']) {
-                            $attachment = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
-                            $result['__assetPaths'][] = $attachment->getFilePath();
+                    } else {
+                        if ($foreignEntity === 'Asset') {
+                            if ($configuration['zip']) {
+                                $attachment = $this->convertor->getEntity('Attachment', $foreign->get('fileId'));
+                                $result['__assetPaths'][] = $attachment->getFilePath();
+                            }
                         }
                     }
 
@@ -74,7 +79,7 @@ class LinkType extends AbstractType
 
                         $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
 
-                        $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
+                        $this->prepareExportByField($this->getMemoryStorage()->get('exportRecordsPart') ?? [], $foreignEntity, $v, $foreignType, $foreignData);
 
                         $foreignConfiguration = array_merge($configuration, ['field' => $v]);
                         $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
@@ -102,7 +107,7 @@ class LinkType extends AbstractType
         }
     }
 
-    protected function prepareExportByField(string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
+    protected function prepareExportByField(array $records, string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
     {
         $exportByFieldParts = explode(".", $configuratorField);
         $parts = count($exportByFieldParts);
@@ -110,14 +115,16 @@ class LinkType extends AbstractType
             return;
         }
 
-        $foreignLinkData = $this->convertor->findLinkedEntities($foreignEntity, $foreignData['id'], $exportByFieldParts[0], []);
-        if (empty($foreignLinkData['total'])) {
+        $foreignLinkData = $this->convertor->findLinkedEntities($records, $foreignEntity, $foreignData['id'], $exportByFieldParts[0], ['disableCount' => true]);
+        if (empty($foreignLinkData['collection'][0])) {
             $foreignData[$configuratorField] = null;
             return;
         }
 
         if ($parts === 3) {
-            $foreignLinkData = $this->convertor->findLinkedEntities($foreignLinkData['collection'][0]->getEntityType(), $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], []);
+            $foreignLinkData = $this->convertor->getService($foreignLinkData['collection'][0]->getEntityType())->findLinkedEntities(
+                $foreignLinkData['collection'][0]->get('id'), $exportByFieldParts[1], ['disableCount' => true]
+            );
             if (empty($foreignLinkData['total'])) {
                 $foreignData[$configuratorField] = null;
                 return;
@@ -206,8 +213,65 @@ class LinkType extends AbstractType
         return false;
     }
 
-    protected function getEntity(string $scope, string $id)
+    protected function loadLinkDataToMemory(array $record, string $entity, string $field): string
     {
-        return $this->convertor->getEntity($scope, $id);
+        $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
+
+        $fieldName = $this->getFieldName($field);
+
+        $key = $field;
+
+        // if PAV
+        if (!empty($record['attributeType'])) {
+            $records = [];
+            foreach ($this->getMemoryStorage()->get('pavCollection') as $pav) {
+                if ($pav->get('attributeId') === $record['attributeId']) {
+                    $records[] = $pav->toArray();
+                }
+            }
+
+            $key .= '_' . $record['attributeId'];
+        }
+
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+
+        if (isset($linkedEntitiesKeys[$entity][$key])) {
+            return $key;
+        }
+
+        $foreignEntity = $this->getForeignEntityName($entity, $field);
+
+        $ids = [];
+        foreach ($records as $v) {
+            $val = $v[$fieldName];
+            if (is_array($val)) {
+                $ids = array_merge($ids, $val);
+            } else {
+                $ids[] = $val;
+            }
+        }
+
+        $params['offset'] = 0;
+        $params['maxSize'] = $this->convertor->getConfig()->get('exportMemoryItemsCount', 10000);
+        $params['disableCount'] = true;
+        $params['where'] = [['type' => 'in', 'attribute' => 'id', 'value' => $ids]];
+
+        $res = $this->convertor->getService($foreignEntity)->findEntities($params);
+
+        foreach ($res['collection'] as $re) {
+            $itemKey = $this->convertor->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
+            $this->getMemoryStorage()->set($itemKey, $re);
+            $linkedEntitiesKeys[$entity][$key][] = $itemKey;
+        }
+        $this->getMemoryStorage()->set($this->convertor->keyName, $linkedEntitiesKeys);
+
+        return $key;
+    }
+
+    protected function getEntity(string $scope, string $id): ?Entity
+    {
+        $itemKey = $this->convertor->getEntityManager()->getRepository($scope)->getCacheKey($id);
+
+        return $this->getMemoryStorage()->get($itemKey);
     }
 }

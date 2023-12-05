@@ -326,6 +326,7 @@ abstract class AbstractExportType extends Base
         $offset = $this->data['offset'];
 
         while (!empty($records = $this->getRecords($offset))) {
+            $this->getMemoryStorage()->set('exportRecordsPart', $records);
             $offset = $offset + $limit;
             $this->putProductAttributeValues($res['configuration'], $records);
             foreach ($records as $record) {
@@ -374,7 +375,7 @@ abstract class AbstractExportType extends Base
                 fwrite($file, Json::encode($rowData) . PHP_EOL);
                 $res['count']++;
             }
-
+            $this->convertor->clearMemoryOfLoadedEntities();
         }
 
         fclose($file);
@@ -392,6 +393,16 @@ abstract class AbstractExportType extends Base
         }
 
         if (!empty($attributesIds)) {
+            // load attributes to memory
+            if (empty($this->getMemoryStorage()->get('attributesLoaded'))) {
+                $attributeRepository = $this->getEntityManager()->getRepository('Attribute');
+                $attributes = $attributeRepository->where(['id' => $attributesIds])->find();
+                foreach ($attributes as $attribute) {
+                    $attributeRepository->putToCache($attribute->get('id'), $attribute);
+                }
+                $this->getMemoryStorage()->set('attributesLoaded', true);
+            }
+
             $pavWhere = [
                 [
                     'type'      => 'in',
@@ -405,12 +416,8 @@ abstract class AbstractExportType extends Base
                 ]
             ];
 
-            $service = $this->getService('ProductAttributeValue');
-
-            $res = $service->findEntities(['where' => $pavWhere, 'disableCount' => true]);
-            foreach ($records as $k => $record) {
-                $records[$k]['_pavCollection'] = $res['collection'];
-            }
+            $res = $this->getService('ProductAttributeValue')->findEntities(['where' => $pavWhere, 'disableCount' => true]);
+            $this->getMemoryStorage()->set('pavCollection', $res['collection']);
         }
     }
 

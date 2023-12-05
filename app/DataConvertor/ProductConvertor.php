@@ -15,6 +15,7 @@ namespace Export\DataConvertor;
 
 use Espo\Core\EventManager\Event;
 use Espo\ORM\Entity;
+use Espo\ORM\EntityCollection;
 
 class ProductConvertor extends Convertor
 {
@@ -33,16 +34,18 @@ class ProductConvertor extends Convertor
 
         $result[$configuration['column']] = $configuration['markForNoRelation'];
 
+        $pavCollection = $this->getMemoryStorage()->get('pavCollection');
+
         /**
          * Exit if empty
          */
-        if (!isset($record['_pavCollection'])) {
+        if (!$pavCollection instanceof EntityCollection) {
             return $result;
         }
 
         $productAttribute = null;
 
-        foreach ($record['_pavCollection'] as $pav) {
+        foreach ($pavCollection as $pav) {
             if ($pav->get('productId') === $record['id'] && $this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
                 $productAttribute = $pav;
                 break 1;
@@ -50,7 +53,7 @@ class ProductConvertor extends Convertor
         }
 
         if (!empty($configuration['channelId'])) {
-            foreach ($record['_pavCollection'] as $pav) {
+            foreach ($pavCollection as $pav) {
                 if (
                     $pav->get('productId') === $record['id']
                     && $this->isLanguageEquals($pav, $configuration)
