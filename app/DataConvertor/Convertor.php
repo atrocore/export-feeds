@@ -109,8 +109,7 @@ class Convertor
             throw new \Error("Cannot find $scope by id $id.");
         }
 
-        $entityRepository = $this->getEntityManager()->getRepository($scope);
-        $keySet = $entityRepository->getMapper()->getKeys($entityRepository->get(), $field);
+        $keySet = $this->getKeySet($scope, $field);
 
         $nearKey = $keySet['nearKey'] ?? $keySet['foreignKey'];
 
@@ -118,8 +117,14 @@ class Convertor
 
         foreach ($linkedEntitiesKeys[$scope][$field] as $key) {
             $relEntity = $this->getMemoryStorage()->get($key);
-            if ($relEntity->get($nearKey) !== $record[$keySet['key']]) {
-                continue;
+            if (property_exists($relEntity, '_relIds') && !empty($relEntity->_relIds)) {
+                if (!in_array($record[$keySet['key']], $relEntity->_relIds)) {
+                    continue;
+                }
+            } else {
+                if ($relEntity->get($nearKey) !== $record[$keySet['key']]) {
+                    continue;
+                }
             }
 
             if (isset($params['offset']) && $number < $params['offset']) {
@@ -168,11 +173,25 @@ class Convertor
                 'attribute' => $linkDefs['foreign'],
                 'value'     => array_column($records, 'id')
             ];
+
+            // load relation ids
+            if ($linkDefs['type'] === 'hasMany' && !empty($linkDefs['relationName'])) {
+                $keySet = $this->getKeySet($entityType, $relationName);
+                $relationCollection = $this->getEntityManager()->getRepository(ucfirst($linkDefs['relationName']))
+                    ->select(['id', $keySet['nearKey'], $keySet['distantKey']])
+                    ->where([$keySet['nearKey'] => array_column($records, 'id')])
+                    ->find();
+                $relRecords = [];
+                foreach ($relationCollection as $relEntity) {
+                    $relRecords[$relEntity->get($keySet['distantKey'])][] = $relEntity->get($keySet['nearKey']);
+                }
+            }
         }
 
         $res = $this->getService($linkDefs['entity'])->findEntities($params);
 
         foreach ($res['collection'] as $re) {
+            $re->_relIds = $relRecords[$re->get('id')] ?? null;
             $itemKey = $this->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
             $this->getMemoryStorage()->set($itemKey, $re);
             $linkedEntitiesKeys[$entityType][$relationName][] = $itemKey;
@@ -260,5 +279,11 @@ class Convertor
         }
 
         return $attributeType;
+    }
+
+    public function getKeySet(string $entityType, string $link): array
+    {
+        $entityRepository = $this->getEntityManager()->getRepository($entityType);
+        return $entityRepository->getMapper()->getKeys($entityRepository->get(), $link);
     }
 }
