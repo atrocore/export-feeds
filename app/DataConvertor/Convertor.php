@@ -173,22 +173,25 @@ class Convertor
                 'attribute' => $linkDefs['foreign'],
                 'value'     => array_column($records, 'id')
             ];
-
-            // load relation ids
-            if ($linkDefs['type'] === 'hasMany' && !empty($linkDefs['relationName'])) {
-                $keySet = $this->getKeySet($entityType, $relationName);
-                $relationCollection = $this->getEntityManager()->getRepository(ucfirst($linkDefs['relationName']))
-                    ->select(['id', $keySet['nearKey'], $keySet['distantKey']])
-                    ->where([$keySet['nearKey'] => array_column($records, 'id')])
-                    ->find();
-                $relRecords = [];
-                foreach ($relationCollection as $relEntity) {
-                    $relRecords[$relEntity->get($keySet['distantKey'])][] = $relEntity->get($keySet['nearKey']);
-                }
-            }
         }
 
         $res = $this->getService($linkDefs['entity'])->findEntities($params);
+
+        // load relation ids
+        if (!empty($res['collection'][0]) && $linkDefs['type'] === 'hasMany' && !empty($linkDefs['relationName'])) {
+            $keySet = $this->getKeySet($entityType, $relationName);
+            $relationCollection = $this->getEntityManager()->getRepository(ucfirst($linkDefs['relationName']))
+                ->select(['id', $keySet['nearKey'], $keySet['distantKey']])
+                ->where([
+                    $keySet['nearKey'] => array_column($records, 'id'),
+                    $keySet['distantKey'] => array_column($res['collection']->toArray(), 'id'),
+                ])
+                ->find();
+            $relRecords = [];
+            foreach ($relationCollection as $relEntity) {
+                $relRecords[$relEntity->get($keySet['distantKey'])][] = $relEntity->get($keySet['nearKey']);
+            }
+        }
 
         foreach ($res['collection'] as $re) {
             $re->_relIds = $relRecords[$re->get('id')] ?? null;
