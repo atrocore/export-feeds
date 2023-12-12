@@ -115,10 +115,12 @@ class Convertor
 
         $number = 0;
 
+        $relKey = '_' . $keySet['distantKey'];
+
         foreach ($linkedEntitiesKeys[$scope][$field] as $key) {
             $relEntity = $this->getMemoryStorage()->get($key);
-            if (property_exists($relEntity, '_relIds') && !empty($relEntity->_relIds)) {
-                if (!in_array($record[$keySet['key']], $relEntity->_relIds)) {
+            if (property_exists($relEntity, $relKey) && !empty($relEntity->$relKey)) {
+                if (!in_array($record[$keySet['key']], $relEntity->$relKey)) {
                     continue;
                 }
             } else {
@@ -194,7 +196,9 @@ class Convertor
         }
 
         foreach ($res['collection'] as $re) {
-            $re->_relIds = $relRecords[$re->get('id')] ?? null;
+            if (isset($relRecords[$re->get('id')])) {
+                $re->{"_{$keySet['distantKey']}"} = $relRecords[$re->get('id')];
+            }
             $itemKey = $this->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
             $this->getMemoryStorage()->set($itemKey, $re);
             $linkedEntitiesKeys[$entityType][$relationName][] = $itemKey;
