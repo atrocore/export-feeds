@@ -21,11 +21,11 @@ use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityManager;
 use Espo\Services\Record;
+use Export\FieldConverters\LinkType;
 
 class Convertor
 {
     protected Container $container;
-    public string $keyName = 'linked_entities_keys';
 
     public function __construct(Container $container)
     {
@@ -84,13 +84,19 @@ class Convertor
 
     public function clearMemoryOfLoadedEntities(): void
     {
-        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->keyName) ?? [];
-        foreach ($linkedEntitiesKeys as $configurationId => $keys) {
+        foreach ($this->getMemoryStorage()->get(LinkType::MEMORY_KEY) ?? [] as $keys) {
             foreach ($keys as $key) {
                 $this->getMemoryStorage()->delete($key);
             }
         }
-        $this->getMemoryStorage()->delete($this->keyName);
+        $this->getMemoryStorage()->delete(LinkType::MEMORY_KEY);
+
+        foreach ($this->getMemoryStorage()->get(LinkType::MEMORY_EXPORT_BY_KEY) ?? [] as $keys) {
+            foreach ($keys as $key) {
+                $this->getMemoryStorage()->delete($key);
+            }
+        }
+        $this->getMemoryStorage()->delete(LinkType::MEMORY_EXPORT_BY_KEY);
     }
 
     public function getMemoryStorage(): StorageInterface

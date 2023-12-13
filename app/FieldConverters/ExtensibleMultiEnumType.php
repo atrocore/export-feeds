@@ -36,7 +36,7 @@ class ExtensibleMultiEnumType extends LinkMultipleType
 
         $configuration = $this->getMemoryStorage()->get('configurationItemData');
 
-        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get(self::MEMORY_KEY) ?? [];
 
         if (!isset($linkedEntitiesKeys[$configuration['id']])) {
             return ['collection' => $collection];

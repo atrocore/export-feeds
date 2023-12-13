@@ -133,7 +133,7 @@ class LinkMultipleType extends LinkType
 
                 $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
 
-                $this->prepareExportByField($configuration, $foreignEntity, $v, $foreignType, $foreignData);
+                $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
 
                 // prepare type for product attribute value
                 if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
@@ -198,7 +198,7 @@ class LinkMultipleType extends LinkType
 
         $collection = new EntityCollection([], $relEntityType);
 
-        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get(self::MEMORY_KEY) ?? [];
         if (!isset($linkedEntitiesKeys[$configuration['id']])) {
             return ['collection' => $collection];
         }
@@ -240,7 +240,7 @@ class LinkMultipleType extends LinkType
 
     protected function loadToMemory(array $records, string $entityType, string $relationName, array $params, array $configuration): void
     {
-        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get(self::MEMORY_KEY) ?? [];
         if (isset($linkedEntitiesKeys[$configuration['id']])) {
             return;
         }
@@ -297,7 +297,7 @@ class LinkMultipleType extends LinkType
             $this->getMemoryStorage()->set($itemKey, $re);
             $linkedEntitiesKeys[$configuration['id']][] = $itemKey;
         }
-        $this->getMemoryStorage()->set($this->convertor->keyName, $linkedEntitiesKeys);
+        $this->getMemoryStorage()->set(self::MEMORY_KEY, $linkedEntitiesKeys);
     }
 
     public function getKeySet(string $entityType, string $link): array
