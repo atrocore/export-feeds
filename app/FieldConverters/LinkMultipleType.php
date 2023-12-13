@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Espo\ORM\EntityCollection;
+
 class LinkMultipleType extends LinkType
 {
     public function convertToString(array &$result, array $record, array $configuration): void
@@ -131,7 +133,7 @@ class LinkMultipleType extends LinkType
 
                 $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
 
-                $this->prepareExportByField($foreignList, $foreignEntity, $v, $foreignType, $foreignData);
+                $this->prepareExportByField($configuration, $foreignEntity, $v, $foreignType, $foreignData);
 
                 // prepare type for product attribute value
                 if ($entity === 'Product' && $field === 'productAttributeValues' && $v === 'value') {
@@ -182,8 +184,125 @@ class LinkMultipleType extends LinkType
 
     protected function findLinkedEntities(string $entity, array $record, string $field, array $params): array
     {
+        $configuration = $this->getMemoryStorage()->get('configurationItemData');
+        if (empty($configuration['id'])){
+            throw new \Error('No configuration id found.');
+        }
+
         $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
 
-        return $this->convertor->findLinkedEntities($records, $entity, $record['id'], $field, $params);
+        // load to memory
+        $this->loadToMemory($records, $entity, $field, $params, $configuration);
+
+        $relEntityType = $this->getMetadata()->get(['entityDefs', $entity, 'links', $field, 'entity']);
+
+        $collection = new EntityCollection([], $relEntityType);
+
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+        if (!isset($linkedEntitiesKeys[$configuration['id']])) {
+            return ['collection' => $collection];
+        }
+
+        $keySet = $this->getKeySet($entity, $field);
+
+        $nearKey = $keySet['nearKey'] ?? $keySet['foreignKey'];
+
+        $number = 0;
+
+        $relKey = '_' . $field;
+
+        foreach ($linkedEntitiesKeys[$configuration['id']] as $key) {
+            $relEntity = $this->getMemoryStorage()->get($key);
+            if (property_exists($relEntity, $relKey) && !empty($relEntity->$relKey)) {
+                if (!in_array($record[$keySet['key']], $relEntity->$relKey)) {
+                    continue;
+                }
+            } else {
+                if ($relEntity->get($nearKey) !== $record[$keySet['key']]) {
+                    continue;
+                }
+            }
+
+            if (isset($params['offset']) && $number < $params['offset']) {
+                $number++;
+                continue;
+            }
+
+            if (isset($params['maxSize']) && $collection->count() >= $params['maxSize']) {
+                break;
+            }
+
+            $collection->append($relEntity);
+        }
+
+        return ['collection' => $collection];
+    }
+
+    protected function loadToMemory(array $records, string $entityType, string $relationName, array $params, array $configuration): void
+    {
+        $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
+        if (isset($linkedEntitiesKeys[$configuration['id']])) {
+            return;
+        }
+
+        $params['offset'] = 0;
+        $params['maxSize'] = $this->convertor->getConfig()->get('exportMemoryItemsCount', 10000);
+
+        $linkDefs = $this->getMetadata()->get(['entityDefs', $entityType, 'links', $relationName]);
+
+        if (!isset($linkDefs['entity'])) {
+            throw new \Error("Metadata error. No 'entity' parameter for '$relationName' relation.");
+        }
+
+        if ($linkDefs['type'] === 'belongsTo') {
+            $params['where'][] = [
+                'type'      => 'in',
+                'attribute' => 'id',
+                'value'     => array_column($records, lcfirst($linkDefs['entity']) . 'Id')
+            ];
+        } else {
+            if (empty($linkDefs['foreign'])) {
+                throw new \Error("Metadata error. No 'foreign' parameter for '$relationName' relation.");
+            }
+            $params['where'][] = [
+                'type'      => 'linkedWith',
+                'attribute' => $linkDefs['foreign'],
+                'value'     => array_column($records, 'id')
+            ];
+        }
+
+        $res = $this->convertor->getService($linkDefs['entity'])->findEntities($params);
+
+        // load relation ids
+        if (!empty($res['collection'][0]) && $linkDefs['type'] === 'hasMany' && !empty($linkDefs['relationName'])) {
+            $keySet = $this->getKeySet($entityType, $relationName);
+            $relationCollection = $this->convertor->getEntityManager()->getRepository(ucfirst($linkDefs['relationName']))
+                ->select(['id', $keySet['nearKey'], $keySet['distantKey']])
+                ->where([
+                    $keySet['nearKey']    => array_column($records, 'id'),
+                    $keySet['distantKey'] => array_column($res['collection']->toArray(), 'id'),
+                ])
+                ->find();
+            $relRecords = [];
+            foreach ($relationCollection as $relEntity) {
+                $relRecords[$relEntity->get($keySet['distantKey'])][] = $relEntity->get($keySet['nearKey']);
+            }
+        }
+
+        foreach ($res['collection'] as $re) {
+            if (isset($relRecords[$re->get('id')])) {
+                $re->{"_{$relationName}"} = $relRecords[$re->get('id')];
+            }
+            $itemKey = $this->convertor->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
+            $this->getMemoryStorage()->set($itemKey, $re);
+            $linkedEntitiesKeys[$configuration['id']][] = $itemKey;
+        }
+        $this->getMemoryStorage()->set($this->convertor->keyName, $linkedEntitiesKeys);
+    }
+
+    public function getKeySet(string $entityType, string $link): array
+    {
+        $entityRepository = $this->convertor->getEntityManager()->getRepository($entityType);
+        return $entityRepository->getMapper()->getKeys($entityRepository->get(), $link);
     }
 }
