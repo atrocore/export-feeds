@@ -423,6 +423,7 @@ class ExportFeed extends Base
 
         foreach ($items['collection'] as $item) {
             $row = [
+                'id'                        => $item->get('id'),
                 'columnType'                => $item->get('columnType'),
                 'language'                  => $item->get('language'),
                 'column'                    => $eciService->prepareColumnName($item),
