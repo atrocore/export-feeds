@@ -115,7 +115,7 @@ class LinkType extends AbstractType
             return;
         }
 
-        $foreignLinkData = $this->convertor->findLinkedEntities($records, $foreignEntity, $foreignData['id'], $exportByFieldParts[0], ['disableCount' => true]);
+        $foreignLinkData = $this->convertor->getService($foreignEntity)->findLinkedEntities($foreignData['id'], $exportByFieldParts[0], ['disableCount' => true]);
         if (empty($foreignLinkData['collection'][0])) {
             $foreignData[$configuratorField] = null;
             return;

@@ -115,7 +115,7 @@ class Convertor
 
         $number = 0;
 
-        $relKey = '_' . $keySet['distantKey'];
+        $relKey = '_' . $field;
 
         foreach ($linkedEntitiesKeys[$scope][$field] as $key) {
             $relEntity = $this->getMemoryStorage()->get($key);
@@ -197,7 +197,7 @@ class Convertor
 
         foreach ($res['collection'] as $re) {
             if (isset($relRecords[$re->get('id')])) {
-                $re->{"_{$keySet['distantKey']}"} = $relRecords[$re->get('id')];
+                $re->{"_{$relationName}"} = $relRecords[$re->get('id')];
             }
             $itemKey = $this->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
             $this->getMemoryStorage()->set($itemKey, $re);
