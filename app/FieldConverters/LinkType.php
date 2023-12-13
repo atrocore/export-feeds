@@ -79,7 +79,7 @@ class LinkType extends AbstractType
 
                         $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
 
-                        $this->prepareExportByField($this->getMemoryStorage()->get('exportRecordsPart') ?? [], $foreignEntity, $v, $foreignType, $foreignData);
+                        $this->prepareExportByField($configuration, $foreignEntity, $v, $foreignType, $foreignData);
 
                         $foreignConfiguration = array_merge($configuration, ['field' => $v]);
                         $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
@@ -107,7 +107,7 @@ class LinkType extends AbstractType
         }
     }
 
-    protected function prepareExportByField(array $records, string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
+    protected function prepareExportByField(array $configuration, string $foreignEntity, string $configuratorField, string &$foreignType, array &$foreignData): void
     {
         $exportByFieldParts = explode(".", $configuratorField);
         $parts = count($exportByFieldParts);
@@ -213,13 +213,16 @@ class LinkType extends AbstractType
         return false;
     }
 
-    protected function loadLinkDataToMemory(array $record, string $entity, string $field): string
+    protected function loadLinkDataToMemory(array $record, string $entity, string $field): void
     {
+        $configuration = $this->getMemoryStorage()->get('configurationItemData');
+        if (empty($configuration['id'])){
+            throw new \Error('No configuration id found.');
+        }
+
         $records = $this->getMemoryStorage()->get('exportRecordsPart') ?? [];
 
         $fieldName = $this->getFieldName($field);
-
-        $key = $field;
 
         // if PAV
         if (!empty($record['attributeType'])) {
@@ -229,14 +232,12 @@ class LinkType extends AbstractType
                     $records[] = $pav->toArray();
                 }
             }
-
-            $key .= '_' . $record['attributeId'];
         }
 
         $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
 
-        if (isset($linkedEntitiesKeys[$entity][$key])) {
-            return $key;
+        if (isset($linkedEntitiesKeys[$configuration['id']])) {
+            return;
         }
 
         $foreignEntity = $this->getForeignEntityName($entity, $field);
@@ -261,11 +262,9 @@ class LinkType extends AbstractType
         foreach ($res['collection'] as $re) {
             $itemKey = $this->convertor->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
             $this->getMemoryStorage()->set($itemKey, $re);
-            $linkedEntitiesKeys[$entity][$key][] = $itemKey;
+            $linkedEntitiesKeys[$configuration['id']][] = $itemKey;
         }
         $this->getMemoryStorage()->set($this->convertor->keyName, $linkedEntitiesKeys);
-
-        return $key;
     }
 
     protected function getEntity(string $scope, string $id): ?Entity
