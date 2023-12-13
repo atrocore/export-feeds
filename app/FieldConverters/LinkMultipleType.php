@@ -17,6 +17,8 @@ use Espo\ORM\EntityCollection;
 
 class LinkMultipleType extends LinkType
 {
+    public const MEMORY_RELATION_KEY = 'relRecords';
+
     public function convertToString(array &$result, array $record, array $configuration): void
     {
         $field = $configuration['field'];
@@ -209,12 +211,12 @@ class LinkMultipleType extends LinkType
 
         $number = 0;
 
-        $relKey = '_' . $field;
-
+        $relRecords = $this->getMemoryStorage()->get(self::MEMORY_RELATION_KEY) ?? [];
         foreach ($linkedEntitiesKeys[$configuration['id']] as $key) {
             $relEntity = $this->getMemoryStorage()->get($key);
-            if (property_exists($relEntity, $relKey) && !empty($relEntity->$relKey)) {
-                if (!in_array($record[$keySet['key']], $relEntity->$relKey)) {
+            $relIds = $relRecords[$configuration['id']][$relEntity->get('id')] ?? null;
+            if ($relIds !== null) {
+                if (!in_array($record[$keySet['key']], $relIds)) {
                     continue;
                 }
             } else {
@@ -283,16 +285,14 @@ class LinkMultipleType extends LinkType
                     $keySet['distantKey'] => array_column($res['collection']->toArray(), 'id'),
                 ])
                 ->find();
-            $relRecords = [];
+            $relRecords = $this->getMemoryStorage()->get(self::MEMORY_RELATION_KEY) ?? [];
             foreach ($relationCollection as $relEntity) {
-                $relRecords[$relEntity->get($keySet['distantKey'])][] = $relEntity->get($keySet['nearKey']);
+                $relRecords[$configuration['id']][$relEntity->get($keySet['distantKey'])][] = $relEntity->get($keySet['nearKey']);
             }
+            $this->getMemoryStorage()->set(self::MEMORY_RELATION_KEY, $relRecords);
         }
 
         foreach ($res['collection'] as $re) {
-            if (isset($relRecords[$re->get('id')])) {
-                $re->{"_{$relationName}"} = $relRecords[$re->get('id')];
-            }
             $itemKey = $this->convertor->getEntityManager()->getRepository($re->getEntityType())->getCacheKey($re->get('id'));
             $this->getMemoryStorage()->set($itemKey, $re);
             $linkedEntitiesKeys[$configuration['id']][] = $itemKey;
