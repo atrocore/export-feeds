@@ -32,15 +32,17 @@ class ExtensibleMultiEnumType extends LinkMultipleType
         $collection = new EntityCollection([], 'ExtensibleEnumOption');
 
         // load to memory
-        $key = $this->loadLinkDataToMemory($record, $entity, $field);
+        $this->loadLinkDataToMemory($record, $entity, $field);
+
+        $configuration = $this->getMemoryStorage()->get('configurationItemData');
 
         $linkedEntitiesKeys = $this->getMemoryStorage()->get($this->convertor->keyName) ?? [];
 
-        if (!isset($linkedEntitiesKeys[$entity][$key])) {
+        if (!isset($linkedEntitiesKeys[$configuration['id']])) {
             return ['collection' => $collection];
         }
 
-        foreach ($linkedEntitiesKeys[$entity][$key] as $v) {
+        foreach ($linkedEntitiesKeys[$configuration['id']] as $v) {
             $option = $this->getMemoryStorage()->get($v);
             foreach ($record[$field] as $id) {
                 if ($id === $option->get('id')) {
