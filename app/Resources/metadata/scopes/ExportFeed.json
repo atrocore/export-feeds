@@ -3,13 +3,6 @@
   "layouts": false,
   "tab": true,
   "acl": true,
-  "aclPortal": true,
-  "aclPortalLevelList": [
-    "all",
-    "account",
-    "own",
-    "no"
-  ],
   "type": "Base",
   "module": "Export",
   "customizable": false,

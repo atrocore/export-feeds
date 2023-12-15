@@ -1,7 +1,6 @@
 {
   "controller": "controllers/record",
   "acl": "export:acl/export-job",
-  "aclPortal": "export:acl-portal/export-job",
   "boolFilterList": [
     "onlyMy",
     "onlyExportFailed24Hours",
