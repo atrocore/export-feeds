@@ -416,8 +416,22 @@ abstract class AbstractExportType extends Base
                 ]
             ];
 
-            $res = $this->getService('ProductAttributeValue')->findEntities(['where' => $pavWhere, 'disableCount' => true]);
-            $this->getMemoryStorage()->set('pavCollection', $res['collection']);
+            $res = $this
+                ->getService('ProductAttributeValue')
+                ->findEntities([
+                    'where'        => $pavWhere,
+                    'disableCount' => true
+                ]);
+
+            $pavRepo = $this->getEntityManager()->getRepository('ProductAttributeValue');
+
+            $pavCollectionKeys = [];
+            foreach ($res['collection'] as $pav) {
+                $itemKey = $pavRepo->getCacheKey($pav->get('id'));
+                $this->getMemoryStorage()->set($itemKey, $pav);
+                $pavCollectionKeys[implode('_', [$pav->get('productId'), $pav->get('attributeId'), $pav->get('language'), $pav->get('scope'), $pav->get('channelId')])] = $itemKey;
+            }
+            $this->getMemoryStorage()->set('pavCollectionKeys', $pavCollectionKeys);
         }
     }
 
