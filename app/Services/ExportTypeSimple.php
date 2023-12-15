@@ -438,6 +438,22 @@ class ExportTypeSimple extends AbstractExportType
 
             // delete csv file
             unlink($csvFileName);
+
+            foreach ($spreadsheet->getSheet($k)->getRowIterator() as $row) {
+                $cellIterator = $row->getCellIterator();
+                $cellIterator->setIterateOnlyExistingCells(FALSE);
+                foreach ($cellIterator as $cell) {
+                    if (is_numeric($cell->getValue())) {
+                        $spreadsheet
+                            ->getSheet($k)
+                            ->getCell($cell->getCoordinate())
+                            ->setValueExplicit(
+                                $cell->getValue(),
+                                \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING2
+                            );
+                    }
+                }
+            }
         }
 
         try {
