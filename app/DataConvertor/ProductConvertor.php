@@ -34,36 +34,33 @@ class ProductConvertor extends Convertor
 
         $result[$configuration['column']] = $configuration['markForNoRelation'];
 
-        $pavCollection = $this->getMemoryStorage()->get('pavCollection');
+        $pavCollectionKeys = $this->getMemoryStorage()->get('pavCollectionKeys');
 
         /**
          * Exit if empty
          */
-        if (!$pavCollection instanceof EntityCollection) {
+        if (empty($pavCollectionKeys)) {
             return $result;
+        }
+
+        $language = $configuration['language'];
+        if (!empty($GLOBALS['languagePrism'])) {
+            $language = $GLOBALS['languagePrism'];
         }
 
         $productAttribute = null;
 
-        foreach ($pavCollection as $pav) {
-            if ($pav->get('productId') === $record['id'] && $this->isLanguageEquals($pav, $configuration) && $pav->get('attributeId') == $configuration['attributeId'] && $pav->get('scope') == 'Global') {
-                $productAttribute = $pav;
-                break 1;
-            }
+        // find Global
+        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Global', '']);
+        if (isset($pavCollectionKeys[$key])) {
+            $productAttribute = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
         }
 
+        // find Channel
         if (!empty($configuration['channelId'])) {
-            foreach ($pavCollection as $pav) {
-                if (
-                    $pav->get('productId') === $record['id']
-                    && $this->isLanguageEquals($pav, $configuration)
-                    && $pav->get('attributeId') == $configuration['attributeId']
-                    && $pav->get('scope') == 'Channel'
-                    && $pav->get('channelId') == $configuration['channelId']
-                ) {
-                    $productAttribute = $pav;
-                    break 1;
-                }
+            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Channel', $configuration['channelId']]);
+            if (isset($pavCollectionKeys[$key])) {
+                $productAttribute = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
             }
         }
 
@@ -72,7 +69,8 @@ class ProductConvertor extends Convertor
             if (empty($configuration['replaceAttributeValues']) && $productAttribute->get('scope') === 'Global' && !empty($configuration['channelId'])) {
                 return $result;
             }
-            $result = $this->convertType($this->getTypeForAttribute($productAttribute->get('attributeType'), $configuration['attributeValue']), $productAttribute->toArray(), array_merge($configuration, ['field' => $this->getFieldForAttribute($configuration)]));
+            $type = $this->getTypeForAttribute($productAttribute->get('attributeType'), $configuration['attributeValue']);
+            $result = $this->convertType($type, $productAttribute->toArray(), array_merge($configuration, ['field' => $this->getFieldForAttribute($configuration)]));
         }
 
         $eventPayload = [
@@ -91,14 +89,5 @@ class ProductConvertor extends Convertor
             return 'value';
         }
         return $configuration['attributeValue'] ?? 'value';
-    }
-
-    protected function isLanguageEquals(Entity $pav, array $configuration): bool
-    {
-        if (!empty($GLOBALS['languagePrism']) || empty($pav->get('attributeIsMultilang'))) {
-            return true;
-        }
-
-        return $pav->get('language') === $configuration['language'];
     }
 }

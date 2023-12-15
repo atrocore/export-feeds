@@ -269,9 +269,9 @@ class LinkType extends AbstractType
         // if PAV
         if (!empty($record['attributeType'])) {
             $records = [];
-            foreach ($this->getMemoryStorage()->get('pavCollection') as $pav) {
-                if ($pav->get('attributeId') === $record['attributeId']) {
-                    $records[] = $pav->toArray();
+            foreach ($this->getMemoryStorage()->get('pavCollectionKeys') ?? [] as $whereKey => $pavKey) {
+                if (strpos($whereKey, $record['attributeId']) !== false) {
+                    $records[] = $this->getMemoryStorage()->get($pavKey)->toArray();
                 }
             }
         }
