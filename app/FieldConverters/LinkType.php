@@ -258,7 +258,7 @@ class LinkType extends AbstractType
     protected function loadLinkDataToMemory(array $record, string $entity, string $field): void
     {
         $configuration = $this->getMemoryStorage()->get('configurationItemData');
-        if (empty($configuration['id'])){
+        if (empty($configuration['id'])) {
             throw new \Error('No configuration id found.');
         }
 
@@ -269,8 +269,9 @@ class LinkType extends AbstractType
         // if PAV
         if (!empty($record['attributeType'])) {
             $records = [];
-            foreach ($this->getMemoryStorage()->get('pavCollectionKeys') ?? [] as $whereKey => $pavKey) {
-                if (strpos($whereKey, $record['attributeId']) !== false) {
+            $attributesKeys = $this->getMemoryStorage()->get('attributesKeys') ?? [];
+            if (isset($attributesKeys[$record['attributeId']])) {
+                foreach ($attributesKeys[$record['attributeId']] as $pavKey) {
                     $records[] = $this->getMemoryStorage()->get($pavKey)->toArray();
                 }
             }

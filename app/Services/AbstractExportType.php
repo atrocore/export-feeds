@@ -426,12 +426,15 @@ abstract class AbstractExportType extends Base
             $pavRepo = $this->getEntityManager()->getRepository('ProductAttributeValue');
 
             $pavCollectionKeys = [];
+            $attributesKeys = [];
             foreach ($res['collection'] as $pav) {
                 $itemKey = $pavRepo->getCacheKey($pav->get('id'));
                 $this->getMemoryStorage()->set($itemKey, $pav);
                 $pavCollectionKeys[implode('_', [$pav->get('productId'), $pav->get('attributeId'), $pav->get('language'), $pav->get('scope'), $pav->get('channelId')])] = $itemKey;
+                $attributesKeys[$pav->get('attributeId')][] = $itemKey;
             }
             $this->getMemoryStorage()->set('pavCollectionKeys', $pavCollectionKeys);
+            $this->getMemoryStorage()->set('attributesKeys', $attributesKeys);
         }
     }
 
