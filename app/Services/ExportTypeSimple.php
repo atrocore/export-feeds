@@ -476,7 +476,7 @@ class ExportTypeSimple extends AbstractExportType
                                 foreach ($column->getCellIterator($startRow) as $cell) {
                                     $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
                                 }
-                            } else if ($sheetCol['attributeValue'] == 'valueNumeric') {
+                            } else if (in_array($sheetCol['attributeValue'], ['valueNumeric', 'valueFrom', 'valueTo'])) {
                                 foreach ($column->getCellIterator($startRow) as $cell) {
                                     $cellValue = $cell->getValue();
                                     if(is_string($cellValue) && str_contains($cellValue, ",")) {
