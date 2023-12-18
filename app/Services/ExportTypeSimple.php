@@ -448,36 +448,39 @@ class ExportTypeSimple extends AbstractExportType
                 $startRow = 2;
             }
 
-            foreach ($workSheet->getColumnIterator() as $configIndex => $column) {
-                $sheetCol = $sheet['configuration'][Coordinate::columnIndexFromString($configIndex) - 1];
+            // skip empty worksheets
+            if ($startRow <= $workSheet->getHighestRow()) {
+                foreach ($workSheet->getColumnIterator() as $configIndex => $column) {
+                    $sheetCol = $sheet['configuration'][Coordinate::columnIndexFromString($configIndex) - 1];
 
-                switch ($sheetCol['type']) {
-                    case 'Field':
-                        $cellType = $entityDefs['fields'][$sheetCol['field']]['type'];
-                        if (in_array($cellType, ['varchar', 'text', 'enum', 'multiEnum', 'extensibleMultiEnum', 'wysiwyg'])) {
-                            foreach ($column->getCellIterator($startRow) as $cell) {
-                                $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
-                            }
-                        } else if ($cellType == 'float') {
-                            foreach ($column->getCellIterator($startRow) as $cell) {
-                                $cellValue = $cell->getValue();
-                                if(str_contains($cellValue, ",")) {
-                                    $cellValue = str_replace(".", "", $cellValue);
-                                    $cellValue = str_replace(",", ".", $cellValue);
+                    switch ($sheetCol['type']) {
+                        case 'Field':
+                            $cellType = $entityDefs['fields'][$sheetCol['field']]['type'];
+                            if (in_array($cellType, ['varchar', 'text', 'enum', 'multiEnum', 'extensibleMultiEnum', 'wysiwyg'])) {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
                                 }
-                                $cell->setValueExplicit($cellValue, DataType::TYPE_NUMERIC);
+                            } else if ($cellType == 'float') {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $cellValue = $cell->getValue();
+                                    if(str_contains($cellValue, ",")) {
+                                        $cellValue = str_replace(".", "", $cellValue);
+                                        $cellValue = str_replace(",", ".", $cellValue);
+                                    }
+                                    $cell->setValueExplicit($cellValue, DataType::TYPE_NUMERIC);
+                                }
                             }
-                        }
-                        break;
-                    case 'Attribute':
-                        if ($sheetCol['attributeValue'] == 'valueString') {
-                            foreach ($column->getCellIterator($startRow) as $cell) {
-                                $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
+                            break;
+                        case 'Attribute':
+                            if ($sheetCol['attributeValue'] == 'valueString') {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
+                                }
                             }
-                        }
-                        break;
-                    default:
-                        break;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
 
