@@ -440,59 +440,6 @@ class ExportTypeSimple extends AbstractExportType
             $reader->setSheetIndex($k);
             $reader->loadIntoExisting($csvFileName, $spreadsheet);
 
-            // set text cell format for strings, enums
-            $entityDefs = $metadata->get(['entityDefs', $sheet['entity']]);
-            $workSheet = $spreadsheet->getSheet($k);
-            $startRow = 1;
-            if ($sheet['data']['isFileHeaderRow']) {
-                $startRow = 2;
-            }
-
-            // skip empty worksheets
-            if ($startRow <= $workSheet->getHighestRow()) {
-                foreach ($workSheet->getColumnIterator() as $configIndex => $column) {
-                    $sheetCol = $sheet['configuration'][Coordinate::columnIndexFromString($configIndex) - 1];
-
-                    switch ($sheetCol['type']) {
-                        case 'Field':
-                            $cellType = $entityDefs['fields'][$sheetCol['field']]['type'];
-                            if (in_array($cellType, ['varchar', 'text', 'enum', 'multiEnum', 'extensibleMultiEnum', 'wysiwyg'])) {
-                                foreach ($column->getCellIterator($startRow) as $cell) {
-                                    $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
-                                }
-                            } else if ($cellType == 'float') {
-                                foreach ($column->getCellIterator($startRow) as $cell) {
-                                    $cellValue = $cell->getValue();
-                                    if(is_string($cellValue) && str_contains($cellValue, ",")) {
-                                        $cellValue = str_replace(".", "", $cellValue);
-                                        $cellValue = str_replace(",", ".", $cellValue);
-                                    }
-                                    $cell->setValueExplicit($cellValue, DataType::TYPE_NUMERIC);
-                                }
-                            }
-                            break;
-                        case 'Attribute':
-                            if (in_array($sheetCol['attributeValue'], ['valueString', 'value'])) {
-                                foreach ($column->getCellIterator($startRow) as $cell) {
-                                    $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
-                                }
-                            } else if ($sheetCol['attributeValue'] == 'valueNumeric') {
-                                foreach ($column->getCellIterator($startRow) as $cell) {
-                                    $cellValue = $cell->getValue();
-                                    if(is_string($cellValue) && str_contains($cellValue, ",")) {
-                                        $cellValue = str_replace(".", "", $cellValue);
-                                        $cellValue = str_replace(",", ".", $cellValue);
-                                    }
-                                    $cell->setValueExplicit($cellValue, DataType::TYPE_NUMERIC);
-                                }
-                            }
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-
             // delete csv file
             unlink($csvFileName);
         }
