@@ -463,7 +463,7 @@ class ExportTypeSimple extends AbstractExportType
                             } else if ($cellType == 'float') {
                                 foreach ($column->getCellIterator($startRow) as $cell) {
                                     $cellValue = $cell->getValue();
-                                    if(str_contains($cellValue, ",")) {
+                                    if(is_string($cellValue) && str_contains($cellValue, ",")) {
                                         $cellValue = str_replace(".", "", $cellValue);
                                         $cellValue = str_replace(",", ".", $cellValue);
                                     }
@@ -472,9 +472,18 @@ class ExportTypeSimple extends AbstractExportType
                             }
                             break;
                         case 'Attribute':
-                            if ($sheetCol['attributeValue'] == 'valueString') {
+                            if (in_array($sheetCol['attributeValue'], ['valueString', 'value'])) {
                                 foreach ($column->getCellIterator($startRow) as $cell) {
                                     $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
+                                }
+                            } else if ($sheetCol['attributeValue'] == 'valueNumeric') {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $cellValue = $cell->getValue();
+                                    if(is_string($cellValue) && str_contains($cellValue, ",")) {
+                                        $cellValue = str_replace(".", "", $cellValue);
+                                        $cellValue = str_replace(",", ".", $cellValue);
+                                    }
+                                    $cell->setValueExplicit($cellValue, DataType::TYPE_NUMERIC);
                                 }
                             }
                             break;
