@@ -454,7 +454,7 @@ class ExportTypeSimple extends AbstractExportType
                 switch ($sheetCol['type']) {
                     case 'Field':
                         $cellType = $entityDefs['fields'][$sheetCol['field']]['type'];
-                        if (in_array($cellType, ['varchar', 'text', 'enum', 'multiEnum', 'extensibleMultiEnum'])) {
+                        if (in_array($cellType, ['varchar', 'text', 'enum', 'multiEnum', 'extensibleMultiEnum', 'wysiwyg'])) {
                             foreach ($column->getCellIterator($startRow) as $cell) {
                                 $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
                             }
