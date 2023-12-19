@@ -23,7 +23,7 @@ class ExportJob extends Base
 
     public function deleteOld(): bool
     {
-        $days = $this->getConfig()->get('exportJobsMaxDays', 2);
+        $days = $this->getConfig()->get('exportJobsMaxDays', 21);
         if ($days === 0) {
             return true;
         }
