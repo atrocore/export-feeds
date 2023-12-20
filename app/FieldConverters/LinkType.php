@@ -267,7 +267,7 @@ class LinkType extends AbstractType
         $fieldName = $this->getFieldName($field);
 
         // if PAV
-        if (!empty($record['attributeType'])) {
+        if ($configuration['entity'] === 'Product' && !empty($record['attributeType'])) {
             $records = [];
             $attributesKeys = $this->getMemoryStorage()->get('attributesKeys') ?? [];
             if (isset($attributesKeys[$record['attributeId']])) {
