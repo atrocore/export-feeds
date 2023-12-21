@@ -24,8 +24,10 @@ use Espo\ORM\EntityCollection;
 use Export\Entities\ExportJob;
 use Export\TwigFilter\AbstractTwigFilter;
 use Export\TwigFunction\AbstractTwigFunction;
+use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
@@ -440,6 +442,57 @@ class ExportTypeSimple extends AbstractExportType
             $reader->setSheetIndex($k);
             $reader->loadIntoExisting($csvFileName, $spreadsheet);
 
+            $entityDefs = $metadata->get(['entityDefs', $sheet['entity']]);
+            $workSheet = $spreadsheet->getSheet($k);
+            $startRow = 1;
+            if ($sheet['data']['isFileHeaderRow']) {
+                $startRow = 2;
+            }
+
+            // skip empty worksheets
+            if ($startRow <= $workSheet->getHighestRow()) {
+                foreach ($workSheet->getColumnIterator() as $configIndex => $column) {
+                    $sheetCol = $sheet['configuration'][Coordinate::columnIndexFromString($configIndex) - 1];
+                    $decimalMark = $sheetCol['decimalMark'];
+                    $thousandSeparator = $sheetCol['thousandSeparator'];
+
+                    switch ($sheetCol['type']) {
+                        case 'Field':
+                            $cellType = $entityDefs['fields'][$sheetCol['field']]['type'];
+                            if (in_array($cellType, ['varchar', 'text', 'enum', 'multiEnum', 'extensibleMultiEnum', 'wysiwyg'])) {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
+                                }
+                            } else if ($cellType == 'float') {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $this->processXlsxNumericCell($cell, $decimalMark, $thousandSeparator);
+                                }
+                            } else if ($cellType == 'currency') {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    // if currency field exported using value only mask
+                                    if (preg_match("/^[\d\W]+$/", (string) $cell->getValue())) {
+                                        $this->processXlsxNumericCell($cell, $decimalMark, $thousandSeparator);
+                                    }
+                                }
+                            }
+                            break;
+                        case 'Attribute':
+                            if (in_array($sheetCol['attributeValue'], ['valueString', 'value'])) {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $cell->setValueExplicit($cell->getValue(), DataType::TYPE_STRING2);
+                                }
+                            } else if (in_array($sheetCol['attributeValue'], ['valueNumeric', 'valueFrom', 'valueTo'])) {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    $this->processXlsxNumericCell($cell, $decimalMark, $thousandSeparator);
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
             // delete csv file
             unlink($csvFileName);
         }
@@ -462,6 +515,27 @@ class ExportTypeSimple extends AbstractExportType
         $this->getEntityManager()->saveEntity($attachment);
 
         return $this->exportAsZip($attachment);
+    }
+
+    private function processXlsxNumericCell(Cell $cell, $decimalMark, $thousandSeparator): void
+    {
+        $cellValue = (string) $cell->getValue();
+
+        if ($thousandSeparator && str_contains($cellValue, $thousandSeparator)) {
+            $cellValue = str_replace($thousandSeparator, "", $cellValue);
+        }
+        if ($decimalMark && str_contains($cellValue, $decimalMark)) {
+            $cellValue = str_replace($decimalMark, ".", $cellValue);
+        }
+
+        if (is_numeric($cellValue)) {
+            $cell->setValueExplicit($cellValue, DataType::TYPE_NUMERIC);
+            if ($thousandSeparator && $cellValue != 0) {
+                // hide decimal part for integers
+                $format = filter_var($cellValue, FILTER_VALIDATE_INT) ? "#,##" : "#,##0." . str_repeat('0', strcspn(strrev($cellValue), '.'));
+                $cell->getStyle()->getNumberFormat()->setFormatCode($format);
+            }
+        }
     }
 
     protected function exportAsZip(Attachment $attachment): Attachment
