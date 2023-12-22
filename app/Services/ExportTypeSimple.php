@@ -474,6 +474,12 @@ class ExportTypeSimple extends AbstractExportType
                                         $this->processXlsxNumericCell($cell, $decimalMark, $thousandSeparator);
                                     }
                                 }
+                            } else if ($cellType == 'int' && $thousandSeparator) {
+                                foreach ($column->getCellIterator($startRow) as $cell) {
+                                    if (is_string($cell->getValue())) {
+                                        $this->processXlsxNumericCell($cell, $decimalMark, $thousandSeparator);
+                                    }
+                                }
                             }
                             break;
                         case 'Attribute':
