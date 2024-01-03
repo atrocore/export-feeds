@@ -52,7 +52,7 @@ class ExtensibleMultiEnumType extends LinkMultipleType
             $sortField = $this->getMemoryStorage()->get('extensibleEnumOptionSortBy');
             if (empty($sortField)) {
                 $sortField = $this->getMetadata()->get(['clientDefs', 'ExtensibleEnum', 'relationshipPanels', 'extensibleEnumOptions', 'sortBy'], 'sortOrder');
-                $this->getMemoryStorage()->set('extensibleEnumOptionSortBy', 'sortOrder');
+                $this->getMemoryStorage()->set('extensibleEnumOptionSortBy', $sortField);
             }
 
             usort($options, function ($a, $b) use ($sortField) {
