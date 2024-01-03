@@ -42,12 +42,27 @@ class ExtensibleMultiEnumType extends LinkMultipleType
             return ['collection' => $collection];
         }
 
+        $options = [];
         foreach ($linkedEntitiesKeys[$configuration['id']] as $v) {
             $option = $this->getMemoryStorage()->get($v);
-            foreach ($record[$field] as $id) {
-                if ($id === $option->get('id')) {
-                    $collection->append($option);
-                }
+            $options[] = $option;
+        }
+
+        if (count($options) > 1) {
+            $sortField = $this->getMemoryStorage()->get('extensibleEnumOptionSortBy');
+            if (empty($sortField)) {
+                $sortField = $this->getMetadata()->get(['clientDefs', 'ExtensibleEnum', 'relationshipPanels', 'extensibleEnumOptions', 'sortBy'], 'sortOrder');
+                $this->getMemoryStorage()->set('extensibleEnumOptionSortBy', 'sortOrder');
+            }
+
+            usort($options, function ($a, $b) use ($sortField) {
+                return $a->get($sortField) <=> $b->get($sortField);
+            });
+        }
+
+        foreach ($options as $option) {
+            if (in_array($option->get('id'), $record[$field])) {
+                $collection->append($option);
             }
         }
 
