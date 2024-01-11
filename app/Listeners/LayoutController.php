@@ -22,7 +22,6 @@ class LayoutController extends AbstractListener
     public function afterActionRead(Event $event): void
     {
         $scope = $event->getArgument('params')['scope'];
-
         $name = $event->getArgument('params')['name'];
 
         $method = 'modify' . $scope . ucfirst($name);
@@ -30,6 +29,30 @@ class LayoutController extends AbstractListener
         if (method_exists($this, $method)) {
             $this->{$method}($event);
         }
+    }
+
+    protected function modifyActionDetail(Event $event): void
+    {
+        $result = Json::decode($event->getArgument('result'), true);
+
+        $jsonRows = json_encode($result[0]['rows']);
+
+        if (strpos($jsonRows, '"name":"exportFeed"') === false) {
+            $result[0]['rows'][] = [['name' => 'exportFeed'], false];
+        }
+
+        if (strpos($jsonRows, '"name":"payload"') !== false) {
+            $result[0]['rows'] = json_decode(str_replace(',[{"name":"payload","fullWidth":true}]', '', $jsonRows), true);
+        }
+
+        $result[0]['rows'][] = [['name' => 'payload', 'fullWidth' => true]];
+
+        $event->setArgument('result', Json::encode($result));
+    }
+
+    protected function modifyActionDetailSmall(Event $event): void
+    {
+        $this->modifyActionDetail($event);
     }
 
     protected function modifyScheduledJobDetail(Event $event): void
@@ -42,7 +65,7 @@ class LayoutController extends AbstractListener
             if ($row[0]['name'] === 'job') {
                 $newRows[] = [['name' => 'exportFeed'], false];
                 $newRows[] = [['name' => 'exportFeeds'], false];
-                if(!$this->checkIfFieldExists('maximumHoursToLookBack', $result[0]['rows'])){
+                if (!$this->checkIfFieldExists('maximumHoursToLookBack', $result[0]['rows'])) {
                     $newRows[] = [['name' => 'maximumHoursToLookBack'], false];
                 }
             }
@@ -60,8 +83,10 @@ class LayoutController extends AbstractListener
                 if ($this->checkIfFieldExists($fieldName, $value)) {
                     return true;
                 }
-            } else if ($key === 'name' && $value === $fieldName) {
-                return true;
+            } else {
+                if ($key === 'name' && $value === $fieldName) {
+                    return true;
+                }
             }
         }
         return false;
