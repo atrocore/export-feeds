@@ -35,14 +35,12 @@ class LayoutController extends AbstractListener
     {
         $result = Json::decode($event->getArgument('result'), true);
 
-        $jsonRows = json_encode($result[0]['rows']);
-
-        if (strpos($jsonRows, '"name":"exportFeed"') === false) {
+        if (strpos(json_encode($result[0]['rows']), '"name":"exportFeed"') === false) {
             $result[0]['rows'][] = [['name' => 'exportFeed'], false];
         }
 
-        if (strpos($jsonRows, '"name":"payload"') !== false) {
-            $result[0]['rows'] = json_decode(str_replace(',[{"name":"payload","fullWidth":true}]', '', $jsonRows), true);
+        if (strpos(json_encode($result[0]['rows']), '"name":"payload"') !== false) {
+            $result[0]['rows'] = json_decode(str_replace(',[{"name":"payload","fullWidth":true}]', '', json_encode($result[0]['rows'])), true);
         }
 
         $result[0]['rows'][] = [['name' => 'payload', 'fullWidth' => true]];
