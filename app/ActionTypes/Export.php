@@ -47,9 +47,39 @@ class Export implements TypeInterface
     {
         $payload = empty($action->get('payload')) ? '' : (string)$action->get('payload');
 
-        if (property_exists($input, 'entityId') && property_exists($input, 'entityType')) {
-            $entity = $this->getEntityManager()->getRepository($input->entityType)->get($input->entityId);
-            $payload = $this->container->get('twig')->renderTemplate($payload, ['entity' => $entity]);
+        if (!empty($action->get('sourceEntity'))) {
+            $service = $this->getServiceFactory()->create($action->get('sourceEntity'));
+            if (property_exists($input, 'entityId')) {
+                $params = [
+                    'disableCount' => true,
+                    'where'        => [['type' => 'in', 'attribute' => 'id', 'value' => [$input->entityId]]],
+                    'offset'       => 0,
+                    'maxSize'      => 1,
+                    'sortBy'       => 'createdAt',
+                    'asc'          => true
+                ];
+            }
+
+            if (property_exists($input, 'where')) {
+                $params = [
+                    'disableCount' => true,
+                    'where'        => json_decode(json_encode($input->where), true),
+                    'offset'       => 0,
+                    'maxSize'      => 60000,
+                    'sortBy'       => 'createdAt',
+                    'asc'          => true
+                ];
+            }
+
+            if (!empty($params)) {
+                $res = $service->findEntities($params);
+                if (!empty($res['collection'][0])) {
+                    $payload = $this->container->get('twig')->renderTemplate($payload, [
+                        'sourceEntities'    => $res['collection'],
+                        'sourceEntitiesIds' => array_column($res['collection']->toArray(), 'id')
+                    ]);
+                }
+            }
         }
 
         if (!empty($input->_relationData)) {
