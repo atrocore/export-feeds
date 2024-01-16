@@ -43,6 +43,7 @@ class ExportFeed extends Base
                     $data['feed']['data']->{$key} = $value;
                 }
             }
+            $data['executeNow'] = !empty($payload['executeNow']);
         }
 
         if (!empty($priority)) {
@@ -329,8 +330,8 @@ class ExportFeed extends Base
                 foreach ($collection as $item) {
                     foreach ($latestJobs as $job) {
                         if ($item->id == $job['export_feed_id']) {
-                            $item->set('lastStatus',  $job['state']);
-                            $item->set('lastTime',  $job['start']);
+                            $item->set('lastStatus', $job['state']);
+                            $item->set('lastTime', $job['start']);
 
                             continue 2;
                         }
@@ -550,7 +551,11 @@ class ExportFeed extends Base
 
         $priority = empty($data['feed']['priority']) ? 'Normal' : (string)$data['feed']['priority'];
 
-        $this->getInjection('queueManager')->push($name, 'ExportJobCreator', $data, $priority);
+        if (!empty($data['executeNow'])) {
+            $this->getServiceFactory()->create('ExportJobCreator')->run($data);
+        } else {
+            $this->getInjection('queueManager')->push($name, 'ExportJobCreator', $data, $priority);
+        }
 
         return true;
     }

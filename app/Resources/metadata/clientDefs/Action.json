@@ -1,0 +1,26 @@
+{
+  "dynamicLogic": {
+    "fields": {
+      "exportFeed": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "export"
+            }
+          ]
+        },
+        "required": {
+          "conditionGroup": [
+            {
+              "type": "equals",
+              "attribute": "type",
+              "value": "export"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

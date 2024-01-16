@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Export\Listeners;
 
 use Atro\Core\EventManager\Event;
+use Atro\Core\KeyValueStorages\StorageInterface;
 use Atro\Listeners\AbstractListener;
 
 class Metadata extends AbstractListener
@@ -27,18 +28,18 @@ class Metadata extends AbstractListener
                 'type' => 'link'
             ];
             $data['entityDefs']['ExportConfiguratorItem']['links']['attribute'] = [
-                'type' => 'belongsTo',
+                'type'   => 'belongsTo',
                 'entity' => 'Attribute'
             ];
         }
 
         if (isset($data['entityDefs']['Channel'])) {
             $data['entityDefs']['ExportConfiguratorItem']['fields']['channel'] = [
-                'type' => 'link',
+                'type'    => 'link',
                 'tooltip' => true
             ];
             $data['entityDefs']['ExportConfiguratorItem']['links']['channel'] = [
-                'type' => 'belongsTo',
+                'type'   => 'belongsTo',
                 'entity' => 'Channel'
             ];
         }
@@ -48,14 +49,57 @@ class Metadata extends AbstractListener
         }
 
         $data['entityDefs']['ExportFeed']['fields']['lastStatus'] = [
-            'type' => 'enum',
-            'notStorable' => true,
+            'type'           => 'enum',
+            'notStorable'    => true,
             'filterDisabled' => true,
-            'readOnly' => true,
-            'options' => $data['entityDefs']['ExportJob']['fields']['state']['options'],
-            'optionColors' => $data['entityDefs']['ExportJob']['fields']['state']['optionColors']
+            'readOnly'       => true,
+            'options'        => $data['entityDefs']['ExportJob']['fields']['state']['options'],
+            'optionColors'   => $data['entityDefs']['ExportJob']['fields']['state']['optionColors']
         ];
 
+        foreach ($this->getMemoryStorage()->get('dynamic_action') ?? [] as $action) {
+            if ($action['type'] === 'export') {
+                if ($action['usage'] === 'record' && !empty($action['source_entity'])) {
+                    $data['clientDefs'][$action['source_entity']]['dynamicRecordActions'][] = [
+                        'id'         => $action['id'],
+                        'name'       => $action['name'],
+                        'display'    => $action['display'],
+                        'massAction' => !empty($action['mass_action']),
+                        'acl'        => [
+                            'scope'  => 'ExportFeed',
+                            'action' => 'read',
+                        ]
+                    ];
+                }
+                if ($action['usage'] === 'entity' && !empty($action['source_entity'])) {
+                    $data['clientDefs'][$action['source_entity']]['dynamicEntityActions'][] = [
+                        'id'      => $action['id'],
+                        'name'    => $action['name'],
+                        'display' => $action['display'],
+                        'acl'     => [
+                            'scope'  => 'ExportFeed',
+                            'action' => 'read',
+                        ]
+                    ];
+                }
+            }
+        }
+
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['sourceEntity']['visible']['conditionGroup'][0]['type'] = 'in';
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['sourceEntity']['visible']['conditionGroup'][0]['attribute'] = 'type';
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['sourceEntity']['visible']['conditionGroup'][0]['value'][] = 'export';
+
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['payload']['visible']['conditionGroup'][0]['type'] = 'in';
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['payload']['visible']['conditionGroup'][0]['attribute'] = 'type';
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['payload']['visible']['conditionGroup'][0]['value'][] = 'export';
+
+        $data['clientDefs']['Action']['dynamicLogic']['fields']['inBackground']['visible']['conditionGroup'][0]['value'][] = 'export';
+
         $event->setArgument('data', $data);
+    }
+
+    protected function getMemoryStorage(): StorageInterface
+    {
+        return $this->getContainer()->get('memoryStorage');
     }
 }

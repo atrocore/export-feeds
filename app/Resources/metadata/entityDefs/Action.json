@@ -1,0 +1,52 @@
+{
+  "fields": {
+    "payload": {
+      "type": "wysiwyg",
+      "view": "views/fields/script",
+      "notStorable": true,
+      "virtualField": true,
+      "filterDisabled": true,
+      "massUpdateDisabled": true,
+      "importDisabled": true,
+      "useDisabledTextareaInViewMode": true,
+      "tooltip": true
+    },
+    "exportFeed": {
+      "type": "link",
+      "view": "export:views/action/fields/export-feed",
+      "notStorable": true,
+      "virtualField": true,
+      "entity": "ExportFeed",
+      "filterDisabled": true,
+      "massUpdateDisabled": true,
+      "importDisabled": true
+    },
+    "exportFeedId": {
+      "type": "varchar",
+      "notStorable": true,
+      "virtualField": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "emHidden": true
+    },
+    "exportFeedName": {
+      "type": "varchar",
+      "notStorable": true,
+      "layoutListDisabled": true,
+      "layoutListSmallDisabled": true,
+      "layoutDetailDisabled": true,
+      "layoutDetailSmallDisabled": true,
+      "massUpdateDisabled": true,
+      "filterDisabled": true,
+      "exportDisabled": true,
+      "importDisabled": true,
+      "emHidden": true
+    }
+  }
+}

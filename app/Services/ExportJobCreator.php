@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Atro\Core\QueueManager;
+use Espo\Core\ServiceFactory;
 use Espo\Core\Utils\Util;
 use Espo\Entities\User;
 use Espo\Services\QueueManagerBase;
@@ -69,18 +70,26 @@ class ExportJobCreator extends QueueManagerBase
 
         $priority = empty($data['feed']['priority']) ? 'Normal' : (string)$data['feed']['priority'];
 
-        $qmId = $this->getQM()->createQueueItem($qmJobName, 'QueueManagerExport', $data, $priority, $md5Hash);
-
-        $exportJob->set('queueItemId', $qmId);
-
-        $this->getEntityManager()->saveEntity($exportJob);
+        if (!empty($data['executeNow'])) {
+            $this->getEntityManager()->saveEntity($exportJob);
+            $this->getServiceFactory()->create('QueueManagerExport')->run($data);
+        } else {
+            $qmId = $this->getQM()->createQueueItem($qmJobName, 'QueueManagerExport', $data, $priority, $md5Hash);
+            $exportJob->set('queueItemId', $qmId);
+            $this->getEntityManager()->saveEntity($exportJob);
+        }
 
         return $exportJob->get('id');
     }
 
     protected function getExportFeedService(): ExportFeed
     {
-        return $this->getContainer()->get('serviceFactory')->create('ExportFeed');
+        return $this->getServiceFactory()->create('ExportFeed');
+    }
+
+    protected function getServiceFactory(): ServiceFactory
+    {
+        return $this->getContainer()->get('serviceFactory');
     }
 
     protected function getQM(): QueueManager
