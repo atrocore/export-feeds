@@ -452,7 +452,12 @@ class ExportTypeSimple extends AbstractExportType
             // skip empty worksheets
             if ($startRow <= $workSheet->getHighestRow()) {
                 foreach ($workSheet->getColumnIterator() as $configIndex => $column) {
-                    $sheetCol = $sheet['configuration'][Coordinate::columnIndexFromString($configIndex) - 1];
+                    $index = Coordinate::columnIndexFromString($configIndex) - 1;
+                    if (!isset($sheet['configuration'][$index])) {
+                        continue;
+                    }
+
+                    $sheetCol = $sheet['configuration'][$index];
                     $decimalMark = $sheetCol['decimalMark'];
                     $thousandSeparator = $sheetCol['thousandSeparator'];
 
