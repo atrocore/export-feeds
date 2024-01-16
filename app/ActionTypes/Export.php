@@ -80,17 +80,16 @@ class Export implements TypeInterface
             }
         }
 
+        $payload = $this->container->get('twig')->renderTemplate($payload, $templateData);
+        $payload = @json_decode((string)$payload, true);
+
         if (!empty($input->_relationData)) {
-            $payload = @json_decode($payload, true);
             $payload['relation'] = [
                 'action'       => $input->_relationData['action'],
                 'relationName' => $input->_relationData['relationName'],
                 'foreignId'    => $input->_relationData['foreignId']
             ];
-            $payload = json_encode($payload);
         }
-
-        $payload = $this->container->get('twig')->renderTemplate($payload, $templateData);
 
         /** @var \Export\Services\ExportFeed $service */
         $service = $this->getServiceFactory()->create('ExportFeed');
@@ -100,7 +99,9 @@ class Export implements TypeInterface
             return false;
         }
 
-        $service->runExport($exportFeed->get('id'), $payload);
+        $payload['executeNow'] = empty($action->get('inBackground'));
+
+        $service->runExport($exportFeed->get('id'), json_encode($payload));
 
         return true;
     }
