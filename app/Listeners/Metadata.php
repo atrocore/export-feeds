@@ -59,14 +59,18 @@ class Metadata extends AbstractListener
 
         foreach ($this->getMemoryStorage()->get('dynamic_action') ?? [] as $action) {
             if ($action['type'] === 'export') {
-                $data['clientDefs'][$action['source_entity']]['dynamicActions'][] = [
-                    'id'   => $action['id'],
-                    'name' => $action['name'],
-                    'acl'  => [
-                        'scope'  => 'ExportFeed',
-                        'action' => 'read',
-                    ]
-                ];
+                if ($action['usage'] === 'record' && !empty($action['source_entity'])) {
+                    $data['clientDefs'][$action['source_entity']]['dynamicRecordActions'][] = [
+                        'id'         => $action['id'],
+                        'name'       => $action['name'],
+                        'display'    => $action['display'],
+                        'massAction' => !empty($action['mass_action']),
+                        'acl'        => [
+                            'scope'  => 'ExportFeed',
+                            'action' => 'read',
+                        ]
+                    ];
+                }
             }
         }
 
