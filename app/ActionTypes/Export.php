@@ -33,7 +33,6 @@ class Export implements TypeInterface
     {
         $action = $this->getEntityManager()->getEntity('Action', $workflowData['id']);
         $input = new \stdClass();
-        $input->entityType = $event->getArgument('entity')->getEntityType();
         $input->entityId = $event->getArgument('entity')->get('id');
 
         if (!empty($workflow['_relationData'])) {
@@ -46,6 +45,7 @@ class Export implements TypeInterface
     public function executeNow(Entity $action, \stdClass $input): bool
     {
         $payload = empty($action->get('payload')) ? '' : (string)$action->get('payload');
+        $templateData = [];
 
         if (!empty($action->get('sourceEntity'))) {
             $service = $this->getServiceFactory()->create($action->get('sourceEntity'));
@@ -74,10 +74,8 @@ class Export implements TypeInterface
             if (!empty($params)) {
                 $res = $service->findEntities($params);
                 if (!empty($res['collection'][0])) {
-                    $payload = $this->container->get('twig')->renderTemplate($payload, [
-                        'sourceEntities'    => $res['collection'],
-                        'sourceEntitiesIds' => array_column($res['collection']->toArray(), 'id')
-                    ]);
+                    $templateData['sourceEntities'] = $res['collection'];
+                    $templateData['sourceEntitiesIds'] = array_column($res['collection']->toArray(), 'id');
                 }
             }
         }
@@ -91,6 +89,8 @@ class Export implements TypeInterface
             ];
             $payload = json_encode($payload);
         }
+
+        $payload = $this->container->get('twig')->renderTemplate($payload, $templateData);
 
         /** @var \Export\Services\ExportFeed $service */
         $service = $this->getServiceFactory()->create('ExportFeed');
