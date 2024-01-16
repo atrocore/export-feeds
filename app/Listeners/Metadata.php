@@ -71,6 +71,17 @@ class Metadata extends AbstractListener
                         ]
                     ];
                 }
+                if ($action['usage'] === 'entity' && !empty($action['source_entity'])) {
+                    $data['clientDefs'][$action['source_entity']]['dynamicEntityActions'][] = [
+                        'id'      => $action['id'],
+                        'name'    => $action['name'],
+                        'display' => $action['display'],
+                        'acl'     => [
+                            'scope'  => 'ExportFeed',
+                            'action' => 'read',
+                        ]
+                    ];
+                }
             }
         }
 
