@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Export\Services;
 
+use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Exceptions\Error;
 use Espo\Core\Utils\Metadata;
 use Espo\ORM\Entity;
@@ -53,6 +54,10 @@ class QueueManagerExport extends QueueManagerBase
             $exportJob->set('stateMessage', $e->getMessage());
             $this->getEntityManager()->saveEntity($exportJob);
             $GLOBALS['log']->error('Export Error: ' . $e->getMessage());
+
+            if (!empty($data['executeNow'])) {
+                throw new BadRequest($e->getMessage());
+            }
 
             return false;
         }
