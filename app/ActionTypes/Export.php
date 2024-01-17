@@ -32,6 +32,8 @@ class Export implements TypeInterface
     public function executeViaWorkflow(array $workflowData, Event $event): bool
     {
         $action = $this->getEntityManager()->getEntity('Action', $workflowData['id']);
+        $action->set('sourceEntity', $event->getArgument('entity')->getEntityType());
+
         $input = new \stdClass();
         $input->entityId = $event->getArgument('entity')->get('id');
 
