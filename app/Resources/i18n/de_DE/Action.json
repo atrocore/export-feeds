@@ -7,8 +7,5 @@
     "type": {
       "export": "Exportfeed"
     }
-  },
-  "tooltips": {
-    "payload": "Zusätzliche Informationen, die an den Listener zu übermitteln sind."
   }
 }
