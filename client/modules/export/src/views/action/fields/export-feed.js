@@ -17,7 +17,7 @@ Espo.define('export:views/action/fields/export-feed', 'views/fields/link', Dep =
 
             this.listenTo(this.model, 'change:type', () => {
                 if (this.model.get('type') === 'export'){
-                    this.model.set('payload', '{"where":[{"type":"id","attribute":"id","value":{{ sourceEntitiesIds|json_encode|raw}}}]}');
+                    this.model.set('payload', '{"where":[{"type":"in","attribute":"id","value":{{ sourceEntitiesIds|json_encode|raw}}}]}');
                 }
             });
         },
