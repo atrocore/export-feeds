@@ -134,6 +134,8 @@ class ExportFeed extends Base
             $addedFields[] = $item->get('name') . '_' . $item->get('language');
         }
 
+        /** @var \Export\Services\ExportConfiguratorItem $eciService */
+        $eciService = $this->getInjection('serviceFactory')->create('ExportConfiguratorItem');
         $allFields = AbstractExportType::getAllFieldsConfiguration($entity, $this->getMetadata(), $this->getInjection('language'));
 
         foreach ($allFields as $row) {
@@ -168,6 +170,7 @@ class ExportFeed extends Base
             if (isset($row['mask'])) {
                 $item->set('mask', $row['mask']);
             }
+            $item->set('column', $eciService->prepareColumnName($item));
 
             $this->getEntityManager()->saveEntity($item);
         }
