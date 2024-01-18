@@ -78,7 +78,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                         entity = 'ExtensibleEnumOption';
                     } else if (this.model.get('attributeValue') === 'valueUnit') {
                         entity = 'Unit'
-                    } else if (attribute.type === 'link') {
+                    } else if (attribute.type === 'link' || attribute.type === 'linkMultiple') {
                         entity = attribute.entityType;
                     }
                 }
