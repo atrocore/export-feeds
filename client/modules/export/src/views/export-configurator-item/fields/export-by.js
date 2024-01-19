@@ -160,7 +160,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 }
             }
 
-            return ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum'].includes(type) && (this.params.options || []).length;
+            return ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum', 'file'].includes(type) && (this.params.options || []).length;
         },
 
         getAttribute(attributeId) {
