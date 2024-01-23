@@ -81,6 +81,8 @@ class Export implements TypeInterface
                     $templateData['sourceEntitiesIds'] = array_column($res['collection']->toArray(), 'id');
 
                     $templateData['entity'] = $res['collection'][0]; // for backward compatibility
+                } else {
+                    return false;
                 }
             }
         }
