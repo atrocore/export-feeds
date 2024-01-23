@@ -58,7 +58,8 @@ class Export implements TypeInterface
                     'offset'       => 0,
                     'maxSize'      => 1,
                     'sortBy'       => 'createdAt',
-                    'asc'          => true
+                    'asc'          => true,
+                    'withDeleted'  => true
                 ];
             }
 
