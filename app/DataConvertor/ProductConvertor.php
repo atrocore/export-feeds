@@ -48,21 +48,7 @@ class ProductConvertor extends Convertor
             $language = $GLOBALS['languagePrism'];
         }
 
-        $productAttribute = null;
-
-        // find Global
-        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Global', '']);
-        if (isset($pavCollectionKeys[$key])) {
-            $productAttribute = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
-        }
-
-        // find Channel
-        if (!empty($configuration['channelId'])) {
-            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Channel', $configuration['channelId']]);
-            if (isset($pavCollectionKeys[$key])) {
-                $productAttribute = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
-            }
-        }
+        $productAttribute = $this->searchAttributeValue($pavCollectionKeys, $record, $configuration, $language);
 
         if (!empty($productAttribute)) {
             // exit if replaceAttributeValues disabled
@@ -81,6 +67,38 @@ class ProductConvertor extends Convertor
         ];
 
         return $this->getEventManager()->dispatch('ProductConvertor', 'convertAttributeValue', new Event($eventPayload))->getArgument('result');
+    }
+
+    /**
+     * @param array $record
+     * @param array $configuration
+     * @param string|null $language
+     *
+     * @return mixed|null
+     */
+    protected function searchAttributeValue($pavCollectionKeys, array $record, array $configuration, ?string $language = '')
+    {
+        $result = null;
+
+        // find Global
+        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Global', '']);
+        if (isset($pavCollectionKeys[$key])) {
+            $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
+        }
+
+        // find Channel
+        if (!empty($configuration['channelId'])) {
+            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Channel', $configuration['channelId']]);
+            if (isset($pavCollectionKeys[$key])) {
+                $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
+            }
+        }
+
+        if (empty($result) && !in_array($language, ['', 'main'])) {
+            $result = $this->searchAttributeValue($pavCollectionKeys, $record, $configuration, 'main');
+        }
+
+        return $result;
     }
 
     public function getFieldForAttribute($configuration)
