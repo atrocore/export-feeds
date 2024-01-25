@@ -116,8 +116,13 @@ class LinkMultipleType extends LinkType
         if ($configuration['zip'] && in_array($foreignEntity, ['Asset', 'ProductAsset'])) {
             $result['__assetPaths'] = [];
             foreach ($foreignList as $foreignData) {
-                $attachment = $this->convertor->getEntity('Attachment', $foreignData['fileId']);
-                $result['__assetPaths'][] = $attachment->getFilePath();
+                $fileId = $foreignEntity === 'ProductAsset'
+                    ? $this->convertor->getEntity('Asset',$foreignData['assetId'])->get('fileId')
+                    : $foreignData['fileId'];
+                if($fileId !== null){
+                    $attachment = $this->convertor->getEntity('Attachment', $fileId);
+                    $result['__assetPaths'][] = $attachment->getFilePath();
+                }
             }
         }
 
