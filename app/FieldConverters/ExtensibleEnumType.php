@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Export\FieldConverters;
 
+use Espo\Entities\ExtensibleEnumOption;
 use Espo\ORM\Entity;
 
 class ExtensibleEnumType extends LinkType
@@ -37,5 +38,32 @@ class ExtensibleEnumType extends LinkType
         $itemKey = $this->convertor->getEntityManager()->getRepository('ExtensibleEnumOption')->getCacheKey($id);
 
         return $this->getMemoryStorage()->get($itemKey);
+    }
+
+    /**
+     * @param Entity $entity
+     *
+     * @return void
+     */
+    protected function prepareEntity(Entity $entity): void
+    {
+        if (!$entity instanceof ExtensibleEnumOption) {
+            return;
+        }
+
+        if (empty($extensibleEnum = $entity->get('extensibleEnum'))) {
+            return;
+        }
+
+        $data = $this->convertor
+            ->getEntityManager()
+            ->getRepository('ExtensibleEnumOption')
+            ->getPreparedOption($extensibleEnum->get('id'), $entity->get('id'));
+
+        if (!empty($data) && is_array($data)) {
+            $value = $extensibleEnum->get('multilingual') ? $data['preparedName'] : $data['name'];
+
+            $entity->set('name', $value);
+        }
     }
 }
