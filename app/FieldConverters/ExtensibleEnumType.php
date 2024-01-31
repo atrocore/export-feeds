@@ -60,9 +60,12 @@ class ExtensibleEnumType extends LinkType
             ->getRepository('ExtensibleEnumOption')
             ->getPreparedOption($extensibleEnum->get('id'), $entity->get('id'));
 
-        if (!empty($data) && is_array($data)) {
+        if (!empty($data)
+            && is_array($data)
+            && array_key_exists('preparedName', $data)
+            && array_key_exists('name', $data)
+        ) {
             $value = $extensibleEnum->get('multilingual') ? $data['preparedName'] : $data['name'];
-
             $entity->set('name', $value);
         }
     }
