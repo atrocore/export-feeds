@@ -51,22 +51,17 @@ class ExtensibleEnumType extends LinkType
             return;
         }
 
-        if (empty($extensibleEnum = $entity->get('extensibleEnum'))) {
+        if (empty($extensibleEnumId = $entity->get('extensibleEnumId'))) {
             return;
         }
 
         $data = $this->convertor
             ->getEntityManager()
             ->getRepository('ExtensibleEnumOption')
-            ->getPreparedOption($extensibleEnum->get('id'), $entity->get('id'));
+            ->getPreparedOption($extensibleEnumId, $entity->get('id'));
 
-        if (!empty($data)
-            && is_array($data)
-            && array_key_exists('preparedName', $data)
-            && array_key_exists('name', $data)
-        ) {
-            $value = $extensibleEnum->get('multilingual') ? $data['preparedName'] : $data['name'];
-            $entity->set('name', $value);
+        if (!empty($data) && is_array($data) && array_key_exists('preparedName', $data)) {
+            $entity->set('name', $data['preparedName']);
         }
     }
 }
