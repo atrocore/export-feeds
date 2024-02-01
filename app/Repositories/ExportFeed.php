@@ -157,12 +157,13 @@ class ExportFeed extends Base
             $qb->update('export_configurator_item')
                 ->set('column_type', ':newColumnType')
                 ->where('column_type = :columnType and export_feed_id= :exportFeedId')
+                ->andWhere('deleted=:false')
                 ->setParameters([
                     'newColumnType' => 'name',
                     'columnType'    => 'internal',
                     'exportFeedId'  => $entity->get('id')
                 ])
-                ->andWhere($qb->expr()->eq('deleted', 0))
+                ->setParameter('false', false, ParameterType::BOOLEAN)
                 ->executeQuery();
         }
 
