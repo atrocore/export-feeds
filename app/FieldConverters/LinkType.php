@@ -81,7 +81,7 @@ class LinkType extends AbstractType
                             continue 1;
                         }
 
-                        $foreignType = (string)$this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+                        $foreignType = $this->convertor->getTypeForField($foreignEntity, $v);
 
                         $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
 
@@ -175,11 +175,7 @@ class LinkType extends AbstractType
 
         $foreignData[$configuratorField] = $foreignLinkData['collection'][0]->get($exportByFieldParts[$parts - 1]);
 
-        $foreignType = $this
-            ->convertor
-            ->getMetadata()
-            ->get(['entityDefs', $foreignLinkData['collection'][0]->getEntityType(), 'fields', $exportByFieldParts[$parts - 1], 'type'], 'varchar');
-
+        $foreignType = $this->convertor->getTypeForField($foreignLinkData['collection'][0]->getEntityType(), $exportByFieldParts[$parts - 1]);
     }
 
     protected function convertForeignType(array &$fieldResult, string $foreignType, array $foreignConfiguration, array $foreignData, string $field, array $record)

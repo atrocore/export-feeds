@@ -25,15 +25,23 @@ class ValueWithUnitType extends AbstractType
         $this->emptyValue = $configuration['emptyValue'];
         $this->nullValue = $configuration['nullValue'];
 
-        $attribute = $this->convertor->getAttributeById($record['attributeId']);
-        $attributeType = $attribute->get('type');
+        if (empty($record['attributeId'])) {
+            $fieldDefs = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field']]);
+            // use main field instead
+            $field = $fieldDefs['mainField'];
+            $type = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $field, 'type']);
+            $unitResult = $record[$field . 'UnitName'] ?? '';
+        } else {
+            $attribute = $this->convertor->getAttributeById($record['attributeId']);
+            $field = 'value';
+            $type = $attribute->get('type');
+            $unitResult = $this->convertor->convertType('unit', $record, array_merge($configuration, ['field' => $field . 'Unit', 'exportBy' => ['name'], 'markForNoRelation' => '']))[$column];
+        }
 
-        $unitResult = $this->convertor->convertType('unit', $record, array_merge($configuration, ['field' => 'valueUnit', 'exportBy' => ['name'], 'markForNoRelation' => '']))[$column];
-
-        if (in_array($attributeType, ['rangeFloat', 'rangeInt'])) {
-            $type = $attributeType === 'rangeFloat' ? 'float' : 'int';
-            $valueFromResult = $this->convertor->convertType($type, $record, array_merge($configuration, ['field' => 'valueFrom']))[$column];
-            $valueToResult = $this->convertor->convertType($type, $record, array_merge($configuration, ['field' => 'valueTo']))[$column];
+        if (in_array($type, ['rangeFloat', 'rangeInt'])) {
+            $type = $type === 'rangeFloat' ? 'float' : 'int';
+            $valueFromResult = $this->convertor->convertType($type, $record, array_merge($configuration, ['field' => $field . 'From']))[$column];
+            $valueToResult = $this->convertor->convertType($type, $record, array_merge($configuration, ['field' => $field . 'To']))[$column];
             $result[$column] = "";
 
             if (!$this->isNullorEmptyResult($valueFromResult) && !$this->isNullorEmptyResult($valueToResult)) {
@@ -44,7 +52,7 @@ class ValueWithUnitType extends AbstractType
                 $result[$column] = "<= $valueToResult";
             }
         } else {
-            $valueResult = $this->convertor->convertType($attributeType, $record, array_merge($configuration, ['field' => 'value']))[$column];
+            $valueResult = $this->convertor->convertType($type, $record, array_merge($configuration, ['field' => $field]))[$column];
             $result[$column] = "$valueResult";
         }
 

@@ -138,7 +138,7 @@ class LinkMultipleType extends LinkType
                     continue 1;
                 }
 
-                $foreignType = $this->convertor->getMetadata()->get(['entityDefs', $foreignEntity, 'fields', $v, 'type'], 'varchar');
+                $foreignType = $this->convertor->getTypeForField($foreignEntity, $v);
 
                 $this->prepareExportByField($foreignEntity, $v, $foreignType, $foreignData);
 
@@ -147,8 +147,8 @@ class LinkMultipleType extends LinkType
                     $foreignType = $foreignData['attributeType'] === 'asset' ? 'varchar' : $foreignData['attributeType'];
                 }
 
-                $foreignConfiguration = array_merge($configuration, ['field' => $v]);
-                $this->convertForeignType($fieldResult, (string)$foreignType, $foreignConfiguration, $foreignData, $v, $record);
+                $foreignConfiguration = array_merge($configuration, ['entity'=>  $foreignEntity,'field' => $v]);
+                $this->convertForeignType($fieldResult, $foreignType, $foreignConfiguration, $foreignData, $v, $record);
             }
 
             $links[] = implode($configuration['fieldDelimiterForRelation'], $fieldResult);
