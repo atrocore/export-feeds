@@ -48,6 +48,7 @@
     }
   },
   "labels": {
+    "generateTemplate": "Generate Template",
     "simple": "File",
     "typeToSearch": "Type to search...",
     "addMissingFieldsConfirmation": "Are you sure you want to add all missing fields?",
@@ -79,6 +80,7 @@
     "Canceled": "Canceled"
   },
   "messages": {
+    "confirmTemplateGeneration": "Are you sure you want to generate Template?",
     "delimitersMustBeDifferent": "All feed parameters should have unique values.",
     "noExportFeedSelected": "No ExportFeed selected.",
     "columnAlreadyExist": "A column with such name already exists.",

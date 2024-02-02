@@ -15,14 +15,62 @@ Espo.define('export:views/export-feed/fields/template', 'views/fields/script', D
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.prepareJsonTemplate();
             this.listenTo(this.model, 'change:entity change:fileType', () => {
-                this.prepareJsonTemplate();
+                if (this.mode === 'edit' && this.model.isNew()) {
+                    this.prepareJsonTemplate();
+                }
             });
         },
 
+        initInlineActions() {
+            this.listenTo(this, 'after:render', this.initMagicIcon, this);
+
+            Dep.prototype.initInlineActions.call(this);
+        },
+
+        initMagicIcon() {
+            const $cell = this.getCellElement();
+
+            $cell.find('.fa-magic').parent().remove();
+
+            if (this.model.get('fileType') !== 'json') {
+                return;
+            }
+
+            const $link = $('<a href="javascript:" class="pull-right hidden" title="' + this.translate('generateTemplate', 'labels', 'ExportFeed') + '"><span class="fas fa-magic fa-sm"></span></a>');
+
+            $cell.prepend($link);
+
+            $link.on('click', () => {
+                this.confirm({
+                    message: this.translate('confirmTemplateGeneration', 'messages', 'ImportFeed'),
+                    confirmText: this.translate('Apply')
+                }, () => {
+                    this.prepareJsonTemplate();
+                    this.ajaxPutRequest(`ExportFeed/${this.model.get('id')}`, {template: this.model.get('template')}).then(() => {
+                        this.notify('Saved', 'success');
+                    });
+                });
+            });
+
+            $cell.on('mouseenter', function (e) {
+                e.stopPropagation();
+                if (this.disabled || this.readOnly) {
+                    return;
+                }
+                if (this.mode === 'detail') {
+                    $link.removeClass('hidden');
+                }
+            }.bind(this)).on('mouseleave', function (e) {
+                e.stopPropagation();
+                if (this.mode === 'detail') {
+                    $link.addClass('hidden');
+                }
+            }.bind(this));
+        },
+
         prepareJsonTemplate() {
-            if (this.mode !== 'edit' || !this.model.isNew() || this.model.get('fileType') !== 'json') {
+            if (this.model.get('fileType') !== 'json') {
                 return;
             }
 
@@ -48,7 +96,7 @@ Espo.define('export:views/export-feed/fields/template', 'views/fields/script', D
                 }
             });
 
-            this.model.set('template', '{% set siteUrl = config.siteUrl %}\n{% set entity = entities[0] %}\n{\n    ' + templateData.join(',\n    ') + '}');
+            this.model.set('template', '{% set siteUrl = config.siteUrl %}\n{% set entity = entities[0] %}\n{\n    ' + templateData.join(',\n    ') + '\n}');
         },
 
     })

@@ -39,6 +39,7 @@
     "configuratorItems": "Конфігуратор"
   },
   "labels": {
+    "generateTemplate": "Згенерувати шаблон",
     "typeToSearch": "Введіть для пошуку...",
     "addMissingFieldsConfirmation": "Ви впевнені, що хочете додати всі відсутні поля?",
     "removeAllItemsConfirmation": "Ви впевнені, що хочете видалити всі правила конфігуратора?",
@@ -70,6 +71,7 @@
     "Canceled": "Скасовано"
   },
   "messages": {
+    "confirmTemplateGeneration": "Ви впевнені, що хочете згенерувати шаблон?",
     "delimitersMustBeDifferent": "Усі параметри фіду повинні мати унікальні значення.",
     "noExportFeedSelected": "Експортний фід не обрано.",
     "columnAlreadyExist": "Колонка з такою назвою вже існує.",

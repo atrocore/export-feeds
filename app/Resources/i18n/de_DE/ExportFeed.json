@@ -40,6 +40,7 @@
     "exportJobs": "Exportaufträge"
   },
   "labels": {
+    "generateTemplate": "Vorlage generieren",
     "typeToSearch": "Tippe um zu suchen...",
     "addMissingFieldsConfirmation": " Möchten Sie wirklich alle fehlenden Felder hinzufügen?",
     "removeAllItemsConfirmation": "Möchten Sie wirklich alle Konfigurator-Regel entfernen?",
@@ -71,6 +72,7 @@
     "Canceled": "Abgebrochen"
   },
   "messages": {
+    "confirmTemplateGeneration": "Sind Sie sicher, dass Sie eine Vorlage erstellen wollen?",
     "delimitersMustBeDifferent": "Alle Feedparameter sollten eindeutige Werte haben.",
     "noExportFeedSelected": "Kein Exportfeed ausgewählt.",
     "columnAlreadyExist": "Eine Spalte mit diesem Namen existiert bereits.",
