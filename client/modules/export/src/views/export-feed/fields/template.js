@@ -43,7 +43,7 @@ Espo.define('export:views/export-feed/fields/template', 'views/fields/script', D
 
             $link.on('click', () => {
                 this.confirm({
-                    message: this.translate('confirmTemplateGeneration', 'messages', 'ImportFeed'),
+                    message: this.translate('confirmTemplateGeneration', 'messages', 'ExportFeed'),
                     confirmText: this.translate('Apply')
                 }, () => {
                     this.prepareJsonTemplate();
