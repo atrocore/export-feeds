@@ -167,8 +167,10 @@ class Convertor
         return $attributeType;
     }
 
-    public function getTypeForField(string $entityName, string $field): string
+    public function getTypeForField(string $entityName, ?string $field): string
     {
+        if( $field === null) return 'varchar';
+
         $fieldDefs = $this->getMetadata()->get(['entityDefs', $entityName, 'fields', $field]);
         $type = $fieldDefs['type'] ?? 'varchar';
         if (!empty($fieldDefs['unitField'])) {
