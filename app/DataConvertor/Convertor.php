@@ -42,11 +42,7 @@ class Convertor
             return [$configuration['column'] => ""];
         }
 
-        $fieldDefs = $this->getMetadata()->get(['entityDefs', $configuration['entity'], 'fields', $configuration['field']]);
-        $type = $fieldDefs['type'] ?? 'varchar';
-        if (!empty($fieldDefs['unitField'])) {
-            $type = 'unit';
-        }
+        $type = $this->getTypeForField($configuration['entity'], $configuration['field']);
 
         return $this->convertType($type, $record, $configuration);
     }
@@ -169,5 +165,15 @@ class Convertor
         }
 
         return $attributeType;
+    }
+
+    public function getTypeForField(string $entityName, string $field): string
+    {
+        $fieldDefs = $this->getMetadata()->get(['entityDefs', $entityName, 'fields', $field]);
+        $type = $fieldDefs['type'] ?? 'varchar';
+        if (!empty($fieldDefs['unitField'])) {
+            $type = 'valueWithUnit';
+        }
+        return $type;
     }
 }
