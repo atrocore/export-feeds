@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace Export\Services;
 
 use Espo\Core\Exceptions;
-use Espo\Core\Templates\Services\Base;
+use Atro\Core\Templates\Services\Base;
 use Espo\Core\Utils\Json;
 use Espo\Core\Utils\Util;
 use Espo\Entities\User;
@@ -596,42 +596,27 @@ class ExportFeed extends Base
         return [];
     }
 
-    public function duplicateConfiguratorItems(Entity $entity, Entity $duplicatingEntity): void
+    public function duplicateSheets(Entity $entity, Entity $duplicatingEntity): void
     {
-        if (empty($items = $duplicatingEntity->get('configuratorItems')) || count($items) === 0) {
+        if (empty($items = $duplicatingEntity->get('sheets')) || count($items) === 0) {
             return;
         }
 
         foreach ($items as $item) {
             $data = $item->toArray();
+            $data['_duplicatingEntityId'] = $item->get('id');
+            $data['exportFeedId'] = $entity->get('id');
+
             unset($data['id']);
             unset($data['createdAt']);
-            $data['exportFeedId'] = $entity->get('id');
+            unset($data['modifiedAt']);
+            unset($data['createdById']);
+            unset($data['modifiedById']);
 
-            $newItem = $this->getEntityManager()->getEntity('ExportConfiguratorItem');
-            $newItem->set($data);
-            $this->getEntityManager()->saveEntity($newItem);
+            $this->getServiceFactory()->create('Sheet')->createEntity((object)$data);
         }
     }
 
-    public function duplicateExportHttpHeaders(Entity $entity, Entity $duplicatingEntity): void
-    {
-        $headers = $duplicatingEntity->get('exportHttpHeaders');
-
-        if (empty($headers) || count($headers) === 0) {
-            return;
-        }
-
-        foreach ($headers as $header) {
-            $data = $header->toArray();
-            unset($data['id']);
-            $data['exportFeedId'] = $entity->get('id');
-
-            $newHeader = $this->getEntityManager()->getEntity('ExportHttpHeader');
-            $newHeader->set($data);
-            $this->getEntityManager()->saveEntity($newHeader);
-        }
-    }
 
     public function verifyCodeEasyCatalog(string $code)
     {
