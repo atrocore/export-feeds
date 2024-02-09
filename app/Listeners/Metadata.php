@@ -35,8 +35,7 @@ class Metadata extends AbstractListener
 
         if (isset($data['entityDefs']['Channel'])) {
             $data['entityDefs']['ExportConfiguratorItem']['fields']['channel'] = [
-                'type'    => 'link',
-                'tooltip' => true
+                'type'    => 'link'
             ];
             $data['entityDefs']['ExportConfiguratorItem']['links']['channel'] = [
                 'type'   => 'belongsTo',
