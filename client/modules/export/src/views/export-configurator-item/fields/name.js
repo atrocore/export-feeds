@@ -132,6 +132,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                         if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
                             entity = 'ExtensibleEnumOption';
                         }
+                        if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'measure') {
+                            entity = 'Unit';
+                        }
                         if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
                             entity = 'ExtensibleEnumOption'
                         }
