@@ -21,9 +21,8 @@ class ExportJob extends Base
 {
     protected $mandatorySelectAttributeList = ['exportFeedId', 'exportFeedName', 'state', 'stateMessage'];
 
-    public function deleteOld(): bool
+    public function deleteOld(int $days): bool
     {
-        $days = $this->getConfig()->get('exportJobsMaxDays', 21);
         if ($days === 0) {
             return true;
         }
