@@ -94,6 +94,16 @@ class Metadata extends AbstractListener
 
         $data['clientDefs']['Action']['dynamicLogic']['fields']['inBackground']['visible']['conditionGroup'][0]['value'][] = 'export';
 
+        if (empty($data['clientDefs']['ScheduledJob']['dynamicLogic']['fields']['maximumHoursToLookBack']['visible']['conditionGroup'][0])) {
+            $data['clientDefs']['ScheduledJob']['dynamicLogic']['fields']['maximumHoursToLookBack']['visible']['conditionGroup'][0] = [
+                'type' => 'in',
+                'attribute' => 'job',
+                'value' => ['ExportFeed']
+            ];
+        } else {
+            $data['clientDefs']['ScheduledJob']['dynamicLogic']['fields']['maximumHoursToLookBack']['visible']['conditionGroup'][0]['value'][] = 'ExportFeed';
+        }
+
         $event->setArgument('data', $data);
     }
 
