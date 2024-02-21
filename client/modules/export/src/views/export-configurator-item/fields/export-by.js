@@ -68,6 +68,9 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'extensibleEnumId'])) {
                     entity = 'ExtensibleEnumOption';
                 }
+                if (this.getMetadata().get(['entityDefs', this.model.get('entity'), 'fields', this.model.get('name'), 'type']) === 'measure') {
+                    entity = 'Unit';
+                }
                 if (this.model.get('entity') === 'ProductAttributeValue' && this.model.get('name') === 'value') {
                     entity = 'ExtensibleEnumOption'
                 }
@@ -160,7 +163,7 @@ Espo.define('export:views/export-configurator-item/fields/export-by', 'views/fie
                 }
             }
 
-            return ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum', 'file'].includes(type) && (this.params.options || []).length;
+            return ['image', 'asset', 'link', 'extensibleEnum', 'linkMultiple', 'extensibleMultiEnum', 'file', 'measure'].includes(type) && (this.params.options || []).length;
         },
 
         getAttribute(attributeId) {

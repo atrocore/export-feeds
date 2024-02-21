@@ -12,5 +12,8 @@
   "hasAssignedUser": true,
   "hasTeam": true,
   "hasAccount": true,
-  "isActiveUnavailable": true
+  "isActiveUnavailable": true,
+  "duplicatableRelations": [
+    "configuratorItems"
+  ]
 }

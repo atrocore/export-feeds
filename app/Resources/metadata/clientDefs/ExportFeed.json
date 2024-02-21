@@ -325,7 +325,6 @@
               "type": "in",
               "attribute": "fileType",
               "value": [
-                "xlsx",
                 "csv"
               ]
             },
@@ -340,6 +339,13 @@
         },
         "required": {
           "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "csv"
+              ]
+            },
             {
               "type": "in",
               "attribute": "type",
