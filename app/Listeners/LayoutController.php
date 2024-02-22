@@ -66,6 +66,9 @@ class LayoutController extends AbstractListener
                 if (!$this->checkIfFieldExists('maximumHoursToLookBack', $result[0]['rows'])) {
                     $newRows[] = [['name' => 'maximumHoursToLookBack'], false];
                 }
+                if (!$this->checkIfFieldExists('maximumDaysForJobExist', $result[0]['rows'])) {
+                    $newRows[] = [['name' => 'maximumDaysForJobExist'], false];
+                }
             }
         }
 
