@@ -43,6 +43,26 @@ class ExportJob extends Base
             }
         }
 
+        // delete queue items
+        while (true) {
+            $toDeleteItem = $this->getEntityManager()->getRepository('QueueItem')
+                ->where([
+                    'modifiedAt<' => (new \DateTime())->modify("-$days days")->format('Y-m-d H:i:s'),
+                    'serviceName' => ['ExportJobCreator', 'QueueManagerExport'],
+                    'status' => ['Success', 'Failed', 'Canceled']
+                ])
+                ->limit(0, 2000)
+                ->order('modifiedAt')
+                ->find();
+            if (empty($toDeleteItem[0])) {
+                break;
+            }
+
+            foreach ($toDeleteItem as $entity) {
+                $this->getEntityManager()->removeEntity($entity);
+            }
+        }
+
         // delete forever
         $daysToDeleteForever = $days + 14;
         $qb = $this->getEntityManager()->getConnection()->createQueryBuilder();
