@@ -72,6 +72,10 @@
       "view": "export:views/export-feed/fields/language",
       "tooltip": true
     },
+    "fallbackLanguage": {
+      "type": "varchar",
+      "view": "export:views/export-feed/fields/fallback-language"
+    },
     "isActive": {
       "notNull": true,
       "type": "bool"

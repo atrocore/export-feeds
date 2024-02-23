@@ -32,7 +32,8 @@
     "convertCollectionToString": "Convert collection to string",
     "convertRelationsToString": "Convert relations to string",
     "replaceAttributeValues": "Replace attribute values",
-    "exportByMaxDepth": "Maximum depth of relations to show"
+    "exportByMaxDepth": "Maximum depth of relations to show",
+    "fallbackLanguage": "Fallback Language"
   },
   "links": {
     "configuratorItems": "Configurator",

@@ -106,6 +106,20 @@
             }
           ]
         }
+      },
+      "fallbackLanguage": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isNotEmpty",
+              "attribute": "language"
+            },
+            {
+              "type": "isEmpty",
+              "attribute": "exportFeedLanguage"
+            }
+          ]
+        }
       }
     }
   }

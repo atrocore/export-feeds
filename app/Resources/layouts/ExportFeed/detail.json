@@ -99,6 +99,12 @@
       ],
       [
         {
+          "name": "fallbackLanguage"
+        },
+        false
+      ],
+      [
+        {
           "name": "thousandSeparator"
         },
         {

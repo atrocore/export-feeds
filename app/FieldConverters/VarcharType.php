@@ -19,13 +19,18 @@ class VarcharType extends AbstractType
     {
         $field = $configuration['field'];
         $column = $configuration['column'];
-
         $result[$column] = $configuration['nullValue'];
-        if (isset($record[$field])) {
-            if (empty($record[$field])) {
-                $result[$column] = $record[$field] === null ? $configuration['nullValue'] : $configuration['emptyValue'];
+
+        if (array_key_exists($field,$record)) {
+            $value = $record[$field];
+            if(empty($value) && array_key_exists($configuration['fallbackField'], $record) ){
+                $value = $record[$configuration['fallbackField']];
+            }
+
+            if (empty($value)) {
+                $result[$column] = $value === null ? $configuration['nullValue'] : $configuration['emptyValue'];
             } else {
-                $result[$column] = $record[$field];
+                $result[$column] = $value;
             }
         }
     }

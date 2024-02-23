@@ -421,6 +421,24 @@
             }
           ]
         }
+      },
+      "fallbackLanguage": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "xlsx",
+                "csv"
+              ]
+            },
+            {
+              "type": "isNotEmpty",
+              "attribute": "language"
+            }
+          ]
+        }
       }
     }
   }

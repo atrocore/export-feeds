@@ -32,6 +32,7 @@ class ExportConfiguratorItem extends Base
             'sortOrder',
             'attributeId',
             'language',
+            'fallbackLanguage',
             'scope',
             'channelId',
             'channelName',
