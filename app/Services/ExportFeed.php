@@ -430,6 +430,7 @@ class ExportFeed extends Base
                 'id'                        => $item->get('id'),
                 'columnType'                => $item->get('columnType'),
                 'language'                  => $item->get('language'),
+                'fallbackLanguage'          => $item->get('fallbackLanguage'),
                 'column'                    => $eciService->prepareColumnName($item),
                 'template'                  => $feed->get('template'),
                 'emptyValue'                => $feed->getFeedField('emptyValue'),

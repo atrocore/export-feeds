@@ -151,6 +151,7 @@ abstract class AbstractExportType extends Base
             $row['channelId'] = '';
         }
 
+
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
         $row['nullValue'] = array_key_exists('nullValue', $feedData) ? $feedData['nullValue'] : 'Null';
@@ -159,6 +160,27 @@ abstract class AbstractExportType extends Base
         $row['thousandSeparator'] = !empty($feedData['thousandSeparator']) ? $feedData['thousandSeparator'] : '';
         $row['fieldDelimiterForRelation'] = !empty($feedData['fieldDelimiterForRelation']) ? $feedData['fieldDelimiterForRelation'] : '|';
         $row['entity'] = $feedData['entity'];
+
+        $feedLanguage = $this->data['feed']['language'];
+        $feedFallbackLanguage = $this->data['feed']['fallbackLanguage'];
+
+        if(
+            $row['type'] === 'Field'
+            && !empty($feedLanguage)
+            && $this->getMetadata()->get(['entityDefs', $row['entity'], 'fields', $row['field'],'isMultilang'], false)
+        ){
+            $row['language'] = $feedLanguage;
+            $row['fallbackLanguage'] = $feedFallbackLanguage;
+
+        }
+
+        if ($row['type'] === 'Field' && !empty($row['fallbackLanguage'])) {
+            if($row['fallbackLanguage'] === 'main'){
+                $row['fallbackField'] = $row['field'];
+            }else{
+                $row['fallbackField']  = $row['field'].ucfirst(Util::toCamelCase(strtolower($row['fallbackLanguage'])));
+            }
+        }
 
         // change field name for multilingual field
         if ($row['type'] === 'Field' && $row['language'] !== 'main' && empty($GLOBALS['languagePrism'])) {
@@ -242,6 +264,9 @@ abstract class AbstractExportType extends Base
             }
         }
 
+        $languagePrism = $GLOBALS['languagePrism'];
+        unset($GLOBALS['languagePrism']);
+
         $result = $this->getEntityService()->findEntities($params);
 
         if (isset($result['collection'])) {
@@ -252,6 +277,8 @@ abstract class AbstractExportType extends Base
         } else {
             $list = $result['list'];
         }
+
+        $GLOBALS['languagePrism'] = $languagePrism;
 
         $this->iteration++;
 
@@ -316,7 +343,6 @@ abstract class AbstractExportType extends Base
         foreach ($this->data['feed']['data']['configuration'] as $rowNumber => $row) {
             $res['configuration'][$rowNumber] = $this->prepareRow($row);
         }
-
         // clearing file if it needs
         file_put_contents($res['fullFileName'], '');
 

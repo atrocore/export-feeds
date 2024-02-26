@@ -29,7 +29,9 @@
         {
           "name": "language"
         },
-        false
+        {
+          "name": "fallbackLanguage"
+        }
       ],
       [
         {

@@ -33,7 +33,8 @@
     "convertCollectionToString": "Sammlung in String umwandeln",
     "convertRelationsToString": "Relationen in String umwandeln",
     "replaceAttributeValues": "Attributwerte ersetzen",
-    "exportByMaxDepth": "Maximale Tiefe der anzuzeigenden Beziehungen"
+    "exportByMaxDepth": "Maximale Tiefe der anzuzeigenden Beziehungen",
+    "fallbackLanguage": "Fallback-Sprache"
   },
   "links": {
     "configuratorItems": "Konfigurator",

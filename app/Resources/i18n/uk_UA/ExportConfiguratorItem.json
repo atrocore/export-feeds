@@ -24,7 +24,8 @@
     "zip": "Експорт ассетів у ZIP-архів",
     "attributeValue": "Значення атрибута",
     "fileNameTemplate": "Шаблон імені файлу",
-    "exportByForListAttribute": "Пов’язані поля сутності для списків"
+    "exportByForListAttribute": "Пов’язані поля сутності для списків",
+    "fallbackLanguage": "Резервна мова"
   },
   "links": {
     "exportFeed": "Експорт. фід",

@@ -24,7 +24,8 @@
     "zip": "Assets in ein ZIP-Archiv exportieren",
     "attributeValue": "Attributwert",
     "fileNameTemplate": "Dateinamenvorlage",
-    "exportByForListAttribute": "Verwandte Entitätsfelder für Listen"
+    "exportByForListAttribute": "Verwandte Entitätsfelder für Listen",
+    "fallbackLanguage": "Fallback-Sprache"
   },
   "links": {
     "exportFeed": "Exportfeed",
