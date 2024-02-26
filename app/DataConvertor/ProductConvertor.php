@@ -81,14 +81,14 @@ class ProductConvertor extends Convertor
         $result = null;
 
         // find Global
-        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Global', '']);
+        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, '']);
         if (isset($pavCollectionKeys[$key])) {
             $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
         }
 
         // find Channel
         if (!empty($configuration['channelId'])) {
-            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Channel', $configuration['channelId']]);
+            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, $configuration['channelId']]);
             if (isset($pavCollectionKeys[$key])) {
                 $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
             }
