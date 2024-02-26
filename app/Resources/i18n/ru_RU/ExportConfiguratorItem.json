@@ -10,7 +10,6 @@
     "exportIntoSeparateColumns": "Разделять",
     "type": "Тип",
     "language": "Язык",
-    "scope": "Область действия",
     "channel": "Канал",
     "mask": "Маска",
     "filterField": "Поле фильтра",

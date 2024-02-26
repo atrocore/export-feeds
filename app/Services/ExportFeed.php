@@ -483,15 +483,11 @@ class ExportFeed extends Base
                 $row['attributeId'] = $attribute->get('id');
                 $row['attributeName'] = $attribute->get('name');
 
-                $row['scope'] = $item->get('scope');
-                $row['channelId'] = null;
                 $row['channelLocales'] = [];
+                $row['channelId'] = $item->get('channelId');
 
-                if ($row['scope'] === 'Channel') {
-                    $row['channelId'] = $item->get('channelId');
-                    if (!empty($channel = $item->get('channel'))) {
-                        $row['channelLocales'] = $channel->get('locales');
-                    }
+                if (!empty($channel = $item->get('channel'))) {
+                    $row['channelLocales'] = $channel->get('locales');
                 }
 
                 if (empty($row['attributeValue'])) {

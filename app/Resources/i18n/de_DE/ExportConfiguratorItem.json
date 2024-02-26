@@ -10,7 +10,6 @@
     "exportIntoSeparateColumns": "Trennen",
     "type": "Typ",
     "language": "Sprache",
-    "scope": "Scope",
     "channel": "Kanal",
     "mask": "Maske",
     "filterField": "Filterfeld",

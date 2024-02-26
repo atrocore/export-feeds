@@ -52,7 +52,7 @@ class ProductConvertor extends Convertor
 
         if (!empty($productAttribute)) {
             // exit if replaceAttributeValues disabled
-            if (empty($configuration['replaceAttributeValues']) && $productAttribute->get('scope') === 'Global' && !empty($configuration['channelId'])) {
+            if (empty($configuration['replaceAttributeValues'])) {
                 return $result;
             }
             $type = $this->getTypeForAttribute($productAttribute->get('attributeType'), $configuration['attributeValue']);
@@ -81,14 +81,14 @@ class ProductConvertor extends Convertor
         $result = null;
 
         // find Global
-        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Global', '']);
+        $key = implode('_', [$record['id'], $configuration['attributeId'], $language, '']);
         if (isset($pavCollectionKeys[$key])) {
             $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
         }
 
         // find Channel
         if (!empty($configuration['channelId'])) {
-            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Channel', $configuration['channelId']]);
+            $key = implode('_', [$record['id'], $configuration['attributeId'], $language, $configuration['channelId']]);
             if (isset($pavCollectionKeys[$key])) {
                 $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
             }

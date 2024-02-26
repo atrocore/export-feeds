@@ -33,7 +33,6 @@ class ExportConfiguratorItem extends Base
             'attributeId',
             'language',
             'fallbackLanguage',
-            'scope',
             'channelId',
             'channelName',
             'fixedValue',

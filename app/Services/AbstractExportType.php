@@ -147,10 +147,9 @@ abstract class AbstractExportType extends Base
     {
         $feedData = $this->data['feed']['data'];
 
-        if (empty($row['scope']) || $row['scope'] !== 'Channel') {
-            $row['channelId'] = '';
+        if (!isset($row['channelId'])) {
+            $row['channelId'] = null;
         }
-
 
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
@@ -456,7 +455,7 @@ abstract class AbstractExportType extends Base
             foreach ($res['collection'] as $pav) {
                 $itemKey = $pavRepo->getCacheKey($pav->get('id'));
                 $this->getMemoryStorage()->set($itemKey, $pav);
-                $pavCollectionKeys[implode('_', [$pav->get('productId'), $pav->get('attributeId'), $pav->get('language'), $pav->get('scope'), $pav->get('channelId')])] = $itemKey;
+                $pavCollectionKeys[implode('_', [$pav->get('productId'), $pav->get('attributeId'), $pav->get('language'), $pav->get('channelId')])] = $itemKey;
                 $attributesKeys[$pav->get('attributeId')][] = $itemKey;
             }
             $this->getMemoryStorage()->set('pavCollectionKeys', $pavCollectionKeys);
