@@ -147,6 +147,10 @@ abstract class AbstractExportType extends Base
     {
         $feedData = $this->data['feed']['data'];
 
+        if (!isset($row['channelId'])) {
+            $row['channelId'] = null;
+        }
+
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
         $row['nullValue'] = array_key_exists('nullValue', $feedData) ? $feedData['nullValue'] : 'Null';
