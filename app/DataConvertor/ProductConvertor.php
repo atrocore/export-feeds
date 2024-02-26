@@ -52,7 +52,7 @@ class ProductConvertor extends Convertor
 
         if (!empty($productAttribute)) {
             // exit if replaceAttributeValues disabled
-            if (empty($configuration['replaceAttributeValues']) && $productAttribute->get('scope') === 'Global' && !empty($configuration['channelId'])) {
+            if (empty($configuration['replaceAttributeValues'])) {
                 return $result;
             }
             $type = $this->getTypeForAttribute($productAttribute->get('attributeType'), $configuration['attributeValue']);
