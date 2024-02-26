@@ -263,8 +263,10 @@ abstract class AbstractExportType extends Base
             }
         }
 
-        $languagePrism = $GLOBALS['languagePrism'];
-        unset($GLOBALS['languagePrism']);
+        if (isset($GLOBALS['languagePrism'])) {
+            $languagePrism = $GLOBALS['languagePrism'];
+            unset($GLOBALS['languagePrism']);
+        }
 
         $result = $this->getEntityService()->findEntities($params);
 
@@ -277,7 +279,9 @@ abstract class AbstractExportType extends Base
             $list = $result['list'];
         }
 
-        $GLOBALS['languagePrism'] = $languagePrism;
+        if (isset($languagePrism)) {
+            $GLOBALS['languagePrism'] = $languagePrism;
+        }
 
         $this->iteration++;
 
