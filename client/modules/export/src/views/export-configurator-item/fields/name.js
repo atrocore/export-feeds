@@ -107,14 +107,9 @@ Espo.define('export:views/export-configurator-item/fields/name', 'views/fields/e
                 if (this.model.get('attributeValue')) {
                     extraInfo += '<br>' + this.translate('attributeValue', 'fields', 'ExportConfiguratorItem') + ': ' + this.getLanguage().translateOption(this.model.get('attributeValue'), 'attributeValue', 'ExportConfiguratorItem')
                 }
-                extraInfo += `<br>${this.translate('scope', 'fields', 'ExportConfiguratorItem')}: `;
-
-                if (this.model.get('scope') === 'Global') {
-                    extraInfo += 'Global';
-                } else {
-                    extraInfo += this.model.get('channelName');
+                if (this.model.get('channelName')) {
+                    extraInfo += `<br>${this.translate('Channel', 'scopeNames', 'Global')}: ${this.model.get('channelName')}`;
                 }
-
             }
 
             return extraInfo;
