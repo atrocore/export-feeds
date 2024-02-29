@@ -34,7 +34,10 @@
     "convertRelationsToString": "Relationen in String umwandeln",
     "replaceAttributeValues": "Attributwerte ersetzen",
     "exportByMaxDepth": "Maximale Tiefe der anzuzeigenden Beziehungen",
-    "fallbackLanguage": "Fallback-Sprache"
+    "fallbackLanguage": "Fallback-Sprache",
+    "originTemplateName": "Vorlagenname",
+    "originTemplate": "Ursprungsvorlage",
+    "isTemplateEditable": "Editierbar"
   },
   "links": {
     "configuratorItems": "Konfigurator",

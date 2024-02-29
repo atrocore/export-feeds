@@ -63,6 +63,20 @@
       ],
       [
         {
+          "name": "originTemplateName"
+        },
+        {
+          "name": "isTemplateEditable"
+        }
+      ],
+      [
+        {
+          "name": "originTemplate",
+          "fullWidth": true
+        }
+      ],
+      [
+        {
           "name": "template",
           "fullWidth": true
         }

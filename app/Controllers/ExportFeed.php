@@ -120,4 +120,17 @@ class ExportFeed extends Base
 
         return $this->getRecordService()->getEasyCatalog($request->get("code"), $request->get('offset'));
     }
+
+    public function actionGetOriginTemplate($params, $data, Request $request)
+    {
+        if (!$request->isGet() || empty($request->get("template"))) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return json_encode(['template' => $this->getRecordService()->getOriginTemplate($request->get("template"))]);
+    }
 }

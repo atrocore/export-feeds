@@ -1,0 +1,10 @@
+[
+  {
+    "route": "/ExportFeed/action/getOriginTemplate",
+    "method": "get",
+    "params": {
+      "controller": "ExportFeed",
+      "action": "getOriginTemplate"
+    }
+  }
+]

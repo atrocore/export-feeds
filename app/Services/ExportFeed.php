@@ -376,6 +376,10 @@ class ExportFeed extends Base
         }
 
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
+
+        if (!empty($entity->get('originTemplateName'))) {
+            $entity->set('originTemplate', $this->getOriginTemplate($entity->get('originTemplateName')));
+        }
     }
 
     public function getExportTypeService(string $type): AbstractExportType
@@ -391,6 +395,7 @@ class ExportFeed extends Base
         $this->addDependency('serviceFactory');
         $this->addDependency('language');
         $this->addDependency('user');
+        $this->addDependency('moduleManager');
     }
 
     protected function beforeUpdateEntity(Entity $entity, $data)
@@ -558,6 +563,40 @@ class ExportFeed extends Base
         }
 
         return true;
+    }
+
+    /**
+     * @param string $templateName
+     *
+     * @return string|null
+     */
+    public function getOriginTemplate(string $templateName): ?string
+    {
+        if (!empty($templateName)) {
+            $template = $this->getMemoryStorage()->get($templateName);
+
+            if (!empty($template)) {
+                return $template;
+            }
+
+            $templateMetadata = $this->getMetadata()->get(['app', 'twigTemplates', $templateName], []);
+
+            if (!empty($templateMetadata['module']) && !empty($templateMetadata['path'])) {
+                $module = $this->getInjection('moduleManager')->getModule($templateMetadata['module']);
+
+                if ($module) {
+                    $path = dirname($module->getAppPath()) . '/' . $templateMetadata['path'];
+
+                    if (file_exists($path) && !empty($result = @file_get_contents($path))) {
+                        $this->getMemoryStorage()->set($templateName, $result);
+
+                        return $result;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     protected function getChannel(string $channelId): ?Entity

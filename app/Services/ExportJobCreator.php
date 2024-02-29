@@ -26,6 +26,10 @@ class ExportJobCreator extends QueueManagerBase
         $data['offset'] = 0;
         $data['limit'] = empty($data['feed']['limit']) ? \PHP_INT_MAX : $data['feed']['limit'];
 
+        if (!empty($data['feed']['originTemplateName'])) {
+            $data['feed']['originTemplate'] = $this->getExportFeedService()->getOriginTemplate($data['feed']['originTemplateName']);
+        }
+
         $count = $this->getExportFeedService()->getExportTypeService($data['feed']['type'])->getCount($data);
 
         if (!empty($data['feed']['separateJob']) && $count !== null) {

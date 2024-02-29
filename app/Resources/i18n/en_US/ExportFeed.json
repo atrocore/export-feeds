@@ -33,7 +33,10 @@
     "convertRelationsToString": "Convert relations to string",
     "replaceAttributeValues": "Replace attribute values",
     "exportByMaxDepth": "Maximum depth of relations to show",
-    "fallbackLanguage": "Fallback Language"
+    "fallbackLanguage": "Fallback Language",
+    "originTemplateName": "Template Name",
+    "originTemplate": "Origin Template",
+    "isTemplateEditable": "Editable"
   },
   "links": {
     "configuratorItems": "Configurator",

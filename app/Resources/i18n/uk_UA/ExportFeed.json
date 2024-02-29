@@ -33,7 +33,10 @@
     "convertRelationsToString": "Конвертувати поля зв'язку в рядок",
     "replaceAttributeValues": "Замінювати значення атрибутів",
     "exportByMaxDepth": "Показати максимальну глибину відносин",
-    "fallbackLanguage": "Резервна мова"
+    "fallbackLanguage": "Резервна мова",
+    "originTemplateName": "Назва шаблону",
+    "originTemplate": "Оригінальний шаблон",
+    "isTemplateEditable": "Редагувати"
   },
   "links": {
     "exportJobs": "Завдання експорту",

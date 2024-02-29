@@ -68,6 +68,59 @@
           ]
         }
       },
+      "originTemplateName": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "json",
+                "xml",
+                "sql"
+              ]
+            }
+          ]
+        }
+      },
+      "originTemplate": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "json",
+                "xml",
+                "sql"
+              ]
+            },
+            {
+              "type": "isNotEmpty",
+              "attribute": "originTemplate"
+            }
+          ]
+        }
+      },
+      "isTemplateEditable": {
+        "visible": {
+          "conditionGroup": [
+            {
+              "type": "isNotEmpty",
+              "attribute": "originTemplate"
+            },
+            {
+              "type": "in",
+              "attribute": "fileType",
+              "value": [
+                "json",
+                "xml",
+                "sql"
+              ]
+            }
+          ]
+        }
+      },
       "template": {
         "visible": {
           "conditionGroup": [
@@ -79,6 +132,18 @@
                 "xml",
                 "sql"
               ]
+            }
+          ]
+        },
+        "readOnly": {
+          "conditionGroup": [
+            {
+              "type": "isFalse",
+              "attribute": "isTemplateEditable"
+            },
+            {
+              "type": "isNotEmpty",
+              "attribute": "originTemplate"
             }
           ]
         }
