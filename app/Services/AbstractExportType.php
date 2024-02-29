@@ -165,13 +165,12 @@ abstract class AbstractExportType extends Base
         $feedFallbackLanguage = $this->data['feed']['fallbackLanguage'];
 
         if(
-            $row['type'] === 'Field'
+            $row['type'] === 'Field' || $row['type'] === 'Attribute'
             && !empty($feedLanguage)
             && $this->getMetadata()->get(['entityDefs', $row['entity'], 'fields', $row['field'],'isMultilang'], false)
         ){
             $row['language'] = $feedLanguage;
             $row['fallbackLanguage'] = $feedFallbackLanguage;
-
         }
 
         if ($row['type'] === 'Field' && !empty($row['fallbackLanguage'])) {

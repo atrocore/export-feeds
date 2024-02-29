@@ -48,7 +48,11 @@ class ProductConvertor extends Convertor
             $language = $GLOBALS['languagePrism'];
         }
 
+        $GLOBALS['log']->error("pavKey: ".json_encode($pavCollectionKeys));
         $productAttribute = $this->searchAttributeValue($pavCollectionKeys, $record, $configuration, $language);
+        if(empty($productAttribute->get('value')) && !empty($configuration['fallbackLanguage'])){
+            $productAttribute = $this->searchAttributeValue($pavCollectionKeys, $record, $configuration, $configuration['fallbackLanguage']);
+        }
 
         if (!empty($productAttribute)) {
             // exit if replaceAttributeValues disabled
@@ -82,6 +86,7 @@ class ProductConvertor extends Convertor
 
         // find Global
         $key = implode('_', [$record['id'], $configuration['attributeId'], $language, 'Global', '']);
+      $GLOBALS['log']->error('Record Key:  '.$key);
         if (isset($pavCollectionKeys[$key])) {
             $result = $this->getMemoryStorage()->get($pavCollectionKeys[$key]);
         }
