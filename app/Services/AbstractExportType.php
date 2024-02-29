@@ -147,10 +147,9 @@ abstract class AbstractExportType extends Base
     {
         $feedData = $this->data['feed']['data'];
 
-        if (empty($row['scope']) || $row['scope'] !== 'Channel') {
-            $row['channelId'] = '';
+        if (!isset($row['channelId'])) {
+            $row['channelId'] = null;
         }
-
 
         $row['delimiter'] = !empty($feedData['delimiter']) ? $feedData['delimiter'] : ',';
         $row['emptyValue'] = !empty($feedData['emptyValue']) ? $feedData['emptyValue'] : '';
@@ -165,10 +164,15 @@ abstract class AbstractExportType extends Base
         $feedFallbackLanguage = $this->data['feed']['fallbackLanguage'];
 
         if(
-            $row['type'] === 'Field' || $row['type'] === 'Attribute'
+            $row['type'] === 'Field'
             && !empty($feedLanguage)
             && $this->getMetadata()->get(['entityDefs', $row['entity'], 'fields', $row['field'],'isMultilang'], false)
         ){
+            $row['language'] = $feedLanguage;
+            $row['fallbackLanguage'] = $feedFallbackLanguage;
+        }
+
+        if($row['type'] === 'Attribute' && !empty($feedLanguage)){
             $row['language'] = $feedLanguage;
             $row['fallbackLanguage'] = $feedFallbackLanguage;
         }
@@ -263,8 +267,10 @@ abstract class AbstractExportType extends Base
             }
         }
 
-        $languagePrism = $GLOBALS['languagePrism'];
-        unset($GLOBALS['languagePrism']);
+        if (isset($GLOBALS['languagePrism'])) {
+            $languagePrism = $GLOBALS['languagePrism'];
+            unset($GLOBALS['languagePrism']);
+        }
 
         $result = $this->getEntityService()->findEntities($params);
 
@@ -277,7 +283,9 @@ abstract class AbstractExportType extends Base
             $list = $result['list'];
         }
 
-        $GLOBALS['languagePrism'] = $languagePrism;
+        if (isset($languagePrism)) {
+            $GLOBALS['languagePrism'] = $languagePrism;
+        }
 
         $this->iteration++;
 
@@ -455,7 +463,7 @@ abstract class AbstractExportType extends Base
             foreach ($res['collection'] as $pav) {
                 $itemKey = $pavRepo->getCacheKey($pav->get('id'));
                 $this->getMemoryStorage()->set($itemKey, $pav);
-                $pavCollectionKeys[implode('_', [$pav->get('productId'), $pav->get('attributeId'), $pav->get('language'), $pav->get('scope'), $pav->get('channelId')])] = $itemKey;
+                $pavCollectionKeys[implode('_', [$pav->get('productId'), $pav->get('attributeId'), $pav->get('language'), $pav->get('channelId')])] = $itemKey;
                 $attributesKeys[$pav->get('attributeId')][] = $itemKey;
             }
             $this->getMemoryStorage()->set('pavCollectionKeys', $pavCollectionKeys);
