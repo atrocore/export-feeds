@@ -50,9 +50,9 @@ class ProductConvertor extends Convertor
 
         $productAttribute = $this->searchAttributeValue($pavCollectionKeys, $record, $configuration, $language);
 
-        if(empty($productAttribute->get('value'))
+        if(
+            (empty($productAttribute) || empty($productAttribute->get('value')))
             && !empty($configuration['fallbackLanguage'])
-            && !empty($productAttribute->get('attributeIsMultilang'))
         ) {
             $productAttribute = $this->searchAttributeValue(
                 $pavCollectionKeys,

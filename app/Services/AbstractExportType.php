@@ -172,12 +172,19 @@ abstract class AbstractExportType extends Base
             $row['fallbackLanguage'] = $feedFallbackLanguage;
         }
 
-        if($row['type'] === 'Attribute' && !empty($feedLanguage)){
+        if(
+            $row['type'] === 'Attribute'
+            && !empty($feedLanguage)
+            && $this->getEntityManager()
+                ->getRepository('Attribute')
+                ->get($row['attributeId'])
+                ->get('isMultilang')
+        ){
             $row['language'] = $feedLanguage;
             $row['fallbackLanguage'] = $feedFallbackLanguage;
         }
 
-        if ($row['type'] === 'Field' && !empty($row['fallbackLanguage'])) {
+        if ($row['type'] === 'Field' && !empty($row['fallbackLanguage']) ) {
             if($row['fallbackLanguage'] === 'main'){
                 $row['fallbackField'] = $row['field'];
             }else{
