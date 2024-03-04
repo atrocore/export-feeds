@@ -170,7 +170,11 @@ abstract class AbstractExportType extends Base
         ){
             $row['language'] = $feedLanguage;
             $row['fallbackLanguage'] = $feedFallbackLanguage;
+        }
 
+        if($row['type'] === 'Attribute' && !empty($feedLanguage)){
+            $row['language'] = $feedLanguage;
+            $row['fallbackLanguage'] = $feedFallbackLanguage;
         }
 
         if ($row['type'] === 'Field' && !empty($row['fallbackLanguage'])) {
