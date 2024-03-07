@@ -70,6 +70,9 @@ Espo.define('export:views/export-configurator-item/fields/language', 'views/fiel
 
             checkFieldVisibility() {
                 if (this.isMultiLang && (this.getConfig().get('inputLanguageList') || []).length > 0) {
+                    if(!this.model.get('language')){
+                        this.model.set('language', this.params.options[0])
+                    }
                     this.show();
                 } else {
                     this.hide();
