@@ -21,6 +21,7 @@ use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 use Espo\Core\EventManager\Event;
+use Export\TemplateLoaders\AbstractTemplate;
 
 class ExportFeed extends Base
 {
@@ -391,6 +392,7 @@ class ExportFeed extends Base
     {
         parent::init();
 
+        $this->addDependency('container');
         $this->addDependency('queueManager');
         $this->addDependency('serviceFactory');
         $this->addDependency('language');
@@ -570,33 +572,34 @@ class ExportFeed extends Base
      *
      * @return string|null
      */
-    public function getOriginTemplate(string $templateName): ?string
+    public function getOriginTemplate(string $template): ?string
     {
-        if (!empty($templateName)) {
-            $template = $this->getMemoryStorage()->get($templateName);
+        if (!empty($className = $this->getMetadata()->get(['app', 'templateLoaders', $template]))) {
+            if (is_a($className, AbstractTemplate::class, true)) {
+                $templateClass = new $className($this->getInjection('container'));
 
-            if (!empty($template)) {
-                return $template;
-            }
-
-            $templateMetadata = $this->getMetadata()->get(['app', 'twigTemplates', $templateName], []);
-
-            if (!empty($templateMetadata['module']) && !empty($templateMetadata['path'])) {
-                $module = $this->getInjection('moduleManager')->getModule($templateMetadata['module']);
-
-                if ($module) {
-                    $path = dirname($module->getAppPath()) . '/' . $templateMetadata['path'];
-
-                    if (file_exists($path) && !empty($result = @file_get_contents($path))) {
-                        $this->getMemoryStorage()->set($templateName, $result);
-
-                        return $result;
-                    }
-                }
+                return $templateClass->loadTemplateFromFile();
             }
         }
 
         return null;
+    }
+
+    public function getAvailableTemplates(array $data): array
+    {
+        $result = [];
+
+        foreach ($this->getMetadata()->get(['app', 'templateLoaders'], []) as $name => $className) {
+            if (is_a($className, AbstractTemplate::class, true)) {
+                $templateClass = new $className($this->getInjection('container'));
+
+                if ($templateClass->isTemplateCompatible($data)) {
+                    $result[$name] = $templateClass->getName();
+                }
+            }
+        }
+
+        return $result;
     }
 
     protected function getChannel(string $channelId): ?Entity

@@ -11,19 +11,17 @@
 Espo.define('export:views/export-feed/fields/origin-template-name', 'views/fields/enum', Dep => {
 
     return Dep.extend({
+        setup() {
+            Dep.prototype.setup.call(this);
+
+            this.listenTo(this.model, 'change:type change:fileType change:entity', () => this.setupOptions());
+        },
 
         setupOptions() {
             this.params.options = [''];
             this.translatedOptions = {'': ''};
 
-            let data = this.getMetadata().get(['app', 'twigTemplates']) || {};
-
-            Object.keys(data).forEach(key => {
-                if ('entity' in data[key] && data[key].entity === this.model.get('entity')) {
-                    this.params.options.push(key);
-                    this.translatedOptions[key] = key;
-                }
-            });
+            this.loadAvailableTemplates();
         },
 
         afterRender() {
@@ -37,7 +35,9 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
                 let templateId = this.model.get(this.name);
 
                 if (templateId) {
-                    this.model.set('template', '{% extends "' + templateId + '" %}');
+                    let templateName = this.translatedOptions[templateId];
+
+                    this.model.set('template', '{% extends "' + templateName + '" %}');
 
                     this.notify('Loading...');
                     this.ajaxGetRequest('ExportFeed/action/getOriginTemplate', {template: templateId}).success(res => {
@@ -55,6 +55,19 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
             } else {
                 this.hide();
             }
+        },
+
+        loadAvailableTemplates() {
+            this.ajaxPostRequest('ExportFeed/action/loadAvailableTemplates', this.model.attributes).then(result => {
+                if (result) {
+                    Object.keys(result).forEach(template => {
+                        this.params.options.push(template);
+                        this.translatedOptions[template] = result[template];
+                    });
+
+                    this.reRender();
+                }
+            });
         }
     })
 });
