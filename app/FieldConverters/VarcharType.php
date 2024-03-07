@@ -23,11 +23,11 @@ class VarcharType extends AbstractType
 
         if (array_key_exists($field,$record)) {
             $value = $record[$field];
-            if(empty($value) && array_key_exists($configuration['fallbackField'], $record) ){
+            if(($value === null || $value === '') && array_key_exists($configuration['fallbackField'], $record) ){
                 $value = $record[$configuration['fallbackField']];
             }
 
-            if (empty($value)) {
+            if ($value === null || $value === '') {
                 $result[$column] = $value === null ? $configuration['nullValue'] : $configuration['emptyValue'];
             } else {
                 $result[$column] = $value;
