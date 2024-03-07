@@ -193,7 +193,7 @@ abstract class AbstractExportType extends Base
         }
 
         // change field name for multilingual field
-        if ($row['type'] === 'Field' && $row['language'] !== 'main' && empty($GLOBALS['languagePrism'])) {
+        if ($row['type'] === 'Field' && $row['language'] !== 'main') {
             $row['field'] .= ucfirst(Util::toCamelCase(strtolower($row['language'])));
         }
 
