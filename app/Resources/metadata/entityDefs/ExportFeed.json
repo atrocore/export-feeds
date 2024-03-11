@@ -275,7 +275,8 @@
     },
     "originTemplateName": {
       "type": "enum",
-      "view": "export:views/export-feed/fields/origin-template-name"
+      "view": "export:views/export-feed/fields/origin-template-name",
+      "layoutListDisabled": true
     },
     "isTemplateEditable": {
       "type": "bool",

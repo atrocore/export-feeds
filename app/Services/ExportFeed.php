@@ -377,10 +377,6 @@ class ExportFeed extends Base
         }
 
         $entity->set('replaceAttributeValues', !empty($entity->getFeedField('replaceAttributeValues')));
-
-        if (!empty($entity->get('originTemplateName'))) {
-            $entity->set('originTemplate', $this->getOriginTemplate($entity->get('originTemplateName')));
-        }
     }
 
     public function getExportTypeService(string $type): AbstractExportType
@@ -576,7 +572,7 @@ class ExportFeed extends Base
     {
         if (!empty($className = $this->getMetadata()->get(['app', 'templateLoaders', $template]))) {
             if (is_a($className, AbstractTemplate::class, true)) {
-                $templateClass = new $className($this->getInjection('container'));
+                $templateClass = $this->getInjection('container')->get($className);
 
                 return $templateClass->loadTemplateFromFile();
             }
@@ -591,7 +587,7 @@ class ExportFeed extends Base
 
         foreach ($this->getMetadata()->get(['app', 'templateLoaders'], []) as $name => $className) {
             if (is_a($className, AbstractTemplate::class, true)) {
-                $templateClass = new $className($this->getInjection('container'));
+                $templateClass = $this->getInjection('container')->get($className);
 
                 if ($templateClass->isTemplateCompatible($data)) {
                     $result[$name] = $templateClass->getName();

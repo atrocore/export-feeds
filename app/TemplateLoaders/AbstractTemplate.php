@@ -14,15 +14,13 @@ declare(strict_types=1);
 namespace Export\TemplateLoaders;
 
 use Atro\Core\KeyValueStorages\StorageInterface;
-use Espo\Core\Container;
+use Atro\Core\Container;
+use Espo\Core\Injectable;
 use Espo\Core\Utils\Config;
 use Espo\Core\Utils\Metadata;
 
-abstract class AbstractTemplate
+abstract class AbstractTemplate extends Injectable
 {
-    /** @var Container $container */
-    protected Container $container;
-
     /** @var string $additionalTemplate */
     protected string $additionalTemplate;
 
@@ -47,9 +45,12 @@ abstract class AbstractTemplate
     /**
      * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct()
     {
-        $this->container = $container;
+        $this->addDependency('container');
+        $this->addDependency('config');
+        $this->addDependency('metadata');
+        $this->addDependency('memoryStorage');
     }
 
     /**
@@ -128,12 +129,17 @@ abstract class AbstractTemplate
         return true;
     }
 
+    protected function getContainer(): Container
+    {
+        return $this->getInjection('container');
+    }
+
     /**
      * @return Config
      */
     protected function getConfig(): Config
     {
-        return $this->container->get('config');
+        return $this->getInjection('config');
     }
 
     /**
@@ -141,7 +147,7 @@ abstract class AbstractTemplate
      */
     protected function getMetadata(): Metadata
     {
-        return $this->container->get('metadata');
+        return $this->getInjection('metadata');
     }
 
     /**
@@ -149,6 +155,6 @@ abstract class AbstractTemplate
      */
     protected function getMemoryStorage(): StorageInterface
     {
-        return $this->container->get('memoryStorage');
+        return $this->getInjection('memoryStorage');
     }
 }

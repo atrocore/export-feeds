@@ -59,7 +59,7 @@ class TwigTemplate extends AbstractTemplate
         $filters = array_merge($this->getMetadata()->get(['twig', 'filters'], []), $this->getMetadata()->get(['app', 'twigFilters'], []));
 
         foreach ($filters as $alias => $className) {
-            $filter = $this->container->get($className);
+            $filter = $this->getContainer()->get($className);
             if ($filter instanceof AbstractTwigFilter) {
                 $filter->setTemplateData($this->data);
                 $twig->addFilter(new TwigFilter($alias, [$filter, 'filter']));
@@ -72,7 +72,7 @@ class TwigTemplate extends AbstractTemplate
         $functions = array_merge($this->getMetadata()->get(['twig', 'functions'], []), $this->getMetadata()->get(['app', 'twigFunctions'], []));
 
         foreach ($functions as $alias => $className) {
-            $twigFunction = $this->container->get($className);
+            $twigFunction = $this->getContainer()->get($className);
             if ($twigFunction instanceof AbstractTwigFunction && method_exists($twigFunction, 'run')) {
                 $twigFunction->setTemplateData($this->data);
                 $twig->addFunction(new TwigFunction($alias, [$twigFunction, 'run']));

@@ -15,17 +15,6 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
             Dep.prototype.setup.call(this);
 
             this.listenTo(this.model, 'change:type change:fileType change:entity', () => this.setupOptions());
-        },
-
-        setupOptions() {
-            this.params.options = [''];
-            this.translatedOptions = {'': ''};
-
-            this.loadAvailableTemplates();
-        },
-
-        afterRender() {
-            Dep.prototype.afterRender.call(this);
 
             this.listenTo(this.model, 'change:' + this.name, () => {
                 this.model.set('originTemplate', null);
@@ -40,21 +29,44 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
                     this.model.set('template', '{% extends "' + templateName + '" %}');
 
                     this.notify('Loading...');
-                    this.ajaxGetRequest('ExportFeed/action/getOriginTemplate', {template: templateId}).success(res => {
-                        if (res.template) {
-                            this.model.set('originTemplate', res.template);
-                        }
-
+                    this.loadOriginalTemplate(templateId, () => {
                         this.notify(false);
                     });
                 }
             });
+
+            if (this.model.get(this.name)) {
+                this.loadOriginalTemplate(this.model.get(this.name))
+            }
+        },
+
+        setupOptions() {
+            this.params.options = [''];
+            this.translatedOptions = {'': ''};
+
+            this.loadAvailableTemplates();
+        },
+
+        afterRender() {
+            Dep.prototype.afterRender.call(this);
 
             if ((this.params.options || []).length) {
                 this.show();
             } else {
                 this.hide();
             }
+        },
+
+        loadOriginalTemplate(template, callback) {
+            this.ajaxGetRequest('ExportFeed/action/getOriginTemplate', {template: template}).success(res => {
+                if (res.template) {
+                    this.model.set('originTemplate', res.template);
+                }
+
+                if (callback) {
+                    callback();
+                }
+            });
         },
 
         loadAvailableTemplates() {
@@ -64,8 +76,6 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
                         this.params.options.push(template);
                         this.translatedOptions[template] = result[template];
                     });
-
-                    this.reRender();
                 }
             });
         }

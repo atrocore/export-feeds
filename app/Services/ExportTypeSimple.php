@@ -58,17 +58,15 @@ class ExportTypeSimple extends AbstractExportType
             $templateClassName = $this->getMetadata()->get(['app', 'templateLoaders', $templateLoaderName]);
 
             if (!empty($templateClassName) && is_a($templateClassName, AbstractTemplate::class, true)) {
-                $templateClass = new $templateClassName($this->getContainer());
+                $templateClass = $this->getInjection('container')->get($templateClassName);
 
                 if ($templateClass->isTemplateCompatible($this->data['feed'])) {
-                    unset($this->data['feed']['originTemplateName']);
-
                     return $templateClass;
                 }
             }
         }
 
-        return new $className($this->getContainer());
+        return $this->getInjection('container')->get($className);
     }
 
     public function renderTemplateContents(string $template, array $templateData, string $loaderName = ''): string
