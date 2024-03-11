@@ -393,7 +393,6 @@ class ExportFeed extends Base
         $this->addDependency('serviceFactory');
         $this->addDependency('language');
         $this->addDependency('user');
-        $this->addDependency('moduleManager');
     }
 
     protected function beforeUpdateEntity(Entity $entity, $data)
