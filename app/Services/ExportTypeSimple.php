@@ -22,14 +22,10 @@ use Espo\Core\Utils\Util;
 use Espo\Entities\Attachment;
 use Espo\ORM\EntityCollection;
 use Export\Entities\ExportJob;
-use Export\TwigFilter\AbstractTwigFilter;
-use Export\TwigFunction\AbstractTwigFunction;
+use Export\TemplateLoaders\AbstractTemplate;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
-use Twig\TwigFilter;
-use Twig\TwigFunction;
 
 class ExportTypeSimple extends AbstractExportType
 {
@@ -54,34 +50,35 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
-    public function renderTemplateContents(string $template, array $templateData): string
+    protected function getTemplateClassLoader(string $templateLoaderName = ''): AbstractTemplate
+    {
+        $className = 'Export\\TemplateLoaders\\TwigTemplate';
+
+        if (!empty($templateLoaderName)) {
+            $templateClassName = $this->getMetadata()->get(['app', 'templateLoaders', $templateLoaderName]);
+
+            if (!empty($templateClassName) && is_a($templateClassName, AbstractTemplate::class, true)) {
+                $templateClass = $this->getInjection('container')->get($templateClassName);
+
+                if ($templateClass->isTemplateCompatible($this->data['feed'])) {
+                    return $templateClass;
+                }
+            }
+        }
+
+        return $this->getInjection('container')->get($className);
+    }
+
+    public function renderTemplateContents(string $template, array $templateData, string $loaderName = ''): string
     {
         $templateData['config'] = $this->getConfig()->getData();
         $templateData['feedData'] = $this->data['feed'];
 
-        $twig = new \Twig\Environment(new \Twig\Loader\ArrayLoader(['template' => $template]));
+        $templateLoader = $this->getTemplateClassLoader($loaderName);
+        $templateLoader->addTemplate($template);
+        $templateLoader->setData($templateData);
 
-        // Merge basic filters/functions with export filters/functions
-        $filters = array_merge($this->getMetadata()->get(['twig', 'filters'], []), $this->getMetadata()->get(['app', 'twigFilters'], []));
-        $functions = array_merge($this->getMetadata()->get(['twig', 'functions'], []), $this->getMetadata()->get(['app', 'twigFunctions'], []));
-
-        foreach ($filters as $alias => $className) {
-            $filter = $this->getContainer()->get($className);
-            if ($filter instanceof \Atro\Core\Twig\AbstractTwigFilter) {
-                $filter->setTemplateData($templateData);
-                $twig->addFilter(new TwigFilter($alias, [$filter, 'filter']));
-            }
-        }
-
-        foreach ($functions as $alias => $className) {
-            $twigFunction = $this->getContainer()->get($className);
-            if ($twigFunction instanceof \Atro\Core\Twig\AbstractTwigFunction && method_exists($twigFunction, 'run')) {
-                $twigFunction->setTemplateData($templateData);
-                $twig->addFunction(new TwigFunction($alias, [$twigFunction, 'run']));
-            }
-        }
-
-        return $twig->render('template', $templateData);
+        return $templateLoader->render();
     }
 
     public function getFullCollection(): EntityCollection
@@ -110,7 +107,7 @@ class ExportTypeSimple extends AbstractExportType
 
         $exportJob->set('count', $collection instanceof EntityCollection ? count($collection) : 0);
 
-        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection], $this->data['feed']['originTemplateName']);
 
         if (!empty($contents)) {
             $array = @json_decode(preg_replace("/}[\n\s]*,[\n\s]*]/", "}]", $contents), true);
@@ -155,7 +152,7 @@ class ExportTypeSimple extends AbstractExportType
 
         $exportJob->set('count', $collection instanceof EntityCollection ? count($collection) : 0);
 
-        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection], $this->data['feed']['originTemplateName']);
 
         $contents = join("\n", array_map(function ($query) {
             return trim($query);
@@ -197,7 +194,7 @@ class ExportTypeSimple extends AbstractExportType
 
         $exportJob->set('count', $collection instanceof EntityCollection ? count($collection) : 0);
 
-        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection]);
+        $contents = $this->renderTemplateContents((string)$this->data['feed']['template'], ['entities' => $collection], $this->data['feed']['originTemplateName']);
 
         $repository = $this->getEntityManager()->getRepository('Attachment');
 

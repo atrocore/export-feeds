@@ -16,6 +16,7 @@ namespace Export\Controllers;
 use Espo\Core\Exceptions\BadRequest;
 use Espo\Core\Templates\Controllers\Base;
 use Espo\Core\Exceptions;
+use Espo\Core\Utils\Json;
 use Slim\Http\Request;
 
 /**
@@ -119,5 +120,33 @@ class ExportFeed extends Base
         }
 
         return $this->getRecordService()->getEasyCatalog($request->get("code"), $request->get('offset'));
+    }
+
+    public function actionLoadAvailableTemplates($params, $data, Request $request)
+    {
+        if (!$request->isPost() || empty($data)) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        $data = Json::decode(Json::encode($data), true);
+
+        return $this->getRecordService()->getAvailableTemplates($data);
+    }
+
+    public function actionGetOriginTemplate($params, $data, Request $request)
+    {
+        if (!$request->isGet() || empty($request->get("template"))) {
+            throw new Exceptions\BadRequest();
+        }
+
+        if (!$this->getAcl()->check($this->name, 'read')) {
+            throw new Exceptions\Forbidden();
+        }
+
+        return json_encode(['template' => $this->getRecordService()->getOriginTemplate($request->get("template"))]);
     }
 }

@@ -273,6 +273,22 @@
         "DESC"
       ]
     },
+    "originTemplateName": {
+      "type": "enum",
+      "view": "export:views/export-feed/fields/origin-template-name",
+      "layoutListDisabled": true
+    },
+    "isTemplateEditable": {
+      "type": "bool",
+      "default": false
+    },
+    "originTemplate": {
+      "type": "text",
+      "rows": 20,
+      "useDisabledTextareaInViewMode": true,
+      "notStorable": true,
+      "readOnly": true
+    },
     "template": {
       "type": "text",
       "useDisabledTextareaInViewMode": true,

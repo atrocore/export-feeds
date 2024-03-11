@@ -21,6 +21,7 @@ use Espo\Entities\User;
 use Espo\ORM\Entity;
 use Espo\ORM\EntityCollection;
 use Espo\Core\EventManager\Event;
+use Export\TemplateLoaders\AbstractTemplate;
 
 class ExportFeed extends Base
 {
@@ -387,6 +388,7 @@ class ExportFeed extends Base
     {
         parent::init();
 
+        $this->addDependency('container');
         $this->addDependency('queueManager');
         $this->addDependency('serviceFactory');
         $this->addDependency('language');
@@ -558,6 +560,41 @@ class ExportFeed extends Base
         }
 
         return true;
+    }
+
+    /**
+     * @param string $templateName
+     *
+     * @return string|null
+     */
+    public function getOriginTemplate(string $template): ?string
+    {
+        if (!empty($className = $this->getMetadata()->get(['app', 'templateLoaders', $template]))) {
+            if (is_a($className, AbstractTemplate::class, true)) {
+                $templateClass = $this->getInjection('container')->get($className);
+
+                return $templateClass->loadTemplateFromFile();
+            }
+        }
+
+        return null;
+    }
+
+    public function getAvailableTemplates(array $data): array
+    {
+        $result = [];
+
+        foreach ($this->getMetadata()->get(['app', 'templateLoaders'], []) as $name => $className) {
+            if (is_a($className, AbstractTemplate::class, true)) {
+                $templateClass = $this->getInjection('container')->get($className);
+
+                if ($templateClass->isTemplateCompatible($data)) {
+                    $result[$name] = $templateClass->getName();
+                }
+            }
+        }
+
+        return $result;
     }
 
     protected function getChannel(string $channelId): ?Entity
