@@ -13,6 +13,8 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
 
         bottomView: 'export:views/export-feed/record/detail-bottom',
 
+        initialModel: [],
+
         setup() {
             Dep.prototype.setup.call(this);
 
@@ -36,6 +38,8 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
             });
 
             this.getStorage().set('mode', 'ExportFeed', null);
+
+            this.initialModel = this.model.getClonedAttributes();
         },
 
         afterRender() {
@@ -105,5 +109,12 @@ Espo.define('export:views/export-feed/record/detail', 'views/record/detail',
 
             Dep.prototype.save.call(this, callback, skipExit);
         },
+
+        cancelEdit() {
+            this.model.set(this.initialModel, {silent: true});
+            this.model.trigger('cancel:export-feed-edit');
+
+            Dep.prototype.cancelEdit.call(this);
+        }
     })
 );
