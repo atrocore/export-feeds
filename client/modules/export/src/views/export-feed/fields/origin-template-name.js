@@ -14,7 +14,10 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
         setup() {
             Dep.prototype.setup.call(this);
 
-            this.listenTo(this.model, 'change:type change:fileType change:entity', () => this.setupOptions());
+            this.listenTo(this.model, 'change:type change:fileType change:entity', () => {
+                this.model.set(this.name, null);
+                this.setupOptions();
+            });
 
             this.listenTo(this.model, 'change:' + this.name, () => {
                 this.model.set('originTemplate', null);
@@ -33,6 +36,11 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
                         this.notify(false);
                     });
                 }
+            });
+
+            this.listenTo(this.model, 'cancel:export-feed-edit', () => {
+                this.setupOptions();
+                this.loadOriginalTemplate(this.model.get(this.name));
             });
 
             if (this.model.get(this.name)) {
@@ -76,6 +84,8 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
                         this.params.options.push(template);
                         this.translatedOptions[template] = result[template];
                     });
+
+                    this.reRender();
                 }
             });
         }
