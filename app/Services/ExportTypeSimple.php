@@ -50,7 +50,7 @@ class ExportTypeSimple extends AbstractExportType
         return $attachment;
     }
 
-    protected function getTemplateClassLoader(string $templateLoaderName = ''): AbstractTemplate
+    protected function getTemplateClassLoader(?string $templateLoaderName = null): AbstractTemplate
     {
         $className = 'Export\\TemplateLoaders\\TwigTemplate';
 
@@ -69,7 +69,7 @@ class ExportTypeSimple extends AbstractExportType
         return $this->getInjection('container')->get($className);
     }
 
-    public function renderTemplateContents(string $template, array $templateData, string $loaderName = ''): string
+    public function renderTemplateContents(string $template, array $templateData, ?string $loaderName = null): string
     {
         $templateData['config'] = $this->getConfig()->getData();
         $templateData['feedData'] = $this->data['feed'];
