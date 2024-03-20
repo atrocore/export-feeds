@@ -1,0 +1,11 @@
+{
+	"fields": {
+		"exportFeed": "Eksportuj kanał",
+		"payload": "Ładunek"
+	},
+	"options": {
+		"type": {
+			"export": "Eksportuj kanał"
+		}
+	}
+}

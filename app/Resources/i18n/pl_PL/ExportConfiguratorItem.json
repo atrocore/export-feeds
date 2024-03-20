@@ -1,0 +1,66 @@
+{
+  "fields": {
+    "name": "Pole",
+    "column": "Nazwa kolumny",
+    "columnType": "Etykieta kolumny",
+    "exportFeed": "Eksportuj kanał",
+    "attribute": "Atrybut",
+    "exportBy": "Powiązane pola encji",
+    "remove": "Usuń",
+    "exportIntoSeparateColumns": "Oddzielne",
+    "type": "Typ",
+    "language": "Język",
+    "channel": "Kanał",
+    "mask": "Maska",
+    "filterField": "Pole filtru",
+    "filterFieldValue": "Wartość pola filtru",
+    "offsetRelation": "Przesunięcie",
+    "limitRelation": "Limit",
+    "sortFieldRelation": "Kolejność sortowania (pole)",
+    "sortOrderRelation": "Kolejność sortowania (kierunek)",
+    "fixedValue": "Wartość stała",
+    "previousItem": "Poprzedni element",
+    "zip": "Eksportuj zasoby do archiwum ZIP",
+    "attributeValue": "Wartość atrybutu",
+    "fileNameTemplate": "Szablon nazwy pliku",
+    "exportByForListAttribute": "Powiązane pola encji dla list",
+    "fallbackLanguage": "Język zapasowy"
+  },
+  "links": {
+    "exportFeed": "Eksportuj kanał",
+    "channel": "Kanał"
+  },
+  "labels": {
+    "exportByForAttributeValue": "Dotyczy tylko atrybutu typu Lista lub Lista wielowartościowa"
+  },
+  "columnType": {
+    "name": "Nazwa",
+    "internal": "Nazwa (nieprzetłumaczona) / Lokalizacja",
+    "custom": "Nazwa niestandardowa"
+  },
+  "options": {
+    "boolFilterFieldValue": {
+      "+": "prawda",
+      "-": "fałsz"
+    },
+    "attributeValue": {
+      "value": "Wartość",
+      "valueFrom": "Wartość od",
+      "valueTo": "Wartość do",
+      "valueUnit": "Jednostka wartości",
+      "id": "ID (Wartość atrybutu produktu)",
+      "valueNumeric": "Wartość (liczbowa)",
+      "valueString": "Wartość (Tekst)"
+    }
+  },
+  "tooltips": {
+    "exportIntoSeparateColumns": "Powiązane rekordy danych zostaną wyeksportowane jako różne pola/kolumny, używając dla nazwy przyrostka \"_1\", \"_2\" i tak dalej.",
+    "filterField": "Wybierz pole filtru, jeśli chcesz zastosować filtr do powiązanych rekordów.",
+    "filterFieldValue": "Wybrane zostaną tylko rekordy przefiltrowane przez wartość pola filtru.",
+    "column": "Możesz użyć pól powiązanej encji w nazwie kolumny. Użyj nazwy pola w bazie danych jako zmiennej, np. {{nazwa}}. Pole wyboru \"Oddzielne kolumny\" powinno być aktywowane."
+  },
+  "exceptions": {
+    "noSuchAttribute": "Atrybut o takim kodzie '%s' nie istnieje.",
+    "unknownModifier": "Modyfikator '%s' jest nieznany."
+  }
+}
