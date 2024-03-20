@@ -32,6 +32,10 @@ class ExportFeed extends Base
             throw new Exceptions\NotFound();
         }
 
+        if (empty($exportFeed->get('isActive'))) {
+            return false;
+        }
+
         $data = [
             'id'   => Util::generateId(),
             'feed' => $this->prepareFeedData($exportFeed)
@@ -63,6 +67,10 @@ class ExportFeed extends Base
         $exportFeed = $this->getEntity($requestData->id);
         if (empty($exportFeed)) {
             throw new Exceptions\NotFound();
+        }
+
+        if (empty($exportFeed->get('isActive'))) {
+            return false;
         }
 
         switch ($exportFeed->get('fileType')) {
