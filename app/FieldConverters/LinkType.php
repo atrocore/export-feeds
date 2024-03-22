@@ -30,9 +30,11 @@ class LinkType extends AbstractType
         $result[$column] = $configuration['markForNoRelation'];
 
         $linkId = $record[$this->getFieldName($field)];
-        $type = $record['attributeType'] ?? $this->getMetadata()->get(['entityDefs', $entity, 'fields', $field, 'type']);
+        $metadata = $this->getMetadata()->get(['entityDefs', $entity, 'fields', $field]);
+        $type = $record['attributeType'] ?? $metadata['type'] ?? null;
+        $isUnit = ($configuration['attributeValue'] ?? null) == 'valueUnit' || ($type == 'link' && !empty($metadata['unitIdField']));
 
-        if ($type == 'extensibleEnum') {
+        if ($type == 'extensibleEnum' || $isUnit) {
             $result[$column] = $configuration['nullValue'];
         }
 
