@@ -103,7 +103,10 @@
     "channel": "Dieser Wert wird bei der Erstellung einer Regel für ein kanalspezifisches Attribut vererbt und hat keine Auswirkung auf den Export selbst.",
     "convertCollectionToString": "Felder und Attribute des Typs: multi-enum, array, one-to-many relation.",
     "convertRelationsToString": "Beziehungsfelder werden durch Feldtrennzeichen für Beziehung getrennt.",
-    "replaceAttributeValues": "Nicht existierende kanalspezifische Attributwerte mit globalen Werten ersetzen."
+    "replaceAttributeValues": "Nicht existierende kanalspezifische Attributwerte mit globalen Werten ersetzen.",
+    "markForNoRelation": "Gibt an, wie eine nicht verknüpfte Beziehung beschriftet werden soll.",
+    "nullValue": "Der Wert wird als \"NULL\"-Wert interpretiert.",
+    "emptyValue": "Der Wert wird als \"leerer\" Wert zusätzlich zur leeren Zelle interpretiert."
   },
   "boolFilters": {
     "onlyExportFailed24Hours": "Nur Export Feeds, die in den letzten 24 Stunden fehlgeschlagen sind",
