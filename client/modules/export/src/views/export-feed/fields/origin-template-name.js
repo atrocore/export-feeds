@@ -43,9 +43,7 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
                 this.loadOriginalTemplate(this.model.get(this.name));
             });
 
-            if (this.model.get(this.name)) {
-                this.loadOriginalTemplate(this.model.get(this.name))
-            }
+            this.loadOriginalTemplate(this.model.get(this.name));
         },
 
         setupOptions() {
@@ -58,7 +56,7 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
         afterRender() {
             Dep.prototype.afterRender.call(this);
 
-            if ((this.params.options || []).length) {
+            if ((this.params.options || []).length > 1) {
                 this.show();
             } else {
                 this.hide();
@@ -66,6 +64,10 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
         },
 
         loadOriginalTemplate(template, callback) {
+            if (!template || template === '') {
+                return;
+            }
+
             this.ajaxGetRequest('ExportFeed/action/getOriginTemplate', {template: template}).success(res => {
                 if (res.template) {
                     this.model.set('originTemplate', res.template);
@@ -78,6 +80,8 @@ Espo.define('export:views/export-feed/fields/origin-template-name', 'views/field
         },
 
         loadAvailableTemplates() {
+            this.hide();
+
             this.ajaxPostRequest('ExportFeed/action/loadAvailableTemplates', this.model.attributes).then(result => {
                 if (result) {
                     Object.keys(result).forEach(template => {
