@@ -68,21 +68,6 @@
           ]
         }
       },
-      "originTemplateName": {
-        "visible": {
-          "conditionGroup": [
-            {
-              "type": "in",
-              "attribute": "fileType",
-              "value": [
-                "json",
-                "xml",
-                "sql"
-              ]
-            }
-          ]
-        }
-      },
       "originTemplate": {
         "visible": {
           "conditionGroup": [
